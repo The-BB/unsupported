@@ -1,0 +1,37 @@
+--- a/setup.py
++++ b/setup.py
+@@ -165,18 +165,6 @@
+ 
+         # Sometimes pip fails to preserve the timestamps correctly,
+         # in which case, make will try to run autotools again.
+-        subprocess.run(
+-            ['touch', 'configure.ac', 'aclocal.m4', 'configure',
+-             'Makefile.am', 'Makefile.in'],
+-            cwd=LIBUV_BUILD_DIR, env=env, check=True)
+-
+-        if 'LIBUV_CONFIGURE_HOST' in env:
+-            cmd = ['./configure', '--host=' + env['LIBUV_CONFIGURE_HOST']]
+-        else:
+-            cmd = ['./configure']
+-        subprocess.run(
+-            cmd,
+-            cwd=LIBUV_BUILD_DIR, env=env, check=True)
+ 
+         j_flag = '-j{}'.format(os.cpu_count() or 1)
+         c_flag = "CFLAGS={}".format(env['CFLAGS'])
+--- a/vendor/libuv/src/unix/thread.c
++++ b/vendor/libuv/src/unix/thread.c
+@@ -37,8 +37,12 @@
+ #include <sys/sem.h>
+ #endif
+ 
+-#ifdef __GLIBC__
++#if defined __GLIBC__ && !defined __UCLIBC__
+ #include <gnu/libc-version.h>  /* gnu_get_libc_version() */
++#endif
++
++#ifdef __UCLIBC__
++#include <gnu-versions.h>
+ #endif
+ 
+ #undef NANOSEC
