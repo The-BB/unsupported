@@ -1,0 +1,30 @@
+--- a/configure.ac
++++ b/configure.ac
+@@ -995,7 +995,6 @@ AC_CONFIG_FILES([examples/rrdcached/Make
+ AC_CONFIG_FILES([etc/rrdcached-default-lsb])
+ AC_CONFIG_FILES([tests/Makefile])
+ AC_CONFIG_FILES([doc/Makefile])
+-AC_CONFIG_FILES([po/Makefile.in])
+ AC_CONFIG_FILES([src/Makefile])
+ AC_CONFIG_FILES([src/librrd.pc])
+ AC_CONFIG_FILES([bindings/Makefile])
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -194,7 +194,7 @@
+ ETAGS = etags
+ CTAGS = ctags
+ CSCOPE = cscope
+-DIST_SUBDIRS = po src bindings tests doc examples
++DIST_SUBDIRS = src bindings tests doc examples
+ am__DIST_COMMON = $(srcdir)/Makefile.in \
+ 	$(top_srcdir)/conftools/compile \
+ 	$(top_srcdir)/conftools/config.guess \
+@@ -456,7 +456,7 @@
+ RSYNC = rsync --rsh=ssh
+ 
+ # build the following subdirectories
+-SUBDIRS = po src bindings tests $(am__append_1) $(am__append_2)
++SUBDIRS = src bindings tests $(am__append_1) $(am__append_2)
+ EXTRA_DIST = COPYRIGHT CHANGES TODO CONTRIBUTORS THREADS VERSION LICENSE \
+              rrdtool.spec favicon.ico bootstrap \
+              libtool \
