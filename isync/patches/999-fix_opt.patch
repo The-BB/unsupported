@@ -1,0 +1,11 @@
+--- a/src/compat/config.c
++++ b/src/compat/config.c
+@@ -451,7 +451,7 @@
+ 					goto gotstor;
+ 			box->local_store_path = my_strndup( path, pl );
+ 			/* derive a suitable name */
+-			if (!strcmp( box->local_store_path, "/var/mail/" ) || !strcmp( box->local_store_path, "/var/spool/mail/" )) {
++			if (!strcmp( box->local_store_path, "/opt/var/mail/" ) || !strcmp( box->local_store_path, "/opt/var/spool/mail/" )) {
+ 				local_store = nfstrdup( "spool" );
+ 			} else if (!strcmp( box->local_store_path, "~/" )) {
+ 				local_store = nfstrdup( "home" );
