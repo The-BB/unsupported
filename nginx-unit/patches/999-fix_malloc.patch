@@ -1,0 +1,75 @@
+--- a/auto/malloc
++++ b/auto/malloc
+@@ -8,7 +8,7 @@
+ 
+ nxt_feature="posix_memalign()"
+ nxt_feature_name=NXT_HAVE_POSIX_MEMALIGN
+-nxt_feature_run=yes
++nxt_feature_run=
+ nxt_feature_incs=
+ nxt_feature_libs=
+ nxt_feature_test="#include <stdlib.h>
+@@ -31,7 +31,7 @@ if [ $nxt_found = no ]; then
+ 
+     nxt_feature="memalign()"
+     nxt_feature_name=NXT_HAVE_MEMALIGN
+-    nxt_feature_run=yes
++    nxt_feature_run=
+     nxt_feature_incs=
+     nxt_feature_libs=
+     nxt_feature_test="#include <stdlib.h>
+@@ -54,7 +54,7 @@ fi
+ 
+ nxt_feature="Linux malloc_usable_size()"
+ nxt_feature_name=NXT_HAVE_MALLOC_USABLE_SIZE
+-nxt_feature_run=yes
++nxt_feature_run=
+ nxt_feature_incs=
+ nxt_feature_libs=
+ nxt_feature_test="#include <malloc.h>
+@@ -76,7 +76,7 @@ if [ $nxt_found = no ]; then
+ 
+     nxt_feature="FreeBSD malloc_usable_size()"
+     nxt_feature_name=NXT_HAVE_MALLOC_USABLE_SIZE
+-    nxt_feature_run=yes
++    nxt_feature_run=no
+     nxt_feature_incs=
+     nxt_feature_libs=
+     nxt_feature_test="#include <stdlib.h>
+@@ -100,7 +100,7 @@ if [ $nxt_found = no ]; then
+ 
+     nxt_feature="MacOSX malloc_good_size()"
+     nxt_feature_name=NXT_HAVE_MALLOC_GOOD_SIZE
+-    nxt_feature_run=yes
++    nxt_feature_run=no
+     nxt_feature_incs=
+     nxt_feature_libs=
+     nxt_feature_test="#include <malloc/malloc.h>
+@@ -120,7 +120,7 @@ fi
+ 
+ nxt_feature="alloca()"
+ nxt_feature_name=NXT_HAVE_ALLOCA
+-nxt_feature_run=yes
++nxt_feature_run=
+ nxt_feature_incs=
+ nxt_feature_libs=
+ nxt_feature_test="#include <stdlib.h>
+@@ -142,7 +142,7 @@ if [ $nxt_found = no ]; then
+ 
+     nxt_feature="alloca() in alloca.h"
+     nxt_feature_name=NXT_HAVE_ALLOCA_H
+-    nxt_feature_run=yes
++    nxt_feature_run=
+     nxt_feature_incs=
+     nxt_feature_libs=
+     nxt_feature_test="#include <alloca.h>
+--- a/src/nxt_malloc.c
++++ b/src/nxt_malloc.c
+@@ -201,6 +201,6 @@ fail:
+ 
+ #else
+ 
+-#error no memalign() implementation.
++#warning no memalign() implementation.
+ 
+ #endif

@@ -1,0 +1,20 @@
+--- a/auto/modules/ruby
++++ b/auto/modules/ruby
+@@ -67,7 +67,7 @@ if /bin/sh -c "$NXT_RUBY -v" >> $NXT_AUT
+ 
+     nxt_feature="Ruby"
+     nxt_feature_name=""
+-    nxt_feature_run=no
++    nxt_feature_run=
+     nxt_feature_incs="${NXT_RUBY_INCPATH}"
+     nxt_feature_libs="${NXT_RUBY_LIBS}"
+     nxt_feature_test="
+@@ -94,7 +94,7 @@ fi
+ 
+ nxt_feature="Ruby version"
+ nxt_feature_name=""
+-nxt_feature_run=value
++nxt_feature_run=
+ nxt_feature_incs="${NXT_RUBY_INCPATH}"
+ nxt_feature_libs="${NXT_RUBY_LIBS}"
+ nxt_feature_test="

@@ -1,0 +1,29 @@
+--- a/auto/atomic
++++ b/auto/atomic
+@@ -7,7 +7,7 @@
+ 
+ nxt_feature="GCC builtin atomic operations"
+ nxt_feature_name=NXT_HAVE_GCC_ATOMIC
+-nxt_feature_run=yes
++nxt_feature_run=no
+ nxt_feature_incs=
+ nxt_feature_libs=
+ nxt_feature_test="int main() {
+@@ -39,7 +39,7 @@ if [ $nxt_found = no ]; then
+ 
+     nxt_feature="Solaris builtin atomic operations"
+     nxt_feature_name=NXT_HAVE_SOLARIS_ATOMIC
+-    nxt_feature_run=yes
++    nxt_feature_run=no
+     nxt_feature_incs=
+     nxt_feature_libs=
+     nxt_feature_test="#include <atomic.h>
+@@ -107,7 +107,7 @@ if [ $nxt_found = no ]; then
+ 
+     nxt_feature="xlC builtin atomic operations"
+     nxt_feature_name=NXT_HAVE_XLC_ATOMIC
+-    nxt_feature_run=yes
++    nxt_feature_run=no
+     nxt_feature_incs=
+     nxt_feature_libs=
+     . auto/feature

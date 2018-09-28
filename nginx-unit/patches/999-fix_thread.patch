@@ -1,0 +1,38 @@
+--- a/auto/threads
++++ b/auto/threads
+@@ -77,7 +77,7 @@ fi
+ 
+ nxt_feature="pthread spinlock"
+ nxt_feature_name=NXT_HAVE_PTHREAD_SPINLOCK
+-nxt_feature_run=yes
++nxt_feature_run=no
+ nxt_feature_incs=
+ nxt_feature_libs=$NXT_PTHREAD
+ nxt_feature_test="#include <pthread.h>
+@@ -105,7 +105,7 @@ if [ $nxt_found = yes ]; then
+ 
+     nxt_feature="pthread spinlock zero initial value"
+     nxt_feature_name=NXT_HAVE_PTHREAD_SPINLOCK_ZERO
+-    nxt_feature_run=yes
++    nxt_feature_run=no
+     nxt_feature_incs=
+     nxt_feature_libs=$NXT_PTHREAD
+     nxt_feature_test="#include <pthread.h>
+@@ -184,7 +184,7 @@ fi
+ 
+ nxt_feature="__thread"
+ nxt_feature_name=NXT_HAVE_THREAD_STORAGE_CLASS
+-nxt_feature_run=yes
++nxt_feature_run=no
+ nxt_feature_incs=
+ nxt_feature_libs=$NXT_PTHREAD
+ nxt_feature_test="#include <pthread.h>
+@@ -222,7 +222,7 @@ if [ $nxt_found = no ]; then
+ 
+     nxt_feature="phtread_key_t"
+     nxt_feature_name=NXT_HAVE_PTHREAD_SPECIFIC_DATA
+-    nxt_feature_run=yes
++    nxt_feature_run=no
+     nxt_feature_incs=
+     nxt_feature_libs=$NXT_PTHREAD
+     nxt_feature_test="#include <pthread.h>

@@ -1,0 +1,20 @@
+--- a/auto/modules/python
++++ b/auto/modules/python
+@@ -76,7 +76,7 @@ if /bin/sh -c "$NXT_PYTHON_CONFIG --pref
+ 
+     nxt_feature="Python"
+     nxt_feature_name=""
+-    nxt_feature_run=no
++    nxt_feature_run=
+     nxt_feature_incs="${NXT_PYTHON_INCLUDE}"
+     nxt_feature_libs="${NXT_PYTHON_LIBS} $NXT_PYTHON_LDFLAGS"
+     nxt_feature_test="
+@@ -103,7 +103,7 @@ fi
+ 
+ nxt_feature="Python version"
+ nxt_feature_name=""
+-nxt_feature_run=value
++nxt_feature_run=
+ nxt_feature_incs="${NXT_PYTHON_INCLUDE}"
+ nxt_feature_libs="${NXT_PYTHON_LIBS} $NXT_PYTHON_LDFLAGS"
+ nxt_feature_test="

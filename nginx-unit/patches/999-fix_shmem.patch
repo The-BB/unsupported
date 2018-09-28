@@ -1,0 +1,20 @@
+--- a/auto/shmem
++++ b/auto/shmem
+@@ -9,7 +9,7 @@ NXT_SHM_PREFIX="/"
+ 
+ nxt_feature="shm_open()"
+ nxt_feature_name=NXT_HAVE_SHM_OPEN
+-nxt_feature_run=yes
++nxt_feature_run=no
+ nxt_feature_incs=
+ nxt_feature_libs=
+ nxt_feature_test="#include <sys/mman.h>
+@@ -112,7 +112,7 @@ fi
+ 
+ nxt_feature="memfd_create()"
+ nxt_feature_name=NXT_HAVE_MEMFD_CREATE
+-nxt_feature_run=yes
++nxt_feature_run=no
+ nxt_feature_incs=
+ nxt_feature_libs=
+ nxt_feature_test="#include <linux/memfd.h>

@@ -1,0 +1,11 @@
+--- a/auto/modules/php
++++ b/auto/modules/php
+@@ -134,7 +134,7 @@ fi
+ 
+ nxt_feature="PHP version"
+ nxt_feature_name=""
+-nxt_feature_run=value
++nxt_feature_run=
+ nxt_feature_incs="${NXT_PHP_INCLUDE}"
+ nxt_feature_libs="${NXT_PHP_LIB} ${NXT_PHP_LDFLAGS}"
+ nxt_feature_test="
