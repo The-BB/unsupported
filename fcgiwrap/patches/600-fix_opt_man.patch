@@ -1,0 +1,42 @@
+--- a/fcgiwrap.8
++++ b/fcgiwrap.8
+@@ -76,7 +76,7 @@
+ The fastest way to see \fBfcgiwrap\fP do something is to launch it at the command line
+ like this:
+ .br
+-fcgiwrap \-s unix:/var/run/fcgiwrap.sock
++fcgiwrap \-s unix:/opt/var/run/fcgiwrap.sock
+ .br
+ Apart from potential permission problems etc., it should be ready to accept FastCGI
+ requests and run CGI scripts.
+@@ -85,13 +85,13 @@
+ .I spawn-fcgi
+ using a configuration like this:
+ 
+-FCGI_SOCKET=/var/run/fcgiwrap.sock
++FCGI_SOCKET=/opt/var/run/fcgiwrap.sock
+ .br
+-FCGI_PROGRAM=/usr/sbin/fcgiwrap
++FCGI_PROGRAM=/opt/sbin/fcgiwrap
+ .br
+-FCGI_USER=nginx
++FCGI_USER=
+ .br
+-FCGI_GROUP=www
++FCGI_GROUP=
+ .br
+ FCGI_EXTRA_OPTIONS="\-M 0700"
+ .br
+@@ -104,11 +104,11 @@
+ 
+ location / {
+ .br
+-	fastcgi_param DOCUMENT_ROOT /var/www/localhost/htdocs/cgit/;
++	fastcgi_param DOCUMENT_ROOT /opt/share/www/cgit/;
+ .br
+ 	fastcgi_param SCRIPT_NAME   cgit;
+ .br
+-	fastcgi_pass unix:/var/run/fastcgi.sock;
++	fastcgi_pass unix:/opt/var/run/fastcgi.sock;
+ .br
+ }
