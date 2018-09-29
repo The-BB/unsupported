@@ -4,7 +4,7 @@ packages are work but unsupported
 не пользы дела для, токмо забавы ради (ну-у, и при случае, чтоб вытянуть в мир) ;)
 
 для сборки некоторых пакетов, требуется внести изменения в Makefile пакетов, от которыхони зависят, напр.:
-для сборки nginx-unit требуется библиотека libphp (пакет php7);
-для сборки php7-pecl-smbclient требуется библиотека libsmbclient и dev-версия пакета (пакет samba36);
-rrdtool конфликтует с одноименным пакетом из oldpackages;
-etc.
+* для сборки nginx-unit требуется библиотека libphp (пакет php7);
+* для сборки php7-pecl-smbclient требуется библиотека libsmbclient и dev-версия пакета (пакет samba36);
+* rrdtool конфликтует с одноименным пакетом из oldpackages;
+* etc.
