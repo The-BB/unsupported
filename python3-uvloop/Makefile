@@ -6,12 +6,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python3-uvloop
-PKG_VERSION:=0.11.2
+PKG_VERSION:=0.11.3
 PKG_RELEASE:=1
 
 PKG_SOURCE:=uvloop-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://files.pythonhosted.org/packages/5c/37/6daa39aac42b2deda6ee77f408bec0419b600e27b89b374b0d440af32b10
-PKG_HASH:=a97bd62ebbdf7e6e84bf44afe439d9b24ce4d8661a29a639626a8c03748f6f98
+PKG_SOURCE_URL:=https://files.pythonhosted.org/packages/46/60/8e46188acba22369848d5e9bcbee3ca04b68a12d0598bd625c1a3994f5df
+PKG_HASH:=fd5042d0a2ea07b92d0e2190f7711feb91cde31cf2bf1829e2e8c4c0fdd1f1aa
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/uvloop-$(PKG_VERSION)
 
@@ -58,7 +58,7 @@ define Package/python3-uvloop/install
 	$(CP) \
 	    $(PKG_INSTALL_DIR)$(PYTHON3_PKG_DIR)/* \
 	    $(1)$(PYTHON3_PKG_DIR)/
-	rm -f $(1)/opt/lib/python3.7/site-packages/uvloop-0.11.2-py3.7.egg-info/{dependency_links,SOURCES}.txt
+	rm -f $(1)/opt/lib/python3.7/site-packages/uvloop-0.11.3-py3.7.egg-info/{dependency_links,SOURCES}.txt
 endef
 
 $(eval $(call BuildPackage,python3-uvloop))
