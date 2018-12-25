@@ -6,12 +6,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-pycryptodome
-PKG_VERSION:=3.6.5
+PKG_VERSION:=3.7.2
 PKG_RELEASE:=1
 
 PKG_SOURCE:=pycryptodome-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://files.pythonhosted.org/packages/f7/e2/1a9beb4e838b9ab91fcf95b3801f07fa0d6c627fec479f286e8e497db324
-PKG_HASH:=99d653f3a92f35e3c768a142aa83c8c7b104a787655c51e25dca89ed778960b8
+PKG_SOURCE_URL:=https://files.pythonhosted.org/packages/a5/f5/ea666524f67b6e2b29112d33ad8d948281980b2a86015c264de8424400c2
+PKG_HASH:=f5fc7e3b2d29552f0383063408ce2bd295e9d3c7ef13377599aa300a3d2baef7
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(BUILD_VARIANT)-pycryptodome-$(PKG_VERSION)
 
