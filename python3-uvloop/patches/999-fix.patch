@@ -1,6 +1,6 @@
 --- a/setup.py
 +++ b/setup.py
-@@ -165,18 +165,6 @@
+@@ -165,18 +165,6 @@ class uvloop_build_ext(build_ext):
  
          # Sometimes pip fails to preserve the timestamps correctly,
          # in which case, make will try to run autotools again.
@@ -21,17 +21,19 @@
          c_flag = "CFLAGS={}".format(env['CFLAGS'])
 --- a/vendor/libuv/src/unix/thread.c
 +++ b/vendor/libuv/src/unix/thread.c
-@@ -37,8 +37,12 @@
+@@ -37,10 +37,14 @@
  #include <sys/sem.h>
  #endif
  
 -#ifdef __GLIBC__
 +#if defined __GLIBC__ && !defined __UCLIBC__
  #include <gnu/libc-version.h>  /* gnu_get_libc_version() */
-+#endif
-+
-+#ifdef __UCLIBC__
-+#include <gnu-versions.h>
  #endif
  
++#ifdef __UCLIBC__
++#include <gnu-versions.h>
++#endif
++
  #undef NANOSEC
+ #define NANOSEC ((uint64_t) 1e9)
+ 
