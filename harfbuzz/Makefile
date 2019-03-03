@@ -33,7 +33,7 @@ define Package/harfbuzz/description
   HarfBuzz is an OpenType text shaping engine.
 endef
 
-CONFUGURE_ARGS += \
+CONFIGURE_ARGS += \
 	--with-coretext=no \
 	--with-uniscribe=no
 
