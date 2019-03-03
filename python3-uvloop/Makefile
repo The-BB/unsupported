@@ -6,12 +6,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python3-uvloop
-PKG_VERSION:=0.12.0
+PKG_VERSION:=0.12.1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=uvloop-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://files.pythonhosted.org/packages/f0/5a/cf8cb64bdc694462ef1ee9a925302dac40b29a52ab0eede4bab7fc0e0f2b
-PKG_HASH:=afdf34bf507090e4c7f5108a17240982760356b8aae4edd37180ec4f94c36cbb
+PKG_SOURCE_URL:=https://files.pythonhosted.org/packages/ec/74/96f1fdd6936d7a5ea2fa20bbd54b2c2242b1e92df425b37d00737982f2d7
+PKG_HASH:=198fe0c196056930ec6c4a0a878e531a66d15467ca7c74a875aa90271f0c6e3f
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/uvloop-$(PKG_VERSION)
 
