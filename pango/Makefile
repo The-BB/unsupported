@@ -37,7 +37,7 @@ endef
 
 TARGET_CFLAGS += -I$(STAGING_DIR)/opt/include/harfbuzz
 
-CONFUGURE_ARGS += \
+CONFIGURE_ARGS += \
 	--enable-explicit-deps=no
 
 define Build/InstallDev
