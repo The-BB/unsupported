@@ -2,7 +2,6 @@
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
 #
-#FIXME postinstall
 
 include $(TOPDIR)/rules.mk
 
@@ -14,17 +13,19 @@ PKG_SOURCE:=$(PKG_NAME)_$(PKG_VERSION).orig.tar.gz
 PKG_SOURCE_URL:=http://http.debian.net/debian/pool/main/g/geoip
 PKG_HASH:=99b119f8e21e94f1dfd6d49fbeed29a70df1544896e76cd456f25e397b07d476
 
-PKG_UNPACK=$(TAR) -C $(PKG_BUILD_DIR) -xzf $(DL_DIR)/$(PKG_SOURCE) --strip=1
+PKG_LICENSE:=LGPL-2.1-only
 
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
+PKG_UNPACK:=$(TAR) -C $(PKG_BUILD_DIR) -xzf $(DL_DIR)/$(PKG_SOURCE) --strip=1
+
 define Package/geoip
-  SUBMENU:=database
   SECTION:=utils
   CATEGORY:=Utilities
+  SUBMENU:=Database
   TITLE:=tools and libs that use the GeoIP
   URL:=http://www.maxmind.com/
 endef
@@ -33,6 +34,24 @@ define Package/geoip/description
   GeoIP is a C library and command line tools that enables the user to find \
 the country that any IP address or hostname originates from.
 endef
+
+BASE_FILE1:=GeoIP.dat.gz
+define Download/geoip_dat
+  FILE:=$(BASE_FILE1)
+  URL_FILE:=$(BASE_FILE1)
+  URL:=https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database
+  HASH:=025e516ec14a8a705fb479880ffce43f9fdb8869666d522c38c791069f4b0acf
+endef
+$(eval $(call Download,geoip_dat))
+
+#BASE_FILE2:=GeoLiteCity.dat.xz
+#define Download/geolitecity_dat
+#  FILE:=$(BASE_FILE2)
+#  URL_FILE:=$(BASE_FILE2)
+#  URL:=https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database
+#  HASH:=2b71217ae18ecdbb521c49624c0d1320d971b33bd312127406605a0677b570d3
+#endef
+#$(eval $(call Download,geolitecity_dat))
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/{include,lib}
@@ -45,48 +64,12 @@ endef
 define Package/geoip/install
 	$(INSTALL_DIR) $(1)/opt/{bin,lib,share/GeoIP}
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/geoiplookup{,6} $(1)/opt/bin
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/*.so* $(1)/opt/lib/
-endef
-
-define Package/geoip/postinst
-#!/bin/sh
-
-echo "e.g. download and install GeoIP Country database"
-echo "if you need another, uncomment and rerun postinst"
-
-cd /opt/share/GeoIP
-
-if [ ! -f /opt/share/GeoIP/GeoIP.dat ]; then
-wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz
-gzip -d GeoIP.dat.gz
-fi
-
-#if [ ! -f /opt/share/GeoIP/GeoIPv6.dat ]; then
-#wget http://geolite.maxmind.com/download/geoip/database/GeoIPv6.dat.gz
-#gzip -d GeoIPv6.dat.gz
-#fi
-
-#if [ ! -f /opt/share/GeoIP/GeoLiteCity.dat ]; then
-#wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
-#gzip -d GeoLiteCity.dat.gz
-#fi
-
-#if [ ! -f /opt/share/GeoIP/GeoLiteCityv6.dat ]; then
-#wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCityv6-beta/GeoLiteCityv6.dat.gz
-#gzip -d GeoLiteCityv6.dat.gz
-#fi
-
-#if [ ! -f /opt/share/GeoIP/GeoIPASNum.dat ]; then
-#wget http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNum.dat.gz
-#gzip -d GeoIPASNum.dat.gz
-#fi
-
-#if [ ! -f /opt/share/GeoIP/GeoIPASNumv6.dat ]; then
-#wget http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNumv6.dat.gz
-#gzip -d GeoIPASNumv6.dat.gz
-#fi
-
-exit 0
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/*.so.* $(1)/opt/lib/
+	# unpack db
+	$(CP) $(DL_DIR)/$(BASE_FILE1) $(1)/opt/share/GeoIP
+	cd $(1)/opt/share/GeoIP && gzip -d $(BASE_FILE1)
+#	$(CP) $(DL_DIR)/$(BASE_FILE2) $(1)/opt/share/GeoIP
+#	cd $(1)/opt/share/GeoIP && xz --decompress $(BASE_FILE2)
 endef
 
 $(eval $(call BuildPackage,geoip))
