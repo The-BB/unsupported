@@ -54,17 +54,27 @@ $(eval $(call Download,geoip_dat))
 #$(eval $(call Download,geolitecity_dat))
 
 define Build/InstallDev
-	$(INSTALL_DIR) $(1)/opt/{include,lib}
+	$(INSTALL_DIR) $(1)/opt/include
 	$(CP) $(PKG_INSTALL_DIR)/opt/include/*.h $(1)/opt/include/
+
+	$(INSTALL_DIR) $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libGeoIP.{a,so*} $(1)/opt/lib/
+
 	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/geoip.pc $(1)/opt/lib/pkgconfig/
+
+	# XXX
+	$(SED) 's,^includedir=.*/include,includedir=$(STAGING_DIR)/opt/include,; \
+		s,^libdir=.*/lib,libdir=$(STAGING_DIR)/opt/lib,' \
+			$(1)/opt/lib/pkgconfig/geoip.pc
 endef
 
 define Package/geoip/install
 	$(INSTALL_DIR) $(1)/opt/{bin,lib,share/GeoIP}
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/geoiplookup{,6} $(1)/opt/bin
+
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/*.so.* $(1)/opt/lib/
+
 	# unpack db
 	$(CP) $(DL_DIR)/$(BASE_FILE1) $(1)/opt/share/GeoIP
 	cd $(1)/opt/share/GeoIP && gzip -d $(BASE_FILE1)
