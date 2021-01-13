@@ -8,21 +8,19 @@ include $(TOPDIR)/rules.mk
 PECL_NAME:=apcu
 PECL_LONGNAME:=APCu - APC User Cache
 
-PKG_VERSION:=5.1.12
+PKG_VERSION:=5.1.19
 PKG_RELEASE:=1
-PKG_HASH:=4126f771cdcd8cc32e2ad024bae5b25611b28e6077fdbff8efe28ce55306797a
 
 PKG_NAME:=php7-pecl-$(PECL_NAME)
 PKG_SOURCE:=$(PECL_NAME)-$(PKG_VERSION).tgz
-PKG_SOURCE_URL:=http://pecl.php.net/get/
+PKG_SOURCE_URL:=https://pecl.php.net/get/
+PKG_HASH:=837fbc99d5c79efb510fafaf585ef0c06e02baf8310a7d77f93e402c93276ce0
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/pecl-php7/$(PECL_NAME)-$(PKG_VERSION)
+
+PKG_LICENSE:=PHP-3.01
+
 PKG_BUILD_PARALLEL:=1
-
-PKG_LICENSE:=PHPv3.01
-PKG_LICENSE_FILES:=
-
-PKG_FIXUP:=autoreconf
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
@@ -32,7 +30,7 @@ CONFIGURE_ARGS += \
 	--enable-apcu
 
 define Build/InstallDev
-	mkdir -p $(STAGING_DIR)/opt/include/php7/ext/$(PECL_NAME)
+	$(INSTALL_DIR) $(STAGING_DIR)/opt/include/php7/ext/$(PECL_NAME)
 	$(CP) $(PKG_BUILD_DIR)/*.h $(STAGING_DIR)/opt/include/php7/ext/$(PECL_NAME)/
 endef
 
