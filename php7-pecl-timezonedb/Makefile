@@ -8,25 +8,23 @@ include $(TOPDIR)/rules.mk
 PECL_NAME:=timezonedb
 PECL_LONGNAME:=Timezone Database
 
-PKG_VERSION:=2018.5
+PKG_VERSION:=2020.4
 PKG_RELEASE:=1
-PKG_HASH:=8cd7bcd162476bba853ec4c2e1ef721a4f3c7d13716e27be212964f7afe919a8
 
 PKG_NAME:=php7-pecl-$(PECL_NAME)
 PKG_SOURCE:=$(PECL_NAME)-$(PKG_VERSION).tgz
-PKG_SOURCE_URL:=http://pecl.php.net/get
+PKG_SOURCE_URL:=https://pecl.php.net/get
+PKG_HASH:=074adadb322fd1d1fccf04cd93bb46e984129f06156bebbcb3935b563a0badc7
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/pecl-php7/$(PECL_NAME)-$(PKG_VERSION)
+
+PKG_LICENSE:=PHP-3.01
+
 PKG_BUILD_PARALLEL:=1
-
-PKG_LICENSE:=PHPv3.01
-
-PKG_FIXUP:=autoreconf
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 include $(TOPDIR)/feeds/packages/lang/php7/pecl.mk
-
 
 CONFIGURE_ARGS+= \
 	--enable-timezonedb
