@@ -3,8 +3,8 @@ Packages are work but unsupported Entware team.
 
 не пользы дела для, токмо забавы ради ;)
 
-Для сборки некоторых пакетов, требуется внести изменения в Makefile пакетов, от которых они зависят, напр.:
-* для сборки php7-pecl-smbclient требуется библиотека libsmbclient и dev-секция в пакете "samba4"
+Для сборки некоторых пакетов, требуется внести изменения в Makefile пакетов, от которых они зависят, напр.,
+для php7-pecl-smbclient требуется dev-секция в пакете "samba4":
 ```
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/tmp/samba-$(PKG_VERSION)/include/samba-4.0
@@ -16,5 +16,3 @@ define Build/InstallDev
 		$(1)/opt/tmp/samba-$(PKG_VERSION)/lib/
 endef
 ```
-* rrdtool конфликтует с одноименным пакетом из oldpackages;
-* etc.
