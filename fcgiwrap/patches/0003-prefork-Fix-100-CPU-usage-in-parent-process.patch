@@ -1,0 +1,31 @@
+From 2041deb6da8825095e007cd5638abd6ffc4f3a4e Mon Sep 17 00:00:00 2001
+From: Peter Wu <lekensteyn@gmail.com>
+Date: Thu, 9 Jan 2014 11:08:19 +0100
+Subject: [PATCH 03/13] prefork: Fix 100% CPU usage in parent process
+
+When a child process is terminated, the parent calls waitpid() to check
+for dead children. This returns -1 on error (e.g. there are no other
+children or a signal interrupted waitpid()), the pid (> 0) for dead
+children OR 0 if there are some children which are still alive.
+
+Fixes gnosek/fcgiwrap#18.
+---
+ fcgiwrap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fcgiwrap.c b/fcgiwrap.c
+index e86ff9d..d4f7901 100644
+--- a/fcgiwrap.c
++++ b/fcgiwrap.c
+@@ -623,7 +623,7 @@ static void sigchld_handler(int dummy)
+ {
+ 	int status;
+ 
+-	while ((dummy = waitpid(-1, &status, WNOHANG)) != -1) {
++	while ((dummy = waitpid(-1, &status, WNOHANG)) > 0) {
+ 		/* sanity check */
+ 		if (nrunning > 0)
+ 			nrunning--;
+-- 
+2.20.1
+

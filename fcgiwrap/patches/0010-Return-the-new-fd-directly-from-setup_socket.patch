@@ -1,0 +1,51 @@
+From d9c6cf5cdcdf18dcacd184f587324a10be5027f7 Mon Sep 17 00:00:00 2001
+From: Grzegorz Nosek <root@localdomain.pl>
+Date: Sun, 19 Apr 2015 11:14:03 +0200
+Subject: [PATCH 10/13] Return the new fd directly from setup_socket()
+
+We either have a proper descriptor (>0) or an error (<0)
+so we don't strictly need the fd_out parameter
+---
+ fcgiwrap.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/fcgiwrap.c b/fcgiwrap.c
+index 3c36cf7..07892ca 100644
+--- a/fcgiwrap.c
++++ b/fcgiwrap.c
+@@ -712,7 +712,7 @@ static int listen_on_fd(int fd) {
+ 	return 0;
+ }
+ 
+-static int setup_socket(char *url, int *fd_out) {
++static int setup_socket(char *url) {
+ 	char *p = url;
+ 	char *q;
+ 	int fd;
+@@ -792,8 +792,11 @@ invalid_url:
+ 		return -1;
+ 	}
+ 
+-	*fd_out = fd;
+-	return listen_on_fd(fd);
++	if (listen_on_fd(fd) < 0) {
++		return -1;
++	}
++
++	return fd;
+ }
+ 
+ int main(int argc, char **argv)
+@@ -858,7 +861,8 @@ int main(int argc, char **argv)
+ 	} else
+ #endif
+ 	if (socket_url) {
+-		if (setup_socket(socket_url, &fd) < 0) {
++		fd = setup_socket(socket_url);
++		if (fd < 0) {
+ 			return 1;
+ 		}
+ 	}
+-- 
+2.20.1
+

@@ -1,0 +1,40 @@
+From 5ad97b1c7eb853a921e0167e6bfcb6b1815b4fa4 Mon Sep 17 00:00:00 2001
+From: =?utf8?q?Johan=20Str=C3=B6m?= <johan@stromnet.se>
+Date: Fri, 15 Aug 2014 09:41:37 +0200
+Subject: [PATCH 07/13] Use-after-free fix
+
+---
+ fcgiwrap.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/fcgiwrap.c b/fcgiwrap.c
+index a2c88af..3c36cf7 100644
+--- a/fcgiwrap.c
++++ b/fcgiwrap.c
+@@ -861,7 +861,6 @@ int main(int argc, char **argv)
+ 		if (setup_socket(socket_url, &fd) < 0) {
+ 			return 1;
+ 		}
+-		free(socket_url);
+ 	}
+ 
+ 	prefork(nchildren);
+@@ -871,9 +870,12 @@ int main(int argc, char **argv)
+ 		const char *p = socket_url;
+ 		close(fd);
+ 
+-		if (!strncmp(p, "unix:", sizeof("unix:") - 1)) {
+-			p += sizeof("unix:") - 1;
+-			unlink(p);
++		if(socket_url) {
++			if (!strncmp(p, "unix:", sizeof("unix:") - 1)) {
++				p += sizeof("unix:") - 1;
++				unlink(p);
++			}
++			free(socket_url);
+ 		}
+ 	}
+ 	return 0;
+-- 
+2.20.1
+

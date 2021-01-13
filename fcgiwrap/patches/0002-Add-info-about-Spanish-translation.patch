@@ -1,0 +1,26 @@
+From 4b2151ef965bfcf90b9ebdcf759a5f788368116f Mon Sep 17 00:00:00 2001
+From: Grzegorz Nosek <root@localdomain.pl>
+Date: Tue, 7 May 2013 13:57:54 +0200
+Subject: [PATCH 02/13] Add info about Spanish translation
+
+---
+ README.rst | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/README.rst b/README.rst
+index 377ead8..4686c34 100644
+--- a/README.rst
++++ b/README.rst
+@@ -7,6 +7,9 @@ fcgiwrap
+ :Contributors:	W-Mark Kubacki <wmark@hurrikane.de>
+                 Jordi Mallach <jordi@debian.org>
+ 
++
++This page has been translated into `Spanish <http://www.webhostinghub.com/support/es/misc/fcgiwrap>`_ language by Maria Ramos from `Webhostinghub.com/support/edu <http://www.webhostinghub.com/support/edu>`_.
++
+ Features
+ ========
+  - very lightweight (84KB of private memory per instance)
+-- 
+2.20.1
+

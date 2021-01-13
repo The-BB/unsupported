@@ -1,0 +1,38 @@
+From ff11e97f2eddca17427eaf0277c5efa853e58958 Mon Sep 17 00:00:00 2001
+From: Grzegorz Nosek <root@localdomain.pl>
+Date: Sun, 19 Apr 2015 11:15:12 +0200
+Subject: [PATCH 11/13] Don't free socket_url at exit
+
+While this generally is the right thing to do, we don't clean up
+the rest of the memory (we're exiting in a moment, anyway)
+and conditionally freeing a single variable seems wrong.
+---
+ fcgiwrap.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/fcgiwrap.c b/fcgiwrap.c
+index 07892ca..edb1fd3 100644
+--- a/fcgiwrap.c
++++ b/fcgiwrap.c
+@@ -870,16 +870,15 @@ int main(int argc, char **argv)
+ 	prefork(nchildren);
+ 	fcgiwrap_main();
+ 
+-	if(fd) {
++	if (fd) {
+ 		const char *p = socket_url;
+ 		close(fd);
+ 
+-		if(socket_url) {
++		if (socket_url) {
+ 			if (!strncmp(p, "unix:", sizeof("unix:") - 1)) {
+ 				p += sizeof("unix:") - 1;
+ 				unlink(p);
+ 			}
+-			free(socket_url);
+ 		}
+ 	}
+ 	return 0;
+-- 
+2.20.1
+

@@ -1,6 +1,6 @@
 --- a/fcgiwrap.8
 +++ b/fcgiwrap.8
-@@ -76,7 +76,7 @@
+@@ -76,7 +76,7 @@ or \- to skip the directory change compl
  The fastest way to see \fBfcgiwrap\fP do something is to launch it at the command line
  like this:
  .br
@@ -9,7 +9,7 @@
  .br
  Apart from potential permission problems etc., it should be ready to accept FastCGI
  requests and run CGI scripts.
-@@ -85,13 +85,13 @@
+@@ -85,13 +85,13 @@ Most probably you will want to launch \f
  .I spawn-fcgi
  using a configuration like this:
  
@@ -27,7 +27,7 @@
  .br
  FCGI_EXTRA_OPTIONS="\-M 0700"
  .br
-@@ -104,11 +104,11 @@
+@@ -104,11 +104,11 @@ run as FastCGI as follows:
  
  location / {
  .br
@@ -40,3 +40,14 @@
 +	fastcgi_pass unix:/opt/var/run/fastcgi.sock;
  .br
  }
+ 
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -1,5 +1,5 @@
+-targetdir = $(DESTDIR)@prefix@@sbindir@
+-man8dir = $(DESTDIR)@prefix@@mandir@/man8
++targetdir = $(DESTDIR)@sbindir@
++man8dir = $(DESTDIR)@mandir@/man8
+ datarootdir =
+ 
+ .PHONY:	clean distclean

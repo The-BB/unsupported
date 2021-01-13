@@ -1,0 +1,25 @@
+From 99aedae9f611beffd11a448033bd8f72c069a3c4 Mon Sep 17 00:00:00 2001
+From: =?utf8?q?Johan=20Str=C3=B6m?= <johan@stromnet.se>
+Date: Fri, 15 Aug 2014 09:31:16 +0200
+Subject: [PATCH 06/13] SIGTERM, not SIGQUIT..
+
+---
+ fcgiwrap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fcgiwrap.c b/fcgiwrap.c
+index 9f12396..a2c88af 100644
+--- a/fcgiwrap.c
++++ b/fcgiwrap.c
+@@ -631,7 +631,7 @@ static void fcgiwrap_main(void)
+ 	a.sa_flags = 0;
+ 	sigemptyset( &a.sa_mask );
+ 	sigaction( SIGINT, &a, NULL );
+-	sigaction( SIGQUIT, &a, NULL );
++	sigaction( SIGTERM, &a, NULL );
+ 
+ 	inherited_environ = environ;
+ 
+-- 
+2.20.1
+

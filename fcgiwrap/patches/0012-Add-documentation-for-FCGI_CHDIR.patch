@@ -1,0 +1,29 @@
+From 085d6ffddd071d468301c851ad3ac3f671fd95a2 Mon Sep 17 00:00:00 2001
+From: Grzegorz Nosek <root@localdomain.pl>
+Date: Sun, 19 Apr 2015 11:35:58 +0200
+Subject: [PATCH 12/13] Add documentation for FCGI_CHDIR
+
+---
+ fcgiwrap.8 | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/fcgiwrap.8 b/fcgiwrap.8
+index 3d58687..bf02c26 100644
+--- a/fcgiwrap.8
++++ b/fcgiwrap.8
+@@ -65,6 +65,12 @@ actual executable
+ SCRIPT_FILENAME
+ .RS
+ complete path to CGI script. When set, overrides DOCUMENT_ROOT and SCRIPT_NAME
++.RE
++FCGI_CHDIR
++.RS
++By default fcgiwrap changes to the directory containing the CGI script before executing it (per CGI spec).
++You may override this behaviour by passing FCGI_CHDIR containing the script's expected working directory
++or \- to skip the directory change completely.
+ 
+ .SH EXAMPLE
+ The fastest way to see \fBfcgiwrap\fP do something is to launch it at the command line
+-- 
+2.20.1
+
