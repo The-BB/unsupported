@@ -8,21 +8,19 @@ include $(TOPDIR)/rules.mk
 PECL_NAME:=ssh2
 PECL_LONGNAME:=Bindings for the libssh2 library
 
-PKG_VERSION:=1.1.2
+PKG_VERSION:=1.2
 PKG_RELEASE:=1
-PKG_HASH:=87618d6a0981afe8c24b36d6b38c21a0aa0237b62e60347d0170bd86b51f79fb
 
 PKG_NAME:=php7-pecl-$(PECL_NAME)
 PKG_SOURCE:=$(PECL_NAME)-$(PKG_VERSION).tgz
-PKG_SOURCE_URL:=http://pecl.php.net/get/
+PKG_SOURCE_URL:=https://pecl.php.net/get/
+PKG_HASH:=87618d6a0981afe8c24b36d6b38c21a0aa0237b62e60347d0170bd86b51f79fb
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/pecl-php7/$(PECL_NAME)-$(PKG_VERSION)
+
+PKG_LICENSE:=PHP-3.01
+
 PKG_BUILD_PARALLEL:=1
-
-PKG_LICENSE:=PHPv3.01
-PKG_LICENSE_FILES:=
-
-PKG_FIXUP:=autoreconf
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
