@@ -30,7 +30,7 @@ define Package/libcairo
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=Cairo library
-  DEPENDS:=+pixman +fontconfig +libfreetype +libpng +liblzo +glib2 $(INTL_DEPENDS)
+  DEPENDS:=+fontconfig +glib2 +libfreetype +liblzo +libpng +pixman $(INTL_DEPENDS)
 endef
 
 define Package/libcairo/description
@@ -42,7 +42,7 @@ define Package/cairo-trace
   SECTION:=utils
   CATEGORY:=Utilities
   TITLE:=Cairo Utilities
-  DEPENDS:=+libcairo
+  DEPENDS:=+zlib
 endef
 
 define Package/cairo-trace/description
@@ -59,21 +59,18 @@ define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libcairo*.{a,so*} $(1)/opt/lib/
 
-#	$(INSTALL_DIR) $(1)/opt/lib/cairo
-#	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libcairo*.{a,so} $(1)/opt/lib/cairo/
-
 	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/cairo*.pc $(1)/opt/lib/pkgconfig/
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/cairo{,-ft}.pc $(1)/opt/lib/pkgconfig/
 
 	# XXX
 	$(SED) 's,^includedir=.*/include,includedir=$(STAGING_DIR)/opt/include,; \
 		s,^libdir=.*/lib,libdir=$(STAGING_DIR)/opt/lib,' \
-			$(1)/opt/lib/pkgconfig/*.pc
+			$(1)/opt/lib/pkgconfig/cairo{,-ft}.pc
 endef
 
 define Package/libcairo/install
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libcairo*.so.* $(1)/opt/lib/
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libcairo.so.* $(1)/opt/lib/
 endef
 
 define Package/cairo-trace/install
@@ -81,7 +78,7 @@ define Package/cairo-trace/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/cairo-trace $(1)/opt/bin
 
 	$(INSTALL_DIR) $(1)/opt/lib/cairo
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/cairo/*.so $(1)/opt/lib/cairo/
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/cairo/libcairo-trace.so $(1)/opt/lib/cairo/
 endef
 
 $(eval $(call BuildPackage,libcairo))
