@@ -22,6 +22,7 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 
 define Package/pango/Default
+  TITLE:=Pango
   URL:=http://www.pango.org/
 endef
 
@@ -29,27 +30,25 @@ define Package/libpango
   $(call Package/pango/Default)
   SECTION:=libs
   CATEGORY:=Libraries
-  TITLE:=Pango library
-  DEPENDS:=+libcairo +fontconfig +libfreetype +harfbuzz +glib2 $(INTL_DEPENDS)
+  TITLE+= library
+  DEPENDS:=+libcairo +libharfbuzz $(INTL_DEPENDS)
 endef
 
 define Package/libpango/description
-  Pango is a library for laying out and rendering of text, with an emphasis \
-on internationalization.
+  Pango is a library for laying out and rendering of text, with an emphasis
+  on internationalization.
 endef
 
 define Package/pango-view
   $(call Package/pango/Default)
   SECTION:=utils
   CATEGORY:=Utilities
-  TITLE:=Pango text viewer
+  TITLE+= text viewer
   DEPENDS:=+libpango
 endef
 
 define Package/pango-view/description
-  $(call Package/libpango/description)
-  .
-  (Pango text viewer)
+  Pango text viewer.
 endef
 
 CONFIGURE_ARGS += \
