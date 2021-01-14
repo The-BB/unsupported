@@ -26,10 +26,12 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 include $(TOPDIR)/feeds/packages/lang/php7/pecl.mk
 
-TARGET_CPPFLAGS += -I$(STAGING_DIR)/opt/tmp/samba-4.12.7/include/samba-4.0
+SAMBA_VER=$(shell grep ^PKG_VER $(TOPDIR)/feeds/packages/net/samba4/Makefile | cut -f2 -d"=")
+
+TARGET_CPPFLAGS += -I$(STAGING_DIR)/opt/tmp/samba-$(SAMBA_VER)/include/samba-4.0
 
 CONFIGURE_ARGS += \
-	--with-libsmbclient=$(STAGING_DIR)/opt/tmp/samba-4.12.7
+	--with-libsmbclient=$(STAGING_DIR)/opt/tmp/samba-$(SAMBA_VER)
 
 CONFIGURE_VARS += \
 	ac_cv_lib_smbclient_smbc_setPort=yes \
