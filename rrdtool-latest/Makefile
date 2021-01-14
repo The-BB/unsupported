@@ -23,32 +23,33 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 
 define Package/rrdtool-latest/Default
-  CATEGORY:=Utilities
-  SECTION:=utils
+  SUBMENU:=Database
   TITLE:=Round Robin Database (RRD)
   URL:=http://oss.oetiker.ch/rrdtool/
-  DEPENDS:=+libpango +libxml2 +libpcre $(ICONV_DEPENDS) $(INTL_DEPENDS)
 endef
 
 define Package/librrd-latest
-$(call Package/rrdtool-latest/Default)
-  CATEGORY:=Libraries
+  $(call Package/rrdtool-latest/Default)
   SECTION:=libs
+  CATEGORY:=Libraries
   TITLE+= management library (v$(PKG_VERSION))
+  DEPENDS:=+libpango +libxml2
 endef
 
 define Package/rrdcgi-latest
-$(call Package/rrdtool-latest/Default)
-  SUBMENU:=Database
+  $(call Package/rrdtool-latest/Default)
+  SECTION:=utils
+  CATEGORY:=Utilities
   TITLE+= CGI graphing tool (v$(PKG_VERSION))
-  DEPENDS+= +librrd-latest
+  DEPENDS:=+librrd-latest
 endef
 
 define Package/rrdtool-latest
-$(call Package/rrdtool-latest/Default)
-  SUBMENU:=Database
+  $(call Package/rrdtool-latest/Default)
+  SECTION:=utils
+  CATEGORY:=Utilities
   TITLE+= management tools (v$(PKG_VERSION))
-  DEPENDS+= +librrd-latest
+  DEPENDS:=+librrd-latest
 endef
 
 CONFIGURE_ARGS += \
