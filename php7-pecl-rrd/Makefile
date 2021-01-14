@@ -26,8 +26,10 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 include $(TOPDIR)/feeds/packages/lang/php7/pecl.mk
 
+RRDTOOL_VER=$(shell grep ^PKG_VER ../rrdtool-latest/Makefile | cut -f2 -d"=")
+
 CONFIGURE_ARGS+= \
-	PKG_CONFIG_LIBDIR='$(STAGING_DIR)/opt/tmp/rrdtool-1.7.2/lib/pkgconfig'
+	PKG_CONFIG_LIBDIR='$(STAGING_DIR)/opt/tmp/rrdtool-$(RRDTOOL_VER)/lib/pkgconfig'
 
 $(eval $(call PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),+rrdtool-latest,30))
 $(eval $(call BuildPackage,$(PKG_NAME)))
