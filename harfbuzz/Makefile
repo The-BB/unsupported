@@ -21,16 +21,40 @@ PKG_INSTALL:=1
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 
-define Package/harfbuzz
-  SECTION:=libs
-  CATEGORY:=Libraries
+define Package/harfbuzz/Default
   TITLE:=an OpenType text shaping engine
   URL:=https://www.freedesktop.org/wiki/Software/HarfBuzz/
-  DEPENDS:=+libfreetype +icu +libstdcpp +glib2 $(INTL_DEPENDS)
+endef
+
+define Package/libharfbuzz
+  $(call Package/harfbuzz/Default)
+  SECTION:=libs
+  CATEGORY:=Libraries
+  DEPENDS:=+glib2 +libfreetype $(INTL_DEPENDS)
+endef
+
+define Package/harfbuzz
+  $(call Package/harfbuzz/Default)
+  SECTION:=utils
+  CATEGORY:=Utilities
+  TITLE+=(bin)
+  DEPENDS:=+libharfbuzz @BROKEN
+endef
+
+define Package/harfbuzz/Default/description
+  HarfBuzz is an OpenType text shaping engine.
+endef
+
+define Package/libharfbuzz/description
+  $(call Package/harfbuzz/Default/description)
+  .
+  (lib)
 endef
 
 define Package/harfbuzz/description
-  HarfBuzz is an OpenType text shaping engine.
+  $(call Package/harfbuzz/Default/description)
+  .
+  (bin)
 endef
 
 CONFIGURE_ARGS += \
@@ -39,23 +63,29 @@ CONFIGURE_ARGS += \
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include/harfbuzz
-	$(CP) $(PKG_INSTALL_DIR)/opt/include/harfbuzz/*.h $(1)/opt/include/harfbuzz/
+	$(CP) $(PKG_INSTALL_DIR)/opt/include/harfbuzz/hb*.h $(1)/opt/include/harfbuzz/
 
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz*.so* $(1)/opt/lib/
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz.so* $(1)/opt/lib
 
 	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/harfbuzz*.pc $(1)/opt/lib/pkgconfig
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/harfbuzz.pc $(1)/opt/lib/pkgconfig
 
 	# XXX
 	$(SED) 's,^includedir=.*/include,includedir=$(STAGING_DIR)/opt/include,; \
 		s,^libdir=.*/lib,libdir=$(STAGING_DIR)/opt/lib,' \
-			$(1)/opt/lib/pkgconfig/*.pc
+			$(1)/opt/lib/pkgconfig/harfbuzz.pc
+endef
+
+define Package/libharfbuzz/install
+	$(INSTALL_DIR) $(1)/opt/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz.so.* $(1)/opt/lib
 endef
 
 define Package/harfbuzz/install
-	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz*.so.* $(1)/opt/lib/
+	$(INSTALL_DIR) $(1)/opt/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/hb-* $(1)/opt/bin
 endef
 
-$(eval $(call BuildPackage,harfbuzz))
+$(eval $(call BuildPackage,libharfbuzz))
+#$(eval $(call BuildPackage,harfbuzz))
