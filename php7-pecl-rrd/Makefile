@@ -9,7 +9,7 @@ PECL_NAME:=rrd
 PECL_LONGNAME:=PHP bindings to rrd tool system
 
 PKG_VERSION:=2.0.1
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_NAME:=php7-pecl-$(PECL_NAME)
 PKG_SOURCE:=$(PECL_NAME)-$(PKG_VERSION).tgz
@@ -26,10 +26,10 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 include $(TOPDIR)/feeds/packages/lang/php7/pecl.mk
 
-RRDTOOL_VER=$(shell grep ^PKG_VER ../rrdtool-latest/Makefile | cut -f2 -d"=")
+ADD_PKG_CONFIG_PATH=$(STAGING_DIR)/opt/usr/lib/pkgconfig
 
 CONFIGURE_ARGS+= \
-	PKG_CONFIG_LIBDIR='$(STAGING_DIR)/opt/tmp/rrdtool-$(RRDTOOL_VER)/lib/pkgconfig'
+	PKG_CONFIG_PATH="$(ADD_PKG_CONFIG_PATH):$$$$PKG_CONFIG_PATH"
 
 $(eval $(call PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),+rrdtool-latest,30))
 $(eval $(call BuildPackage,$(PKG_NAME)))
