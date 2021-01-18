@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pango
 PKG_VERSION:=1.40.14
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=http://ftp.gnome.org/pub/GNOME/sources/pango/1.40/
@@ -51,8 +51,11 @@ define Package/pango-view/description
   Pango text viewer.
 endef
 
+ADD_PKG_CONFIG_PATH=$(STAGING_DIR)/opt/usr/lib/pkgconfig
+
 CONFIGURE_ARGS += \
-	--enable-debug=no
+	--enable-debug=no \
+	PKG_CONFIG_PATH="$(ADD_PKG_CONFIG_PATH):$$$$PKG_CONFIG_PATH"
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include/pango-1.0/pango
@@ -63,14 +66,14 @@ define Build/InstallDev
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libpango{,cairo,ft2}-1.0.so* \
 		$(1)/opt/lib/
 
-	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
+	$(INSTALL_DIR) $(1)/opt/usr/lib/pkgconfig
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/pango{,cairo,ft2}.pc \
-		$(1)/opt/lib/pkgconfig/
+		$(1)/opt/usr/lib/pkgconfig/
 
 	# XXX
 	$(SED) 's,^includedir=.*/include,includedir=$(STAGING_DIR)/opt/include,; \
 		s,^libdir=.*/lib,libdir=$(STAGING_DIR)/opt/lib,' \
-			$(1)/opt/lib/pkgconfig/*.pc
+			$(1)/opt/usr/lib/pkgconfig/*.pc
 endef
 
 define Package/libpango/install
