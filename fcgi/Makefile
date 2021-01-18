@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=fcgi
 PKG_VERSION:=2.4.2
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)2-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/FastCGI-Archives/fcgi2/tar.gz/$(PKG_VERSION)?
@@ -40,20 +40,20 @@ TARGET_CXXFLAGS += -fno-rtti -flto
 TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
 
 define Build/InstallDev
-	$(INSTALL_DIR) $(1)/opt/include
-	$(CP) $(PKG_INSTALL_DIR)/opt/include/fastcgi.h $(1)/opt/include/
-	$(CP) $(PKG_INSTALL_DIR)/opt/include/fcgi{app,_config,misc,o,os,_stdio}.h $(1)/opt/include/
+	$(INSTALL_DIR) $(1)/opt/usr/include
+	$(CP) $(PKG_INSTALL_DIR)/opt/include/fastcgi.h $(1)/opt/usr/include/
+	$(CP) $(PKG_INSTALL_DIR)/opt/include/fcgi{app,_config,misc,o,os,_stdio}.h $(1)/opt/usr/include/
 
-	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libfcgi.{a,so*} $(1)/opt/lib/
+	$(INSTALL_DIR) $(1)/opt/usr/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libfcgi.{a,so*} $(1)/opt/usr/lib/
 
-	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/fcgi.pc $(1)/opt/lib/pkgconfig/
+	$(INSTALL_DIR) $(1)/opt/usr/lib/pkgconfig
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/fcgi.pc $(1)/opt/usr/lib/pkgconfig/
 
 	# XXX
-	$(SED) 's,^includedir=.*/include,includedir=$(STAGING_DIR)/opt/include,; \
-		s,^libdir=.*/lib,libdir=$(STAGING_DIR)/opt/lib,' \
-			$(1)/opt/lib/pkgconfig/*.pc
+	$(SED) 's,^includedir=.*/include,includedir=$(STAGING_DIR)/opt/usr/include,; \
+		s,^libdir=.*/lib,libdir=$(STAGING_DIR)/opt/usr/lib,' \
+			$(1)/opt/usr/lib/pkgconfig/*.pc
 endef
 
 define Package/fcgi/install
