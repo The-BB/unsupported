@@ -9,7 +9,7 @@ PECL_NAME:=geoip
 PECL_LONGNAME:=Map IP address to geographic places
 
 PKG_VERSION:=1.1.1
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_NAME:=php7-pecl-$(PECL_NAME)
 PKG_SOURCE:=$(PECL_NAME)-$(PKG_VERSION).tgz
@@ -27,7 +27,7 @@ include $(INCLUDE_DIR)/nls.mk
 include $(TOPDIR)/feeds/packages/lang/php7/pecl.mk
 
 CONFIGURE_ARGS+= \
-	--with-geoip=shared,"$(STAGING_DIR)/opt"
+	--with-geoip=shared,"$(STAGING_DIR)/opt/usr"
 
 $(eval $(call PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),+geoip,30))
 $(eval $(call BuildPackage,$(PKG_NAME)))
