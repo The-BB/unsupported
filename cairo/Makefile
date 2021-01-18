@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cairo
 PKG_VERSION:=1.17.4
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://cairographics.org/snapshots
@@ -54,18 +54,19 @@ endef
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include/cairo
-	$(CP) $(PKG_INSTALL_DIR)/opt/include/cairo/*.h $(1)/opt/include/cairo/
+	$(CP) $(PKG_INSTALL_DIR)/opt/include/cairo/*.h 	$(1)/opt/include/cairo/
 
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libcairo*.{a,so*} $(1)/opt/lib/
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libcairo*.so* $(1)/opt/lib/
 
-	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/cairo{,-ft}.pc $(1)/opt/lib/pkgconfig/
+	$(INSTALL_DIR) $(1)/opt/usr/lib/pkgconfig
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/cairo{,-ft}.pc \
+		$(1)/opt/usr/lib/pkgconfig/
 
 	# XXX
 	$(SED) 's,^includedir=.*/include,includedir=$(STAGING_DIR)/opt/include,; \
 		s,^libdir=.*/lib,libdir=$(STAGING_DIR)/opt/lib,' \
-			$(1)/opt/lib/pkgconfig/cairo{,-ft}.pc
+			$(1)/opt/usr/lib/pkgconfig/cairo{,-ft}.pc
 endef
 
 define Package/libcairo/install
