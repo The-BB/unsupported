@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=geoip
 PKG_VERSION:=1.6.12
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)_$(PKG_VERSION).orig.tar.gz
 PKG_SOURCE_URL:=http://http.debian.net/debian/pool/main/g/geoip
@@ -31,8 +31,8 @@ define Package/geoip
 endef
 
 define Package/geoip/description
-  GeoIP is a C library and command line tools that enables the user to find \
-the country that any IP address or hostname originates from.
+  GeoIP is a C library and command line tools that enables the user to find
+  the country that any IP address or hostname originates from.
 endef
 
 BASE_FILE1:=GeoIP.dat.gz
@@ -54,27 +54,29 @@ $(eval $(call Download,geoip_dat))
 #$(eval $(call Download,geolitecity_dat))
 
 define Build/InstallDev
-	$(INSTALL_DIR) $(1)/opt/include
-	$(CP) $(PKG_INSTALL_DIR)/opt/include/*.h $(1)/opt/include/
+	$(INSTALL_DIR) $(1)/opt/usr/include
+	$(CP) $(PKG_INSTALL_DIR)/opt/include/*.h $(1)/opt/usr/include/
 
-	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libGeoIP.{a,so*} $(1)/opt/lib/
+	$(INSTALL_DIR) $(1)/opt/usr/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libGeoIP.{a,so*} $(1)/opt/usr/lib/
 
-	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/geoip.pc $(1)/opt/lib/pkgconfig/
+	$(INSTALL_DIR) $(1)/opt/usr/lib/pkgconfig
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/geoip.pc $(1)/opt/usr/lib/pkgconfig/
 
 	# XXX
-	$(SED) 's,^includedir=.*/include,includedir=$(STAGING_DIR)/opt/include,; \
-		s,^libdir=.*/lib,libdir=$(STAGING_DIR)/opt/lib,' \
-			$(1)/opt/lib/pkgconfig/geoip.pc
+	$(SED) 's,^includedir=.*/include,includedir=$(STAGING_DIR)/opt/usr/include,; \
+		s,^libdir=.*/lib,libdir=$(STAGING_DIR)/opt/usr/lib,' \
+			$(1)/opt/usr/lib/pkgconfig/geoip.pc
 endef
 
 define Package/geoip/install
-	$(INSTALL_DIR) $(1)/opt/{bin,lib,share/GeoIP}
+	$(INSTALL_DIR) $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/geoiplookup{,6} $(1)/opt/bin
 
+	$(INSTALL_DIR) $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/*.so.* $(1)/opt/lib/
 
+	$(INSTALL_DIR) $(1)/opt/share/GeoIP
 	# unpack db
 	$(CP) $(DL_DIR)/$(BASE_FILE1) $(1)/opt/share/GeoIP
 	cd $(1)/opt/share/GeoIP && gzip -d $(BASE_FILE1)
