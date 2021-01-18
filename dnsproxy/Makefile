@@ -6,7 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dnsproxy
-PKG_VERSION:=v0.33.7
+PKG_VERSION:=v0.33.8
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/AdguardTeam/dnsproxy
@@ -14,7 +14,7 @@ PKG_GOGET:=github.com/AdguardTeam/dnsproxy
 GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 
 #!!! uncomment PKG_SOURCE to download fixed version
-PKG_SOURCE=$(GOPKG_SOURCE)
+#PKG_SOURCE=$(GOPKG_SOURCE)
 PKG_COMMIT=662b1052c36b71c9e6d7f314313cfdde9da0325a
 PKG_HASH:=987d04fa0426993691aca980ae0c4f007d8984f041a82d75131d8bd12c762a84
 PKG_MIRROR_HASH:=skip
@@ -70,7 +70,6 @@ define Build/Compile
 		$(GOROOT)/bin/go build . ; \
 	)
 endef
-
 
 define Package/dnsproxy/install
 	$(INSTALL_DIR) $(1)/opt/bin
