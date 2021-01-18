@@ -9,7 +9,7 @@ PECL_NAME:=smbclient
 PECL_LONGNAME:=A PHP wrapper for libsmbclient
 
 PKG_VERSION:=1.0.1
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_NAME:=php7-pecl-$(PECL_NAME)
 PKG_SOURCE:=$(PECL_NAME)-$(PKG_VERSION).tgz
@@ -26,12 +26,10 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 include $(TOPDIR)/feeds/packages/lang/php7/pecl.mk
 
-SAMBA_VER=$(shell grep ^PKG_VER $(TOPDIR)/feeds/packages/net/samba4/Makefile | cut -f2 -d"=")
-
-TARGET_CPPFLAGS += -I$(STAGING_DIR)/opt/tmp/samba-$(SAMBA_VER)/include/samba-4.0
+TARGET_CPPFLAGS += -I$(STAGING_DIR)/opt/usr/include/samba-4.0
 
 CONFIGURE_ARGS += \
-	--with-libsmbclient=$(STAGING_DIR)/opt/tmp/samba-$(SAMBA_VER)
+	--with-libsmbclient=$(STAGING_DIR)/opt/usr
 
 CONFIGURE_VARS += \
 	ac_cv_lib_smbclient_smbc_setPort=yes \
