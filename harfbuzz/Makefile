@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=harfbuzz
 PKG_VERSION:=2.6.7
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://www.freedesktop.org/software/harfbuzz/release
@@ -63,18 +63,21 @@ CONFIGURE_ARGS += \
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include/harfbuzz
-	$(CP) $(PKG_INSTALL_DIR)/opt/include/harfbuzz/hb*.h $(1)/opt/include/harfbuzz/
+	$(CP) $(PKG_INSTALL_DIR)/opt/include/harfbuzz/hb*.h \
+		$(1)/opt/include/harfbuzz/
 
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz.so* $(1)/opt/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz.so* \
+		$(1)/opt/lib
 
-	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/harfbuzz.pc $(1)/opt/lib/pkgconfig
+	$(INSTALL_DIR) $(1)/opt/usr/lib/pkgconfig
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/harfbuzz.pc \
+		$(1)/opt/usr/lib/pkgconfig
 
 	# XXX
 	$(SED) 's,^includedir=.*/include,includedir=$(STAGING_DIR)/opt/include,; \
 		s,^libdir=.*/lib,libdir=$(STAGING_DIR)/opt/lib,' \
-			$(1)/opt/lib/pkgconfig/harfbuzz.pc
+			$(1)/opt/usr/lib/pkgconfig/harfbuzz.pc
 endef
 
 define Package/libharfbuzz/install
