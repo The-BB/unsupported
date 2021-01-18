@@ -7,12 +7,12 @@ include $(TOPDIR)/rules.mk
 
 PKG_NPM_NAME:=node-red
 PKG_NAME:=$(PKG_NPM_NAME)
-PKG_VERSION:=1.2.6
+PKG_VERSION:=1.2.7
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NPM_NAME)-$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=http://registry.npmjs.org/$(PKG_NPM_NAME)/-/
-PKG_HASH:=53461c67807019d0c811d9731f6fe173ec7286ab7ba897013d5a9ce8043b42cd
+PKG_HASH:=0565a54a07a769b527b4d0c48e4d5c8dbdf030912ca324c43cc7cdc5394b2871
 
 PKG_BUILD_DEPENDS:=node/host
 PKG_USE_MIPS16:=0
@@ -67,7 +67,7 @@ define Package/node-red/install
 	$(LN) ../lib/node_modules/node-red/bin/node-red-pi $(1)/opt/bin/node-red-pi
 	$(INSTALL_DIR) $(1)/opt/etc/init.d
 	$(INSTALL_BIN) ./files/S99node-red $(1)/opt/etc/init.d
-	# XXX fucking [[:space:]] in the folder names
+	# XXX fix exec path in scripts
 	$(FIND) $(1)/opt/lib -type f -exec \
 	$(SED) \
 	    's,^#!.*bash$$$$,#!/opt/bin/bash,;s,^#!.*node$$$$,#!/opt/bin/node,' {} \;
@@ -77,13 +77,6 @@ define Package/node-red/install
 	    $(1)/opt/lib/node_modules/node-red/bin/node-red-pi
 	$(SED) 's,^#!.*sh,#!/bin/sh,' \
 	    $(1)/opt/lib/node_modules/node-red/node_modules/ajv/scripts/prepare-tests
-#	###
-#	$(SED) 's,/lib,/opt/lib,;s,/usr/sbin,/opt/usr/sbin,' \
-#	    $(1)/opt/lib/node_modules/node-red/node_modules/detect-libc/lib/*.js
-#	$(SED) 's,/root,/opt/root,;s,/home,/opt/home,' \
-#	    $(1)/opt/lib/node_modules/node-red/node_modules/os-homedir/index.js
-#	$(SED) 's,/tmp,/opt/tmp,' \
-#	    $(1)/opt/lib/node_modules/node-red/node_modules/os-tmpdir/index.js
 endef
 
 $(eval $(call BuildPackage,node-red))
