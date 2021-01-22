@@ -18,22 +18,48 @@ PKG_LICENSE:=BSD-2-Clause
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
-define Package/libsocket
+define Package/libsocket/Default
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=ultimate socket library
   URL:=https://github.com/dermesser/libsocket
+endef
+
+define Package/libsocket
+  $(call Package/libsocket/Default)
+endef
+
+define Package/libsocketpp
+  $(call Package/libsocket/Default)
+  TITLE+=(++)
   DEPENDS:=+libstdcpp
 endef
 
-define Package/libsocket/description
+define Package/libsocket/Default/description
   The ultimate socket library for C and C++, supporting TCP, UDP and Unix
   sockets (DGRAM and STREAM) on Linux, FreeBSD, Solaris.
 endef
 
+define Package/libsocket/description
+  $(call Package/libsocket/Default/description)
+  .
+  (C only)
+endef
+
+define Package/libsocketpp/description
+  $(call Package/libsocket/Default/description)
+  .
+  (C++ only)
+endef
+
 define Package/libsocket/install
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libsocket{,++}.so $(1)/opt/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libsocket.so $(1)/opt/lib
+endef
+
+define Package/libsocketpp/install
+	$(INSTALL_DIR) $(1)/opt/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libsocket++.so $(1)/opt/lib
 endef
 
 define Build/InstallDev
@@ -45,3 +71,4 @@ define Build/InstallDev
 endef
 
 $(eval $(call BuildPackage,libsocket))
+$(eval $(call BuildPackage,libsocketpp))
