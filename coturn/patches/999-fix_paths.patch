@@ -1,0 +1,126 @@
+--- a/src/apps/relay/mainrelay.c
++++ b/src/apps/relay/mainrelay.c
+@@ -114,7 +114,7 @@ NULL, PTHREAD_MUTEX_INITIALIZER,
+ 
+ //////////////// Common params ////////////////////
+ TURN_VERBOSE_NONE,0,0,0,0,
+-"/var/run/turnserver.pid","",
++"/opt/var/run/turnserver.pid","",
+ DEFAULT_STUN_PORT,DEFAULT_STUN_TLS_PORT,0,0,0,1,
+ 0,0,0,0,0,
+ "",
+@@ -491,8 +491,7 @@ static char Usage[] = "Usage: turnserver
+ "						for the sessions, combined (input and output network streams are treated separately).\n"
+ " -c				<filename>	Configuration file name (default - turnserver.conf).\n"
+ #if !defined(TURN_NO_SQLITE)
+-" -b, , --db, --userdb	<filename>		SQLite database file name; default - /var/db/turndb or\n"
+-"						    /usr/local/var/db/turndb or /var/lib/turn/turndb.\n"
++" -b, , --db, --userdb	<filename>		SQLite database file name; default - /opt/var/lib/turn/turndb.\n"
+ #endif
+ #if !defined(TURN_NO_PQ)
+ " -e, --psql-userdb, --sql-userdb <conn-string>	PostgreSQL database connection string, if used (default - empty, no PostreSQL DB used).\n"
+@@ -592,7 +591,7 @@ static char Usage[] = "Usage: turnserver
+ " --no-tcp-relay					Do not allow TCP relay endpoints, use only UDP relay options.\n"
+ " -l, --log-file		<filename>		Option to set the full path name of the log file.\n"
+ "						By default, the turnserver tries to open a log file in\n"
+-"						/var/log/turnserver/, /var/log, /var/tmp, /tmp and . (current) directories\n"
++"						/opt/var/log/turnserver/, /opt/var/log and . (current) directories\n"
+ "						(which open operation succeeds first that file will be used).\n"
+ "						With this option you can set the definite log file name.\n"
+ "						The special names are \"stdout\" and \"-\" - they will force everything\n"
+@@ -630,8 +629,7 @@ static char Usage[] = "Usage: turnserver
+ " --denied-peer-ip=<ip[-ip]> 			Specifies an ip or range of ips that are not allowed to connect to the turn server.\n"
+ "						Multiple denied-peer-ip can be set.\n"
+ " --pidfile <\"pid-file-name\">			File name to store the pid of the process.\n"
+-"						Default is /var/run/turnserver.pid (if superuser account is used) or\n"
+-"						/var/tmp/turnserver.pid .\n"
++"						Default is /opt/var/run/turnserver.pid (if superuser account is used).\n"
+ " --acme-redirect <URL>				Redirect ACME, i.e. HTTP GET requests matching '^/.well-known/acme-challenge/(.*)' to '<URL>$1'.\n"
+ "						Default is '', i.e. no special handling for such requests.\n"
+ " --secure-stun					Require authentication of the STUN Binding request.\n"
+@@ -697,8 +695,7 @@ static char AdminUsage[] = "Usage: turna
+ 	"					output an encrypted form of password with AES-128\n"
+ 	"\nOptions with mandatory values:\n\n"
+ #if !defined(TURN_NO_SQLITE)
+-	"	-b, --db, --userdb		SQLite database file, default value is /var/db/turndb or\n"
+-	"					  /usr/local/var/db/turndb or /var/lib/turn/turndb.\n"
++	"	-b, --db, --userdb		SQLite database file, default value is /opt/var/lib/turn/turndb.\n"
+ #endif
+ #if !defined(TURN_NO_PQ)
+ 	"	-e, --psql-userdb, --sql-userdb	PostgreSQL user database connection string, if PostgreSQL DB is used.\n"
+@@ -2490,13 +2487,7 @@ int main(int argc, char **argv)
+ 			TURN_LOG_FUNC(TURN_LOG_LEVEL_WARNING, "%s\n", s);
+ 
+ 			{
+-				const char *pfs[] = {"/var/run/turnserver.pid",
+-						"/var/spool/turnserver.pid",
+-						"/var/turnserver.pid",
+-						"/var/tmp/turnserver.pid",
+-						"/tmp/turnserver.pid",
+-						"turnserver.pid",
+-						NULL};
++				const char *pfs[] = {"/opt/var/run/turnserver.pid", NULL};
+ 				const char **ppfs = pfs;
+ 				while(*ppfs) {
+ 					f = fopen(*ppfs,"w");
+--- a/src/apps/common/apputils.c
++++ b/src/apps/common/apputils.c
+@@ -744,16 +744,16 @@ char *skip_blanks(char* s)
+ #define Q(x) #x
+ #define QUOTE(x) Q(x)
+ 
+-#define ETCDIR INSTALL_PREFIX/etc/
++#define ETCDIR /opt/etc/turnserver/
+ #define QETCDIR QUOTE(ETCDIR)
+ 
+-#define ETCDIR1 INSTALL_PREFIX/etc/turnserver/
++#define ETCDIR1 /opt/etc/turnserver/
+ #define QETCDIR1 QUOTE(ETCDIR1)
+ 
+-#define ETCDIR2 INSTALL_PREFIX/etc/coturn/
++#define ETCDIR2 /opt/etc/turnserver/
+ #define QETCDIR2 QUOTE(ETCDIR2)
+ 
+-static const char *config_file_search_dirs[] = {"./", "./turnserver/", "./coturn/", "./etc/", "./etc/turnserver/", "./etc/coturn/", "../etc/", "../etc/turnserver/", "../etc/coturn/", "/etc/", "/etc/turnserver/", "/etc/coturn/", "/usr/local/etc/", "/usr/local/etc/turnserver/", "/usr/local/etc/coturn/", QETCDIR, QETCDIR1, QETCDIR2, NULL };
++static const char *config_file_search_dirs[] = {"/opt/etc/turnserver/", QETCDIR, QETCDIR1, QETCDIR2, NULL };
+ static char *c_execdir=NULL;
+ 
+ void set_execdir(void)
+--- a/src/apps/common/ns_turn_utils.c
++++ b/src/apps/common/ns_turn_utils.c
+@@ -367,7 +367,7 @@ static void set_rtpfile(void)
+ 		else
+ 			snprintf(logtail, FILE_STR_LEN, "turn_%d_", (int)getpid());
+ 
+-		if (snprintf(logbase, FILE_STR_LEN, "/var/log/turnserver/%s", logtail)<0)
++		if (snprintf(logbase, FILE_STR_LEN, "/opt/var/log/turnserver/%s", logtail)<0)
+ 			TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "String truncation occured.\n");
+ 
+ 		set_log_file_name(logbase, logf);
+@@ -376,7 +376,7 @@ static void set_rtpfile(void)
+ 		if(_rtpfile)
+ 			TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "log file opened: %s\n", logf);
+ 		else {
+-			if (snprintf(logbase, FILE_STR_LEN, "/var/log/%s", logtail)<0)
++			if (snprintf(logbase, FILE_STR_LEN, "/opt/var/log/%s", logtail)<0)
+ 				TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "String truncation occured.\n");
+ 
+ 			set_log_file_name(logbase, logf);
+@@ -384,7 +384,7 @@ static void set_rtpfile(void)
+ 			if(_rtpfile)
+ 				TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "log file opened: %s\n", logf);
+ 			else {
+-				if (snprintf(logbase, FILE_STR_LEN, "/var/tmp/%s", logtail)<0)
++				if (snprintf(logbase, FILE_STR_LEN, "/opt/var/tmp/%s", logtail)<0)
+ 					TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "String truncation occured.\n");
+ 
+ 				set_log_file_name(logbase, logf);
+@@ -392,7 +392,7 @@ static void set_rtpfile(void)
+ 				if(_rtpfile)
+ 					TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "log file opened: %s\n", logf);
+ 				else {
+-					if (snprintf(logbase, FILE_STR_LEN, "/tmp/%s", logtail)<0)
++					if (snprintf(logbase, FILE_STR_LEN, "/opt/tmp/%s", logtail)<0)
+ 						TURN_LOG_FUNC(TURN_LOG_LEVEL_INFO, "String truncation occured.\n");
+ 					set_log_file_name(logbase, logf);
+ 					_rtpfile = fopen(logf, "a");

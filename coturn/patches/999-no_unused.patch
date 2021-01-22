@@ -1,0 +1,338 @@
+--- a/configure
++++ b/configure
+@@ -789,19 +789,19 @@ fi
+ # Can we use GCM cipher ?
+ ###########################
+ 
+-if [ -z ${TURN_NO_GCM} ] ; then 
++#if [ -z ${TURN_NO_GCM} ] ; then 
+ 
+-gcm_testlib
+-ER=$?
+-if [ ${ER} -eq 0 ] ; then
+-	${ECHO_CMD} "WARNING: Cannot find GCM support."
+-	${ECHO_CMD} "Turning GCM off."
+-	TURN_NO_GCM="-DTURN_NO_GCM"
+-fi
++#gcm_testlib
++#ER=$?
++#if [ ${ER} -eq 0 ] ; then
++#	${ECHO_CMD} "WARNING: Cannot find GCM support."
++#	${ECHO_CMD} "Turning GCM off."
++#	TURN_NO_GCM="-DTURN_NO_GCM"
++#fi
+ 
+-else
++#else
+ 	TURN_NO_GCM="-DTURN_NO_GCM"
+-fi
++#fi
+ 
+ ###########################
+ # Test Libevent2 setup
+@@ -833,63 +833,63 @@ fi
+ # Test Prometheus
+ ###########################
+ 
+-if [ -z "${TURN_NO_PROMETHEUS}" ] ; then
++#if [ -z "${TURN_NO_PROMETHEUS}" ] ; then
+ 
+-	testlib prom
+-	ER=$?
+-	if ! [ ${ER} -eq 0 ] ; then
+-		${ECHO_CMD} "Prometheus lib found."
+-		testlib promhttp
+-		ER=$?
+-		if ! [ ${ER} -eq 0 ] ; then
+-			${ECHO_CMD} "Prometheus http lib found."
+-			testlib microhttpd
+-			ER=$?
+-			if ! [ ${ER} -eq 0 ] ; then
+-				${ECHO_CMD} "Microhttpd lib found."
+-			else
+-				${ECHO_CMD}
+-				${ECHO_CMD} "Warning: microhttpd development libraries are not installed properly in required location."
+-				${ECHO_CMD} "Prometheus support will be disabled."
+-				${ECHO_CMD} "See the INSTALL file."
+-				${ECHO_CMD}
+-				OSCFLAGS="${OSCFLAGS} -DTURN_NO_PROMETHEUS"
+-			fi
+-		else
+-			${ECHO_CMD}
+-			${ECHO_CMD} "Warning: Libpromhttp development libraries are not installed properly in required location."
+-			${ECHO_CMD} "Prometheus support will be disabled."
+-			${ECHO_CMD} "See the INSTALL file."
+-			${ECHO_CMD}
+-			OSCFLAGS="${OSCFLAGS} -DTURN_NO_PROMETHEUS"
+-		fi
+-	else
+-		${ECHO_CMD}
+-		${ECHO_CMD} "Warning: Libprom development libraries are not installed properly in required location."
+-		${ECHO_CMD} "Prometheus support will be disabled."
+-		${ECHO_CMD} "See the INSTALL file."
+-		${ECHO_CMD}
+-		OSCFLAGS="${OSCFLAGS} -DTURN_NO_PROMETHEUS"
+-	fi
++#	testlib prom
++#	ER=$?
++#	if ! [ ${ER} -eq 0 ] ; then
++#		${ECHO_CMD} "Prometheus lib found."
++#		testlib promhttp
++#		ER=$?
++#		if ! [ ${ER} -eq 0 ] ; then
++#			${ECHO_CMD} "Prometheus http lib found."
++#			testlib microhttpd
++#			ER=$?
++#			if ! [ ${ER} -eq 0 ] ; then
++#				${ECHO_CMD} "Microhttpd lib found."
++#			else
++#				${ECHO_CMD}
++#				${ECHO_CMD} "Warning: microhttpd development libraries are not installed properly in required location."
++#				${ECHO_CMD} "Prometheus support will be disabled."
++#				${ECHO_CMD} "See the INSTALL file."
++#				${ECHO_CMD}
++#				OSCFLAGS="${OSCFLAGS} -DTURN_NO_PROMETHEUS"
++#			fi
++#		else
++#			${ECHO_CMD}
++#			${ECHO_CMD} "Warning: Libpromhttp development libraries are not installed properly in required location."
++#			${ECHO_CMD} "Prometheus support will be disabled."
++#			${ECHO_CMD} "See the INSTALL file."
++#			${ECHO_CMD}
++#			OSCFLAGS="${OSCFLAGS} -DTURN_NO_PROMETHEUS"
++#		fi
++#	else
++#		${ECHO_CMD}
++#		${ECHO_CMD} "Warning: Libprom development libraries are not installed properly in required location."
++#		${ECHO_CMD} "Prometheus support will be disabled."
++#		${ECHO_CMD} "See the INSTALL file."
++#		${ECHO_CMD}
++#		OSCFLAGS="${OSCFLAGS} -DTURN_NO_PROMETHEUS"
++#	fi
+ 
+-else
++#else
+ 	OSCFLAGS="${OSCFLAGS} -DTURN_NO_PROMETHEUS"
+-fi
++#fi
+ 
+ ###########################
+ # Test libsystemd
+ ###########################
+ 
+-if [ -z "${TURN_NO_SYSTEMD}" ] ; then
+-    if testpkg_common libsystemd; then
+-        ${ECHO_CMD} "Systemd library found."
+-    else
+-        ${ECHO_CMD} "Systemd library not found. Building without systemd support."
+-        TURN_NO_SYSTEMD="-DTURN_NO_SYSTEMD"
+-    fi
+-else
++#if [ -z "${TURN_NO_SYSTEMD}" ] ; then
++#    if testpkg_common libsystemd; then
++#        ${ECHO_CMD} "Systemd library found."
++#    else
++#        ${ECHO_CMD} "Systemd library not found. Building without systemd support."
++#        TURN_NO_SYSTEMD="-DTURN_NO_SYSTEMD"
++#    fi
++#else
+     TURN_NO_SYSTEMD="-DTURN_NO_SYSTEMD"
+-fi
++#fi
+ 
+ ###########################
+ # Test SQLite3 setup
+@@ -908,68 +908,68 @@ else
+ fi
+ 
+ if [ -z "${TURNDBDIR}" ] ; then
+-	TURNDBDIR=${LOCALSTATEDIR}/db
++	TURNDBDIR=${LOCALSTATEDIR}
+ fi
+ 
+ ###########################
+ # Test PostgreSQL
+ ###########################
+ 
+-if [ -z "${TURN_NO_PQ}" ] ; then
+-    if testpkg_db libpq; then
+-        ${ECHO_CMD} "PostgreSQL found."
+-    else
+-        ${ECHO_CMD} "PostgreSQL not found. Building without PostgreSQL support."
+-        TURN_NO_PQ="-DTURN_NO_PQ"
+-    fi
+-else
++#if [ -z "${TURN_NO_PQ}" ] ; then
++#    if testpkg_db libpq; then
++#        ${ECHO_CMD} "PostgreSQL found."
++#    else
++#        ${ECHO_CMD} "PostgreSQL not found. Building without PostgreSQL support."
++#        TURN_NO_PQ="-DTURN_NO_PQ"
++#    fi
++#else
+     TURN_NO_PQ="-DTURN_NO_PQ"
+-fi
++#fi
+ 
+ ###########################
+ # Test MySQL
+ ###########################
+ 
+-if [ -z "${TURN_NO_MYSQL}" ] ; then
+-    if testpkg_db mariadb || testpkg_db mysqlclient ; then
+-        ${ECHO_CMD} "MySQL found."
+-    else
+-        ${ECHO_CMD} "MySQL not found. Building without MySQL support."
+-        TURN_NO_MYSQL="-DTURN_NO_MYSQL"
+-    fi
+-else
++#if [ -z "${TURN_NO_MYSQL}" ] ; then
++#    if testpkg_db mariadb || testpkg_db mysqlclient ; then
++#        ${ECHO_CMD} "MySQL found."
++#    else
++#        ${ECHO_CMD} "MySQL not found. Building without MySQL support."
++#        TURN_NO_MYSQL="-DTURN_NO_MYSQL"
++#    fi
++#else
+     TURN_NO_MYSQL="-DTURN_NO_MYSQL"
+-fi
++#fi
+ 
+ ###########################
+ # Test MongoDB
+ ###########################
+ 
+-if [ -z "${TURN_NO_MONGO}" ] ; then
+-    if testpkg_db libmongoc-1.0; then
+-        ${ECHO_CMD} "MongoDB found."
+-    else
+-        ${ECHO_CMD} "MongoDB not found. Building without MongoDB support."
+-        TURN_NO_MONGO="-DTURN_NO_MONGO"
+-    fi
+-else
++#if [ -z "${TURN_NO_MONGO}" ] ; then
++#    if testpkg_db libmongoc-1.0; then
++#        ${ECHO_CMD} "MongoDB found."
++#    else
++#        ${ECHO_CMD} "MongoDB not found. Building without MongoDB support."
++#        TURN_NO_MONGO="-DTURN_NO_MONGO"
++#    fi
++#else
+     TURN_NO_MONGO="-DTURN_NO_MONGO"
+-fi
++#fi
+ 
+ ###########################
+ # Test Redis
+ ###########################
+ 
+-if [ -z "${TURN_NO_HIREDIS}" ] ; then
+-    if testpkg_db hiredis; then
+-        ${ECHO_CMD} "Hiredis found."
+-    else
+-        ${ECHO_CMD} "Hiredis not found. Building without hiredis support."
+-        TURN_NO_HIREDIS="-DTURN_NO_HIREDIS"
+-    fi
+-else
++#if [ -z "${TURN_NO_HIREDIS}" ] ; then
++#    if testpkg_db hiredis; then
++#        ${ECHO_CMD} "Hiredis found."
++#    else
++#        ${ECHO_CMD} "Hiredis not found. Building without hiredis support."
++#        TURN_NO_HIREDIS="-DTURN_NO_HIREDIS"
++#    fi
++#else
+     TURN_NO_HIREDIS="-DTURN_NO_HIREDIS"
+-fi
++#fi
+ 
+ ###############################
+ # LDCONFIG
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -126,11 +126,11 @@ install:	all ${MAKE_DEPS}
+ 	${MKDIR} ${DESTDIR}${PREFIX}
+ 	${MKDIR} ${DESTDIR}${BINDIR}
+ 	${MKDIR} ${DESTDIR}${TURNDBDIR}
+-	${MKDIR} ${DESTDIR}${MANPREFIX}/man/man1
++#	${MKDIR} ${DESTDIR}${MANPREFIX}/man/man1
+ 	${MKDIR} ${DESTDIR}${CONFDIR}
+ 	${MKDIR} ${DESTDIR}${LIBDIR}
+-	${MKDIR} ${DESTDIR}${EXAMPLESDIR}
+-	${MKDIR} ${DESTDIR}${DOCSDIR}
++#	${MKDIR} ${DESTDIR}${EXAMPLESDIR}
++#	${MKDIR} ${DESTDIR}${DOCSDIR}
+ 	${MKDIR} ${DESTDIR}${SCHEMADIR}
+ 	${MKDIR} ${DESTDIR}${TURNINCLUDEDIR}
+ 	${INSTALL_PROGRAM} bin/turnserver ${DESTDIR}${BINDIR}
+@@ -140,41 +140,41 @@ install:	all ${MAKE_DEPS}
+ 	${INSTALL_PROGRAM} bin/turnutils_stunclient ${DESTDIR}${BINDIR}
+ 	${INSTALL_PROGRAM} bin/turnutils_oauth ${DESTDIR}${BINDIR}
+ 	${INSTALL_PROGRAM} bin/turnutils_natdiscovery ${DESTDIR}${BINDIR}
+-	${INSTALL_MAN} man/man1/turnserver.1 ${DESTDIR}${MANPREFIX}/man/man1/
+-	${INSTALL_MAN} man/man1/turnadmin.1 ${DESTDIR}${MANPREFIX}/man/man1/
+-	${INSTALL_MAN} man/man1/turnutils.1 ${DESTDIR}${MANPREFIX}/man/man1/
+-	${INSTALL_MAN} man/man1/turnutils_uclient.1 ${DESTDIR}${MANPREFIX}/man/man1/
+-	${INSTALL_MAN} man/man1/turnutils_stunclient.1 ${DESTDIR}${MANPREFIX}/man/man1/
+-	${INSTALL_MAN} man/man1/turnutils_oauth.1 ${DESTDIR}${MANPREFIX}/man/man1/
+-	${INSTALL_MAN} man/man1/turnutils_natdiscovery.1 ${DESTDIR}${MANPREFIX}/man/man1/
+-	${INSTALL_MAN} man/man1/turnutils_peer.1 ${DESTDIR}${MANPREFIX}/man/man1/
+-	${INSTALL_MAN} man/man1/coturn.1 ${DESTDIR}${MANPREFIX}/man/man1/
++#	${INSTALL_MAN} man/man1/turnserver.1 ${DESTDIR}${MANPREFIX}/man/man1/
++#	${INSTALL_MAN} man/man1/turnadmin.1 ${DESTDIR}${MANPREFIX}/man/man1/
++#	${INSTALL_MAN} man/man1/turnutils.1 ${DESTDIR}${MANPREFIX}/man/man1/
++#	${INSTALL_MAN} man/man1/turnutils_uclient.1 ${DESTDIR}${MANPREFIX}/man/man1/
++#	${INSTALL_MAN} man/man1/turnutils_stunclient.1 ${DESTDIR}${MANPREFIX}/man/man1/
++#	${INSTALL_MAN} man/man1/turnutils_oauth.1 ${DESTDIR}${MANPREFIX}/man/man1/
++#	${INSTALL_MAN} man/man1/turnutils_natdiscovery.1 ${DESTDIR}${MANPREFIX}/man/man1/
++#	${INSTALL_MAN} man/man1/turnutils_peer.1 ${DESTDIR}${MANPREFIX}/man/man1/
++#	${INSTALL_MAN} man/man1/coturn.1 ${DESTDIR}${MANPREFIX}/man/man1/
+ 	${INSTALL_STATIC_LIB} lib/libturnclient.a ${DESTDIR}${LIBDIR}
+-	${INSTALL_DATA} LICENSE ${DESTDIR}${DOCSDIR}
+-	${INSTALL_DATA} README.turnserver ${DESTDIR}${DOCSDIR}
+-	${INSTALL_DATA} README.turnadmin ${DESTDIR}${DOCSDIR}
+-	${INSTALL_DATA} README.turnutils ${DESTDIR}${DOCSDIR}
+-	${INSTALL_DATA} INSTALL ${DESTDIR}${DOCSDIR}
+-	${INSTALL_DATA} postinstall.txt ${DESTDIR}${DOCSDIR}
+-	${INSTALL_DATA} turndb/schema.sql ${DESTDIR}${DOCSDIR}
++#	${INSTALL_DATA} LICENSE ${DESTDIR}${DOCSDIR}
++#	${INSTALL_DATA} README.turnserver ${DESTDIR}${DOCSDIR}
++#	${INSTALL_DATA} README.turnadmin ${DESTDIR}${DOCSDIR}
++#	${INSTALL_DATA} README.turnutils ${DESTDIR}${DOCSDIR}
++#	${INSTALL_DATA} INSTALL ${DESTDIR}${DOCSDIR}
++#	${INSTALL_DATA} postinstall.txt ${DESTDIR}${DOCSDIR}
++#	${INSTALL_DATA} turndb/schema.sql ${DESTDIR}${DOCSDIR}
+ 	${INSTALL_DATA} turndb/schema.sql ${DESTDIR}${SCHEMADIR}
+-	${INSTALL_DATA} turndb/schema.mongo.sh ${DESTDIR}${DOCSDIR}
+-	${INSTALL_DATA} turndb/schema.mongo.sh ${DESTDIR}${SCHEMADIR}
+-	${INSTALL_DATA} turndb/testredisdbsetup.sh ${DESTDIR}${SCHEMADIR}
+-	${INSTALL_DATA} turndb/testmongosetup.sh ${DESTDIR}${SCHEMADIR}
+-	${INSTALL_DATA} turndb/testsqldbsetup.sql ${DESTDIR}${SCHEMADIR}
+-	${INSTALL_DATA} turndb/schema.userdb.redis ${DESTDIR}${DOCSDIR}
+-	${INSTALL_DATA} turndb/schema.userdb.redis ${DESTDIR}${SCHEMADIR}
+-	${INSTALL_DATA} turndb/schema.stats.redis ${DESTDIR}${DOCSDIR}
+-	${INSTALL_DATA} turndb/schema.stats.redis ${DESTDIR}${SCHEMADIR}
++#	${INSTALL_DATA} turndb/schema.mongo.sh ${DESTDIR}${DOCSDIR}
++#	${INSTALL_DATA} turndb/schema.mongo.sh ${DESTDIR}${SCHEMADIR}
++#	${INSTALL_DATA} turndb/testredisdbsetup.sh ${DESTDIR}${SCHEMADIR}
++#	${INSTALL_DATA} turndb/testmongosetup.sh ${DESTDIR}${SCHEMADIR}
++#	${INSTALL_DATA} turndb/testsqldbsetup.sql ${DESTDIR}${SCHEMADIR}
++#	${INSTALL_DATA} turndb/schema.userdb.redis ${DESTDIR}${DOCSDIR}
++#	${INSTALL_DATA} turndb/schema.userdb.redis ${DESTDIR}${SCHEMADIR}
++#	${INSTALL_DATA} turndb/schema.stats.redis ${DESTDIR}${DOCSDIR}
++#	${INSTALL_DATA} turndb/schema.stats.redis ${DESTDIR}${SCHEMADIR}
+ 	if [ -f sqlite/turndb ] ; then ${INSTALL_DATA} sqlite/turndb ${DESTDIR}${TURNDBDIR}/turndb; fi
+-	${INSTALL_DATA} examples/etc/turnserver.conf ${DESTDIR}${CONFDIR}/turnserver.conf.default
+-	${INSTALL_DIR} examples/etc ${DESTDIR}${EXAMPLESDIR}
+-	${INSTALL_DIR} examples/scripts ${DESTDIR}${EXAMPLESDIR}
++	${INSTALL_DATA} examples/etc/turnserver.conf ${DESTDIR}${CONFDIR}/turnserver.conf
++#	${INSTALL_DIR} examples/etc ${DESTDIR}${EXAMPLESDIR}
++#	${INSTALL_DIR} examples/scripts ${DESTDIR}${EXAMPLESDIR}
+ 	${RMCMD} ${DESTDIR}${EXAMPLESDIR}/scripts/rfc5769.sh
+ 	${INSTALL_DIR} include/turn/client ${DESTDIR}${TURNINCLUDEDIR}
+ 	${INSTALL_DATA} include/turn/ns_turn_defs.h ${DESTDIR}${TURNINCLUDEDIR}
+-	${MORECMD} ${DESTDIR}${DOCSDIR}/postinstall.txt
++#	${MORECMD} ${DESTDIR}${DOCSDIR}/postinstall.txt
+ 
+ deinstall:	${MAKE_DEPS}
+ 	${PKILL_PROGRAM} turnserver || ${ECHO_CMD} OK

@@ -1,0 +1,11 @@
+--- a/configure
++++ b/configure
+@@ -1018,7 +1018,7 @@ OSCFLAGS="${OSCFLAGS} ${TURN_NO_SCTP} ${
+ 
+ if ! [ -z "${TURN_ACCEPT_RPATH}" ] ; then
+   if [ -z "${TURN_DISABLE_RPATH}" ] ; then
+-    TURN_RPATH="${TURN_RPATH} -Wl,-rpath,/usr/local/lib"
++    TURN_RPATH="${TURN_RPATH} -Wl,-rpath,/opt/lib"
+     OSLIBS="${OSLIBS} ${TURN_RPATH}"
+   fi
+ fi
