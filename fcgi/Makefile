@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=fcgi
 PKG_VERSION:=2.4.2
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 PKG_SOURCE:=$(PKG_NAME)2-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/FastCGI-Archives/fcgi2/tar.gz/$(PKG_VERSION)?
@@ -38,6 +38,9 @@ endef
 
 TARGET_CXXFLAGS += -fno-rtti -flto
 TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
+
+CONFIGURE_VARS += \
+	ac_cv_lib_socket_socket=no
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/usr/include
