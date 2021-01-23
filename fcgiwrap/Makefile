@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=fcgiwrap
 PKG_VERSION:=1.1.0
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/gnosek/fcgiwrap/tar.gz/$(PKG_VERSION)?
@@ -33,10 +33,12 @@ define Package/fcgiwrap/description
    Simple FastCGI wrapper for CGI scripts.
 endef
 
-CONFIGURE_ARGS += \
-	--with-systemd=no
-
 TARGET_CFLAGS += $(TARGET_CPPFLAGS)
+TARGET_CFLAGS += -I$(STAGING_DIR)/opt/usr/include
+TARGET_LDFLAGS += -L$(STAGING_DIR)/opt/usr/lib
+
+CONFIGURE_ARGS += \
+	--without-systemd
 
 define Package/fcgiwrap/install
 	$(INSTALL_DIR) $(1)/opt/sbin
