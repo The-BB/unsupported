@@ -1,0 +1,26 @@
+--- a/stun.cxx
++++ b/stun.cxx
+@@ -1396,7 +1396,7 @@ stunServerProcess(StunServerInfo& info,
+    
+    struct timeval tv;
+    tv.tv_sec = 0;
+-   tv.tv_usec = 1000;
++   tv.tv_usec = 1000000;
+ 	
+    int e = select( maxFd, &fdSet, NULL,NULL, &tv );
+    if (e < 0)
+--- a/stun.h
++++ b/stun.h
+@@ -44,7 +44,11 @@ const UInt16 MessageIntegrity = 0x0008;
+ const UInt16 ErrorCode        = 0x0009;
+ const UInt16 UnknownAttribute = 0x000A;
+ const UInt16 ReflectedFrom    = 0x000B;
+-const UInt16 XorMappedAddress = 0x8020;
++// attribute XOR-MAPPED-ADDRESS:
++//    RFC 3489 : not defined
++//    draft-ietf-behave-rfc3489bis-02 : 0x8020
++//    draft-ietf-behave-rfc3489bis-03 ff. and RFC 5389 : 0x0020
++const UInt16 XorMappedAddress = 0x0020;
+ const UInt16 XorOnly          = 0x0021;
+ const UInt16 ServerName       = 0x8022;
+ const UInt16 SecondaryAddress = 0x8050; // Non standard extention

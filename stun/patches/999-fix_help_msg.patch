@@ -1,0 +1,33 @@
+--- a/client.cxx
++++ b/client.cxx
+@@ -23,12 +23,12 @@ void
+ usage()
+ {
+    cerr << "Usage:" << endl
+-	<< "    ./client stunServerHostname [testNumber] [-v] [-p srcPort] [-i nicAddr1] [-i nicAddr2] [-i nicAddr3]" << endl
++	<< "    ./stun-client stunServerHostname [testNumber] [-v] [-p srcPort] [-i nicAddr1] [-i nicAddr2] [-i nicAddr3]" << endl
+ 	<< "For example, if the STUN server was larry.gloo.net, you could do:" << endl
+-	<< "    ./client larry.gloo.net" << endl
++	<< "    ./stun-client larry.gloo.net" << endl
+ 	<< "The testNumber is just used for special tests." << endl
+ 	<< " test 1 runs test 1 from the RFC. For example:" << endl
+-	<< "    ./client larry.gloo.net 0" << endl << endl
++	<< "    ./stun-client larry.gloo.net 0" << endl << endl
+         << endl;
+ }
+ 
+--- a/server.cxx
++++ b/server.cxx
+@@ -23,10 +23,10 @@ void
+ usage()
+ {
+    cerr << "Usage: " << endl
+-        << " ./server [-v] [-h] [-h IP_Address] [-a IP_Address] [-p port] [-o port] [-m mediaport]" << endl
++        << " ./stund [-v] [-h] [-h IP_Address] [-a IP_Address] [-p port] [-o port] [-m mediaport]" << endl
+         << " " << endl
+         << " If the IP addresses of your NIC are 10.0.1.150 and 10.0.1.151, run this program with" << endl
+-        << "    ./server -v  -h 10.0.1.150 -a 10.0.1.151" << endl
++        << "    ./stund -v  -h 10.0.1.150 -a 10.0.1.151" << endl
+         << " STUN servers need two IP addresses and two ports, these can be specified with:" << endl
+         << "  -h sets the primary IP" << endl
+         << "  -a sets the secondary IP" << endl
