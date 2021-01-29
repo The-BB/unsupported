@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=coturn
 PKG_VERSION:=4.5.2
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/$(PKG_NAME)/$(PKG_NAME)/archive/$(PKG_VERSION)
@@ -65,9 +65,6 @@ define Package/coturn/install
 
 	$(INSTALL_DIR) $(1)/opt/etc/init.d
 	$(INSTALL_BIN) ./files/S99turnserver $(1)/opt/etc/init.d
-
-	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libturnclient.a $(1)/opt/lib
 
 	$(INSTALL_DIR) $(1)/opt/var/lib/turn
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/examples/var/db/turndb \
