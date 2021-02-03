@@ -1,0 +1,28 @@
+From 99a540b35f77c7f99590f677ec3e43a905ef9e4c Mon Sep 17 00:00:00 2001
+From: cyber386 <62885475+cyber386@users.noreply.github.com>
+Date: Sun, 28 Jun 2020 20:14:34 +0800
+Subject: [PATCH 2/5] Added support for MIPS64 architecture
+
+---
+ build-release.sh | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/build-release.sh b/build-release.sh
+index d74802f..2648a07 100755
+--- a/src/github.com/shadowsocks/v2ray-plugin/build-release.sh
++++ b/src/github.com/shadowsocks/v2ray-plugin/build-release.sh
+@@ -62,3 +62,11 @@ done
+ $upx v2ray-plugin_linux_mips* >/dev/null
+ tar -zcf bin/v2ray-plugin-linux-mips-$VERSION.tar.gz v2ray-plugin_linux_mips*
+ $sum bin/v2ray-plugin-linux-mips-$VERSION.tar.gz
++
++# MIPS64
++MIPS64S=(mips64 mips64le)
++for v in ${MIPS64S[@]}; do
++	env CGO_ENABLED=0 GOOS=linux GOARCH=$v go build -v -ldflags "$LDFLAGS" -gcflags "$GCFLAGS" -o v2ray-plugin_linux_$v
++done
++tar -zcf bin/v2ray-plugin-linux-mips64-$VERSION.tar.gz v2ray-plugin_linux_mips64*
++$sum bin/v2ray-plugin-linux-mips64-$VERSION.tar.gz
+-- 
+2.20.1
+

@@ -1,0 +1,25 @@
+From 997ef6e19da10e689c1b9b724d36e9e869935523 Mon Sep 17 00:00:00 2001
+From: Max Lv <mlv@nvidia.com>
+Date: Mon, 19 Oct 2020 10:07:20 +0800
+Subject: [PATCH 5/5] Update VPN flag
+
+---
+ main.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main.go b/main.go
+index cf71a4a..2212ddf 100644
+--- a/src/github.com/shadowsocks/v2ray-plugin/main.go
++++ b/src/github.com/shadowsocks/v2ray-plugin/main.go
+@@ -329,7 +329,7 @@ func startV2Ray() (core.Server, error) {
+ 			*fastOpen = true
+ 		}
+ 
+-		if _, b := opts.Get("V"); b {
++		if _, b := opts.Get("__android_vpn"); b {
+ 			*vpn = true
+ 		}
+ 
+-- 
+2.20.1
+
