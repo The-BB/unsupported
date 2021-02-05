@@ -1,5 +1,5 @@
-# for fun
-Packages are work but unsupported Entware team.
+# unsupported
+Packages not supported by the Entware team.
 
 не пользы дела для, токмо забавы ради ;)
 
