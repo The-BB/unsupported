@@ -1,9 +1,28 @@
 # unsupported
 Packages not supported by the Entware team.
 
+1. https://github.com/Entware/Entware/wiki/Compile-packages-from-sources
+
+2. To use these packages, add the following line to the feeds.conf in the Entware buildroot, e.g.:
+
+```
+echo 'src-git unsupported https://github.com/The-BB/unsupported.git' >> feeds.conf
+```
+
+To install all its package definitions, run:
+
+```
+./scripts/feeds update unsupported
+
+./scripts/feeds install -a -p unsupported
+```
+
+The unsupported packages should now appear in menuconfig.
+
+---
 не пользы дела для, токмо забавы ради ;)
 
-Для сборки некоторых пакетов, требуется внести изменения в Makefile пакетов, от которых они зависят, напр.,
+3. Для сборки некоторых пакетов, требуется внести изменения в Makefile пакетов, от которых они зависят, напр.,
 для php7-pecl-smbclient требуется dev-секция в пакете "samba4":
 ```
 define Build/InstallDev
