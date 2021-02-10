@@ -1,7 +1,4 @@
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+# SPDX-License-Identifier: GPL-2.0-only
 
 include $(TOPDIR)/rules.mk
 
@@ -10,8 +7,8 @@ PKG_VERSION:=1.2.16
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/jselbie/stunserver
 PKG_SOURCE_VERSION:=cfadf9c3836d5ae63a682913de24ba085df924f3
+PKG_SOURCE_URL:=https://github.com/jselbie/stunserver
 PKG_MIRROR_HASH:=051955f6df46838096f81f1341e396d6d67b78b6862ed6f5f5e2218dcc2bd59e
 
 PKG_LICENSE:=Apache-2.0
