@@ -14,7 +14,6 @@ PKG_LICENSE:=GPL-2.0-only
 PKG_LICENSE_FILES:=COPYING
 
 include $(INCLUDE_DIR)/package.mk
-#include $(INCLUDE_DIR)/host-build.mk
 include $(INCLUDE_DIR)/cmake.mk
 
 define Package/libgit2
@@ -32,8 +31,8 @@ endef
 
 define Build/InstallDev
 	$(call Build/InstallDev/cmake,$(1))
-	$(SED) 's,^libdir=.*,libdir=$(STAGING_DIR)/opt/lib,; \
-		s,^includedir=.*,includedir=$(STAGING_DIR)/opt/include,' \
+	$(SED) 's,^libdir=.*/lib,libdir=$(STAGING_DIR)/opt/lib,; \
+		s,^includedir=.*/include,includedir=$(STAGING_DIR)/opt/include,' \
 			$(1)/opt/lib/pkgconfig/libgit2.pc
 endef
 
@@ -42,5 +41,4 @@ define Package/libgit2/install
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libgit2.so.* $(1)/opt/lib
 endef
 
-#$(eval $(call HostBuild))
 $(eval $(call BuildPackage,libgit2))
