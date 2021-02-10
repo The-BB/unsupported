@@ -1,7 +1,5 @@
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+# SPDX-License-Identifier: GPL-2.0-only
+
 # Based on https://git.archive.openwrt.org/?p=packages.git;a=blob_plain;f=net/stun/Makefile;hb=HEAD
 
 include $(TOPDIR)/rules.mk
