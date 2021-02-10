@@ -1,7 +1,7 @@
 # unsupported
 Packages not supported by the Entware team.
 
-1. https://github.com/Entware/Entware/wiki/Compile-packages-from-sources
+1. Read [Compile packages from sources](https://github.com/Entware/Entware/wiki/Compile-packages-from-sources)
 
 2. To use these packages, add the following line to the feeds.conf in the Entware buildroot, e.g.:
 
