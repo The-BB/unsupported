@@ -1,7 +1,4 @@
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+# SPDX-License-Identifier: GPL-2.0-only
 
 include $(TOPDIR)/rules.mk
 
@@ -11,14 +8,15 @@ PKG_VERSION:=1.2.9
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NPM_NAME)-$(PKG_VERSION).tgz
-PKG_SOURCE_URL:=http://registry.npmjs.org/$(PKG_NPM_NAME)/-/
+PKG_SOURCE_URL:=https://registry.npmjs.org/$(PKG_NPM_NAME)/-/
 PKG_HASH:=ce7984f40a9bbb8342faeaefc8d863de4807ddf84953078d459e8b7209a8ca4d
 
-PKG_BUILD_DEPENDS:=node/host
+PKG_LICENSE:=Apache-2.0
+
+PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
-PKG_LICENSE:=Apache-2.0
-PKG_LICENSE_FILES:=LICENSE
+PKG_BUILD_DEPENDS:=node/host
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -38,7 +36,8 @@ endef
 NODEJS_CPU:=$(subst powerpc,ppc,$(subst aarch64,arm64,$(subst x86_64,x64,$(subst i386,ia32,$(ARCH)))))
 TMPNPM:=$(shell mktemp -u XXXXXXXXXX)
 
-TARGET_CFLAGS+=$(FPIC)
+TARGET_CFLAGS += $(FPIC)
+TARGET_CXXFLAGS += $(FPIC)
 
 define Build/Prepare
 	$(INSTALL_DIR) $(PKG_BUILD_DIR)
@@ -50,11 +49,11 @@ define Build/Compile
 	npm_config_arch=$(NODEJS_CPU) \
 	npm_config_target_arch=$(NODEJS_CPU) \
 	npm_config_build_from_source=true \
-	npm_config_nodedir=$(STAGING_DIR)/opt/ \
-	npm_config_prefix=$(PKG_INSTALL_DIR)/opt/ \
+	npm_config_nodedir=$(STAGING_DIR)/opt \
+	npm_config_prefix=$(PKG_INSTALL_DIR)/opt \
 	npm_config_cache=$(TMP_DIR)/npm-cache-$(TMPNPM) \
 	npm_config_tmp=$(TMP_DIR)/npm-tmp-$(TMPNPM) \
-	npm install -g $(DL_DIR)/$(PKG_SOURCE)
+	npm install -g --production $(DL_DIR)/$(PKG_SOURCE)
 	rm -rf $(TMP_DIR)/npm-tmp-$(TMPNPM)
 	rm -rf $(TMP_DIR)/npm-cache-$(TMPNPM)
 endef
