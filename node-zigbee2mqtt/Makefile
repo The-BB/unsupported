@@ -1,7 +1,4 @@
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+# SPDX-License-Identifier: GPL-2.0-only
 
 include $(TOPDIR)/rules.mk
 
@@ -11,13 +8,15 @@ PKG_VERSION:=1.17.1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NPM_NAME)-$(PKG_VERSION).tgz
-PKG_SOURCE_URL:=http://registry.npmjs.org/$(PKG_NPM_NAME)/-/
+PKG_SOURCE_URL:=https://registry.npmjs.org/$(PKG_NPM_NAME)/-/
 PKG_HASH:=620f3531db9886c4f6b3d6d3615846f4aab4284e436755233029a3d9b050e60e
 
-PKG_BUILD_DEPENDS:=node/host
+PKG_LICENSE:=GPL-3.0-only
+
+PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
-PKG_LICENSE:=GPL-3.0-only
+PKG_BUILD_DEPENDS:=node/host
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -25,13 +24,16 @@ define Package/node-zigbee2mqtt
   SUBMENU:=Node.js
   SECTION:=lang
   CATEGORY:=Languages
-  TITLE:=Zigbee to MQTT bridge
+  TITLE:=Zigbee to MQTT bridge using zigbee-shepherd
   URL:=https://www.zigbee2mqtt.io
   DEPENDS:=+node-npm
 endef
 
 define Package/node-zigbee2mqtt/description
   Allows you to use your Zigbee devices without the vendors bridge or gateway.
+ It bridges events and allows you to control your Zigbee devices via MQTT.
+ In this way you can integrate your Zigbee devices with whatever smart home
+ infrastructure you are using.
 endef
 
 define Package/node-zigbee2mqtt/conffiles
@@ -65,7 +67,7 @@ endef
 
 define Package/node-zigbee2mqtt/install
 	$(INSTALL_DIR) $(1)/opt/lib/node_modules
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/node_modules/* $(1)/opt/lib/node_modules/
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/node_modules/$(PKG_NPM_NAME) $(1)/opt/lib/node_modules/
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(LN) ../lib/node_modules/zigbee2mqtt/cli.js $(1)/opt/bin/zigbee2mqtt
 	$(INSTALL_DIR) $(1)/opt/etc/init.d
@@ -76,7 +78,7 @@ define Package/node-zigbee2mqtt/install
 		 s,^#!.*node$$$$,#!/opt/bin/node,; \
 		 s,^#!.* sh,#!/bin/sh,' {} +
 	$(INSTALL_DIR) $(1)/opt/var/lib/.z2m
-	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/opt/lib/node_modules/zigbee2mqtt/data/* \
+	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/opt/lib/node_modules/zigbee2mqtt/data/configuration.yaml \
 		$(1)/opt/var/lib/.z2m
 endef
 
