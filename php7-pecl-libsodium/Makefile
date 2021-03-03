@@ -26,5 +26,5 @@ include $(TOPDIR)/feeds/packages/lang/php7/pecl.mk
 CONFIGURE_ARGS += \
 	--with-sodium=shared,"$(STAGING_DIR)/opt"
 
-$(eval $(call PECLPackage,sodium,$(PECL_LONGNAME),+libsodium,30))
+$(eval $(call PHP7PECLPackage,sodium,$(PECL_LONGNAME),+libsodium,30))
 $(eval $(call BuildPackage,$(PKG_NAME)))
