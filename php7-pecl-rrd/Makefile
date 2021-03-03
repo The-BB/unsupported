@@ -25,8 +25,8 @@ include $(TOPDIR)/feeds/packages/lang/php7/pecl.mk
 
 ADD_PKG_CONFIG_PATH=$(STAGING_DIR)/opt/usr/lib/pkgconfig
 
-CONFIGURE_ARGS+= \
+CONFIGURE_ARGS += \
 	PKG_CONFIG_PATH="$(ADD_PKG_CONFIG_PATH):$$$$PKG_CONFIG_PATH"
 
-$(eval $(call PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),+rrdtool-latest,30))
+$(eval $(call PHP7PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),+rrdtool-latest,30))
 $(eval $(call BuildPackage,$(PKG_NAME)))
