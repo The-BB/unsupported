@@ -23,8 +23,8 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 include $(TOPDIR)/feeds/packages/lang/php7/pecl.mk
 
-CONFIGURE_ARGS+= \
+CONFIGURE_ARGS += \
 	--enable-timezonedb
 
-$(eval $(call PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),,20))
+$(eval $(call PHP7PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),,20))
 $(eval $(call BuildPackage,$(PKG_NAME)))
