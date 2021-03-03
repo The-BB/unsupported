@@ -31,5 +31,5 @@ define Build/InstallDev
 	$(CP) $(PKG_BUILD_DIR)/*.h $(STAGING_DIR)/opt/include/php7/ext/$(PECL_NAME)/
 endef
 
-$(eval $(call PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),,20))
+$(eval $(call PHP7PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),,20))
 $(eval $(call BuildPackage,$(PKG_NAME)))
