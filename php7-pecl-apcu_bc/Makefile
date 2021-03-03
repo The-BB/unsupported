@@ -34,7 +34,8 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 include $(TOPDIR)/feeds/packages/lang/php7/pecl.mk
 
-CONFIGURE_ARGS+= --enable-apc
+CONFIGURE_ARGS += \
+	--enable-apc
 
-$(eval $(call PECLPackage,apc,$(PECL_LONGNAME),+php7-pecl-apcu,25))
+$(eval $(call PHP7PECLPackage,apc,$(PECL_LONGNAME),+php7-pecl-apcu,25))
 $(eval $(call BuildPackage,$(PKG_NAME)))
