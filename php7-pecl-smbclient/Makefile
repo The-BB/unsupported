@@ -32,5 +32,5 @@ CONFIGURE_VARS += \
 	ac_cv_lib_smbclient_smbc_setPort=yes \
 	ac_cv_lib_smbclient_smbc_setOptionUseNTHash=yes
 
-$(eval $(call PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),+samba4-libs,30))
+$(eval $(call PHP7PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),+samba4-libs,30))
 $(eval $(call BuildPackage,$(PKG_NAME)))
