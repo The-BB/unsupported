@@ -26,5 +26,5 @@ include $(TOPDIR)/feeds/packages/lang/php7/pecl.mk
 CONFIGURE_ARGS += \
 	--enable-xdebug
 
-$(eval $(call PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),,25))
+$(eval $(call PHP7PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),,25))
 $(eval $(call BuildPackage,$(PKG_NAME)))
