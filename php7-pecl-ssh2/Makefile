@@ -26,5 +26,5 @@ include $(TOPDIR)/feeds/packages/lang/php7/pecl.mk
 CONFIGURE_ARGS += \
 	--with-ssh2=$(STAGING_DIR)/opt
 
-$(eval $(call PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),+libssh2,20))
+$(eval $(call PHP7PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),+libssh2,20))
 $(eval $(call BuildPackage,$(PKG_NAME)))
