@@ -7,7 +7,7 @@ PKG_VERSION:=1.1.0
 PKG_RELEASE:=3
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/gnosek/fcgiwrap/tar.gz/$(PKG_VERSION)?
+PKG_SOURCE_URL:=https://codeload.github.com/gnosek/fcgiwrap/tar.gz/refs/tags/$(PKG_VERSION)?
 PKG_HASH:=4c7de0db2634c38297d5fcef61ab4a3e21856dd7247d49c33d9b19542bd1c61f
 
 PKG_LICENSE:=MIT
