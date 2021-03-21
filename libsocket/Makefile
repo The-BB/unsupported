@@ -7,7 +7,7 @@ PKG_VERSION:=2.5.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/dermesser/libsocket/archive/v$(PKG_VERSION)
+PKG_SOURCE_URL:=https://codeload.github.com/dermesser/libsocket/tar.gz/refs/tags/v$(PKG_VERSION)?
 PKG_HASH:=0afe2ece985caa0b44546d10426b15a506164d5b96d7242890c7d0337f479689
 
 PKG_LICENSE:=BSD-2-Clause
