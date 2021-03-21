@@ -7,7 +7,7 @@ PKG_VERSION:=4.5.2
 PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/$(PKG_NAME)/$(PKG_NAME)/archive/$(PKG_VERSION)
+PKG_SOURCE_URL:=https://codeload.github.com/coturn/coturn/tar.gz/refs/tags/$(PKG_VERSION)?
 PKG_HASH:=462f1aa5c2455f28c1c8df09510d9e88ab14a1159b5e33ea5be5095262e83745
 
 PKG_LICENSE:=BSD-3-Clause
