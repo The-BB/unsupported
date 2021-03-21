@@ -11,7 +11,7 @@ PKG_RELEASE:=1
 PKG_NAME:=php7-pecl-apc
 PKG_SOURCE:=$(PECL_NAME)-$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=https://pecl.php.net/get/
-PKG_HASH:=7cb1c22f67e31cfa99aad6298d1ea7fd7a995b0d9e4e05a64dcf2b4ed5e15ce5
+PKG_HASH:=40d8e44dbbb6fc3fc019824683d215717413633e5f0a70d34cfa8a09bd064055
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/pecl-php7/$(PECL_NAME)-$(PKG_VERSION)
 
@@ -19,7 +19,7 @@ PKG_LICENSE:=PHP-3.01
 
 PKG_BUILD_PARALLEL:=1
 
-#APCU:=apcu-5.1.19.tgz
+#APCU:=apcu-5.1.20.tgz
 
 #define prepare_source_directory
 #	mkdir -p $(PKG_BUILD_DIR)/ext/apcu
