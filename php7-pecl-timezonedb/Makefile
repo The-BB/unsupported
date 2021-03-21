@@ -5,13 +5,13 @@ include $(TOPDIR)/rules.mk
 PECL_NAME:=timezonedb
 PECL_LONGNAME:=Timezone Database
 
-PKG_VERSION:=2020.4
+PKG_VERSION:=2021.1
 PKG_RELEASE:=1
 
 PKG_NAME:=php7-pecl-$(PECL_NAME)
 PKG_SOURCE:=$(PECL_NAME)-$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=https://pecl.php.net/get
-PKG_HASH:=074adadb322fd1d1fccf04cd93bb46e984129f06156bebbcb3935b563a0badc7
+PKG_HASH:=9fd473fc76e01a2ffcd087283d20e4ec14067b29a8336ac4acf9c564abbeaa55
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/pecl-php7/$(PECL_NAME)-$(PKG_VERSION)
 
