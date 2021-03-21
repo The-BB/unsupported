@@ -8,7 +8,7 @@ PKG_RELEASE:=2
 
 PKG_SOURCE_URL:=http://oss.oetiker.ch/rrdtool/pub
 PKG_SOURCE:=rrdtool-$(PKG_VERSION).tar.gz
-PKG_HASH:=cd948e89cd2d8825fab4a6fb0323f810948d934af7d92c9ee8b5e9e1350e52d7
+PKG_HASH:=a199faeb7eff7cafc46fac253e682d833d08932f3db93a550a4a5af180ca58db
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/rrdtool-$(PKG_VERSION)
 
