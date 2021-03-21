@@ -11,10 +11,9 @@ PKG_GOGET:=github.com/shadowsocks/v2ray-plugin
 GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 
 #!!! uncomment PKG_SOURCE to download fixed version
-PKG_SOURCE=$(GOPKG_SOURCE)
+#PKG_SOURCE=$(GOPKG_SOURCE)
 PKG_COMMIT=b9717056b251747149cacb44458fe02e420b9d9b
 PKG_HASH:=skip
-PKG_MIRROR_HASH:=skip
 
 PKG_LICENSE:=MIT
 
