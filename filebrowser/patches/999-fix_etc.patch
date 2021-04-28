@@ -9,3 +9,12 @@
  
  The precedence of the configuration values are as follows:
  
+@@ -389,7 +389,7 @@ func initConfig() {
+ 		checkErr(err)
+ 		v.AddConfigPath(".")
+ 		v.AddConfigPath(home)
+-		v.AddConfigPath("/etc/filebrowser/")
++		v.AddConfigPath("/opt/etc/filebrowser/")
+ 		v.SetConfigName(".filebrowser")
+ 	} else {
+ 		v.SetConfigFile(cfgFile)
