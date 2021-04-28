@@ -1,0 +1,11 @@
+--- a/src/github.com/filebrowser/filebrowser/cmd/root.go
++++ b/src/github.com/filebrowser/filebrowser/cmd/root.go
+@@ -92,7 +92,7 @@ If you don't set "config", it will look
+ 
+ - ./
+ - $HOME/
+-- /etc/filebrowser/
++- /opt/etc/filebrowser/
+ 
+ The precedence of the configuration values are as follows:
+ 
