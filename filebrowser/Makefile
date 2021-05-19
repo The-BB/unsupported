@@ -4,7 +4,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=filebrowser
 PKG_VERSION:=2.15.0
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_GOGET:=github.com/filebrowser/filebrowser
 
@@ -73,6 +73,8 @@ define Build/Compile
 		npm run build ; \
 		popd ; \
 	\
+		GOGC=off \
+		GO111MODULE=on \
 		CGO_ENABLED=0 \
 		GOOS=linux \
 		GOARCH=$(GOARCH) \
