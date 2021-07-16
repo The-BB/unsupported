@@ -1,0 +1,948 @@
+Subject: collected Debian patches for anacron package
+Author: Peter Eisentraut <petere@debian.org>
+
+The packaging for anacron is maintained in Git.  This makes it complex to
+separate the changes into individual patches.  They are therefore all
+included in a single Debian patch.
+
+For full commit history and separated commits, see the packaging Git
+repository.
+--- a/ChangeLog
++++ b/ChangeLog
+@@ -1,3 +1,8 @@
++   Changes in Anacron 2.3.1
++   ------------------------
++* documentation no longer suggests adding local directories to the PATH
++
++
+    Changes in Anacron 2.3
+    ----------------------
+ * anacron can now read an arbitrary anacrontab file, use the -t option
+--- a/Makefile
++++ b/Makefile
+@@ -22,7 +22,7 @@
+ PREFIX = 
+ BINDIR = $(PREFIX)/usr/sbin
+ MANDIR = $(PREFIX)/usr/man
+-CFLAGS = -Wall -pedantic -O2
++CFLAGS += -Wall -pedantic
+ #CFLAGS = -Wall -O2 -g -DDEBUG
+ 
+ # If you change these, please update the man-pages too
+--- a/README
++++ b/README
+@@ -40,7 +40,7 @@ scripts are scheduled to run on Sundays.
+ off for the night or for the weekend, these scripts rarely get run.
+ 
+    Anacron solves this problem.  These jobs can simply be scheduled as
+-Anacron-jobs with periods of 1, 7 and 30 days.
++Anacron-jobs with periods of 1, 7 and a special target called @monthly.
+ 
+ 
+      What Anacron is not ?
+@@ -109,11 +109,11 @@ scripts, from cron-jobs, or explicitly.
+ -----Cut
+ # /etc/anacrontab example
+ SHELL=/bin/sh
+-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
++PATH=/sbin:/bin:/usr/sbin:/usr/bin
+ # format: period delay job-identifier command
+ 1       5       cron.daily      run-parts /etc/cron.daily
+ 7       10      cron.weekly     run-parts /etc/cron.weekly
+-30      15      cron.monthly    run-parts /etc/cron.monthly
++@monthly      15      cron.monthly    run-parts /etc/cron.monthly
+ -----Cut
+ 
+ 5. Put the command "anacron -s" somewhere in your boot-scripts.
+--- a/TODO
++++ b/TODO
+@@ -1,6 +1,3 @@
+-anacron runs jobs twice in a 31 day month
+-add hostname to emails sent to admin
+-allow user anacrontabs
+ make manpages match #defines automagically --> sed fu
+ full ANSI / POSIX compliance
+ code cleaning
+--- a/anacron.8
++++ b/anacron.8
+@@ -1,13 +1,15 @@
+-.TH ANACRON 8 2000-06-22 "Sean 'Shaleh' Perry" "Anacron Users' Manual"
++.TH ANACRON 8 2018-11-30 "the Debian Project" "Anacron Users' Manual"
+ .SH NAME
+ anacron \- runs commands periodically
+ .SH SYNOPSIS
+ .B anacron \fR[\fB-s\fR] [\fB-f\fR] [\fB-n\fR] [\fB-d\fR] [\fB-q\fR]
+-[\fB-t anacrontab\fR] [\fIjob\fR] ...
++[\fB-t anacrontab\fR] [\fB-S spooldir\fR] [\fIjob\fR] ...
+ .br
+-.B anacron -u [\fB-t anacrontab\fR] \fR[\fIjob\fR] ...
++.B anacron [\fB-S spooldir\fR] -u [\fB-t anacrontab\fR] \fR[\fIjob\fR] ...
+ .br
+ .B anacron \fR[\fB-V\fR|\fB-h\fR]
++.br
++.B anacron -T [\fB-t anacrontab\fR]
+ .SH DESCRIPTION
+ Anacron
+ can be used to execute commands periodically, with a
+@@ -58,7 +60,9 @@ immediately when their delay is over.  T
+ completely independent.
+ .PP
+ If a job generates any output on its standard output or standard error,
+-the output is mailed to the user running Anacron (usually root).
++the output is mailed to the user running Anacron (usually root), or to
++the address contained by the MAILTO environment variable in the crontab, if such
++exists.
+ .PP
+ Informative messages about what Anacron is doing are sent to \fBsyslogd(8)\fR
+ under facility \fBcron\fR, priority \fBnotice\fR.  Error messages are sent at
+@@ -98,6 +102,15 @@ Suppress messages to standard error.  On
+ .B -t anacrontab
+ Use specified anacrontab, rather than the default
+ .TP
++.B -T
++Anacrontab testing. The configuration file will be tested for validity. If
++there is an error in the file, an error will be shown and anacron will 
++return 1. Valid anacrontabs will return 0.
++.TP
++.B -S spooldir
++Use the specified spooldir to store timestamps in. This option is required for
++users who wish to run anacron themselves.
++.TP
+ .B -V
+ Print version information, and exit.
+ .TP
+@@ -115,6 +128,28 @@ by setting the TZ environment variable,
+ file.  See
+ .B tzset(3)
+ for more information.
++
++Timestamp files are created in the spool directory for each job in anacrontab.
++These are never removed automatically by anacron, and should be removed by
++hand if a job is no longer being scheduled.
++.SH DEBIAN-SPECIFIC CONFIGURATION
++.PP
++On Debian-based systems, anacron will be activated hourly every day from 07:30
++local time to 23:30 local time through cron job (on non-systemd systems where
++cron is installed and enabled) or systemd timer (on systemd-based systems).
++On activation, anacron will check if it missed some jobs. If yes, it will start
++those jobs after a short period of time.
++.PP
++By default,
++The hourly activation of anacron will not take place
++when the system is using battery and no AC power is
++connected to the computer. It is meant to reduce power usage and extend
++battery life, but such design might lead to unwanted results.
++.
++Users may disable this feature and let anacron run regardless of power
++supply. Please read Debian-specific documentation in
++.I /usr/share/doc/anacron/README.Debian
++file for detailed instruction in now to change such behaviour.
+ .SH FILES
+ .TP
+ .I /etc/anacrontab
+@@ -123,12 +158,23 @@ description.
+ .TP
+ .I /var/spool/anacron
+ This directory is used by Anacron for storing timestamp files.
++.TP
++.I /lib/systemd/system/anacron.service
++This file provides systemd service for anacron.
++.TP
++.I /lib/systemd/system/anacron.timer
++This file provides systemd timer for anacron. Currently the service is
++triggered hourly through systemd timer.
+ .SH "SEE ALSO"
+ .B anacrontab(5), cron(8), tzset(3)
+ .PP
+ The Anacron
+ .I README
+ file.
++.PP
++For Debian-specific modifications, please read
++.I /usr/share/doc/anacron/README.Debian
++file for detailed information.
+ .SH BUGS
+ Anacron never removes timestamp files.  Remove unused files manually.
+ .PP
+@@ -139,9 +185,12 @@ descriptors if there are more than about
+ Mail comments, suggestions and bug reports to Sean 'Shaleh' Perry <shaleh@(debian.org|valinux.com)>.
+ .SH AUTHOR
+ Anacron was originally conceived and implemented by Christian Schwarz
+-<schwarz@monet.m.isar.de>.
++<schwarz@monet.m.isar.de>. The current implementation is a complete rewrite by
++Itai Tzur <itzur@actcom.co.il>.
+ .PP
+-The current implementation is a complete rewrite by Itai Tzur
+-<itzur@actcom.co.il>.
++The code base was maintained by Sean 'Shaleh' Perry <shaleh@(debian.org|valinux.com)>.
++During 2004-2006, it was maintained by Pascal Hakim <pasc@(debian.org|redellipse.net)>.
++During 2009-2014, it was maintained by Peter Eisentraut <petere@debian.org>.
+ .PP
+-The code base is currently maintained by Sean 'Shaleh' Perry <shaleh@(debian.org|valinux.com)>.
++Nowadays anacron in Debian is co-maintained by various developers
++from Debian Project.
+--- /dev/null
++++ b/anacron.apm
+@@ -0,0 +1,19 @@
++#! /bin/sh
++
++# This script makes anacron jobs start to run when the machine is
++# plugged into AC power, or woken up.  For a laptop, these are the 
++# closest parallels to turning on a desktop.
++
++# The /etc/init.d/anacron script now normally tries to avoid running
++# anacron unless on AC power, so as to avoid running down the battery.
++# (Things like the slocate updatedb cause a lot of IO.)  Rather than
++# trying to second-guess which events reflect having or not having
++# power, we just try to run anacron every time and let it abort if
++# there's no AC.  You'll see a message on the cron syslog facility 
++# (typically /var/log/cron) if it does run.
++
++case "$1,$2" in
++change,power|resume,*)
++    /etc/init.d/anacron start >/dev/null
++    ;;
++esac
+--- a/anacrontab.5
++++ b/anacrontab.5
+@@ -1,4 +1,4 @@
+-.TH ANACRONTAB 5 1998-02-02 "Itai Tzur" "Anacron Users' Manual"
++.TH ANACRONTAB 5 2004-07-11 "Pascal Hakim" "Anacron Users' Manual"
+ .SH NAME
+ /etc/anacrontab \- configuration file for anacron
+ .SH DESCRIPTION
+@@ -8,10 +8,13 @@ describes the jobs controlled by \fBanac
+ three kinds:  job-description lines, environment
+ assignments, or empty lines.
+ .PP
+-Job-description lines are of the form:
++Job-description lines are of one of these two forms:
+ .PP
+    period  delay  job-identifier  command
+ .PP
++.PP
++   @period_name delay job-identify command
++.PP
+ The
+ .I period
+ is specified in days, the
+@@ -22,7 +25,12 @@ can contain any non-blank character, exc
+ the job in Anacron messages,
+ and as the name for the job's timestamp file.  The
+ .I command
+-can be any shell command.
++can be any shell command. The fields can be separated by blank spaces or tabs.
++The
++.I period_name
++can only be set to monthly at the present time. This will ensure jobs
++are only run once a month, no matter the number of days in this month,
++or the previous month.
+ .PP
+ Environment assignment lines are of the form:
+ .PP
+@@ -38,6 +46,8 @@ assignment of the same variable.
+ .PP
+ Empty lines are either blank lines, line containing white-space only, or
+ lines with white-space followed by a '#' followed by an arbitrary comment.
++.PP
++You can continue a line onto the next line by ending it with a '\e'.
+ .SH "SEE ALSO"
+ .B anacron(8)
+ .PP
+@@ -46,3 +56,5 @@ The Anacron
+ file.
+ .SH AUTHOR
+ Itai Tzur <itzur@actcom.co.il>
++.PP
++Currently maintained by Pascal Hakim <pasc@(debian.org|redellipse.net)>.
+--- a/global.h
++++ b/global.h
+@@ -2,6 +2,7 @@
+     Anacron - run commands periodically
+     Copyright (C) 1998  Itai Tzur <itzur@actcom.co.il>
+     Copyright (C) 1999  Sean 'Shaleh' Perry <shaleh@debian.org>
++    Copyright (C) 2004  Pascal Hakim <pasc@redellipse.net>
+ 
+     This program is free software; you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+@@ -53,9 +54,11 @@ typedef struct env_rec1 env_rec;
+ 
+ struct job_rec1 {
+    int period;
++   int named_period;
+    int delay;
+    char *ident;
+    char *command;
++   char *mailto;
+ 
+    int tab_line;
+    int arg_num;
+@@ -75,9 +78,10 @@ typedef struct job_rec1 job_rec;
+ extern pid_t primary_pid;
+ extern char *program_name;
+ extern char *anacrontab;
++extern char *spooldir;
+ extern int old_umask;
+ extern sigset_t old_sigmask;
+-extern int serialize,force,update_only,now,no_daemon,quiet;
++extern int serialize,force,update_only,now,no_daemon,quiet,testing_only;
+ extern int day_now;
+ extern int year,month,day_of_month;
+ extern int in_background;
+@@ -93,6 +97,9 @@ extern job_rec **job_array;
+ 
+ extern int running_jobs,running_mailers;
+ 
++extern int complaints;
++
++extern char *mail_charset;
+ 
+ /* Function prototypes */
+ 
+@@ -121,7 +128,7 @@ void xcloselog();
+ #endif /* not DEBUG */
+ 
+ /* readtab.c */
+-void read_tab();
++void read_tab(int cwd);
+ void arrange_jobs();
+ 
+ /* lock.c */
+--- a/gregor.c
++++ b/gregor.c
+@@ -2,6 +2,7 @@
+     Anacron - run commands periodically
+     Copyright (C) 1998  Itai Tzur <itzur@actcom.co.il>
+     Copyright (C) 1999  Sean 'Shaleh' Perry <shaleh@debian.org>
++    Copyright (C) 2004  Pascal Hakim <pasc@redellipse.net>
+  
+     This program is free software; you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+@@ -23,6 +24,7 @@
+ 
+ 
+ #include <limits.h>
++#include <time.h>
+ #include "gregor.h"
+ 
+ const static int
+@@ -65,7 +67,7 @@ day_num(int year, int month, int day)
+ {
+     int dn;
+     int i;
+-    const int isleap; /* save three calls to leap() */
++    int isleap; /* save three calls to leap() */
+ 
+     /* Some validity checks */
+ 
+@@ -114,3 +116,66 @@ leap(int year)
+     /* but not by 400 */
+     return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
+ }
++
++int
++days_last_month (void)
++/* How many days did last month have? */
++{
++    struct tm time_record;
++    time_t current_time;
++    time (&current_time);
++    localtime_r (&current_time, &time_record);
++
++    switch (time_record.tm_mon) {
++	case 0: return days_in_month[11];
++	case 2: return days_in_month[1] + (leap (time_record.tm_year + 1900) ? 1 : 0);
++	default: return days_in_month[time_record.tm_mon - 1];
++    }
++}
++
++int
++days_this_month (void)
++/* How many days does this month have? */
++{
++    struct tm time_record;
++    time_t current_time;
++    time (&current_time);
++    localtime_r (&current_time, &time_record);
++
++    switch (time_record.tm_mon) {
++	case 1: return days_in_month[1] + (leap (time_record.tm_year + 1900) ? 1 : 0);
++	default: return days_in_month[time_record.tm_mon];
++    }
++}
++
++int
++days_last_year (void)
++/* How many days this last year have? */
++{
++    struct tm time_record;
++    time_t current_time;
++    time (&current_time);
++    localtime_r (&current_time, &time_record);
++
++    if (leap(time_record.tm_year - 1 + 1900)) {
++	return 366;
++    }
++
++    return 365;
++}
++
++int
++days_this_year (void)
++/* How many days does this year have */
++{
++     struct tm time_record;
++    time_t current_time;
++    time (&current_time);
++    localtime_r (&current_time, &time_record);
++
++    if (leap(time_record.tm_year + 1900)) {
++	return 366;
++    }
++
++    return 365;
++}
+--- a/gregor.h
++++ b/gregor.h
+@@ -2,6 +2,7 @@
+     Anacron - run commands periodically
+     Copyright (C) 1998  Itai Tzur <itzur@actcom.co.il>
+     Copyright (C) 1999  Sean 'Shaleh' Perry <shaleh@debian.org>
++    Copyright (C) 2004  Pascal Hakim <pasc@redellipse.net>
+ 
+     This program is free software; you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+@@ -23,3 +24,7 @@
+ 
+ 
+ int day_num(int year, int month, int day);
++int days_last_month (void);
++int days_this_month (void);
++int days_last_year (void);
++int days_this_year (void);
+--- a/lock.c
++++ b/lock.c
+@@ -2,6 +2,7 @@
+     Anacron - run commands periodically
+     Copyright (C) 1998  Itai Tzur <itzur@actcom.co.il>
+     Copyright (C) 1999  Sean 'Shaleh' Perry <shaleh@debian.org>
++    Copyirght (C) 2004  Pascal Hakim <pasc@redellipse.net>
+  
+     This program is free software; you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+@@ -111,6 +112,34 @@ consider_job(job_rec *jr)
+ 	    xclose(jr->timestamp_fd);
+ 	    return 0;
+ 	}
++
++	/*
++	 * Check to see if it's a named period, in which case we need 
++	 * to figure it out.
++	 */
++	if (jr->named_period)
++	{
++	    int period = 0, bypass = 0;
++	    switch (jr->named_period)
++	    {
++		case 1:
++		    period = days_last_month ();
++		    bypass = days_this_month ();
++		    break;
++		case 2:
++		    period = days_last_year ();
++		    bypass = days_this_year ();
++		    break;
++		default:
++		    die ("Unknown named period for %s (%d)", jr->ident, jr->named_period);
++	    }
++	    if (day_delta < period && day_delta != bypass)
++	    {
++		/* Job is still too young */
++		xclose (jr->timestamp_fd);
++		return 0;
++	    }
++	}
+     }
+ 
+     /* no! try to grab the lock */
+--- a/log.c
++++ b/log.c
+@@ -2,6 +2,7 @@
+     Anacron - run commands periodically
+     Copyright (C) 1998  Itai Tzur <itzur@actcom.co.il>
+     Copyright (C) 1999  Sean 'Shaleh' Perry <shaleh@debian.org>
++    Copyright (C) 2004  Pascal Hakim <pasc@redellipse.net>
+  
+     This program is free software; you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+@@ -42,12 +43,16 @@
+ #include <signal.h>
+ #include <sys/types.h>
+ #include <string.h>
++#include <stdlib.h> /* for exit() */
+ #include "global.h"
+ 
+ static char truncated[] = " (truncated)";
+ static char msg[MAX_MSG + 1];
+ static int log_open = 0;
+ 
++/* Number of complaints that we've seen */
++int complaints = 0;
++
+ static void
+ xopenlog()
+ {
+@@ -147,6 +152,8 @@ complain(const char *fmt, ...)
+     va_start(args, fmt);
+     log(COMPLAIN_LEVEL, fmt, args);
+     va_end(args);
++
++    complaints += 1;
+ }
+ 
+ void
+@@ -158,6 +165,8 @@ complain_e(const char *fmt, ...)
+     va_start(args, fmt);
+     log_e(COMPLAIN_LEVEL, fmt, args);
+     va_end(args);
++
++    complaints += 1;
+ }
+ 
+ void
+--- a/main.c
++++ b/main.c
+@@ -2,6 +2,7 @@
+     Anacron - run commands periodically
+     Copyright (C) 1998  Itai Tzur <itzur@actcom.co.il>
+     Copyright (C) 1999  Sean 'Shaleh' Perry <shaleh@debian.org>
++    Copyright (C) 2004  Pascal Hakim <pasc@redellipse.net>
+  
+     This program is free software; you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+@@ -30,6 +31,9 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <string.h>
++#include <stdlib.h> /* for exit() */
++#include <langinfo.h>
++#include <locale.h>
+ #include "global.h"
+ #include "gregor.h"
+ 
+@@ -39,8 +43,9 @@ int year, month, day_of_month;
+ 
+ char *program_name;
+ char *anacrontab;
++char *spooldir;
+ int serialize, force, update_only, now,
+-    no_daemon, quiet;                            /* command-line options */
++    no_daemon, quiet, testing_only;            /* command-line options */
+ char **args;                       /* vector of "job" command-line arguments */
+ int nargs;                                     /* number of these */
+ char *defarg = "*";
+@@ -51,6 +56,8 @@ sigset_t old_sigmask;
+ job_rec *first_job_rec;
+ env_rec *first_env_rec;
+ 
++char *mail_charset;
++
+ static time_t start_sec;                       /* time anacron started */
+ static volatile int got_sigalrm, got_sigchld, got_sigusr1;
+ int running_jobs, running_mailers;              /* , number of */
+@@ -61,17 +68,19 @@ print_version()
+     printf("Anacron " RELEASE "\n"
+ 	   "Copyright (C) 1998  Itai Tzur <itzur@actcom.co.il>\n"
+ 	   "Copyright (C) 1999  Sean 'Shaleh' Perry <shaleh@debian.org>\n"
++	   "Copyright (C) 2004  Pascal Hakim <pasc@redellipse.net>\n"
+ 	   "\n"
+-	   "Mail comments, suggestions and bug reports to <shaleh@debian.org>."
++	   "Mail comments, suggestions and bug reports to <pasc@redellipse.net>."
+ 	   "\n\n");
+ }
+ 
+ static void
+ print_usage()
+ {
+-    printf("Usage:  anacron [-s] [-f] [-n] [-d] [-q] [-t anacrontab] [job] ...\n"
+-	   "        anacron -u [job] ...\n"
++    printf("Usage:  anacron [-s] [-f] [-n] [-d] [-q] [-t anacrontab] [-S spooldir] [job] ...\n"
++	   "        anacron [-S spooldir] -u [job] ...\n"
+ 	   "        anacron [-V|-h]\n"
++	   "        anacron -T [-t anacrontab]\n"
+ 	   "\n"
+ 	   " -s  Serialize execution of jobs\n"
+ 	   " -f  Force execution of jobs, even before their time\n"
+@@ -82,6 +91,8 @@ print_usage()
+ 	   " -t  Use this anacrontab\n"
+ 	   " -V  Print version information\n"
+ 	   " -h  Print this message\n"
++	   " -T  Test an anacrontab\n"
++	   " -S  Select a different spool directory\n"
+ 	   "\n"
+ 	   "See the manpage for more details.\n"
+ 	   "\n");
+@@ -95,7 +106,7 @@ parse_opts(int argc, char *argv[])
+ 
+     quiet = no_daemon = serialize = force = update_only = now = 0;
+     opterr = 0;
+-    while ((opt = getopt(argc, argv, "sfundqt:Vh")) != EOF)
++    while ((opt = getopt(argc, argv, "sfundqt:TS:Vh")) != EOF)
+     {
+ 	switch (opt)
+ 	{
+@@ -120,6 +131,12 @@ parse_opts(int argc, char *argv[])
+ 	case 't':
+ 	    anacrontab = strdup(optarg);
+ 	    break;
++	case 'T':
++	    testing_only = 1;
++	    break;
++	case 'S':
++	    spooldir = strdup(optarg);
++	    break;
+ 	case 'V':
+ 	    print_version();
+ 	    exit(0);
+@@ -351,7 +368,7 @@ record_start_time()
+     day_of_month = tm_now->tm_mday;
+     day_now = day_num(year, month, day_of_month);
+     if (day_now == -1) die("Invalid date (this is really embarrassing)");
+-    if (!update_only)
++    if (!update_only && !testing_only)
+ 	explain("Anacron " RELEASE " started on %04d-%02d-%02d",
+ 		year, month, day_of_month);
+ }
+@@ -414,21 +431,44 @@ main(int argc, char *argv[])
+ {
+     int j;
+ 
++    int cwd;
++    char *cs;
++
+     anacrontab = NULL;
++    spooldir = NULL;
+ 
+     if((program_name = strrchr(argv[0], '/')) == NULL)
+ 	program_name = argv[0];
+     else
+ 	++program_name; /* move pointer to char after '/' */
+ 
++    /* Get the default locale character set for the mail
++     * "Content-Type: ...; charset=" header
++     */
++    setlocale(LC_CTYPE, "");
++    /* "US-ASCII" is preferred to "ANSI_X3.4-1968" in MIME, even
++     * though "ANSI_X3.4-1968" is the official charset name. */
++    if ((cs = nl_langinfo(CODESET)) && strcmp(cs, "ANSI_X3.4-1968") != 0)
++	mail_charset = strdup(cs);
++    else
++	mail_charset = "US-ASCII";
++    setlocale(LC_CTYPE, "C");
++
+     parse_opts(argc, argv);
+ 
+     if (anacrontab == NULL)
+ 	anacrontab = strdup(ANACRONTAB);
+ 
++    if (spooldir == NULL)
++	spooldir = strdup(SPOOLDIR);
++
++    if ((cwd = open ("./", O_RDONLY)) == -1) {
++	die_e ("Can't save current directory");
++    }
++
+     in_background = 0;
+ 
+-    if (chdir(SPOOLDIR)) die_e("Can't chdir to " SPOOLDIR);
++    if (chdir(spooldir)) die_e("Can't chdir to %s", spooldir );
+ 
+     old_umask = umask(0);
+ 
+@@ -437,15 +477,23 @@ main(int argc, char *argv[])
+     if (fclose(stdin)) die_e("Can't close stdin");
+     xopen(0, "/dev/null", O_RDONLY);
+ 
+-    if (!no_daemon)
++    if (!no_daemon && !testing_only)
+ 	go_background();
+     else
+ 	primary_pid = getpid();
+ 
+     record_start_time();
+-    read_tab();
++    read_tab(cwd);
++    close(cwd);
+     arrange_jobs();
+ 
++    if (testing_only)
++    {
++	if (complaints) exit (1);
++	
++	exit (0);
++    }
++
+     if (update_only)
+     {
+ 	fake_jobs();
+@@ -462,6 +510,6 @@ main(int argc, char *argv[])
+ 	launch_job(job_array[j]);
+     }
+     wait_children();
+-    explain("Normal exit (%d jobs run)", njobs);
++    explain("Normal exit (%d job%s run)", njobs, (njobs == 1 ? "" : "s"));
+     exit(0);
+ }
+--- a/matchrx.c
++++ b/matchrx.c
+@@ -26,6 +26,7 @@
+ #include <regex.h>
+ #include <stdarg.h>
+ #include <stdlib.h>
++#include <string.h> /* for memset() */
+ #include "matchrx.h"
+ 
+ int
+--- a/readtab.c
++++ b/readtab.c
+@@ -2,6 +2,7 @@
+     Anacron - run commands periodically
+     Copyright (C) 1998  Itai Tzur <itzur@actcom.co.il>
+     Copyright (C) 1999  Sean 'Shaleh' Perry <shaleh@debian.org>
++    Copyright (C) 2004  Pascal Hakim <pasc@redellipse.net>
+  
+     This program is free software; you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+@@ -83,11 +84,23 @@ read_tab_line ()
+ Return NULL if no more lines.
+  */
+ {
+-    int c;
++    int c, prev=0;
+ 
+     if (feof(tab)) return NULL;
+-    while ((c = getc(tab)) != EOF && c != '\n')
+-	obstack_1grow(&input_o, c);
++    while (1)
++    {
++	c = getc(tab);
++	if ((c == '\n' && prev != '\\') || c == EOF)
++	{
++	    if (0 != prev) obstack_1grow(&input_o, prev);
++	    break;
++	}
++
++	if ('\\' != prev && 0 != prev && '\n' != prev) obstack_1grow(&input_o, prev);
++	else if ('\n' == prev) obstack_1grow(&input_o, ' ');
++
++	prev = c;
++    }
+     if (ferror(tab)) die_e("Error reading %s", anacrontab);
+     obstack_1grow(&input_o, '\0');
+     return obstack_finish(&input_o);
+@@ -95,7 +108,7 @@ Return NULL if no more lines.
+ 
+ static int
+ job_arg_num(const char *ident)
+-/* Return the command-line-argument number refering to this job-identifier.
++/* Return the command-line-argument number referring to this job-identifier.
+  * If it isn't specified, return -1.
+  */
+ {
+@@ -153,6 +166,7 @@ register_job(const char *periods, const
+     }
+     jr = obstack_alloc(&tab_o, sizeof(job_rec));
+     jr->period = period;
++    jr->named_period = 0;
+     jr->delay = delay;
+     jr->tab_line = line_num;
+     jr->ident = obstack_alloc(&tab_o, ident_len + 1);
+@@ -171,6 +185,54 @@ register_job(const char *periods, const
+ }
+ 
+ static void
++register_period_job(const char *periods, const char *delays,
++		    const char *ident, char *command)
++/* Store a job definition with a named period */
++{
++    int delay;
++    job_rec *jr;
++    int period_len, ident_len, command_len;
++
++    period_len = strlen(periods);
++    ident_len = strlen(ident);
++    command_len = strlen(command);
++    jobs_read++;
++    delay = conv2int(delays);
++    if (delay < 0)
++    {
++	complain("%s: number out of range on line %d, skipping",
++		 anacrontab, line_num);
++	return;
++    }
++
++    jr = obstack_alloc(&tab_o, sizeof(job_rec));
++    if (!strncmp ("@monthly", periods, 7)) {
++	jr->named_period = 1;
++    } else if (!strncmp("@yearly", periods, 7)) {
++	jr->named_period = 2;
++    } else {
++	complain("%s: Unknown named period on line %d, skipping",
++		 anacrontab, line_num);
++    }
++    jr->period = 0;
++    jr->delay = delay;
++    jr->tab_line = line_num;
++    jr->ident = obstack_alloc(&tab_o, ident_len + 1);
++    strcpy(jr->ident, ident);
++    jr->arg_num = job_arg_num(ident);
++    jr->command = obstack_alloc(&tab_o, command_len + 1);
++    strcpy(jr->command, command);
++    jr->job_pid = jr->mailer_pid = 0;
++    if (last_job_rec != NULL) last_job_rec->next = jr;
++    else first_job_rec = jr;
++    last_job_rec = jr;
++    jr->prev_env_rec = last_env_rec;
++    jr->next = NULL;
++    Debug(("Read job - period %d, delay=%d, ident%s, command=%s",
++	  jr->named_period, jr->delay, jr->ident, jr->command));
++}
++
++static void
+ parse_tab_line(char *line)
+ {
+     int r;
+@@ -210,6 +272,18 @@ parse_tab_line(char *line)
+ 	register_job(periods, delays, ident, command);
+ 	return;
+     }
++
++    /* A period job? */
++    r = match_rx("^[ \t]*(@[^ \t]+)[ \t]+([[:digit:]]+)[ \t]+"
++		 "([^ \t/]+)[ \t]+([^ \t].*)$",
++		 line, 4, &periods, &delays, &ident, &command);
++    if (r == -1) goto reg_err;
++    if (r)
++    {
++	register_period_job(periods, delays, ident, command);
++	return;
++    }
++
+     complain("Invalid syntax in %s on line %d - skipping this line",
+ 	     anacrontab, line_num);
+     return;
+@@ -219,7 +293,7 @@ parse_tab_line(char *line)
+ }
+ 
+ void
+-read_tab()
++read_tab(int cwd)
+ /* Read the anacrontab file into memory */
+ {
+     char *tab_line;
+@@ -229,7 +303,10 @@ read_tab()
+     jobs_read = 0;
+     line_num = 0;
+     /* Open the anacrontab file */
++    fchdir (cwd);
+     tab = fopen(anacrontab, "r");
++    if (chdir(spooldir)) die_e("Can't chdir to %s", spooldir);
++
+     if (tab == NULL) die_e("Error opening %s", anacrontab);
+     /* Initialize the obstacks */
+     obstack_init(&input_o);
+@@ -271,7 +348,7 @@ arrange_jobs()
+     njobs = 0;
+     while (j != NULL)
+     {
+-	if (j->arg_num != -1 && (update_only || consider_job(j)))
++	if (j->arg_num != -1 && (update_only || testing_only || consider_job(j)))
+ 	{
+ 	    njobs++;
+ 	    obstack_grow(&tab_o, &j, sizeof(j));
+--- a/runjob.c
++++ b/runjob.c
+@@ -109,7 +109,6 @@ static void
+ run_job(const job_rec *jr)
+ /* This is called to start the job, after the fork */
+ {
+-    setup_env(jr);
+     /* setup stdout and stderr */
+     xclose(1);
+     xclose(2);
+@@ -153,6 +152,15 @@ static void
+ launch_mailer(job_rec *jr)
+ {
+     pid_t pid;
++    struct stat buf;
++    int r;
++
++    /* Check that we have a way of sending mail. */
++    if(stat(SENDMAIL, &buf))
++    {
++	complain("Can't find sendmail at %s, not mailing output", SENDMAIL);
++	return;
++    }
+ 
+     pid = xfork();
+     if (pid == 0)
+@@ -173,7 +181,7 @@ launch_mailer(job_rec *jr)
+ 	 * options, which don't seem to be appropriate here.
+ 	 * Hopefully, this will keep all the MTAs happy. */
+ 	execl(SENDMAIL, SENDMAIL, "-FAnacron", "-odi",
+-	      username(), (char *)NULL);
++	      jr->mailto, (char *)NULL);
+ 	die_e("Can't exec " SENDMAIL);
+     }
+     /* parent */
+@@ -207,19 +215,47 @@ launch_job(job_rec *jr)
+ {
+     pid_t pid;
+     int fd;
++    char hostname[512];
++    char *mailto;
++
++    /* get hostname */
++    if (gethostname(hostname, 512)) {
++      strcpy (hostname,"unknown machine");
++    }
++
++    setup_env(jr);
++   
++    /* Get the destination email address if set, or current user otherwise */
++    mailto = getenv("MAILTO");
++
++    if (mailto)
++	    jr->mailto = mailto;
++    else
++	    jr->mailto = username ();
+ 
+     /* create temporary file for stdout and stderr of the job */
+     fd = jr->output_fd = temp_file();
+     /* write mail header */
+     xwrite(fd, "From: ");
++    xwrite(fd, "Anacron <");
+     xwrite(fd, username());
+-    xwrite(fd, " (Anacron)\n");
++    xwrite(fd, ">\n");
+     xwrite(fd, "To: ");
+-    xwrite(fd, username());
++    if (mailto) {
++       xwrite(fd, mailto);
++    } else {
++       xwrite(fd, username());
++    }
+     xwrite(fd, "\n");
+     xwrite(fd, "Subject: Anacron job '");
+     xwrite(fd, jr->ident);
+-    xwrite(fd, "'\n\n");
++    xwrite(fd, "' on ");
++    xwrite(fd, hostname);
++    xwrite(fd, "\n");
++    xwrite(fd, "Content-Type: text/plain; charset=");
++    xwrite(fd, mail_charset);
++    xwrite(fd, "\n\n");
++
+     jr->mail_header_size = file_size(fd);
+ 
+     pid = xfork();

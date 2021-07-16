@@ -1,0 +1,44 @@
+--- a/Makefile
++++ b/Makefile
+@@ -19,16 +19,17 @@
+ #   `COPYING' that comes with the Anacron source distribution.
+ 
+ 
+-PREFIX = 
+-BINDIR = $(PREFIX)/usr/sbin
+-MANDIR = $(PREFIX)/usr/man
++DESTDIR ?= 
++PREFIX = /opt
++BINDIR = $(DESTDIR)/$(PREFIX)/sbin
++#MANDIR = $(PREFIX)/usr/man
+ CFLAGS += -Wall -pedantic
+ #CFLAGS = -Wall -O2 -g -DDEBUG
+ 
+ # If you change these, please update the man-pages too
+ # Only absolute paths here, please
+-SPOOLDIR = /var/spool/anacron
+-ANACRONTAB = /etc/anacrontab
++SPOOLDIR = /opt/var/spool/anacron
++ANACRONTAB = /opt/etc/anacrontab
+ 
+ RELEASE = 2.3
+ package_name = anacron-$(RELEASE)
+@@ -64,14 +65,14 @@ anacron: $(objects)
+ 
+ .PHONY: installdirs
+ installdirs:
+-	$(INSTALL_DIR) $(BINDIR) $(PREFIX)$(SPOOLDIR) \
+-		$(MANDIR)/man5 $(MANDIR)/man8
++	$(INSTALL_DIR) $(BINDIR) $(DESTDIR)$(SPOOLDIR)
++#		$(MANDIR)/man5 $(MANDIR)/man8
+ 
+ .PHONY: install
+ install: installdirs
+ 	$(INSTALL_PROGRAM) anacron $(BINDIR)/anacron
+-	$(INSTALL_DATA) anacrontab.5 $(MANDIR)/man5/anacrontab.5
+-	$(INSTALL_DATA) anacron.8 $(MANDIR)/man8/anacron.8
++#	$(INSTALL_DATA) anacrontab.5 $(MANDIR)/man5/anacrontab.5
++#	$(INSTALL_DATA) anacron.8 $(MANDIR)/man8/anacron.8
+ 
+ .PHONY: clean
+ clean:
