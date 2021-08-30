@@ -3,8 +3,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=filebrowser
-PKG_VERSION:=2.15.0
-PKG_RELEASE:=2
+PKG_VERSION:=2.17.2
+PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/filebrowser/filebrowser
 
@@ -12,7 +12,7 @@ GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 
 #!!! uncomment PKG_SOURCE to download fixed version
 #PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=73ccbe912fc1848957d8b2f6bbe5243804769d85
+PKG_COMMIT=bf303c536ae000036d810639cc13fcf4e082e0cb
 PKG_HASH:=skip
 
 PKG_LICENSE:=Apache-2.0
@@ -33,7 +33,7 @@ define Package/filebrowser/Default
 	$(call Package/gopackage/Default)
 	SECTION:=net
 	CATEGORY:=Network
-	SUBMENU:=
+	SUBMENU:=Filesystem
 	TITLE:=Web File Browser
 	URL:=https://filebrowser.org
 endef
