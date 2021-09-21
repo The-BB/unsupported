@@ -1,0 +1,31 @@
+From f77c25555f3e64bd060fd8b9b6eb9319a3d4e520 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Mon, 5 Jul 2021 22:59:31 +0300
+Subject: [PATCH 124/150] [TurbobitNet] fix #3990
+
+---
+ src/pyload/plugins/downloaders/TurbobitNet.py | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+--- a/src/pyload/plugins/downloaders/TurbobitNet.py
++++ b/src/pyload/plugins/downloaders/TurbobitNet.py
+@@ -13,7 +13,7 @@ from ..base.simple_downloader import Sim
+ class TurbobitNet(SimpleDownloader):
+     __name__ = "TurbobitNet"
+     __type__ = "downloader"
+-    __version__ = "0.40"
++    __version__ = "0.41"
+     __status__ = "testing"
+ 
+     __pattern__ = r'https?://(?:(?:www|m)\.)?(?:turbobit\.net|turbo?\.(?:to|cc))/(?:download/free/)?(?P<ID>\w+)'
+@@ -63,7 +63,9 @@ class TurbobitNet(SimpleDownloader):
+ 
+         m = re.search(r"minLimit : (.+?),", self.data)
+         if m is None:
+-            self.fail(self._("minLimit pattern not found"))
++            self.retry_captcha()
++
++        self.captcha.correct()
+ 
+         wait_time = eval_js(m.group(1))
+         self.wait(wait_time)

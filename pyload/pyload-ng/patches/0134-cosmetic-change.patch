@@ -1,0 +1,24 @@
+From 4e0814247a6c3a16f7ab38c1cff9d274db9ce2bf Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Tue, 17 Aug 2021 11:00:11 +0300
+Subject: [PATCH 134/150] cosmetic change
+
+---
+ src/pyload/core/network/request_factory.py | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+--- a/src/pyload/core/network/request_factory.py
++++ b/src/pyload/core/network/request_factory.py
+@@ -42,9 +42,10 @@ class RequestFactory:
+ 
+             if account:
+                 cj = self.get_cookie_jar(plugin_name, account)
+-                req.set_cookie_jar(cj)
+             else:
+-                req.set_cookie_jar(CookieJar(plugin_name))
++                cj = CookieJar(plugin_name)
++
++            req.set_cookie_jar(cj)
+ 
+         return req
+ 

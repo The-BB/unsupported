@@ -1,0 +1,20 @@
+From feb0d926a59708384bbb40b9c63cc5bb12d76cdd Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sat, 18 Sep 2021 00:35:16 +0300
+Subject: [PATCH 145/150] fix bad import
+
+---
+ src/pyload/plugins/base/xfs_downloader.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/src/pyload/plugins/base/xfs_downloader.py
++++ b/src/pyload/plugins/base/xfs_downloader.py
+@@ -7,7 +7,7 @@ from datetime import timedelta
+ from urllib.parse import urljoin
+ 
+ from pyload.core.utils import parse, seconds
+-from pyload.core.utils.old import html_unescape
++from pyload.core.utils.web.purge import unescape as html_unescape
+ 
+ from ..anticaptchas.ReCaptcha import ReCaptcha
+ from ..anticaptchas.SolveMedia import SolveMedia

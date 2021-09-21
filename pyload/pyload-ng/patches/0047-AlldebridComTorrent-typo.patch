@@ -1,0 +1,20 @@
+From c81d5e9ea04bf848831c980390f43c1dbf962229 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sun, 16 May 2021 17:52:56 +0300
+Subject: [PATCH 047/150] [AlldebridComTorrent] typo
+
+---
+ src/pyload/plugins/decrypters/AlldebridComTorrent.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/src/pyload/plugins/decrypters/AlldebridComTorrent.py
++++ b/src/pyload/plugins/decrypters/AlldebridComTorrent.py
+@@ -60,7 +60,7 @@ class AlldebridComTorrent(SimpleDecrypte
+             if self.pyfile.url.startswith("http"):
+                 #: remote URL, download the torrent to tmp directory
+                 torrent_content = self.load(self.pyfile.url, decode=False)
+-                torrent_filename = safejoin(self.pyload.tempdir, "tmp_%s.torrent" % self.pyfile.package().name)
++                torrent_filename = safejoin(self.pyload.tempdir, "tmp_{}.torrent".format(self.pyfile.package().name))
+                 with open(torrent_filename, "wb") as f:
+                     f.write(torrent_content)
+ 

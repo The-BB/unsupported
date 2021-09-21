@@ -1,0 +1,129 @@
+From e40e156b9b7a8bfdc60fa1477041fa101ec3edbb Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Fri, 14 May 2021 15:08:42 +0300
+Subject: [PATCH 028/150] [OneFichierCom] sync with stable
+
+---
+ src/pyload/plugins/accounts/OneFichierCom.py  | 12 ++--
+ .../plugins/downloaders/OneFichierCom.py      | 60 +------------------
+ 2 files changed, 7 insertions(+), 65 deletions(-)
+
+--- a/src/pyload/plugins/accounts/OneFichierCom.py
++++ b/src/pyload/plugins/accounts/OneFichierCom.py
+@@ -33,18 +33,14 @@ class OneFichierCom(BaseAccount):
+ 
+         m = re.search(self.VALID_UNTIL_PATTERN, html)
+         if m is not None:
+-            expiredate = m.group(1)
+-            self.log_debug("Expire date: " + expiredate)
++            expire_date = m.group(1)
++            self.log_debug("Expire date: " + expire_date)
+ 
+             try:
+-                validuntil = time.mktime(time.strptime(expiredate, "%Y-%m-%d"))
++                validuntil = time.mktime(time.strptime(expire_date, "%Y-%m-%d"))
+ 
+             except Exception as exc:
+-                self.log_error(
+-                    exc,
+-                    exc_info=self.pyload.debug > 1,
+-                    stack_info=self.pyload.debug > 2,
+-                )
++                self.log_error(exc)
+ 
+             else:
+                 premium = True
+--- a/src/pyload/plugins/downloaders/OneFichierCom.py
++++ b/src/pyload/plugins/downloaders/OneFichierCom.py
+@@ -11,7 +11,7 @@ from ..helpers import format_exc
+ class OneFichierCom(SimpleDownloader):
+     __name__ = "OneFichierCom"
+     __type__ = "downloader"
+-    __version__ = "1.13"
++    __version__ = "1.18"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?(?:(?P<ID1>\w+)\.)?(?P<HOST>1fichier\.com|alterupload\.com|cjoint\.net|d(?:es)?fichiers\.com|dl4free\.com|megadl\.fr|mesfichiers\.org|piecejointe\.net|pjointe\.com|tenvoi\.com)(?:/\?(?P<ID2>\w+))?"
+@@ -37,8 +37,6 @@ class OneFichierCom(SimpleDownloader):
+         ("GammaC0de", "nitzo2001[AT]yahoo[DOT]com"),
+     ]
+ 
+-    DISPOSITION = False  # TODO: Remove disposition in 0.6.x
+-
+     URL_REPLACEMENTS = [
+         (
+             __pattern__ + ".*",
+@@ -51,9 +49,7 @@ class OneFichierCom(SimpleDownloader):
+ 
+     NAME_PATTERN = r">Filename :</td>\s*<td.*>(?P<N>.+?)<"
+     SIZE_PATTERN = r">Size :</td>\s*<td.*>(?P<S>[\d.,]+) (?P<U>[\w^_]+)"
+-    OFFLINE_PATTERN = (
+-        r"(?:File not found !\s*<)|(?:>The requested file has been deleted)"
+-    )
++    OFFLINE_PATTERN = r"(?:File not found !\s*<|>\s*The requested file (?:has been deleted|do(?:es)? not exist))"
+     LINK_PATTERN = r'<a href="(.+?)".*>Click here to download the file</a>'
+     TEMP_OFFLINE_PATTERN = r"Without subscription, you can only download one file at|Our services are in maintenance"
+     PREMIUM_ONLY_PATTERN = r"is not possible to unregistered users|need a subscription"
+@@ -65,54 +61,6 @@ class OneFichierCom(SimpleDownloader):
+         self.chunk_limit = -1 if self.premium else 1
+         self.resume_download = True
+ 
+-    @classmethod
+-    def get_info(cls, url="", html=""):
+-        redirect = url
+-        for i in range(10):
+-            try:
+-                headers = {
+-                    k.lower(): v
+-                    for k, v in re.findall(
+-                        r"(?P<name>.+?): (?P<value>.+?)\r?\n",
+-                        get_url(redirect, just_header=True),
+-                    )
+-                }
+-                if "location" in headers and headers["location"]:
+-                    redirect = headers["location"]
+-
+-                else:
+-                    if headers.get("content-type") == "application/octet-stream":
+-                        if "filename=" in headers.get("content-disposition"):
+-                            _name = dict(
+-                                i.strip().split("=")
+-                                for i in headers["content-disposition"].split(";")[1:]
+-                            )
+-                            name = _name["filename"].strip("\"'")
+-                        else:
+-                            name = url
+-
+-                        info = {
+-                            "name": name,
+-                            "size": int(headers.get("content-length")),
+-                            "status": 7,
+-                            "url": url,
+-                        }
+-
+-                    else:
+-                        info = super(OneFichierCom, cls).get_info(url, html)
+-
+-                    break
+-
+-            except Exception as exc:
+-                print(format_exc())
+-                info = {"status": 8, "error": exc}
+-                break
+-
+-        else:
+-            info = {"status": 8, "error": "Too many redirects"}
+-
+-        return info
+-
+     def handle_free(self, pyfile):
+         url, inputs = self.parse_html_form(r'action="https://1fichier.com/\?[\w^_]+')
+ 
+@@ -141,6 +89,4 @@ class OneFichierCom(SimpleDownloader):
+             self.link = m.group(1)
+ 
+     def handle_premium(self, pyfile):
+-        self.download(
+-            pyfile.url, post={"did": 0, "dl_no_ssl": "on"}, disposition=False
+-        )  # TODO: Remove disposition in 0.6.x
++        self.download(pyfile.url, post={"did": 0, "dl_no_ssl": "on"})

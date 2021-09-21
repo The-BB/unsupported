@@ -1,0 +1,1716 @@
+From 5bb9cf604da4f0165129e8f15fc6d76bcb33b5d0 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sun, 16 May 2021 18:54:53 +0300
+Subject: [PATCH 050/150] add missing plugins from stable
+
+---
+ src/pyload/plugins/accounts/CzshareCom.py     |  63 +++++
+ src/pyload/plugins/accounts/DownsterNet.py    | 138 +++++++++
+ src/pyload/plugins/accounts/ExtmatrixCom.py   | 107 +++++++
+ .../plugins/accounts/GetTwentyFourOrg.py      |  55 ++++
+ src/pyload/plugins/accounts/PorntrexCom.py    |  40 +++
+ src/pyload/plugins/accounts/TbSevenPl.py      |  69 +++++
+ .../plugins/decrypters/CzshareComFolder.py    |  40 +++
+ src/pyload/plugins/downloaders/AlfafileNet.py |  96 +++++++
+ src/pyload/plugins/downloaders/AnonfileCom.py |  35 +++
+ src/pyload/plugins/downloaders/CosmoboxOrg.py |  69 +++++
+ src/pyload/plugins/downloaders/CzshareCom.py  | 174 ++++++++++++
+ src/pyload/plugins/downloaders/DownsterNet.py |  45 +++
+ .../plugins/downloaders/ExtmatrixCom.py       |  38 +++
+ src/pyload/plugins/downloaders/FileAl.py      |  35 +++
+ .../plugins/downloaders/GetTwentyFourOrg.py   |  64 +++++
+ src/pyload/plugins/downloaders/HitfileNet.py  |  96 +++++++
+ src/pyload/plugins/downloaders/LibgenIo.py    | 265 ++++++++++++++++++
+ src/pyload/plugins/downloaders/MegaupNet.py   |  36 +++
+ .../plugins/downloaders/NippyshareCom.py      |  28 ++
+ src/pyload/plugins/downloaders/PorntrexCom.py |  53 ++++
+ src/pyload/plugins/downloaders/TbSevenPl.py   |  57 ++++
+ 21 files changed, 1603 insertions(+)
+ create mode 100644 src/pyload/plugins/accounts/CzshareCom.py
+ create mode 100644 src/pyload/plugins/accounts/DownsterNet.py
+ create mode 100644 src/pyload/plugins/accounts/ExtmatrixCom.py
+ create mode 100644 src/pyload/plugins/accounts/GetTwentyFourOrg.py
+ create mode 100644 src/pyload/plugins/accounts/PorntrexCom.py
+ create mode 100644 src/pyload/plugins/accounts/TbSevenPl.py
+ create mode 100644 src/pyload/plugins/decrypters/CzshareComFolder.py
+ create mode 100644 src/pyload/plugins/downloaders/AlfafileNet.py
+ create mode 100644 src/pyload/plugins/downloaders/AnonfileCom.py
+ create mode 100644 src/pyload/plugins/downloaders/CosmoboxOrg.py
+ create mode 100644 src/pyload/plugins/downloaders/CzshareCom.py
+ create mode 100644 src/pyload/plugins/downloaders/DownsterNet.py
+ create mode 100644 src/pyload/plugins/downloaders/ExtmatrixCom.py
+ create mode 100644 src/pyload/plugins/downloaders/FileAl.py
+ create mode 100644 src/pyload/plugins/downloaders/GetTwentyFourOrg.py
+ create mode 100644 src/pyload/plugins/downloaders/HitfileNet.py
+ create mode 100644 src/pyload/plugins/downloaders/LibgenIo.py
+ create mode 100644 src/pyload/plugins/downloaders/MegaupNet.py
+ create mode 100644 src/pyload/plugins/downloaders/NippyshareCom.py
+ create mode 100644 src/pyload/plugins/downloaders/PorntrexCom.py
+ create mode 100644 src/pyload/plugins/downloaders/TbSevenPl.py
+
+--- /dev/null
++++ b/src/pyload/plugins/accounts/CzshareCom.py
+@@ -0,0 +1,63 @@
++# -*- coding: utf-8 -*-
++
++import re
++import time
++
++from ..base.account import BaseAccount
++
++
++class CzshareCom(BaseAccount):
++    __name__ = "CzshareCom"
++    __type__ = "account"
++    __version__ = "0.28"
++    __status__ = "testing"
++
++    __description__ = """Czshare.com account plugin, now Sdilej.cz"""
++    __license__ = "GPLv3"
++    __authors__ = [
++        ("zoidberg", "zoidberg@mujmail.cz"),
++        ("stickell", "l.stickell@yahoo.it"),
++        ("ondrej", "git@ondrej.it"),
++    ]
++
++    CREDIT_LEFT_PATTERN = r'^\s+<div class="credit">\s+\n.+<strong>([\d,]+)(KB|MB|GB)</strong>\s+\n.+<!-- \.credit -->\s+$'
++    VALID_UNTIL_PATTERN = r'^\s+<tr class="active">\s+\n.+\n\s+<td>([\d\.: ]+)</td>\s+$'
++
++    def grab_info(self, user, password, data):
++        premium = False
++        validuntil = None
++        trafficleft = None
++
++        html = self.load("https://sdilej.cz/prehled_kreditu/")
++
++        try:
++            m = re.search(self.CREDIT_LEFT_PATTERN, html, re.MULTILINE)
++            trafficleft = self.parse_traffic(m.group(1), m.group(2))
++
++            v = re.search(self.VALID_UNTIL_PATTERN, html, re.MULTILINE)
++            validuntil = time.mktime(time.strptime(v.group(1), "%d.%m.%y %H:%M"))
++
++        except Exception as exc:
++            self.log_error(exc)
++
++        else:
++            premium = True
++
++        return {
++            "premium": premium,
++            "validuntil": validuntil,
++            "trafficleft": trafficleft,
++        }
++
++    def signin(self, user, password, data):
++        html = self.load(
++            "https://sdilej.cz/index.php",
++            post={
++                "Prihlasit": "Prihlasit",
++                "login-password": password,
++                "login-name": user,
++            },
++        )
++
++        if '<div class="login' in html:
++            self.fail_login()
+--- /dev/null
++++ b/src/pyload/plugins/accounts/DownsterNet.py
+@@ -0,0 +1,138 @@
++# -*- coding: utf-8 -*-
++
++import json
++import random
++import string
++import time
++
++import pycurl
++from pyload.core.network.http.exceptions import BadHeader
++
++from ..base.multi_account import MultiAccount
++
++
++class DownsterApi(object):
++    API_URL = "https://downster.net/api/"
++
++    def __init__(self, plugin):
++        self.plugin = plugin
++
++        if hasattr(self.plugin, "account"):
++            self.account_plugin = self.plugin.account
++
++        else:
++            self.account_plugin = self.plugin
++
++    def request(self, method, get={}, **kwargs):
++        self.plugin.req.http.c.setopt(
++            pycurl.HTTPHEADER,
++            [
++                "Accept: application/json, text/plain, */",
++                "Content-Type: application/json",
++                "X-Flow-ID: " + self.flow_id(),
++            ],
++        )
++        self.plugin.req.http.c.setopt(
++            pycurl.USERAGENT,
++            "User-Agent: pyLoad/"
++            + self.plugin.pyload.version
++            + " DownsterNet/"
++            + self.account_plugin.__version__,
++        )
++
++        try:
++            res = self.plugin.load(
++                self.API_URL + method, get=get, post=json.dumps(kwargs)
++            )
++        except BadHeader as exc:
++            res = exc.content
++
++        res = json.loads(res)
++
++        return res
++
++    def rnd(self):
++        return "".join(
++            [random.choice(string.ascii_lowercase + string.digits) for n in range(5)]
++        )
++
++    def flow_id(self):
++        user_flow_id = self.account_plugin.info["data"].get("user_flow_id")
++        self.plugin.log_debug("User flow id: {}".format(user_flow_id))
++        if not user_flow_id:
++            self.account_plugin.info["data"]["user_flow_id"] = self.rnd()
++            self.plugin.log_info(
++                "Created user flow id: {}".format(
++                    self.account_plugin.info["data"]["user_flow_id"]
++                )
++            )
++
++        return (
++            "PYL_" + self.account_plugin.info["data"]["user_flow_id"] + "_" + self.rnd()
++        )
++
++
++class DownsterNet(MultiAccount):
++    __name__ = "DownsterNet"
++    __type__ = "account"
++    __version__ = "0.04"
++    __status__ = "testing"
++
++    __config__ = [
++        ("mh_mode", "all;listed;unlisted", "Filter hosters to use", "all"),
++        ("mh_list", "str", "Hoster list (comma separated)", ""),
++        ("mh_interval", "int", "Reload interval in hours", 12),
++    ]
++
++    __description__ = """Downster.net account plugin"""
++    __license__ = "GPLv3"
++    __authors__ = [(None, None)]
++
++    api = None
++
++    def grab_hosters(self, user, password, data):
++        api_data = self.api.request("download/usage")
++        if not api_data["success"]:
++            self.log_error("Could not get hoster info: " + api_data["error"])
++            return []
++
++        else:
++            return [hoster["hoster"] for hoster in api_data["data"]]
++
++    def grab_info(self, user, password, data):
++        api_data = self.api.request("user/info")
++
++        if not api_data["success"]:
++            validuntil = None
++            trafficleft = None
++            premium = False
++
++            self.log_error("Could not get user info: " + api_data["error"])
++
++        else:
++            validuntil = time.mktime(
++                time.strptime(
++                    api_data["data"]["premiumUntil"], "%Y-%m-%dT%H:%M:%S.%f+00:00"
++                )
++            )
++            trafficleft = -1
++            premium = validuntil > time.time()
++
++        return {
++            "validuntil": validuntil,
++            "trafficleft": trafficleft,
++            "premium": premium,
++        }
++
++    def signin(self, user, password, data):
++        if self.api is None:
++            self.api = DownsterApi(self)
++
++        api_data = self.api.request("user/info")
++        if api_data["success"]:
++            self.skip_login()
++
++        api_data = self.api.request("user/authenticate", email=user, password=password)
++
++        if not api_data["success"]:
++            self.fail_login(api_data["error"])
+--- /dev/null
++++ b/src/pyload/plugins/accounts/ExtmatrixCom.py
+@@ -0,0 +1,107 @@
++# -*- coding: utf-8 -*-
++
++import re
++import time
++import urllib.parse
++
++from pyload.core.datatypes.pyfile import PyFile
++
++from ..base.account import BaseAccount
++from ..base.captcha import BaseCaptcha
++
++
++class ExtmatrixCom(BaseAccount):
++    __name__ = "ExtmatrixCom"
++    __type__ = "account"
++    __version__ = "0.01"
++    __status__ = "testing"
++
++    __description__ = """Extmatrix.com account plugin"""
++    __license__ = "GPLv3"
++    __authors__ = [("GammaC0de", "nitzo2001[AT]yahoo[DOT]com")]
++
++    VALID_UNTIL_PATTERN = r">Premium End:</td>\s*<td>([\d-]+)</td>"
++
++    def grab_info(self, user, password, data):
++        html = self.load("https://www.extmatrix.com")
++
++        premium = ">Premium Member<" in html
++
++        m = re.search(self.VALID_UNTIL_PATTERN, html)
++        if m is not None:
++            validuntil = time.mktime(
++                time.strptime(m.group(1) + " 23:59:59", "%d-%m-%Y %H:%M:%S")
++            )
++
++        else:
++            self.log_error(self._("VALID_UNTIL_PATTERN not found"))
++            validuntil = None
++
++        return {"validuntil": validuntil, "trafficleft": None, "premium": premium}
++
++    def signin(self, user, password, data):
++        html = self.load("https://www.extmatrix.com/login.php")
++        if 'href="./logout.php"' in html:
++            self.skip_login()
++
++        # dummy pyfile
++        pyfile = PyFile(
++            self.pyload.files,
++            -1,
++            "https://www.extmatrix.com",
++            "https://www.extmatrix.com",
++            0,
++            0,
++            "",
++            self.classname,
++            -1,
++            -1,
++        )
++        pyfile.plugin = self
++
++        for i in range(5):
++            m = re.search(r'<img src="(.+?captcha\.php.+?)"', html)
++            if m is None:
++                self.fail_login("Captcha pattern not found")
++
++            captcha_url = urllib.parse.urljoin("https://www.extmatrix.com/", m.group(1))
++            self.captcha = BaseCaptcha(pyfile)
++            captcha_response = self.captcha.decrypt(captcha_url)
++
++            html = self.load(
++                "https://www.extmatrix.com/login.php",
++                post={
++                    "user": user,
++                    "pass": password,
++                    "submit": "Login",
++                    "task": "dologin",
++                    "return=": "./members/myfiles.php",
++                    "captcha": captcha_response,
++                },
++            )
++
++            if "Incorrect captcha code" in html:
++                self.captcha.invalid()
++
++            else:
++                self.captcha.correct()
++                break
++
++        else:
++            self.fail_login(self._("Max captcha retries reached"))
++
++        html = self.load("https://www.extmatrix.com")
++        if 'href="./logout.php"' not in html:
++            self.fail_login()
++
++    """
++     @NOTE: below are methods
++      necessary for captcha to work with account plugins
++    """
++
++    def check_status(self):
++        pass
++
++    def retry_captcha(self, attemps=10, wait=1, msg="Max captcha retries reached"):
++        self.captcha.invalid()
++        self.fail_login(msg=self._("Invalid captcha"))
+--- /dev/null
++++ b/src/pyload/plugins/accounts/GetTwentyFourOrg.py
+@@ -0,0 +1,55 @@
++# -*- coding: utf-8 -*-
++
++import json
++import time
++from hashlib import sha256
++
++import pycurl
++
++from ..base.multi_account import MultiAccount
++
++
++class GetTwentyFourOrg(MultiAccount):
++    __name__ = "GetTwentyFourOrg"
++    __type__ = "account"
++    __version__ = "0.04"
++    __status__ = "testing"
++
++    __description__ = "GeT24.org account plugin"
++    __license__ = "GPLv3"
++    __authors__ = ["get24", "contact@get24.org"]
++
++    API_URL = "https://get24.org/api/"
++
++    def api_request(self, method, **kwargs):
++        self.req.http.c.setopt(
++            pycurl.USERAGENT, "pyLoad/{}".format(self.pyload.version).encode()
++        )
++        json_data = self.load(self.API_URL + method, post=kwargs)
++        return json.loads(json_data)
++
++    def grab_hosters(self, user, password, data):
++        hosts = self.api_request("hosts/enabled")
++        self.log_debug(hosts)
++        return hosts
++
++    def grab_info(self, user, password, data):
++        rc = self.api_request(
++            "login", email=user, passwd_sha256=self.info["data"]["passwd_sha256"]
++        )
++        self.log_debug(rc)
++
++        validuntil = time.mktime(time.strptime(rc["date_expire"], "%Y-%m-%d %H:%M:%S"))
++
++        return {
++            "validuntil": validuntil,
++            "trafficleft": rc["transfer_left"] * 2 ** 30,  # gb -> b
++            "premium": rc["status"] == "premium",
++        }
++
++    def signin(self, user, password, data):
++        data["passwd_sha256"] = sha256(password.encode("ascii")).hexdigest()
++        rc = self.api_request("login", email=user, passwd_sha256=data["passwd_sha256"])
++        if rc.get("ok") is False:
++            self.log_error(rc["reason"])
++            self.fail_login()
+--- /dev/null
++++ b/src/pyload/plugins/accounts/PorntrexCom.py
+@@ -0,0 +1,40 @@
++# -*- coding: utf-8 -*-
++
++from ..base.account import BaseAccount
++from ..helpers import parse_html_form
++
++
++class PorntrexCom(BaseAccount):
++    # Actually not needed
++    __name__ = "PorntrexCom"
++    __type__ = "account"
++    __version__ = "0.01"
++    __status__ = "testing"
++
++    __description__ = """Porntrex.com account plugin"""
++    __license__ = "GPLv3"
++    __authors__ = [("ondrej", "git@ondrej.it")]
++
++    def grab_info(self, user, password, data):
++        return {
++            "validuntil": -1,
++            "trafficleft": -1,
++        }
++
++    def signin(self, user, password, data):
++        html = self.load("https://www.porntrex.com")
++        if ">Log out<" in html:
++            self.skip_login()
++
++        url, inputs = parse_html_form(
++            'action="https://www.porntrex.com/ajax-login/"', html
++        )
++        if inputs is None:
++            self.fail_login("Login form not found")
++
++        inputs["username"] = user
++        inputs["pass"] = password
++
++        html = self.load(url, post=inputs)
++        if ">Log out<" not in html:
++            self.fail_login()
+--- /dev/null
++++ b/src/pyload/plugins/accounts/TbSevenPl.py
+@@ -0,0 +1,69 @@
++# -*- coding: utf-8 -*-
++
++import re
++import time
++
++from ..base.multi_account import MultiAccount
++
++
++class TbSevenPl(MultiAccount):
++    __name__ = "TbSevenPl"
++    __type__ = "account"
++    __version__ = "0.02"
++    __status__ = "testing"
++
++    __config__ = [
++        ("mh_mode", "all;listed;unlisted", "Filter hosters to use", "all"),
++        ("mh_list", "str", "Hoster list (comma separated)", ""),
++        ("mh_interval", "int", "Reload interval in hours", 12),
++    ]
++
++    __description__ = "tb7.pl account plugin"
++    __license__ = "GPLv3"
++    __authors__ = [("GammaC0de", "nitzo2001[AT]yahoo[DOT]com")]
++
++    VALID_UNTIL_PATTERN = r"Dostęp Premium ważny do <b>([\d. /:]+?)<"
++    TRAFFIC_LEFT_PATTERN = (
++        r"Pozostały Limit Premium do wykorzystania: <b>(?P<S>[\d.,]+) (?P<U>[\w^_]+)"
++    )
++
++    def grab_hosters(self, user, password, data):
++        hosts = self.load("https://tb7.pl/jdhostingi.txt")
++        return hosts.splitlines()
++
++    def grab_info(self, user, password, data):
++        premium = True
++        validuntil = None
++        trafficleft = None
++
++        html = self.load("https://tb7.pl/")
++        m = re.search(self.VALID_UNTIL_PATTERN, html)
++        if m is not None:
++            validuntil = time.mktime(time.strptime(m.group(1), "%d.%m.%Y / %H:%M"))
++
++        else:
++            self.log_error("VALID_UNTIL_PATTERN not found")
++
++        m = re.search(self.TRAFFIC_LEFT_PATTERN, html)
++        if m is not None:
++            trafficleft = self.parse_traffic(m.group("S"), m.group("U"))
++
++        else:
++            self.log_error("TRAFFIC_LEFT_PATTERN not found")
++
++        return {
++            "validuntil": validuntil,
++            "trafficleft": trafficleft,
++            "premium": premium,
++        }
++
++    def signin(self, user, password, data):
++        html = self.load("https://tb7.pl/")
++        if "Wyloguj" in html:
++            self.skip_login()
++
++        html = self.load(
++            "https://tb7.pl/login", post={"login": user, "password": password}
++        )
++        if "Wyloguj" not in html:
++            self.fail_login()
+--- /dev/null
++++ b/src/pyload/plugins/decrypters/CzshareComFolder.py
+@@ -0,0 +1,40 @@
++# -*- coding: utf-8 -*-
++
++import re
++
++from ..base.decrypter import BaseDecrypter
++
++
++class CzshareComFolder(BaseDecrypter):
++    __name__ = "CzshareComFolder"
++    __type__ = "decrypter"
++    __version__ = "0.27"
++    __status__ = "testing"
++
++    __pattern__ = r"https?://(?:www\.)?(czshare|sdilej)\.(com|cz)/folders/.+"
++    __config__ = [
++        ("activated", "bool", "Activated", True),
++        ("use_premium", "bool", "Use premium account if available", True),
++        (
++            "folder_per_package",
++            "Default;Yes;No",
++            "Create folder for each package",
++            "Default",
++        ),
++    ]
++
++    __description__ = """Czshare.com folder decrypter plugin, now Sdilej.cz"""
++    __license__ = "GPLv3"
++    __authors__ = [("zoidberg", "zoidberg@mujmail.cz")]
++
++    FOLDER_PATTERN = r'<tr class="subdirectory">\s*<td>\s*<table>(.*?)</table>'
++    LINK_PATTERN = r'<td class="col2"><a href="(.+?)">info</a></td>'
++
++    def decrypt(self, pyfile):
++        html = self.load(pyfile.url)
++
++        m = re.search(self.FOLDER_PATTERN, html, re.S)
++        if m is None:
++            self.error(self._("FOLDER_PATTERN not found"))
++
++        self.links.extend(re.findall(self.LINK_PATTERN, m.group(1)))
+--- /dev/null
++++ b/src/pyload/plugins/downloaders/AlfafileNet.py
+@@ -0,0 +1,96 @@
++# -*- coding: utf-8 -*-
++
++import json
++import re
++
++from pyload.core.utils import seconds
++
++from ..anticaptchas.SolveMedia import SolveMedia
++from ..base.simple_downloader import SimpleDownloader
++
++
++class AlfafileNet(SimpleDownloader):
++    __name__ = "AlfafileNet"
++    __type__ = "downloader"
++    __version__ = "0.06"
++    __status__ = "testing"
++
++    __pattern__ = r"https?://(?:www\.)?(alfafile\.net)/file/(?P<ID>\w+)"
++    __config__ = [
++        ("enabled", "bool", "Activated", True),
++        ("use_premium", "bool", "Use premium account if available", True),
++        ("fallback", "bool", "Fallback to free download if premium fails", True),
++        ("chk_filesize", "bool", "Check file size", True),
++        ("max_wait", "int", "Reconnect if waiting time is greater than minutes", 10),
++    ]
++
++    __description__ = """alfafile.net hoster plugin"""
++    __license__ = "GPLv3"
++    __authors__ = [("GammaC0de", "nitzo2001[AT]yahoo[DOT]com")]
++
++    URL_REPLACEMENTS = [(__pattern__ + ".*", r"https://alfafile.net/file/\g<ID>")]
++    COOKIES = [("alfafile.net", "lang", "en")]
++
++    NAME_PATTERN = r'<strong id="st_file_name" title="(?P<N>.+?)"'
++    SIZE_PATTERN = r'<span class="size">(?P<S>[\d.,]+) (?P<U>[\w^_]+)<'
++
++    LINK_PATTERN = r'<a href="(.+?)" class="big_button"><span>Download</span></a>'
++
++    DL_LIMIT_PATTERN = r"Try again in (.+?)<"
++    PREMIUM_ONLY_PATTERN = r"In order to buy premium access"
++
++    def handle_free(self, pyfile):
++        json_data = self.load(
++            self.fixurl("/download/start_timer/" + self.info["pattern"]["ID"])
++        )
++        json_data = json.loads(json_data)
++
++        if json_data["show_timer"]:
++            self.wait(json_data["timer"])
++
++            redirect_url = self.fixurl(json_data["redirect_url"])
++            self.data = self.load(redirect_url)
++
++            solvemedia = SolveMedia(self.pyfile)
++            captcha_key = solvemedia.detect_key()
++            if captcha_key:
++                self.captcha = solvemedia
++                response, challenge = solvemedia.challenge(captcha_key)
++
++                self.data = self.load(
++                    redirect_url,
++                    post={"adcopy_response": response, "adcopy_challenge": challenge},
++                )
++
++                if "Invalid captcha" in self.data:
++                    self.retry_captcha()
++                else:
++                    self.captcha.correct()
++
++                m = re.search(self.LINK_PATTERN, self.data)
++                if m is not None:
++                    self.link = m.group(1)
++
++            else:
++                self.error(self._("Captcha pattern not found"))
++
++        else:
++            self.data = json_data["html"]
++            self.check_errors()
++
++    def check_errors(self):
++        super().check_errors()
++
++        if re.search(r"You can't download not more than \d+ file at a time", self.data):
++            self.retry(
++                wait=20 * 60,
++                msg=self._("Too many max simultaneous downloads"),
++                msgfail=self._("Too many max simultaneous downloads"),
++            )
++
++        if "You have reached your daily downloads limit" in self.data:
++            self.retry(
++                wait=seconds.to_midnight(),
++                msg=self._("Daily download limit reached"),
++                msgfail=self._("Daily download limit reached"),
++            )
+--- /dev/null
++++ b/src/pyload/plugins/downloaders/AnonfileCom.py
+@@ -0,0 +1,35 @@
++# -*- coding: utf-8 -*-
++
++from ..base.simple_downloader import SimpleDownloader
++
++
++class AnonfileCom(SimpleDownloader):
++    __name__ = "AnonfileCom"
++    __type__ = "downloader"
++    __version__ = "0.02"
++    __status__ = "testing"
++
++    __pattern__ = r"https?://(?:www\.)?anonfiles?\.com/(?P<ID>\w+)"
++    __config__ = [
++        ("enabled", "bool", "Activated", True),
++        ("use_premium", "bool", "Use premium account if available", True),
++        ("fallback", "bool", "Fallback to free download if premium fails", True),
++        ("chk_filesize", "bool", "Check file size", True),
++        ("max_wait", "int", "Reconnect if waiting time is greater than minutes", 10),
++    ]
++
++    __description__ = """Anonfile.com downloader plugin"""
++    __license__ = "GPLv3"
++    __authors__ = [("GammaC0de", "nitzo2001[AT]yahoo[DOT]com")]
++
++    NAME_PATTERN = r'class="text-center text-wordwrap">(?P<N>.+?)<'
++    SIZE_PATTERN = r"Download\s*\((?P<S>[\d.,]+) (?P<U>[\w^_]+)\)"
++
++    LINK_PATTERN = r'href="(https://cdn-\d+.anonfiles.com/.+?)"'
++
++    URL_REPLACEMENTS = [(__pattern__ + ".*", r"https://anonfiles.com/\g<ID>")]
++
++    def setup(self):
++        self.multi_dl = True
++        self.resume_download = True
++        self.chunk_limit = -1
+--- /dev/null
++++ b/src/pyload/plugins/downloaders/CosmoboxOrg.py
+@@ -0,0 +1,69 @@
++# -*- coding: utf-8 -*-
++
++import re
++
++from pyload.core.utils import parse
++
++from ..base.xfs_downloader import XFSDownloader
++
++
++class CosmoboxOrg(XFSDownloader):
++    __name__ = "CosmoboxOrg"
++    __type__ = "downloader"
++    __version__ = "0.03"
++    __status__ = "testing"
++
++    __pattern__ = r"https?://cosmobox\.org/\w{12}"
++    __config__ = [
++        ("enabled", "bool", "Activated", True),
++        ("chk_filesize", "bool", "Check file size", True),
++        ("max_wait", "int", "Reconnect if waiting time is greater than minutes", 10),
++    ]
++
++    __description__ = """Cosmobox.org downloader plugin"""
++    __license__ = "GPLv3"
++    __authors__ = [("OzzieIsaacs", "Ozzie.Fernandez.Isaacs@googlemail.com")]
++
++    PLUGIN_DOMAIN = "cosmobox.org"
++
++    NAME_PATTERN = r"You're downloading: (?P<N>.+?)<"
++    SIZE_PATTERN = (
++        r'<span class="label label-default">(?P<S>[\d.,]+) (?P<U>[\w^_]+)</span>'
++    )
++    WAIT_PATTERN = r'<span class="circle"><span class="seconds">(\d+)</span></span>'
++
++    URL_REPLACEMENTS = [(r"^http://", "https://")]
++
++    def handle_free(self, pyfile):
++        action, inputs = self.parse_html_form(
++            input_names={"op": re.compile(r"^download")}
++        )
++        if inputs is None:
++            self.fail("Free download form not found")
++
++        inputs["method_free"] = "Free+Download"
++
++        self.data = self.load(
++            "https://cosmobox.org/download",
++            post=inputs,
++            ref=self.pyfile.url,
++            redirect=False,
++        )
++
++        m = re.search(r'role="alert">You have reached your download limit', self.data)
++        if m is not None:
++            wait_time = 3 * 60 * 60  #: wait 3 hours
++            self.wait(wait_time)
++
++        else:
++            m = re.search(self.WAIT_PATTERN, self.data)
++            if m is not None:
++                waitmsg = m.group(1).strip()
++                wait_time = parse.seconds(waitmsg)
++                self.wait(wait_time)
++
++        action, inputs = self.parse_html_form(
++            input_names={"op": re.compile(r"^download")}
++        )
++        self.handle_captcha(inputs)
++        self.data = self.download("https://cosmobox.org/download", post=inputs)
+--- /dev/null
++++ b/src/pyload/plugins/downloaders/CzshareCom.py
+@@ -0,0 +1,174 @@
++# -*- coding: utf-8 -*-
++
++import re
++
++from pyload.core.utils import parse
++
++from ..base.simple_downloader import SimpleDownloader
++
++
++class CzshareCom(SimpleDownloader):
++    __name__ = "CzshareCom"
++    __type__ = "downloader"
++    __version__ = "1.11"
++    __status__ = "testing"
++
++    __pattern__ = r"https?://(?:www\.)?(czshare|sdilej)\.(com|cz)/(\d+/|download\.php\?).+"
++    __config__ = [
++        ("enabled", "bool", "Activated", True),
++        ("use_premium", "bool", "Use premium account if available", True),
++        ("fallback", "bool", "Fallback to free download if premium fails", True),
++        ("chk_filesize", "bool", "Check file size", True),
++        ("max_wait", "int", "Reconnect if waiting time is greater than minutes", 10),
++    ]
++
++    __description__ = """CZshare.com downloader plugin, now Sdilej.cz"""
++    __license__ = "GPLv3"
++    __authors__ = [
++        ("zoidberg", "zoidberg@mujmail.cz"),
++        ("ondrej", "git@ondrej.it"),
++    ]
++
++    NAME_PATTERN = r'<div class="tab" id="parameters">\s*<p>\s*Cel. n.zev: <a href=.*?>(?P<N>.+?)</a>'
++    SIZE_PATTERN = r'<div class="tab" id="category">(?:\s*<p>[^\n]*</p>)*\s*Velikost:\s*(?P<S>[\d .,]+)(?P<U>[\w^_]+)\s*</div>'
++    OFFLINE_PATTERN = r'<div class="header clearfix">\s*<h2 class="red">'
++
++    SIZE_REPLACEMENTS = [(" ", "")]
++    URL_REPLACEMENTS = [
++        (r"http://[^/]*/download.php\?.*?id=(\w+).*", r"http://sdilej.cz/\1/x/")
++    ]
++
++    CHECK_TRAFFIC = True
++
++    FREE_URL_PATTERN = r'<a href="(.+?)" class="page-download">[^>]*alt="(.+?)" /></a>'
++    FREE_FORM_PATTERN = r'<form action="download\.php" method="post">\s*<img src="captcha\.php" id="captcha" />(.*?)</form>'
++    PREMIUM_FORM_PATTERN = r'<form action="/profi_down\.php" method="post">(.*?)</form>'
++    FORM_INPUT_PATTERN = r'<input[^>]* name="(.+?)" value="(.+?)"[^>]*/>'
++    MULTIDL_PATTERN = r"<p><font color=\'red\'>Z.*?PROFI.</font></p>"
++    USER_CREDIT_PATTERN = r'<div class="credit">\s*kredit: <strong>([\d .,]+)(\w+)</strong>\s*</div><!-- .credit -->'
++
++    def out_of_traffic(self):
++        #: Check if user logged in
++        m = re.search(self.USER_CREDIT_PATTERN, self.data)
++        if m is None:
++            self.account.relogin()
++            self.data = self.load(self.pyfile.url)
++            m = re.search(self.USER_CREDIT_PATTERN, self.data)
++            if m is None:
++                return True
++
++        #: Check user credit
++        try:
++            credit = parse.bytesize(m.group(1).replace(" ", ""), m.group(2))
++            self.log_info(
++                self._("Premium download for {} KiB of Credit").format(
++                    self.pyfile.size / 1024
++                )
++            )
++            self.log_info(
++                self._("User {} has {} KiB left").format(
++                    self.account.user, credit / 1024
++                )
++            )
++            if credit < self.pyfile.size:
++                self.log_info(
++                    self._("Not enough credit to download file: {}").format(
++                        self.pyfile.name
++                    )
++                )
++                return True
++
++        except Exception as exc:
++            #: let's continue and see what happens...
++            self.log_error(exc)
++
++        return False
++
++    def handle_premium(self, pyfile):
++        try:
++            form = re.search(self.PREMIUM_FORM_PATTERN, self.data, re.S).group(1)
++            inputs = dict(re.findall(self.FORM_INPUT_PATTERN, form))
++
++        except Exception as exc:
++            self.log_error(exc)
++            self.restart(premium=False)
++
++        #: Download the file, destination is determined by pyLoad
++        self.download("http://sdilej.cz/profi_down.php", post=inputs, disposition=True)
++
++    def handle_free(self, pyfile):
++        #: Get free url
++        m = re.search(self.FREE_URL_PATTERN, self.data)
++        if m is None:
++            self.error(self._("FREE_URL_PATTERN not found"))
++
++        parsed_url = "http://sdilej.cz" + m.group(1)
++
++        self.log_debug("PARSED_URL:" + parsed_url)
++
++        #: Get download ticket and parse html
++        self.data = self.load(parsed_url)
++        if re.search(self.MULTIDL_PATTERN, self.data):
++            self.retry(5 * 60, 12, self._("Download limit reached"))
++
++        try:
++            form = re.search(self.FREE_FORM_PATTERN, self.data, re.S).group(1)
++            inputs = dict(re.findall(self.FORM_INPUT_PATTERN, form))
++            pyfile.size = int(inputs["size"])
++
++        except Exception as exc:
++            self.log_error(exc)
++            self.error(self._("Form"))
++
++        #: Get and decrypt captcha
++        captcha_url = "http://sdilej.cz/captcha.php"
++        inputs["captchastring2"] = self.captcha.decrypt(captcha_url)
++        self.data = self.load(parsed_url, post=inputs)
++
++        if "<li>Zadaný ověřovací kód nesouhlasí!</li>" in self.data:
++            self.retry_captcha()
++
++        elif re.search(self.MULTIDL_PATTERN, self.data):
++            self.retry(5 * 60, 12, self._("Download limit reached"))
++
++        else:
++            self.captcha.correct()
++
++        m = re.search("countdown_number = (\d+);", self.data)
++        self.set_wait(int(m.group(1)) if m else 50)
++
++        #: Download the file, destination is determined by pyLoad
++        self.log_debug("WAIT URL", self.req.lastEffectiveURL)
++
++        m = re.search("free_wait.php\?server=(.*?)&(.*)", self.req.lastEffectiveURL)
++        if m is None:
++            self.error(self._("Download URL not found"))
++
++        self.link = "http://{}/download.php?{}".format(m.group(1), m.group(2))
++
++        self.wait()
++
++    def check_download(self):
++        #: Check download
++        check = self.scan_download(
++            {
++                "temp offline": re.compile(r"^Soubor je do.*asn.* nedostupn.*$"),
++                "credit": re.compile(r"^Nem.*te dostate.*n.* kredit.$"),
++                "multi-dl": re.compile(self.MULTIDL_PATTERN),
++                "captcha": "<li>Zadaný ověřovací kód nesouhlasí!</li>",
++            }
++        )
++
++        if check == "temp offline":
++            self.fail(self._("File not available - try later"))
++
++        elif check == "credit":
++            self.restart(premium=False)
++
++        elif check == "multi-dl":
++            self.retry(5 * 60, 12, self._("Download limit reached"))
++
++        elif check == "captcha":
++            self.retry_captcha()
++
++        return super().check_download()
+--- /dev/null
++++ b/src/pyload/plugins/downloaders/DownsterNet.py
+@@ -0,0 +1,45 @@
++# -*- coding: utf-8 -*-
++
++from ..accounts.DownsterNet import DownsterApi
++from ..base.multi_downloader import MultiDownloader
++
++
++class DownsterNet(MultiDownloader):
++    __name__ = "DownsterNet"
++    __type__ = "downloader"
++    __version__ = "0.03"
++    __status__ = "testing"
++
++    __pattern__ = r"^unmatchable$"
++    __config__ = [
++        ("enabled", "bool", "Activated", True),
++        ("use_premium", "bool", "Use premium account if available", True),
++        ("fallback", "bool", "Fallback to free download if premium fails", False),
++        ("chk_filesize", "bool", "Check file size", True),
++        ("max_wait", "int", "Reconnect if waiting time is greater than minutes", 10),
++        ("revert_failed", "bool", "Revert to standard download if fails", False),
++    ]
++
++    __description__ = """Downster.net downloader plugin"""
++    __license__ = "GPLv3"
++    __authors__ = [(None, None)]
++
++    FILE_ERRORS = [("Error", r'{"state":"error"}'), ("Retry", r'{"state":"retry"}')]
++
++    def setup(self):
++        self.api = DownsterApi(self)
++
++    def handle_free(self, pyfile):
++        api_data = self.api.request("download/get", get={"url": pyfile.url})
++
++        if not api_data["success"]:
++            if "offline" in api_data["error"]:
++                self.offline()
++
++            else:
++                self.fail(api_data["error"])
++
++        pyfile.name = api_data["data"]["name"]
++        pyfile.size = int(api_data["data"]["size"])
++
++        self.link = api_data["data"]["downloadUrl"]
+--- /dev/null
++++ b/src/pyload/plugins/downloaders/ExtmatrixCom.py
+@@ -0,0 +1,38 @@
++# -*- coding: utf-8 -*-
++
++import re
++
++from ..base.simple_downloader import SimpleDownloader
++
++
++class ExtmatrixCom(SimpleDownloader):
++    __name__ = "ExtmatrixCom"
++    __type__ = "downloader"
++    __version__ = "0.02"
++    __status__ = "testing"
++
++    __pattern__ = r"https?://www\.extmatrix\.com/(?:get|files)/\w+"
++    __config__ = [
++        ("enabled", "bool", "Activated", True),
++        ("use_premium", "bool", "Use premium account if available", True),
++        ("fallback", "bool", "Fallback to free download if premium fails", True),
++        ("chk_filesize", "bool", "Check file size", True),
++        ("max_wait", "int", "Reconnect if waiting time is greater than minutes", 10),
++    ]
++
++    __description__ = """Extmatrix.com downloader plugin"""
++    __license__ = "GPLv3"
++    __authors__ = [("GammaC0de", "nitzo2001[AT]yahoo[DOT]com")]
++
++    LOGIN_PREMIUM = True
++    INFO_PATTERN = r">Download \| (?P<N>.+?) \((?P<S>[\d.,]+) (?P<U>[\w^_]+)\)<"
++
++    LINK_PATTERN = r'a href="(https://s\d+\.extmatrix\.com/.+?)"'
++
++    def setup(self):
++        self.chunk_limit = -1
++
++    def handle_premium(self, pyfile):
++        m = re.search(self.LINK_PATTERN, self.data)
++        if m is not None:
++            self.link = m.group(1)
+--- /dev/null
++++ b/src/pyload/plugins/downloaders/FileAl.py
+@@ -0,0 +1,35 @@
++# -*- coding: utf-8 -*-
++
++# ATTENTION: if you cannot see the interactive captcha (on firefox), make sure to activate/install X-Frame-Options Header:
++# https://addons.mozilla.org/en-US/firefox/addon/ignore-x-frame-options-header/
++
++import re
++
++from ..base.xfs_downloader import XFSDownloader
++
++
++class FileAl(XFSDownloader):
++    __name__ = "FileAl"
++    __type__ = "downloader"
++    __version__ = "0.01"
++    __status__ = "testing"
++
++    __pattern__ = r"https?://(?:www\.)?file\.al/\w{12}"
++
++    __description__ = """File.al downloader plugin"""
++    __license__ = "GPLv3"
++    __authors__ = [("igel", None)]
++
++    PLUGIN_DOMAIN = "file.al"
++    LINK_PATTERN = (
++        r'direct link.*?<a [^>]*href="(.+?)".*?>Click here to download',
++        re.MULTILINE | re.DOTALL,
++    )
++    WAIT_PATTERN = r"countdown.*?seconds.*?(\d+)"
++
++    RECAPTCHA_PATTERN = r"g-recaptcha.*?sitekey=[\"']([^\"]*)"
++    PREMIUM_ONLY_PATTERN = r"(?:[Pp]remium Users only|can download files up to.*only)"
++
++    def setup(self):
++        self.multi_dl = self.premium
++        self.resume_download = True
+--- /dev/null
++++ b/src/pyload/plugins/downloaders/GetTwentyFourOrg.py
+@@ -0,0 +1,64 @@
++# -*- coding: utf-8 -*-
++
++import json
++
++import pycurl
++
++from ..base.multi_downloader import MultiDownloader
++
++
++class GetTwentyFourOrg(MultiDownloader):
++    __name__ = "GetTwentyFourOrg"
++    __type__ = "downloader"
++    __version__ = "0.04"
++    __status__ = "testing"
++
++    __pattern__ = r"^unmatchable$"
++    __config__ = [
++        ("enabled", "bool", "Activated", True),
++        ("use_premium", "bool", "Use premium account if available", True),
++        ("fallback", "bool", "Fallback to free download if premium fails", False),
++        ("chk_filesize", "bool", "Check file size", False),
++        ("max_wait", "int", "Reconnect if waiting time is greater than minutes", 10),
++        ("revert_failed", "bool", "Revert to standard download if fails", True),
++    ]
++
++    __description__ = "GeT24.org multi-hoster plugin"
++    __license__ = "GPLv3"
++    __authors__ = ["get24", "contact@get24.org"]
++
++    API_URL = "https://get24.org/api/"
++
++    def api_request(self, method, **kwargs):
++        self.req.http.c.setopt(
++            pycurl.USERAGENT, "pyLoad/{}".format(self.pyload.version).encode()
++        )
++        json_data = self.load(self.API_URL + method, post=kwargs)
++        return json.loads(json_data)
++
++    def handle_premium(self, pyfile):
++        rc = self.api_request(
++            "debrid/geturl",
++            email=self.account.user,
++            passwd_sha256=self.account.info["data"]["passwd_sha256"],
++            link=pyfile.url,
++        )
++        if rc.get("ok") is True:
++            pyfile.name = rc["filename"]
++            pyfile.size = rc["filesize"]  # bytes is not good here?
++            self.link = rc["url"]
++
++        elif rc.get("reason") in ("wrong url", "file removed"):
++            self.offline()
++
++        elif rc.get("reason") in (
++            "host daily limit exceeded",
++            "host disabled",
++            "temporary error",
++            "unknown error",
++        ):
++            self.log_warning(rc["reason"])
++            self.temp_offline()
++
++        else:
++            self.fail(rc.get("reason", "unknown error"))
+--- /dev/null
++++ b/src/pyload/plugins/downloaders/HitfileNet.py
+@@ -0,0 +1,96 @@
++# -*- coding: utf-8 -*-
++
++import re
++
++import pycurl
++from pyload.core.utils.misc import eval_js
++
++from ..anticaptchas.ReCaptcha import ReCaptcha
++from ..base.simple_downloader import SimpleDownloader
++
++
++class HitfileNet(SimpleDownloader):
++    __name__ = "HitfileNet"
++    __type__ = "downloader"
++    __version__ = "0.01"
++    __status__ = "testing"
++
++    __pattern__ = r"https?://(?:www\.)?(?:hitfile\.net|hil\.to)/(?:download/free/)?(?P<ID>\w+)"
++    __config__ = [
++        ("enabled", "bool", "Activated", True),
++        ("use_premium", "bool", "Use premium account if available", True),
++        ("fallback", "bool", "Fallback to free download if premium fails", True),
++        ("chk_filesize", "bool", "Check file size", True),
++        ("max_wait", "int", "Reconnect if waiting time is greater than minutes", 10),
++    ]
++
++    __description__ = """Hitfile.net downloader plugin"""
++    __license__ = "GPLv3"
++    __authors__ = [("GammaC0de", "nitzo2001[AT]yahoo[DOT]com")]
++
++    URL_REPLACEMENTS = [(__pattern__ + ".*", r"https://hitfile.net/\g<ID>")]
++    SIZE_REPLACEMENTS = [(r" ", "")]
++
++    COOKIES = [("hitfile.net", "user_lang", "en")]
++
++    NAME_PATTERN = r"You download: .*</span><span>(?P<N>.+?)</span>"
++    SIZE_PATTERN = r'<span class="file-size">\((?P<S>[\d.,]+) (?P<U>[\w^_]+)\)<'
++
++    OFFLINE_PATTERN = r"File was deleted or not found"
++    TEMP_OFFLINE_PATTERN = r"^unmatchable$"
++    DL_LIMIT_PATTERN = r"<span id='timeout'>(\d+)</span>"
++
++    LINK_FREE_PATTERN = r'(/download/redirect/[^"\']+)'
++    LINK_PREMIUM_PATTERN = r'<a href=[\'"](.+?/download/redirect/[^"\']+)'
++
++    def handle_free(self, pyfile):
++        self.free_url = (
++            "https://hitfile.net/download/free/%s" % self.info["pattern"]["ID"]
++        )
++        self.data = self.load(self.free_url)
++
++        m = re.search(self.DL_LIMIT_PATTERN, self.data)
++        if m is not None:
++            self.retry(wait=m.group(1))
++
++        self.solve_captcha()
++
++        m = re.search(r"minLimit : (.+?),", self.data)
++        if m is None:
++            self.fail(self._("minLimit pattern not found"))
++
++        wait_time = eval_js(m.group(1))
++        self.wait(wait_time)
++
++        self.req.http.c.setopt(pycurl.HTTPHEADER, ["X-Requested-With: XMLHttpRequest"])
++        self.data = self.load(
++            "https://hitfile.net/download/getLinkTimeout/%s"
++            % self.info["pattern"]["ID"],
++            ref=self.free_url,
++        )
++        self.req.http.c.setopt(pycurl.HTTPHEADER, ["X-Requested-With:"])
++
++        m = re.search(self.LINK_FREE_PATTERN, self.data)
++        if m is not None:
++            self.link = "https://hitfile.net%s" % m.group(1)
++            self.data = self.load(self.link)
++
++    def solve_captcha(self):
++        action, inputs = self.parse_html_form("action='#'")
++        if not inputs:
++            self.fail(self._("Captcha form not found"))
++
++        if inputs["captcha_type"] == "recaptcha2":
++            self.captcha = ReCaptcha(self.pyfile)
++            inputs["g-recaptcha-response"], challenge = self.captcha.challenge()
++            self.captcha.correct()
++
++        else:
++            self.fail(self._("Unknown captcha type"))
++
++        self.data = self.load(self.free_url, post=inputs)
++
++    def handle_premium(self, pyfile):
++        m = re.search(self.LINK_PREMIUM_PATTERN, self.data)
++        if m is not None:
++            self.link = m.group(1)
+--- /dev/null
++++ b/src/pyload/plugins/downloaders/LibgenIo.py
+@@ -0,0 +1,265 @@
++# -*- coding: utf-8 -*-
++
++import json
++import re
++import time
++import urllib.parse
++
++from bs4 import BeautifulSoup
++from pyload.core.network.http.exceptions import BadHeader
++
++from ..base.downloader import BaseDownloader
++
++
++class LibgenIo(BaseDownloader):
++    __name__ = "LibgenIo"
++    __type__ = "downloader"
++    __version__ = "0.71"
++    __status__ = "testing"
++
++    # Only for libgen hosts and URLs that have an MD5
++    __pattern__ = r"(?i)https?://([^/]+\.)?(libgen\.io|libgen\.me|booksdescr\.org|booksdl\.org|booksdescr\.com|lib1\.org|library1\.org|libgen\.pw|gen\.lib\.rus\.ec)/.*"
++    __config__ = [
++        ("enabled", "enabled", "Activated", True),
++        (
++            "mirrors",
++            "string",
++            "Libgen mirror URL patterns (space-separated)",
++            "http://booksdl.org/{topiclong}/get.php?md5={md5} http://booksdl.org/get.php?md5={md5}",
++        ),
++        ("query_api", "bool", "Query libgen API to fetch more book details", False),
++        (
++            "api_mirrors",
++            "string",
++            "API mirror URLs (space-separated)",
++            "http://libgen.io/json.php http://booksdescr.org/json.php",
++        ),
++        (
++            "api_fields",
++            "string",
++            "API fields to fetch",
++            "id,authorfamily1,authorname1,series1,extension,language,pages,isbn,year",
++        ),
++        ("max_recursions", "int", "Maximum directories to recurse into", 100),
++    ]
++
++    __description__ = """Plugin for libgen.io, respecting throttling, bypassing ad screen, and recursing through folders"""
++    __license__ = "GPLv3"
++    __authors__ = [("Yann Jouanique", "yann.jouanique@gmail.com")]
++
++    def setup(self):
++        self.chunk_limit = -1
++        self.resume_download = True
++        self.multi_dl = False
++
++    def libgen_api(self, topic, md5):
++        get_params = {
++            "lg_topic": topic,
++            "md5": md5,
++            "fields": self.config.get("api_fields"),
++        }
++
++        # Loop through mirrors
++        mirrors = self.config.get("api_mirrors").split()
++        resp = []
++
++        for url in mirrors:
++            self.log_debug("Trying API mirror: " + url)
++            try:
++                res = self.load(url, get=get_params)
++                self.log_debug("Raw API response: {}".format(res))
++                resp = json.loads(res)
++                self.log_debug("Parsed API response: {}".format(resp))
++                if resp and len(resp) > 0 and "id" in resp[0]:
++                    self.log_debug("Got book details: {}".format(resp[0]))
++                    return resp[0]
++            except:
++                self.log_debug("Error calling libgen API at {}".format(url))
++
++        self.log_debug("No working API results")
++        return {}
++
++    def get_book_info(self, url):
++        self.log_debug("Getting book info for URL {}".format(url))
++        info = {"url": url}
++        match = re.search(r"(?i)(?:/|md5=)(?P<md5>[a-f0-9]{32})\b", url)
++
++        if not match:
++            self.log_error("Could not extract MD5 from URL " + url)
++
++        else:
++            info["md5"] = match.group("md5")
++            topic = ""
++            topicmatch = re.search(
++                r"(?i)\b(fiction|foreignfiction|comics|scimag)\b", url
++            )
++            if topicmatch and topicmatch.group():
++                topic = topicmatch.group()
++
++            info["topic"] = topic
++            info["topicshort"] = re.sub(r"^foreign", "", topic)
++            info["topiclong"] = re.sub(r"^fiction", "foreignfiction", topic)
++
++            # enrich with API call?
++            if self.config.get("query_api"):
++                self.log_debug("Enriching book info by calling libgen API")
++                api_info = self.libgen_api(info["topicshort"], info["md5"])
++                if api_info and api_info["id"]:
++                    # Add all info from API response... this will override any existing keys...
++                    info.update(api_info)
++
++            self.log_debug("File info for this download: {}".format(info))
++
++        return info
++
++    def process(self, pyfile):
++        url = re.sub(r"^(jd|py)", "http", pyfile.url)
++        self.log_debug("Start LibGen process for URL {}".format(url))
++        self.log_debug("Using download folder {}".format(pyfile.package().folder))
++
++        # Check if it's an md5 link (single download from the structured archive) or an unsorted comic
++        if re.search(r"/comics0/", url):
++            # It's an unsorted comic, download file or recurse through folder...
++            self.log_debug("This seems to be an unsorted comics link")
++            self.processComic(pyfile)
++            return
++
++        # Get file info
++        self.log_debug("Detecting type for non-Comic URL {}".format(url))
++        bookinfo = self.get_book_info(pyfile.url)
++        if not bookinfo["md5"]:
++            self.fail("Unrecognizable URL")
++            return
++
++        # Loop through mirrors
++        found = False
++        mirrors = self.config.get("mirrors").split()
++
++        for mirror in mirrors:
++            url = mirror.format(**bookinfo)
++            self.log_debug("Trying mirror: " + url)
++            for _i in range(2):
++                try:
++                    self.log_debug("Download attempt " + str(_i))
++                    self.download(url, disposition=True)
++                    self.log_debug("Response: {:d}".format(self.req.code))
++
++                except BadHeader as e:
++                    if e.code not in (400, 401, 403, 404, 410, 500, 503):
++                        raise
++
++                if self.req.code in (400, 404, 410):
++                    self.log_warning("Not found on this mirror, skipping")
++                    break
++
++                elif self.req.code in (500, 503):
++                    self.log_warning("Temporary server error, retrying...")
++                    time.sleep(5)
++
++                else:
++                    self.log_debug("Download successful")
++                    found = True
++                    break
++
++            # Stop mirror iteration if success
++            if found:
++                break
++
++        # End of the loop!
++        if not found:
++            self.log_error("Could not find a working mirror")
++            self.fail("No working mirror")
++
++        else:
++            self.log_debug("End of download loop, checking download")
++            self.check_download()
++
++    def check_download(self):
++        errmsg = self.scan_download(
++            {
++                "Html error": re.compile(
++                    r"(?i)\A(?:\s*<.+>)?((?:[\w\s]*(?:error)\s*\:?)?\s*\d{3})(?:\Z|\s+)"
++                ),
++                "Html file": re.compile(r"(?i)\A\s*<!DOCTYPE html"),
++                "Request error": re.compile(
++                    r"(?i)an error occured while processing your request"
++                ),
++            }
++        )
++
++        if not errmsg:
++            return
++
++        try:
++            errmsg += " | " + self.last_check.group(1).strip()
++
++        except Exception:
++            pass
++
++        self.log_warning("Check result: {}, Waiting 1 minute and retry".format(errmsg))
++        self.retry(3, 60, errmsg)
++
++    def processComic(self, pyfile):
++        url = re.sub(r"^(jd|py)", "http", pyfile.url)
++
++        if not re.match(r".*\/$", url):
++            # It's a single direct download link, donwload it
++            self.log_debug("Link is a single file")
++            for _i in range(2):
++                try:
++                    self.download(url, ref=False, disposition=True)
++                except BadHeader as e:
++                    if e.code not in (401, 403, 404, 410):
++                        raise
++
++                if self.req.code in (404, 410):
++                    self.offline()
++                else:
++                    break
++
++            self.check_download()
++
++        else:
++            # It's a directory list, parse the list
++            self.log_debug("Link is a directory")
++            max = self.config.get("max_recursions")
++
++            html = self.load(pyfile.url, decode=True)
++            self.log_debug("Got raw HTML page = " + html)
++            if html:
++                soup = BeautifulSoup(html, "html.parser")
++                if soup:
++                    self.log_debug("Got HTML page - Title = " + soup.title.string)
++                    domain = urllib.parse.urlparse(pyfile.url).netloc.lower()
++
++                    # Get all links, excluding parent folder
++                    for link in soup.findAll("a", href=re.compile(r"^(?!\.\./).*")):
++                        nlinks = len(pyfile.package().getChildren())
++                        if nlinks >= max:
++                            self.log_warning(
++                                "Reached max link count for this package ({}/{}), skipping".format(
++                                    nlinks, max
++                                )
++                            )
++                            break
++
++                        self.log_debug("Detected new link")
++
++                        href = link.get("href")
++                        self.log_debug("href: " + href)
++
++                        abslink = urllib.parse.urljoin(pyfile.url, href)
++                        self.log_debug("Abslink: " + abslink)
++
++                        new_domain = urllib.parse.urlparse(abslink).netloc.lower()
++                        self.log_debug("Domain: " + new_domain)
++
++                        if new_domain != domain:
++                            self.log_debug("Different domain, ignoring link...")
++                            break
++
++                        self.log_debug("Adding link " + abslink)
++                        self.pyload.api.addFiles(pyfile.package().id, [abslink])
++
++            # Ignore this link as it's a directory page
++            self.skip("Link was a directory listing")
+--- /dev/null
++++ b/src/pyload/plugins/downloaders/MegaupNet.py
+@@ -0,0 +1,36 @@
++# -*- coding: utf-8 -*-
++
++import re
++
++from ..base.simple_downloader import SimpleDownloader
++
++
++class MegaupNet(SimpleDownloader):
++    __name__ = "MegaupNet"
++    __type__ = "downloader"
++    __version__ = "0.02"
++    __status__ = "testing"
++
++    __pattern__ = r"https?://megaup.net/.+"
++    __config__ = [
++        ("enabled", "bool", "Activated", True),
++        ("use_premium", "bool", "Use premium account if available", True),
++        ("fallback", "bool", "Fallback to free download if premium fails", True),
++        ("chk_filesize", "bool", "Check file size", True),
++        ("max_wait", "int", "Reconnect if waiting time is greater than minutes", 10),
++    ]
++
++    __description__ = """Megaup.net downloader plugin"""
++    __license__ = "GPLv3"
++    __authors__ = [("GammaC0de", "nitzo2001[AT]yahoo[DOT]com")]
++
++    NAME_PATTERN = r"File: (?P<N>.+?)<"
++    SIZE_PATTERN = r"Size: (?P<S>[\d.,]+) (?P<U>[\w^_]+)"
++
++    OFFLINE_PATTERN = r"^unmatchable$"
++    WAIT_PATTERN = r"var seconds = (\d+);"
++
++    def handle_free(self, pyfile):
++        m = re.search(r"\'(https://megaup\.net/\w+\?pt=.+?)\'", self.data)
++        if m is not None:
++            self.download(m.group(1), ref=pyfile.url)
+--- /dev/null
++++ b/src/pyload/plugins/downloaders/NippyshareCom.py
+@@ -0,0 +1,28 @@
++# -*- coding: utf-8 -*-
++
++from ..base.xfs_downloader import XFSDownloader
++
++
++class NippyshareCom(XFSDownloader):
++    __name__ = "NippyshareCom"
++    __type__ = "downloader"
++    __version__ = "0.01"
++    __status__ = "testing"
++
++    __pattern__ = r"https?://nippyshare.com/v/\w{6}"
++    __config__ = [
++        ("enabled", "bool", "Activated", True),
++        ("chk_filesize", "bool", "Check file size", True),
++        ("max_wait", "int", "Reconnect if waiting time is greater than minutes", 10),
++    ]
++
++    __description__ = """Nippyshare.com hoster plugin"""
++    __license__ = "GPLv3"
++    __authors__ = [("OzzieIsaacs", "Ozzie.Fernandez.Isaacs@googlemail.com")]
++
++    PLUGIN_DOMAIN = "nippyshare.com"
++
++    NAME_PATTERN = r"><li>Name:(?P<N>.+?)</li>"
++    SIZE_PATTERN = r"<li>Size: (?P<S>[\d.,]+) (?P<U>[\w^_]+)</li>"
++
++    LINK_PATTERN = r"<a href='(.+?)' class='btn btn-info center-block'>Download</a>"
+--- /dev/null
++++ b/src/pyload/plugins/downloaders/PorntrexCom.py
+@@ -0,0 +1,53 @@
++# -*- coding: utf-8 -*-
++
++import re
++
++from ..base.simple_downloader import SimpleDownloader
++
++
++class PorntrexCom(SimpleDownloader):
++    __name__ = "PorntrexCom"
++    __type__ = "downloader"
++    __version__ = "0.01"
++    __status__ = "testing"
++
++    __pattern__ = r"https?://(?:www\.)?porntrex\.com/video/.+"
++
++    __config__ = [
++        ("enabled", "bool", "Activated", True),
++        ("chk_filesize", "bool", "Check file size", True),
++        ("quality", "360p;480p;720p;1080p;1440p;2160p", "Quality Setting", "1080p"),
++    ]
++
++    __description__ = """Porntrex.com downloader plugin"""
++    __license__ = "GPLv3"
++    __authors__ = [("ondrej", "git@ondrej.it")]
++
++    NAME_PATTERN = r'<p class="title-video">(?P<N>.+?)</p>'
++    OFFLINE_PATTERN = r"<title>page not found</title>"
++
++    DISPOSITION = False
++
++    def setup(self):
++        self.multi_dl = True
++        self.resume_download = False
++
++    def handle_free(self, pyfile):
++        html = self.load(pyfile.url)
++
++        quality = self.config.get("quality")
++        all_quality = ["2160p", "1440p", "1080p", "720p", "480p", "360p"]
++
++        for i in all_quality[all_quality.index(quality) :]:
++            video_url = re.findall(
++                r"https://www.porntrex.com/get_file/[\w\d/]+_{0}.mp4".format(i), html
++            )
++            if video_url:
++                self.link = video_url[0]
++                break
++
++        if not self.link:
++            self.error(self._("Video URL not found"))
++
++        self.pyfile.name = re.search(self.NAME_PATTERN, html).group(1)
++        self.pyfile.name += "." + self.link.split(".")[-1]
+--- /dev/null
++++ b/src/pyload/plugins/downloaders/TbSevenPl.py
+@@ -0,0 +1,57 @@
++# -*- coding: utf-8 -*-
++
++import re
++
++from pyload.core.utils import parse
++
++from ..base.multi_downloader import MultiDownloader
++
++
++class TbSevenPl(MultiDownloader):
++    __name__ = "TbSevenPl"
++    __type__ = "downloader"
++    __version__ = "0.02"
++    __status__ = "testing"
++
++    __pattern__ = r"^unmatchable$"
++    __config__ = [
++        ("enabled", "bool", "Activated", True),
++        ("use_premium", "bool", "Use premium account if available", True),
++        ("fallback", "bool", "Fallback to free download if premium fails", False),
++        ("chk_filesize", "bool", "Check file size", True),
++        ("max_wait", "int", "Reconnect if waiting time is greater than minutes", 10),
++        ("revert_failed", "bool", "Revert to standard download if fails", True),
++    ]
++
++    __description__ = """tb7.pl multi-downloader plugin"""
++    __license__ = "GPLv3"
++    __authors__ = [("GammaC0de", "nitzo2001[AT]yahoo[DOT]com")]
++
++    NAME_PATTERN = r'<div class="name">(?P<N>.+?)<'
++    SIZE_PATTERN = r'Rozmiar: <span class="type red">(?P<S>[\d.,]+) (?P<U>[\w_^]+)<'
++
++    LINK_PATTERN = r'<a href="(.+?)" target="_blank">Pobierz</a>'
++
++    def handle_premium(self, pyfile):
++        self.data = self.load(
++            "https://tb7.pl/mojekonto/sciagaj", post={"step": 1, "content": pyfile.url}
++        )
++
++        m = re.search(self.NAME_PATTERN, self.data)
++        if m is not None:
++            pyfile.name = m.group("N")
++
++        m = re.search(self.SIZE_PATTERN, self.data)
++        if m is not None:
++            pyfile.size = parse.bytesize(m.group("S"), m.group("U"))
++
++        self.data = self.load(
++            "https://tb7.pl/mojekonto/sciagaj", post={"step": 2, "0": "on"}
++        )
++
++        if "Nieaktywne linki" in self.data:
++            self.temp_offline()
++
++        m = re.search(self.LINK_PATTERN, self.data)
++        if m is not None:
++            self.link = m.group(1)

@@ -1,0 +1,24 @@
+From 70a05e44b89a89a495af2dd5184c5c511da182f1 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sun, 20 Jun 2021 01:20:22 +0300
+Subject: [PATCH 105/150] typo
+
+---
+ src/pyload/plugins/accounts/FastixRu.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/src/pyload/plugins/accounts/FastixRu.py
++++ b/src/pyload/plugins/accounts/FastixRu.py
+@@ -41,10 +41,10 @@ class FastixRu(MultiAccount):
+         json_data = json.loads(html)
+ 
+         points = json_data["points"]
+-        kb = float(points) * 1024 ** 2
++        trafficleft = float(points) * 1024 ** 2
+ 
+         if points > 0:
+-            account_info = {"validuntil": -1, "trafficleft": kb}
++            account_info = {"validuntil": -1, "trafficleft": trafficleft}
+         else:
+             account_info = {"validuntil": None, "trafficleft": None, "premium": False}
+         return account_info

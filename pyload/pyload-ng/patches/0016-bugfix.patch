@@ -1,0 +1,20 @@
+From 522cce256d304b47053e2c660fe2981e662313c6 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Fri, 7 May 2021 16:14:36 +0300
+Subject: [PATCH 016/150] bugfix
+
+---
+ src/pyload/plugins/base/downloader.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/src/pyload/plugins/base/downloader.py
++++ b/src/pyload/plugins/base/downloader.py
+@@ -495,7 +495,7 @@ class BaseDownloader(BaseHoster):
+         """
+         pack_folder = self.pyfile.package().folder
+ 
+-        for pyfile in self.pyload.files.cache.values():
++        for pyfile in list(self.pyload.files.cache.values()):
+             if (
+                 pyfile != self.pyfile
+                 and pyfile.name == self.pyfile.name

@@ -1,0 +1,1393 @@
+From f7a8a14ec796e47d534ba416a3c238e31f489d39 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Mon, 21 Jun 2021 00:23:22 +0300
+Subject: [PATCH 112/150] api_response() -> api_request()
+
+---
+ src/pyload/plugins/accounts/FileboomMe.py      | 16 ++++++++--------
+ src/pyload/plugins/accounts/IronfilesNet.py    |  6 +++---
+ src/pyload/plugins/accounts/Keep2ShareCc.py    | 16 ++++++++--------
+ .../accounts/LeechThreeHundreedSixtyCom.py     |  8 ++++----
+ src/pyload/plugins/accounts/LinksnappyCom.py   |  8 ++++----
+ src/pyload/plugins/accounts/MegaDebridEu.py    |  6 +++---
+ src/pyload/plugins/accounts/MultishareCz.py    |  8 ++++----
+ src/pyload/plugins/accounts/RapidgatorNet.py   |  6 +++---
+ src/pyload/plugins/accounts/RealdebridCom.py   | 10 +++++-----
+ src/pyload/plugins/accounts/TenluaVn.py        |  6 +++---
+ src/pyload/plugins/accounts/WebshareCz.py      |  8 ++++----
+ src/pyload/plugins/accounts/ZeveraCom.py       |  8 ++++----
+ src/pyload/plugins/addons/DeathByCaptcha.py    | 12 ++++++------
+ .../plugins/decrypters/DailymotionComFolder.py | 10 +++++-----
+ src/pyload/plugins/decrypters/GooGl.py         |  6 +++---
+ .../decrypters/GoogledriveComDereferer.py      |  4 ++--
+ .../plugins/decrypters/GoogledriveComFolder.py |  8 ++++----
+ .../plugins/decrypters/MediafireComFolder.py   |  6 +++---
+ .../plugins/decrypters/RealdebridComTorrent.py | 14 +++++++-------
+ .../plugins/decrypters/SafelinkingNet.py       |  6 +++---
+ .../plugins/decrypters/TenluaVnFolder.py       |  4 ++--
+ .../plugins/decrypters/YoutubeComFolder.py     | 14 +++++++-------
+ src/pyload/plugins/downloaders/DdownloadCom.py |  4 ++--
+ src/pyload/plugins/downloaders/FileboomMe.py   | 14 +++++++-------
+ .../plugins/downloaders/GoogledriveCom.py      |  4 ++--
+ src/pyload/plugins/downloaders/IronfilesNet.py |  2 +-
+ src/pyload/plugins/downloaders/Keep2ShareCc.py | 14 +++++++-------
+ .../plugins/downloaders/LinksnappyCom.py       |  8 ++++----
+ .../downloaders/LinksnappyComTorrent.py        | 18 +++++++++---------
+ src/pyload/plugins/downloaders/MegaDebridEu.py |  4 ++--
+ .../plugins/downloaders/MegacrypterCom.py      |  6 +++---
+ src/pyload/plugins/downloaders/MultishareCz.py |  6 +++---
+ src/pyload/plugins/downloaders/OpenloadIo.py   |  8 ++++----
+ .../plugins/downloaders/RealdebridCom.py       |  4 ++--
+ src/pyload/plugins/downloaders/TenluaVn.py     |  6 +++---
+ src/pyload/plugins/downloaders/WebshareCz.py   |  6 +++---
+ src/pyload/plugins/downloaders/ZeveraCom.py    |  4 ++--
+ 37 files changed, 149 insertions(+), 149 deletions(-)
+
+--- a/src/pyload/plugins/accounts/FileboomMe.py
++++ b/src/pyload/plugins/accounts/FileboomMe.py
+@@ -28,13 +28,13 @@ class FileboomMe(BaseAccount):
+     #: Actually this is Keep2ShareCc API, see https://keep2share.github.io/api/ https://github.com/keep2share/api
+ 
+     @classmethod
+-    def api_response(cls, method, **kwargs):
++    def api_request(cls, method, **kwargs):
+         html = get_url(cls.API_URL + method,
+                        post=json.dumps(kwargs))
+         return json.loads(html)
+ 
+     def grab_info(self, user, password, data):
+-        json_data = self.api_response("AccountInfo", auth_token=data['token'])
++        json_data = self.api_request("AccountInfo", auth_token=data['token'])
+ 
+         return {'validuntil': json_data['account_expires'],
+                 'trafficleft': json_data['available_traffic'],
+@@ -43,7 +43,7 @@ class FileboomMe(BaseAccount):
+     def signin(self, user, password, data):
+         if 'token' in data:
+             try:
+-                json_data = self.api_response("test", auth_token=data['token'])
++                json_data = self.api_request("test", auth_token=data['token'])
+ 
+             except BadHeader as exc:
+                 if exc.code == 403:  #: Session expired
+@@ -55,7 +55,7 @@ class FileboomMe(BaseAccount):
+                 self.skip_login()
+ 
+         try:
+-            json_data = self.api_response("login", username=user, password=password)
++            json_data = self.api_request("login", username=user, password=password)
+ 
+         except BadHeader as exc:
+             if exc.code == 406:  #: Captcha needed
+@@ -68,14 +68,14 @@ class FileboomMe(BaseAccount):
+                     #: Recaptcha
+                     self.captcha = ReCaptcha(pyfile)
+                     for i in range(10):
+-                        json_data = self.api_response("RequestReCaptcha")
++                        json_data = self.api_request("RequestReCaptcha")
+                         if json_data['code'] != 200:
+                             self.log_error(_("Request reCAPTCHA API failed"))
+                             self.fail_login(_("Request reCAPTCHA API failed"))
+ 
+                         re_captcha_response, _ = self.captcha.challenge(self.RECAPTCHA_KEY, version="2js", secure_token=False)
+                         try:
+-                            json_data = self.api_response("login",
++                            json_data = self.api_request("login",
+                                                           username=user,
+                                                           password=password,
+                                                           re_captcha_challenge=json_data['challenge'],
+@@ -109,14 +109,14 @@ class FileboomMe(BaseAccount):
+                     #: Normal captcha
+                     self.captcha = BaseCaptcha(pyfile)
+                     for i in range(10):
+-                        json_data = self.api_response("RequestCaptcha")
++                        json_data = self.api_request("RequestCaptcha")
+                         if json_data['code'] != 200:
+                             self.log_error(self._("Request captcha API failed"))
+                             self.fail_login(self._("Request captcha API failed"))
+ 
+                         captcha_response = self.captcha.decrypt(json_data['captcha_url'])
+                         try:
+-                            json_data = self.api_response("login",
++                            json_data = self.api_request("login",
+                                                           username=user,
+                                                           password=password,
+                                                           captcha_challenge=json_data['challenge'],
+--- a/src/pyload/plugins/accounts/IronfilesNet.py
++++ b/src/pyload/plugins/accounts/IronfilesNet.py
+@@ -18,12 +18,12 @@ class IronfilesNet(BaseAccount):
+ 
+     API_URL = "https://ironfiles.net/api/"
+ 
+-    def api_response(self, method, **kwargs):
++    def api_request(self, method, **kwargs):
+         json_data = self.load(self.API_URL + method, get=kwargs)
+         return json.loads(json_data)
+ 
+     def grab_info(self, user, password, data):
+-        json_data = self.api_response("accountStatus")
++        json_data = self.api_request("accountStatus")
+ 
+         expires = json_data["expires"].split("T", 1)
+         validuntil = time.mktime(
+@@ -37,7 +37,7 @@ class IronfilesNet(BaseAccount):
+         }
+ 
+     def signin(self, user, password, data):
+-        json_data = self.api_response("auth", login=user, password=password)
++        json_data = self.api_request("auth", login=user, password=password)
+ 
+         if not json_data["result"]:
+             self.fail_login(json_data["message"])
+--- a/src/pyload/plugins/accounts/Keep2ShareCc.py
++++ b/src/pyload/plugins/accounts/Keep2ShareCc.py
+@@ -32,12 +32,12 @@ class Keep2ShareCc(BaseAccount):
+     #: See https://keep2share.github.io/api/ https://github.com/keep2share/api
+ 
+     @classmethod
+-    def api_response(cls, method, **kwargs):
++    def api_request(cls, method, **kwargs):
+         html = get_url(cls.API_URL + method, post=json.dumps(kwargs))
+         return json.loads(html)
+ 
+     def grab_info(self, user, password, data):
+-        json_data = self.api_response("AccountInfo", auth_token=data["token"])
++        json_data = self.api_request("AccountInfo", auth_token=data["token"])
+ 
+         return {
+             "validuntil": json_data["account_expires"],
+@@ -48,7 +48,7 @@ class Keep2ShareCc(BaseAccount):
+     def signin(self, user, password, data):
+         if "token" in data:
+             try:
+-                json_data = self.api_response("test", auth_token=data["token"])
++                json_data = self.api_request("test", auth_token=data["token"])
+ 
+             except BadHeader as exc:
+                 if exc.code == 403:  #: Session expired
+@@ -60,7 +60,7 @@ class Keep2ShareCc(BaseAccount):
+                 self.skip_login()
+ 
+         try:
+-            json_data = self.api_response("login", username=user, password=password)
++            json_data = self.api_request("login", username=user, password=password)
+ 
+         except BadHeader as exc:
+             if exc.code == 406:  #: Captcha needed
+@@ -87,7 +87,7 @@ class Keep2ShareCc(BaseAccount):
+                     #: Recaptcha
+                     self.captcha = ReCaptcha(pyfile)
+                     for i in range(10):
+-                        json_data = self.api_response("RequestReCaptcha")
++                        json_data = self.api_request("RequestReCaptcha")
+                         if json_data["code"] != 200:
+                             self.log_error(_("Request reCAPTCHA API failed"))
+                             self.fail_login(_("Request reCAPTCHA API failed"))
+@@ -96,7 +96,7 @@ class Keep2ShareCc(BaseAccount):
+                             self.RECAPTCHA_KEY, version="2js", secure_token=False
+                         )
+                         try:
+-                            json_data = self.api_response(
++                            json_data = self.api_request(
+                                 "login",
+                                 username=user,
+                                 password=password,
+@@ -135,7 +135,7 @@ class Keep2ShareCc(BaseAccount):
+                     #: Normal captcha
+                     self.captcha = BaseCaptcha(pyfile)
+                     for i in range(10):
+-                        json_data = self.api_response("RequestCaptcha")
++                        json_data = self.api_request("RequestCaptcha")
+                         if json_data["code"] != 200:
+                             self.log_error(self._("Request captcha API failed"))
+                             self.fail_login(self._("Request captcha API failed"))
+@@ -144,7 +144,7 @@ class Keep2ShareCc(BaseAccount):
+                             json_data["captcha_url"]
+                         )
+                         try:
+-                            json_data = self.api_response(
++                            json_data = self.api_request(
+                                 "login",
+                                 username=user,
+                                 password=password,
+--- a/src/pyload/plugins/accounts/LeechThreeHundreedSixtyCom.py
++++ b/src/pyload/plugins/accounts/LeechThreeHundreedSixtyCom.py
+@@ -28,14 +28,14 @@ class LeechThreeHundreedSixtyCom(MultiAc
+ 
+     API_URL = "https://leech360.com/api/get_"
+ 
+-    def api_response(self, method, **kwargs):
++    def api_request(self, method, **kwargs):
+         if "pass_" in kwargs:
+             kwargs["pass"] = kwargs.pop("pass_")
+         json_data = self.load(self.API_URL + method, get=kwargs)
+         return json.loads(json_data)
+ 
+     def grab_hosters(self, user, password, data):
+-        api_data = self.api_response("support", token=data["token"])
++        api_data = self.api_request("support", token=data["token"])
+         valid_status = ("online", "vip") if self.info["data"]["premium"] else ("online")
+         return [
+             h["hostname"]
+@@ -44,7 +44,7 @@ class LeechThreeHundreedSixtyCom(MultiAc
+         ]
+ 
+     def grab_info(self, user, password, data):
+-        api_data = self.api_response("userinfo", token=data["token"])
++        api_data = self.api_request("userinfo", token=data["token"])
+ 
+         premium_expire = int(api_data["data"].get("premium_expire", 0))
+         status = api_data["data"]["status"]
+@@ -72,7 +72,7 @@ class LeechThreeHundreedSixtyCom(MultiAc
+         }
+ 
+     def signin(self, user, password, data):
+-        api_data = self.api_response("token", user=user, pass_=password)
++        api_data = self.api_request("token", user=user, pass_=password)
+         if api_data["error"]:
+             self.log_warning(api_data["error_message"])
+             self.fail_login()
+--- a/src/pyload/plugins/accounts/LinksnappyCom.py
++++ b/src/pyload/plugins/accounts/LinksnappyCom.py
+@@ -26,11 +26,11 @@ class LinksnappyCom(MultiAccount):
+ 
+     API_URL = "https://linksnappy.com/api/"
+ 
+-    def api_response(self, method, **kwargs):
++    def api_request(self, method, **kwargs):
+         return json.loads(self.load(self.API_URL + method, get=kwargs))
+ 
+     def grab_hosters(self, user, password, data):
+-        json_data = self.api_response("FILEHOSTS")
++        json_data = self.api_request("FILEHOSTS")
+         return [k for k, v in json_data["return"].items() if v["Status"] == "1"]
+ 
+     def grab_info(self, user, password, data):
+@@ -38,7 +38,7 @@ class LinksnappyCom(MultiAccount):
+         validuntil = None
+         trafficleft = None
+ 
+-        json_data = self.api_response("USERDETAILS", username=user, password=password)
++        json_data = self.api_request("USERDETAILS", username=user, password=password)
+ 
+         if json_data["status"] != "OK":
+             self.log_error(json_data["error"])
+@@ -68,7 +68,7 @@ class LinksnappyCom(MultiAccount):
+         }
+ 
+     def signin(self, user, password, data):
+-        json_data = self.api_response("AUTHENTICATE", username=user, password=password)
++        json_data = self.api_request("AUTHENTICATE", username=user, password=password)
+ 
+         if json_data["status"] != "OK":
+             self.fail_login(json_data["error"])
+--- a/src/pyload/plugins/accounts/MegaDebridEu.py
++++ b/src/pyload/plugins/accounts/MegaDebridEu.py
+@@ -36,7 +36,7 @@ class MegaDebridEu(MultiAccount):
+ 
+     API_URL = "https://www.mega-debrid.eu/api.php"
+ 
+-    def api_response(self, action, get={}, post={}):
++    def api_request(self, action, get={}, post={}):
+         get["action"] = action
+ 
+         # Better use pyLoad User-Agent so we don't get blocked
+@@ -51,7 +51,7 @@ class MegaDebridEu(MultiAccount):
+     def grab_hosters(self, user, password, data):
+         hosters = []
+         try:
+-            res = self.api_response("getHostersList")
++            res = self.api_request("getHostersList")
+ 
+         except BadHeader as exc:
+             if exc.code == 405:
+@@ -106,7 +106,7 @@ class MegaDebridEu(MultiAccount):
+             self.skip_login()
+ 
+         try:
+-            res = self.api_response("connectUser", args(login=user, password=password))
++            res = self.api_request("connectUser", args(login=user, password=password))
+ 
+         except BadHeader as exc:
+             if exc.code == 401:
+--- a/src/pyload/plugins/accounts/MultishareCz.py
++++ b/src/pyload/plugins/accounts/MultishareCz.py
+@@ -30,7 +30,7 @@ class MultishareCz(MultiAccount):
+     #: See https://multishare.cz/api/
+     API_URL = "https://www.multishare.cz/api/"
+ 
+-    def api_response(self, method, **kwargs):
++    def api_request(self, method, **kwargs):
+         get = {"sub": method}
+         get.update(kwargs)
+         self.req.http.c.setopt(pycurl.USERAGENT, "JDownloader")
+@@ -45,11 +45,11 @@ class MultishareCz(MultiAccount):
+             return json.loads(json_data)
+ 
+     def grab_hosters(self, user, password, data):
+-        api_data = self.api_response("supported-hosters")
++        api_data = self.api_request("supported-hosters")
+         return api_data["server"]
+ 
+     def grab_info(self, user, password, data):
+-        api_data = self.api_response("account-details", login=user, password=password)
++        api_data = self.api_request("account-details", login=user, password=password)
+         trafficleft = self.parse_traffic(api_data["credit"], "MB")
+ 
+         premium = True if trafficleft else False
+@@ -58,7 +58,7 @@ class MultishareCz(MultiAccount):
+ 
+     def signin(self, user, password, data):
+         try:
+-            api_data = self.api_response(
++            api_data = self.api_request(
+                 "account-details", login=user, password=password
+             )
+ 
+--- a/src/pyload/plugins/accounts/RapidgatorNet.py
++++ b/src/pyload/plugins/accounts/RapidgatorNet.py
+@@ -22,7 +22,7 @@ class RapidgatorNet(BaseAccount):
+ 
+     API_URL = "https://rapidgator.net/api/user/"
+ 
+-    def api_response(self, method, **kwargs):
++    def api_request(self, method, **kwargs):
+         json_data = self.load(self.API_URL + method, get=kwargs)
+         return json.loads(json_data)
+ 
+@@ -32,7 +32,7 @@ class RapidgatorNet(BaseAccount):
+         premium = False
+ 
+         try:
+-            json_data = self.api_response("info", sid=data["sid"])
++            json_data = self.api_request("info", sid=data["sid"])
+ 
+             if json_data["response_status"] == 200:
+                 validuntil = json_data["response"]["expire_date"]
+@@ -55,7 +55,7 @@ class RapidgatorNet(BaseAccount):
+ 
+     def signin(self, user, password, data):
+         try:
+-            json_data = self.api_response("login", username=user, password=password)
++            json_data = self.api_request("login", username=user, password=password)
+ 
+             if json_data["response_status"] == 200:
+                 data["sid"] = str(json_data["response"]["session_id"])
+--- a/src/pyload/plugins/accounts/RealdebridCom.py
++++ b/src/pyload/plugins/accounts/RealdebridCom.py
+@@ -34,7 +34,7 @@ class RealdebridCom(MultiAccount):
+     # See https://api.real-debrid.com/
+     API_URL = "https://api.real-debrid.com"
+ 
+-    def api_response(self, api_type, method, get={}, post={}):
++    def api_request(self, api_type, method, get={}, post={}):
+         if api_type == "rest":
+             endpoint = "/rest/1.0"
+         elif api_type == "oauth":
+@@ -52,7 +52,7 @@ class RealdebridCom(MultiAccount):
+         return json.loads(json_data)
+ 
+     def _refresh_token(self, client_id, client_secret, refresh_token):
+-        res = self.api_response("oauth", "/token",
++        res = self.api_request("oauth", "/token",
+                                 post=args(client_id=client_id,
+                                           client_secret=client_secret,
+                                           code=refresh_token,
+@@ -68,12 +68,12 @@ class RealdebridCom(MultiAccount):
+         return res['access_token'], res['expires_in']
+ 
+     def grab_hosters(self, user, password, data):
+-        api_data = self.api_response("rest", "/hosts/status", args(auth_token=data['api_token']))
++        api_data = self.api_request("rest", "/hosts/status", args(auth_token=data['api_token']))
+         hosters = [x[0] for x in api_data.items() if x[1]['supported'] == 1]
+         return hosters
+ 
+     def grab_info(self, user, password, data):
+-        api_data = self.api_response("rest", "/user", args(auth_token=data['api_token']))
++        api_data = self.api_request("rest", "/user", args(auth_token=data['api_token']))
+ 
+         validuntil = time.time() + api_data["premium"]
+ 
+@@ -97,7 +97,7 @@ class RealdebridCom(MultiAccount):
+ 
+         api_token = data['api_token']
+ 
+-        api_data = self.api_response("rest", "/user", args(auth_token=api_token))
++        api_data = self.api_request("rest", "/user", args(auth_token=api_token))
+ 
+         if api_data.get('error_code') == 8:  #: Token expired? try to refresh
+             api_token, timeout = self._refresh_token(client_id, client_secret, password)
+--- a/src/pyload/plugins/accounts/TenluaVn.py
++++ b/src/pyload/plugins/accounts/TenluaVn.py
+@@ -21,7 +21,7 @@ class TenluaVn(BaseAccount):
+     API_URL = "https://api2.tenlua.vn/"
+ 
+     @classmethod
+-    def api_response(cls, method, **kwargs):
++    def api_request(cls, method, **kwargs):
+         kwargs["a"] = method
+         sid = kwargs.pop("sid", None)
+         return json.loads(
+@@ -33,7 +33,7 @@ class TenluaVn(BaseAccount):
+         )
+ 
+     def grab_info(self, user, password, data):
+-        user_info = self.api_response("user_info", sid=data["sid"])[0]
++        user_info = self.api_request("user_info", sid=data["sid"])[0]
+ 
+         validuntil = time.mktime(time.strptime(user_info["endGold"], "%d-%m-%Y"))
+         premium = user_info["free_used"] != "null"
+@@ -42,7 +42,7 @@ class TenluaVn(BaseAccount):
+ 
+     def signin(self, user, password, data):
+         try:
+-            login_info = self.api_response(
++            login_info = self.api_request(
+                 "user_login", user=user, password=password, permanent=False
+             )
+ 
+--- a/src/pyload/plugins/accounts/WebshareCz.py
++++ b/src/pyload/plugins/accounts/WebshareCz.py
+@@ -28,11 +28,11 @@ class WebshareCz(BaseAccount):
+     API_URL = "https://webshare.cz/api/"
+ 
+     @classmethod
+-    def api_response(cls, method, **kwargs):
++    def api_request(cls, method, **kwargs):
+         return get_url(cls.API_URL + method + "/", post=kwargs)
+ 
+     def grab_info(self, user, password, data):
+-        user_data = self.api_response("user_data", wst=data["wst"])
++        user_data = self.api_request("user_data", wst=data["wst"])
+ 
+         expiredate = re.search(self.VALID_UNTIL_PATTERN, user_data).group(1)
+         if expiredate:
+@@ -48,7 +48,7 @@ class WebshareCz(BaseAccount):
+         return {"validuntil": validuntil, "trafficleft": -1, "premium": premium}
+ 
+     def signin(self, user, password, data):
+-        salt = self.api_response("salt", username_or_email=user)
++        salt = self.api_request("salt", username_or_email=user)
+ 
+         if "<status>OK</status>" not in salt:
+             message = re.search(r"<message>(.+?)</message>", salt).group(1)
+@@ -63,7 +63,7 @@ class WebshareCz(BaseAccount):
+         ).hexdigest()
+         digest = hashlib.md5(user + ":Webshare:" + password).hexdigest()
+ 
+-        login = self.api_response(
++        login = self.api_request(
+             "login",
+             keep_logged_in=1,
+             username_or_email=user,
+--- a/src/pyload/plugins/accounts/ZeveraCom.py
++++ b/src/pyload/plugins/accounts/ZeveraCom.py
+@@ -29,7 +29,7 @@ class ZeveraCom(MultiAccount):
+ 
+     API_URL = "https://www.zevera.com/api/"
+ 
+-    def api_response(self, method, api_key, **kwargs):
++    def api_request(self, method, api_key, **kwargs):
+         get_data = {"client_id": "452508742", "apikey": api_key}
+ 
+         get_data.update(kwargs)
+@@ -41,13 +41,13 @@ class ZeveraCom(MultiAccount):
+         return json.loads(res)
+ 
+     def grab_hosters(self, user, password, data):
+-        res = self.api_response("services/list", password)
++        res = self.api_request("services/list", password)
+         return res["directdl"]
+ 
+     def grab_info(self, user, password, data):
+         trafficleft = None
+ 
+-        res = self.api_response("account/info", password)
++        res = self.api_request("account/info", password)
+ 
+         premium = res["premium_until"] is not False
+         validuntil = (
+@@ -65,7 +65,7 @@ class ZeveraCom(MultiAccount):
+         }
+ 
+     def signin(self, user, password, data):
+-        res = self.api_response("account/info", password)
++        res = self.api_request("account/info", password)
+         if res["status"] != "success":
+             self.log_error(
+                 self._(
+--- a/src/pyload/plugins/addons/DeathByCaptcha.py
++++ b/src/pyload/plugins/addons/DeathByCaptcha.py
+@@ -62,7 +62,7 @@ class DeathByCaptcha(BaseAddon):
+ 
+     API_URL = "http://api.dbcapi.me/api/"
+ 
+-    def api_response(self, api="captcha", post=False, multipart=False):
++    def api_request(self, api="captcha", post=False, multipart=False):
+         with get_request() as req:
+             req.c.setopt(
+                 pycurl.HTTPHEADER,
+@@ -118,7 +118,7 @@ class DeathByCaptcha(BaseAddon):
+         return res
+ 
+     def get_credits(self):
+-        res = self.api_response("user", True)
++        res = self.api_request("user", True)
+ 
+         if "is_banned" in res and res["is_banned"]:
+             raise DeathByCaptchaException("banned")
+@@ -128,7 +128,7 @@ class DeathByCaptcha(BaseAddon):
+             raise DeathByCaptchaException(res)
+ 
+     def get_status(self):
+-        res = self.api_response("status", False)
++        res = self.api_request("status", False)
+ 
+         if "is_service_overloaded" in res and res["is_service_overloaded"]:
+             raise DeathByCaptchaException("service-overload")
+@@ -144,7 +144,7 @@ class DeathByCaptcha(BaseAddon):
+                 data = fp.read()
+             data = "base64:" + base64.b64encode(data)
+ 
+-        res = self.api_response("captcha", {"captchafile": data}, multipart)
++        res = self.api_request("captcha", {"captchafile": data}, multipart)
+ 
+         if "captcha" not in res:
+             raise DeathByCaptchaException(res)
+@@ -152,7 +152,7 @@ class DeathByCaptcha(BaseAddon):
+ 
+         for _ in range(24):
+             time.sleep(5)
+-            res = self.api_response("captcha/{}".format(ticket), False)
++            res = self.api_request("captcha/{}".format(ticket), False)
+             if res["text"] and res["is_correct"]:
+                 break
+         else:
+@@ -200,7 +200,7 @@ class DeathByCaptcha(BaseAddon):
+     def captcha_invalid(self, task):
+         if task.data["service"] == self.classname and "ticket" in task.data:
+             try:
+-                res = self.api_response(
++                res = self.api_request(
+                     "captcha/{}/report".format(task.data["ticket"]), True
+                 )
+ 
+--- a/src/pyload/plugins/decrypters/DailymotionComFolder.py
++++ b/src/pyload/plugins/decrypters/DailymotionComFolder.py
+@@ -29,7 +29,7 @@ class DailymotionComFolder(BaseDecrypter
+     __license__ = "GPLv3"
+     __authors__ = [("Walter Purcaro", "vuolter@gmail.com")]
+ 
+-    def api_response(self, ref, data=None):
++    def api_request(self, ref, data=None):
+         url = urllib.parse.urljoin("https://api.dailymotion.com/", ref)
+         html = self.load(url, get=data)
+         return json.loads(html)
+@@ -37,7 +37,7 @@ class DailymotionComFolder(BaseDecrypter
+     def get_playlist_info(self, id):
+         ref = "playlist/" + id
+         data = {"fields": "name,owner.screenname"}
+-        playlist = self.api_response(ref, data)
++        playlist = self.api_request(ref, data)
+ 
+         if "error" in playlist:
+             return
+@@ -49,7 +49,7 @@ class DailymotionComFolder(BaseDecrypter
+     def _get_playlists(self, user_id, page=1):
+         ref = "user/{}/playlists".format(user_id)
+         data = {"fields": "id", "page": page, "limit": 100}
+-        user = self.api_response(ref, data)
++        user = self.api_request(ref, data)
+ 
+         if "error" in user:
+             return
+@@ -69,7 +69,7 @@ class DailymotionComFolder(BaseDecrypter
+     def _get_videos(self, id, page=1):
+         ref = "playlist/{}/videos".format(id)
+         data = {"fields": "url", "page": page, "limit": 100}
+-        playlist = self.api_response(ref, data)
++        playlist = self.api_request(ref, data)
+ 
+         if "error" in playlist:
+             return
+@@ -110,4 +110,4 @@ class DailymotionComFolder(BaseDecrypter
+             self.log_debug(
+                 r'{} video\s found on playlist "{}"'.format(len(p_videos), p_name))
+             # NOTE: Folder is NOT recognized by pyload 0.5.0!
+-            self.packages.append((p_name, p_videos, p_folder))
+\ No newline at end of file
++            self.packages.append((p_name, p_videos, p_folder))
+--- a/src/pyload/plugins/decrypters/GooGl.py
++++ b/src/pyload/plugins/decrypters/GooGl.py
+@@ -35,7 +35,7 @@ class GooGl(SimpleDecrypter):
+     API_URL = "https://www.googleapis.com/urlshortener/v1/"
+     API_KEY = "AIzaSyAcA9c4evtwSY1ifuvzo6HKBkeot5Bk_U4"
+ 
+-    def api_response(self, cmd, **kwargs):
++    def api_request(self, cmd, **kwargs):
+         kwargs["key"] = self.API_KEY
+ 
+         json_data = json.loads(self.load("{}{}".format(self.API_URL, cmd),
+@@ -44,9 +44,9 @@ class GooGl(SimpleDecrypter):
+         return json_data
+ 
+     def decrypt(self, pyfile):
+-        res = self.api_response("url", shortUrl=self.pyfile.url)
++        res = self.api_request("url", shortUrl=self.pyfile.url)
+ 
+         if  res['status'] != "OK":
+             self.offline()
+ 
+-        self.packages.append((pyfile.package().name, [res["longUrl"]], pyfile.package().folder))
+\ No newline at end of file
++        self.packages.append((pyfile.package().name, [res["longUrl"]], pyfile.package().folder))
+--- a/src/pyload/plugins/decrypters/GoogledriveComDereferer.py
++++ b/src/pyload/plugins/decrypters/GoogledriveComDereferer.py
+@@ -39,7 +39,7 @@ class GoogledriveComDereferer(BaseDecryp
+     API_URL = "https://www.googleapis.com/drive/v3/"
+     API_KEY = "AIzaSyAcA9c4evtwSY1ifuvzo6HKBkeot5Bk_U4"
+ 
+-    def api_response(self, cmd, **kwargs):
++    def api_request(self, cmd, **kwargs):
+         kwargs["key"] = self.API_KEY
+         try:
+             json_data = json.loads(
+@@ -68,7 +68,7 @@ class GoogledriveComDereferer(BaseDecryp
+             return None
+ 
+     def decrypt(self, pyfile):
+-        json_data = self.api_response("files/{}".format(self.info["pattern"]["ID"]))
++        json_data = self.api_request("files/{}".format(self.info["pattern"]["ID"]))
+         if json_data is None:
+             self.fail("API error")
+ 
+--- a/src/pyload/plugins/decrypters/GoogledriveComFolder.py
++++ b/src/pyload/plugins/decrypters/GoogledriveComFolder.py
+@@ -41,7 +41,7 @@ class GoogledriveComFolder(BaseDecrypter
+     API_URL = "https://www.googleapis.com/drive/v3/"
+     API_KEY = "AIzaSyAcA9c4evtwSY1ifuvzo6HKBkeot5Bk_U4"
+ 
+-    def api_response(self, cmd, **kwargs):
++    def api_request(self, cmd, **kwargs):
+         kwargs["key"] = self.API_KEY
+         try:
+             json_data = json.loads(
+@@ -71,7 +71,7 @@ class GoogledriveComFolder(BaseDecrypter
+ 
+     def enum_folder(self, folder_id):
+         links = []
+-        json_data = self.api_response(
++        json_data = self.api_request(
+             "files",
+             q="'{}' in parents".format(folder_id),
+             pageSize=100,
+@@ -97,7 +97,7 @@ class GoogledriveComFolder(BaseDecrypter
+ 
+         next_page = json_data.get("nextPageToken", None)
+         while next_page:
+-            json_data = self.api_response(
++            json_data = self.api_request(
+                 "files",
+                 q="'{}' in parents".format(folder_id),
+                 pageToken=next_page,
+@@ -131,7 +131,7 @@ class GoogledriveComFolder(BaseDecrypter
+     def decrypt(self, pyfile):
+         links = []
+ 
+-        json_data = self.api_response("files/{}".format(self.info["pattern"]["ID"]))
++        json_data = self.api_request("files/{}".format(self.info["pattern"]["ID"]))
+         if json_data is None:
+             self.fail("API error")
+ 
+--- a/src/pyload/plugins/decrypters/MediafireComFolder.py
++++ b/src/pyload/plugins/decrypters/MediafireComFolder.py
+@@ -33,7 +33,7 @@ class MediafireComFolder(BaseDecrypter):
+     # See http://www.mediafire.com/developers/core_api/
+     API_URL = "http://www.mediafire.com/api/"
+ 
+-    def api_response(self, method, **kwargs):
++    def api_request(self, method, **kwargs):
+         kwargs["response_format"] = "json"
+         json_data = self.load(self.API_URL + method + ".php", get=kwargs)
+         res = json.loads(json_data)
+@@ -44,7 +44,7 @@ class MediafireComFolder(BaseDecrypter):
+         return res
+ 
+     def decrypt(self, pyfile):
+-        api_data = self.api_response(
++        api_data = self.api_request(
+             "folder/get_info", folder_key=self.info["pattern"]["ID"]
+         )
+         pack_name = (
+@@ -52,7 +52,7 @@ class MediafireComFolder(BaseDecrypter):
+             or self.pyfile.package().name
+         )
+ 
+-        api_data = self.api_response(
++        api_data = self.api_request(
+             "folder/get_content",
+             folder_key=self.info["pattern"]["ID"],
+             content_type="files",
+--- a/src/pyload/plugins/decrypters/RealdebridComTorrent.py
++++ b/src/pyload/plugins/decrypters/RealdebridComTorrent.py
+@@ -39,7 +39,7 @@ class RealdebridComTorrent(SimpleDecrypt
+     # See https://api.real-debrid.com/
+     API_URL = "https://api.real-debrid.com/rest/1.0"
+ 
+-    def api_response(self, method, get={}, post={}):
++    def api_request(self, method, get={}, post={}):
+         self.req.http.c.setopt(pycurl.USERAGENT, "pyLoad/{}".format(self.pyload.version))
+ 
+         for _i in range(2):
+@@ -140,13 +140,13 @@ class RealdebridComTorrent(SimpleDecrypt
+ 
+         else:
+             #: magnet URL, send to the server
+-            api_data = self.api_response("/torrents/addMagnet",
++            api_data = self.api_request("/torrents/addMagnet",
+                                           get={"auth_token": self.api_token},
+                                           post={"magnet": self.pyfile.url})
+ 
+         torrent_id = api_data["id"]
+ 
+-        torrent_info = self.api_response("/torrents/info/" + torrent_id,
++        torrent_info = self.api_request("/torrents/info/" + torrent_id,
+                                          get={'auth_token': self.api_token})
+ 
+         if "error" in torrent_info:
+@@ -171,7 +171,7 @@ class RealdebridComTorrent(SimpleDecrypt
+ 
+         selected_ids = ",".join([str(_id) for _id in included_ids
+                                  if _id not in excluded_ids])
+-        self.api_response("/torrents/selectFiles/" + torrent_id,
++        self.api_request("/torrents/selectFiles/" + torrent_id,
+                           get={"auth_token": self.api_token},
+                           post={"files": selected_ids})
+ 
+@@ -183,7 +183,7 @@ class RealdebridComTorrent(SimpleDecrypt
+     def wait_for_server_dl(self, torrent_id):
+         """ Show progress while the server does the download """
+ 
+-        torrent_info = self.api_response("/torrents/info/" + torrent_id,
++        torrent_info = self.api_request("/torrents/info/" + torrent_id,
+                                          get={"auth_token": self.api_token})
+ 
+         if "error" in torrent_info:
+@@ -201,7 +201,7 @@ class RealdebridComTorrent(SimpleDecrypt
+ 
+             self.sleep(5)
+ 
+-            torrent_info = self.api_response("/torrents/info/" + torrent_id,
++            torrent_info = self.api_request("/torrents/info/" + torrent_id,
+                                              get={"auth_token": self.api_token})
+             if "error" in torrent_info:
+                 self.fail("{} (code: {})".format(torrent_info["error"], torrent_info.get("error_code", -1)))
+@@ -251,4 +251,4 @@ class RealdebridComTorrent(SimpleDecrypt
+ 
+         finally:
+             if torrent_id and self.config.get("del_finished"):
+-                self.delete_torrent_from_server(torrent_id)
+\ No newline at end of file
++                self.delete_torrent_from_server(torrent_id)
+--- a/src/pyload/plugins/decrypters/SafelinkingNet.py
++++ b/src/pyload/plugins/decrypters/SafelinkingNet.py
+@@ -37,7 +37,7 @@ class SafelinkingNet(BaseDecrypter):
+     # Safelinking seems to use a static SolveMedia key
+     SOLVEMEDIA_KEY = "OZ987i6xTzNs9lw5.MA-2Vxbc-UxFrLu"
+ 
+-    def api_response(self, url, post_data):
++    def api_request(self, url, post_data):
+         self.req.http.c.setopt(
+             pycurl.HTTPHEADER,
+             [
+@@ -84,7 +84,7 @@ class SafelinkingNet(BaseDecrypter):
+ 
+             post_data = {"hash": self.info["pattern"]["ID"]}
+ 
+-            link_info = self.api_response(
++            link_info = self.api_request(
+                 "http://safelinking.net/v1/protected", post_data
+             )
+ 
+@@ -114,7 +114,7 @@ class SafelinkingNet(BaseDecrypter):
+                 post_data["challengeId"] = challenge
+                 post_data["type"] = "0"
+ 
+-            json_res = self.api_response(
++            json_res = self.api_request(
+                 "https://safelinking.net/v1/captcha", post_data
+             )
+ 
+--- a/src/pyload/plugins/decrypters/TenluaVnFolder.py
++++ b/src/pyload/plugins/decrypters/TenluaVnFolder.py
+@@ -33,12 +33,12 @@ class TenluaVnFolder(SimpleDecrypter):
+     API_URL = "https://api2.tenlua.vn/"
+ 
+     @classmethod
+-    def api_response(cls, method, **kwargs):
++    def api_request(cls, method, **kwargs):
+         kwargs["a"] = method
+         return json.loads(get_url(cls.API_URL, post=json.dumps([kwargs])))
+ 
+     def decrypt(self, pyfile):
+-        folder_info = self.api_response(
++        folder_info = self.api_request(
+             "filemanager_gettree", p=self.info["pattern"]["ID"], download=1
+         )
+         pack_links = [
+--- a/src/pyload/plugins/decrypters/YoutubeComFolder.py
++++ b/src/pyload/plugins/decrypters/YoutubeComFolder.py
+@@ -32,13 +32,13 @@ class YoutubeComFolder(BaseDecrypter):
+ 
+     API_KEY = "AIzaSyAcA9c4evtwSY1ifuvzo6HKBkeot5Bk_U4"
+ 
+-    def api_response(self, method, **kwargs):
++    def api_request(self, method, **kwargs):
+         kwargs['key'] = self.API_KEY
+         json_data = self.load("https://www.googleapis.com/youtube/v3/" + method, get=kwargs)
+         return json.loads(json_data)
+ 
+     def get_channel(self, user):
+-        channels = self.api_response("channels",
++        channels = self.api_request("channels",
+                                      part="id,snippet,contentDetails",
+                                      forUsername=user,
+                                      maxResults=50)
+@@ -50,7 +50,7 @@ class YoutubeComFolder(BaseDecrypter):
+                     'user': user}  #: One lone channel for user?
+ 
+     def get_playlist(self, playlist_id):
+-        playlists = self.api_response("playlists",
++        playlists = self.api_request("playlists",
+                                       part="snippet",
+                                       id=playlist_id)
+         if playlists['items']:
+@@ -62,13 +62,13 @@ class YoutubeComFolder(BaseDecrypter):
+ 
+     def _get_playlists(self, playlist_id, token=None):
+         if token:
+-            playlists = self.api_response("playlists",
++            playlists = self.api_request("playlists",
+                                           part="id",
+                                           maxResults=50,
+                                           channelId=playlist_id,
+                                           pageToken=token)
+         else:
+-            playlists = self.api_response("playlists",
++            playlists = self.api_request("playlists",
+                                           part="id",
+                                           maxResults=50,
+                                           channelId=playlist_id)
+@@ -85,13 +85,13 @@ class YoutubeComFolder(BaseDecrypter):
+ 
+     def _get_videos_id(self, playlist_id, token=None):
+         if token:
+-            playlist = self.api_response("playlistItems",
++            playlist = self.api_request("playlistItems",
+                                          part="contentDetails",
+                                          maxResults=50,
+                                          playlistId=playlist_id,
+                                          pageToken=token)
+         else:
+-            playlist = self.api_response("playlistItems",
++            playlist = self.api_request("playlistItems",
+                                           part="contentDetails",
+                                           maxResults=50,
+                                           playlistId=playlist_id)
+--- a/src/pyload/plugins/downloaders/DdownloadCom.py
++++ b/src/pyload/plugins/downloaders/DdownloadCom.py
+@@ -41,7 +41,7 @@ class DdownloadCom(XFSDownloader):
+     API_URL = "https://api-v2.ddownload.com/api/"
+ 
+     @classmethod
+-    def api_response(cls, method, **kwargs):
++    def api_request(cls, method, **kwargs):
+         kwargs.update({"key": cls.API_KEY})
+         json_data = get_url(cls.API_URL + method, get=kwargs)
+         return json.loads(json_data)
+@@ -49,7 +49,7 @@ class DdownloadCom(XFSDownloader):
+     # @classmethod
+     # def api_info(cls, url):
+     #     info = {}
+-    #     api_data = cls.api_response("file/info", file_code=re.match(cls.__pattern__, url).group('ID'))
++    #     api_data = cls.api_request("file/info", file_code=re.match(cls.__pattern__, url).group('ID'))
+     #
+     #     if api_data['status'] == 200:
+     #         if api_data['result'][0]['status'] == 200:
+--- a/src/pyload/plugins/downloaders/FileboomMe.py
++++ b/src/pyload/plugins/downloaders/FileboomMe.py
+@@ -33,14 +33,14 @@ class FileboomMe(SimpleDownloader):
+     #: Actually this is Keep2ShareCc API, see https://keep2share.github.io/api/ https://github.com/keep2share/api
+ 
+     @classmethod
+-    def api_response(cls, method, **kwargs):
++    def api_request(cls, method, **kwargs):
+         html = get_url(cls.API_URL + method, post=json.dumps(kwargs))
+         return json.loads(html)
+ 
+     @classmethod
+     def api_info(cls, url):
+         file_id = re.match(cls.__pattern__, url).group("ID")
+-        file_info = cls.api_response("GetFilesInfo", ids=[file_id], extended_info=False)
++        file_info = cls.api_request("GetFilesInfo", ids=[file_id], extended_info=False)
+ 
+         if (
+             file_info["code"] != 200
+@@ -73,7 +73,7 @@ class FileboomMe(SimpleDownloader):
+             self.fail(self._("This is a private file"))
+ 
+         try:
+-            api_data = self.api_response(
++            api_data = self.api_request(
+                 "GetUrl",
+                 file_id=file_id,
+                 free_download_key=None,
+@@ -84,13 +84,13 @@ class FileboomMe(SimpleDownloader):
+         except BadHeader as exc:
+             if exc.code == 406:
+                 for i in range(10):
+-                    api_data = self.api_response("RequestCaptcha")
++                    api_data = self.api_request("RequestCaptcha")
+                     if api_data["code"] != 200:
+                         self.fail(self._("Request captcha API failed"))
+ 
+                     captcha_response = self.captcha.decrypt(api_data["captcha_url"])
+                     try:
+-                        api_data = self.api_response(
++                        api_data = self.api_request(
+                             "GetUrl",
+                             file_id=file_id,
+                             free_download_key=None,
+@@ -127,7 +127,7 @@ class FileboomMe(SimpleDownloader):
+ 
+                 self.wait(api_data["time_wait"])
+ 
+-                api_data = self.api_response(
++                api_data = self.api_request(
+                     "GetUrl",
+                     file_id=file_id,
+                     free_download_key=free_download_key,
+@@ -150,7 +150,7 @@ class FileboomMe(SimpleDownloader):
+         if self.info["access"] == "private":
+             self.fail(self._("This is a private file"))
+ 
+-        json_data = self.api_response(
++        json_data = self.api_request(
+             "GetUrl",
+             file_id=file_id,
+             free_download_key=None,
+--- a/src/pyload/plugins/downloaders/GoogledriveCom.py
++++ b/src/pyload/plugins/downloaders/GoogledriveCom.py
+@@ -47,7 +47,7 @@ class GoogledriveCom(BaseDownloader):
+         self.resume_download = True
+         self.chunk_limit = 1
+ 
+-    def api_response(self, cmd, **kwargs):
++    def api_request(self, cmd, **kwargs):
+         kwargs["key"] = self.API_KEY
+         try:
+             json_data = json.loads(
+@@ -99,7 +99,7 @@ class GoogledriveCom(BaseDownloader):
+     def process(self, pyfile):
+         disposition = False
+         self.data = self.load(pyfile.url)
+-        json_data = self.api_response(
++        json_data = self.api_request(
+             "files/" + self.info["pattern"]["ID"], fields="md5Checksum,name,size"
+         )
+ 
+--- a/src/pyload/plugins/downloaders/IronfilesNet.py
++++ b/src/pyload/plugins/downloaders/IronfilesNet.py
+@@ -30,7 +30,7 @@ class IronfilesNet(SimpleDownloader):
+ 
+     API_URL = "https://ironfiles.net/api/"
+ 
+-    def api_response(self, method, **kwargs):
++    def api_request(self, method, **kwargs):
+         json_data = self.load(self.API_URL + method, get=kwargs)
+         return json.loads(json_data)
+ 
+--- a/src/pyload/plugins/downloaders/Keep2ShareCc.py
++++ b/src/pyload/plugins/downloaders/Keep2ShareCc.py
+@@ -40,14 +40,14 @@ class Keep2ShareCc(SimpleDownloader):
+     #: See https://keep2share.github.io/api/ https://github.com/keep2share/api
+ 
+     @classmethod
+-    def api_response(cls, method, **kwargs):
++    def api_request(cls, method, **kwargs):
+         html = get_url(cls.API_URL + method, post=json.dumps(kwargs))
+         return json.loads(html)
+ 
+     @classmethod
+     def api_info(cls, url):
+         file_id = re.match(cls.__pattern__, url).group("ID")
+-        file_info = cls.api_response("GetFilesInfo", ids=[file_id], extended_info=False)
++        file_info = cls.api_request("GetFilesInfo", ids=[file_id], extended_info=False)
+ 
+         if (
+             file_info["code"] != 200
+@@ -79,7 +79,7 @@ class Keep2ShareCc(SimpleDownloader):
+             self.fail(self._("This is a private file"))
+ 
+         try:
+-            json_data = self.api_response(
++            json_data = self.api_request(
+                 "GetUrl",
+                 file_id=file_id,
+                 free_download_key=None,
+@@ -89,13 +89,13 @@ class Keep2ShareCc(SimpleDownloader):
+         except BadHeader as exc:
+             if exc.code == 406:
+                 for i in range(10):
+-                    json_data = self.api_response("RequestCaptcha")
++                    json_data = self.api_request("RequestCaptcha")
+                     if json_data["code"] != 200:
+                         self.fail(self._("Request captcha API failed"))
+ 
+                     captcha_response = self.captcha.decrypt(json_data["captcha_url"])
+                     try:
+-                        json_data = self.api_response(
++                        json_data = self.api_request(
+                             "GetUrl",
+                             file_id=file_id,
+                             free_download_key=None,
+@@ -132,7 +132,7 @@ class Keep2ShareCc(SimpleDownloader):
+ 
+                 self.wait(json_data["time_wait"])
+ 
+-                json_data = self.api_response(
++                json_data = self.api_request(
+                     "GetUrl",
+                     file_id=file_id,
+                     free_download_key=free_download_key,
+@@ -155,7 +155,7 @@ class Keep2ShareCc(SimpleDownloader):
+         if self.info["access"] == "private":
+             self.fail(self._("This is a private file"))
+ 
+-        json_data = self.api_response(
++        json_data = self.api_request(
+             "GetUrl",
+             file_id=file_id,
+             free_download_key=None,
+--- a/src/pyload/plugins/downloaders/LinksnappyCom.py
++++ b/src/pyload/plugins/downloaders/LinksnappyCom.py
+@@ -37,13 +37,13 @@ class LinksnappyCom(MultiDownloader):
+ 
+     API_URL = "https://linksnappy.com/api/"
+ 
+-    def api_response(self, method, **kwargs):
++    def api_request(self, method, **kwargs):
+         return json.loads(self.load(self.API_URL + method, get=kwargs))
+ 
+     def handle_premium(self, pyfile):
+         json_params = json.dumps({"link": pyfile.url})
+ 
+-        api_data = self.api_response("linkgen", genLinks=json_params)["links"][0]
++        api_data = self.api_request("linkgen", genLinks=json_params)["links"][0]
+ 
+         if api_data["status"] != "OK":
+             self.fail(api_data["error"])
+@@ -56,7 +56,7 @@ class LinksnappyCom(MultiDownloader):
+ 
+     def out_of_traffic(self):
+         url_p = urllib.parse.urlparse(self.pyfile.url)
+-        json_data = self.api_response("FILEHOSTS")
++        json_data = self.api_request("FILEHOSTS")
+ 
+         for k, v in json_data["return"].items():
+             url = urllib.parse.urlunparse(url_p._replace(netloc=k))
+@@ -96,7 +96,7 @@ class LinksnappyCom(MultiDownloader):
+         self.pyfile.set_progress(0)
+ 
+         while True:
+-            api_data = self.api_response("CACHEDLSTATUS", id=file_hash)
++            api_data = self.api_request("CACHEDLSTATUS", id=file_hash)
+ 
+             if api_data["status"] != "OK":
+                 self.fail(api_data["error"])
+--- a/src/pyload/plugins/downloaders/LinksnappyComTorrent.py
++++ b/src/pyload/plugins/downloaders/LinksnappyComTorrent.py
+@@ -32,7 +32,7 @@ class LinksnappyComTorrent(BaseDownloade
+ 
+     API_URL = "https://linksnappy.com/api/"
+ 
+-    def api_response(self, method, **kwargs):
++    def api_request(self, method, **kwargs):
+         return json.loads(self.load(self.API_URL + method,
+                                          get=kwargs))
+ 
+@@ -49,7 +49,7 @@ class LinksnappyComTorrent(BaseDownloade
+             #: torrent URL
+             if self.pyfile.url.startswith("http"):
+                 #: remote URL, download the torrent to tmp directory
+-                api_data = self.api_response("torrents/ADDURL", url=self.pyfile.url).items()[0][1]
++                api_data = self.api_request("torrents/ADDURL", url=self.pyfile.url).items()[0][1]
+ 
+                 if api_data['status'] == "FAILED" and api_data['error'] != "This torrent already exists in your account":
+                     self.fail(api_data['error'])
+@@ -80,7 +80,7 @@ class LinksnappyComTorrent(BaseDownloade
+ 
+         else:
+             #: magnet URL, send to the server
+-            api_data = self.api_response("torrents/ADDMAGNET", magnetlinks=self.pyfile.url)
++            api_data = self.api_request("torrents/ADDMAGNET", magnetlinks=self.pyfile.url)
+ 
+             if api_data['status'] != "OK":
+                 self.fail(api_data['error'])
+@@ -97,7 +97,7 @@ class LinksnappyComTorrent(BaseDownloade
+     def wait_for_server_dl(self, torrent_id):
+         """ Show progress while the server does the download """
+ 
+-        api_data = self.api_response("torrents/STATUS", tid=torrent_id)
++        api_data = self.api_request("torrents/STATUS", tid=torrent_id)
+         if api_data['status'] != "OK":
+             self.fail(api_data['error'])
+ 
+@@ -110,12 +110,12 @@ class LinksnappyComTorrent(BaseDownloade
+         self.pyfile.set_progress(0)
+ 
+         if api_data['return']['status'] != "FINISHED":
+-            api_data = self.api_response("torrents/START", tid=torrent_id)
++            api_data = self.api_request("torrents/START", tid=torrent_id)
+             if api_data['status'] != "OK":
+                 if api_data['error'] == "Magnet URI processing in progress. Please wait.":
+                     for _i in range(8):
+                         self.sleep(3)
+-                        api_data = self.api_response("torrents/START", tid=torrent_id)
++                        api_data = self.api_request("torrents/START", tid=torrent_id)
+                         if api_data['status'] == "OK":
+                             break
+                     else:
+@@ -125,7 +125,7 @@ class LinksnappyComTorrent(BaseDownloade
+                     self.fail(api_data['error'])
+ 
+             while True:
+-                api_data = self.api_response("torrents/STATUS", tid=torrent_id)
++                api_data = self.api_request("torrents/STATUS", tid=torrent_id)
+                 if api_data['status'] != "OK":
+                     self.fail(api_data['error'])
+ 
+@@ -151,7 +151,7 @@ class LinksnappyComTorrent(BaseDownloade
+         self.pyfile.set_custom_status("makezip")
+         self.pyfile.set_progress(0)
+         while True:
+-            api_data = self.api_response("torrents/GENZIP", torrentid=torrent_id)
++            api_data = self.api_request("torrents/GENZIP", torrentid=torrent_id)
+             if api_data['status'] == "ERROR":
+                 self.fail(api_data['error'])
+ 
+@@ -166,7 +166,7 @@ class LinksnappyComTorrent(BaseDownloade
+ 
+     def delete_torrent_from_server(self, torrent_id):
+         """ Remove the torrent from the server """
+-        self.api_response("torrents/DELETETORRENT", tid=torrent_id, delFiles=1)
++        self.api_request("torrents/DELETETORRENT", tid=torrent_id, delFiles=1)
+ 
+     def setup(self):
+         self.multi_dl = True
+--- a/src/pyload/plugins/downloaders/MegaDebridEu.py
++++ b/src/pyload/plugins/downloaders/MegaDebridEu.py
+@@ -37,7 +37,7 @@ class MegaDebridEu(MultiDownloader):
+ 
+     API_URL = "https://www.mega-debrid.eu/api.php"
+ 
+-    def api_response(self, action, get={}, post={}):
++    def api_request(self, action, get={}, post={}):
+         get["action"] = action
+ 
+         # Better use pyLoad User-Agent so we don't get blocked
+@@ -51,7 +51,7 @@ class MegaDebridEu(MultiDownloader):
+ 
+     def handle_premium(self, pyfile):
+         try:
+-            res = self.api_response(
++            res = self.api_request(
+                 "getLink",
+                 get=args(
+                     token=self.account.info["data"]["cache_info"][self.account.user][
+--- a/src/pyload/plugins/downloaders/MegacrypterCom.py
++++ b/src/pyload/plugins/downloaders/MegacrypterCom.py
+@@ -22,7 +22,7 @@ class MegacrypterCom(MegaCoNz):
+     API_URL = "http://megacrypter.com/api"
+     FILE_SUFFIX = ".crypted"
+ 
+-    def api_response(self, **kwargs):
++    def api_request(self, **kwargs):
+         """
+         Dispatch a call to the api, see megacrypter.com/api_doc.
+         """
+@@ -36,10 +36,10 @@ class MegacrypterCom(MegaCoNz):
+         node = re.match(self.__pattern__, pyfile.url).group(0)
+ 
+         #: get Mega.co.nz link info
+-        info = self.api_response(link=node, m="info")
++        info = self.api_request(link=node, m="info")
+ 
+         #: Get crypted file URL
+-        dl = self.api_response(link=node, m="dl")
++        dl = self.api_request(link=node, m="dl")
+ 
+         # TODO: map error codes, implement password protection
+         # if info['pass'] is True:
+--- a/src/pyload/plugins/downloaders/MultishareCz.py
++++ b/src/pyload/plugins/downloaders/MultishareCz.py
+@@ -32,7 +32,7 @@ class MultishareCz(MultiDownloader):
+     #: See https://multishare.cz/api/
+     API_URL = "https://www.multishare.cz/api/"
+ 
+-    def api_response(self, method, **kwargs):
++    def api_request(self, method, **kwargs):
+         get = {"sub": method}
+         get.update(kwargs)
+         self.req.http.c.setopt(pycurl.USERAGENT, "JDownloader")
+@@ -47,7 +47,7 @@ class MultishareCz(MultiDownloader):
+             return json.loads(json_data)
+ 
+     def handle_premium(self, pyfile):
+-        api_data = self.api_response("check-file", link=pyfile.url)
++        api_data = self.api_request("check-file", link=pyfile.url)
+         if "err" in api_data:
+             if "Given link is dead" in api_data["err"]:
+                 self.offline()
+@@ -58,7 +58,7 @@ class MultishareCz(MultiDownloader):
+         pyfile.name = api_data["file_name"]
+         pyfile.size = api_data["file_size"]
+ 
+-        api_data = self.api_response(
++        api_data = self.api_request(
+             "download-link",
+             link=pyfile.url,
+             login=self.account.user,
+--- a/src/pyload/plugins/downloaders/OpenloadIo.py
++++ b/src/pyload/plugins/downloaders/OpenloadIo.py
+@@ -34,14 +34,14 @@ class OpenloadIo(SimpleDownloader):
+     API_URL = "https://api.openload.co/1"
+ 
+     @classmethod
+-    def api_response(cls, file_id, method, **kwargs):
++    def api_request(cls, file_id, method, **kwargs):
+         kwargs["file"] = file_id
+         return json.loads(get_url(cls.API_URL + "/file/" + method, get=kwargs))
+ 
+     @classmethod
+     def api_info(cls, url):
+         file_id = re.match(cls.__pattern__, url).group("ID")
+-        info_json = cls.api_response(file_id, "info")
++        info_json = cls.api_request(file_id, "info")
+         file_info = info_json["result"][file_id]
+ 
+         return {"name": file_info["name"], "size": file_info["size"]}
+@@ -53,7 +53,7 @@ class OpenloadIo(SimpleDownloader):
+     def handle_free(self, pyfile):
+         file_id = self.info["pattern"]["ID"]
+ 
+-        ticket_json = self.api_response(file_id, "dlticket")
++        ticket_json = self.api_request(file_id, "dlticket")
+ 
+         if ticket_json["status"] != 200:
+             self.log_error(ticket_json["msg"])
+@@ -81,7 +81,7 @@ class OpenloadIo(SimpleDownloader):
+ 
+         ticket = ticket_json["result"]["ticket"]
+ 
+-        download_json = self.api_response(
++        download_json = self.api_request(
+             file_id, "dl", ticket=ticket, captcha_response=captcha_response
+         )
+ 
+--- a/src/pyload/plugins/downloaders/RealdebridCom.py
++++ b/src/pyload/plugins/downloaders/RealdebridCom.py
+@@ -37,7 +37,7 @@ class RealdebridCom(MultiDownloader):
+     # See https://api.real-debrid.com/
+     API_URL = "https://api.real-debrid.com/rest/1.0"
+ 
+-    def api_response(self, namespace, get={}, post={}):
++    def api_request(self, namespace, get={}, post={}):
+         self.req.http.c.setopt(pycurl.USERAGENT, "pyLoad/{}".format(self.pyload.version))
+         try:
+             json_data = self.load(self.API_URL + namespace, get=get, post=post)
+@@ -54,7 +54,7 @@ class RealdebridCom(MultiDownloader):
+         user = list(self.account.accounts.keys())[0]
+         api_token = self.account.accounts[user]["api_token"]
+ 
+-        data = self.api_response(
++        data = self.api_request(
+             "/unrestrict/link",
+             args(auth_token=api_token),
+             args(link=pyfile.url, password=self.get_password()),
+--- a/src/pyload/plugins/downloaders/TenluaVn.py
++++ b/src/pyload/plugins/downloaders/TenluaVn.py
+@@ -35,7 +35,7 @@ class TenluaVn(SimpleDownloader):
+     API_URL = "https://api2.tenlua.vn/"
+ 
+     @classmethod
+-    def api_response(cls, method, **kwargs):
++    def api_request(cls, method, **kwargs):
+         kwargs["a"] = method
+         sid = kwargs.pop("sid", None)
+         return json.loads(
+@@ -49,7 +49,7 @@ class TenluaVn(SimpleDownloader):
+     @classmethod
+     def api_info(cls, url):
+         file_id = re.match(cls.__pattern__, url).group("ID")
+-        file_info = cls.api_response(
++        file_info = cls.api_request(
+             "filemanager_builddownload_getinfo", n=file_id, r=gen_r()
+         )[0]
+ 
+@@ -83,7 +83,7 @@ class TenluaVn(SimpleDownloader):
+                 if sid is not None:
+                     args["sid"] = sid
+ 
+-                password_status = self.api_response(
++                password_status = self.api_request(
+                     "filemanager_builddownload_checkpassword", **args
+                 )
+                 if password_status["status"] == "0":
+--- a/src/pyload/plugins/downloaders/WebshareCz.py
++++ b/src/pyload/plugins/downloaders/WebshareCz.py
+@@ -33,13 +33,13 @@ class WebshareCz(SimpleDownloader):
+     API_URL = "https://webshare.cz/api/"
+ 
+     @classmethod
+-    def api_response(cls, method, **kwargs):
++    def api_request(cls, method, **kwargs):
+         return get_url(cls.API_URL + method + "/", post=kwargs)
+ 
+     @classmethod
+     def api_info(cls, url):
+         info = {}
+-        api_data = cls.api_response(
++        api_data = cls.api_request(
+             "file_info", ident=re.match(cls.__pattern__, url).group("ID"), wst=""
+         )
+ 
+@@ -65,7 +65,7 @@ class WebshareCz(SimpleDownloader):
+     def handle_free(self, pyfile):
+         wst = self.account.get_data("wst") if self.account else None
+ 
+-        api_data = self.api_response(
++        api_data = self.api_request(
+             "file_link", ident=self.info["pattern"]["ID"], wst=wst
+         )
+ 
+--- a/src/pyload/plugins/downloaders/ZeveraCom.py
++++ b/src/pyload/plugins/downloaders/ZeveraCom.py
+@@ -31,7 +31,7 @@ class ZeveraCom(MultiDownloader):
+ 
+     API_URL = "https://www.zevera.com/api/"
+ 
+-    def api_response(self, method, api_key, **kwargs):
++    def api_request(self, method, api_key, **kwargs):
+         get_data = {"client_id": "452508742", "apikey": api_key}
+ 
+         get_data.update(kwargs)
+@@ -41,7 +41,7 @@ class ZeveraCom(MultiDownloader):
+         return json.loads(res)
+ 
+     def handle_premium(self, pyfile):
+-        res = self.api_response(
++        res = self.api_request(
+             "transfer/directdl", self.account.info["login"]["password"], src=pyfile.url
+         )
+         if res["status"] == "success":

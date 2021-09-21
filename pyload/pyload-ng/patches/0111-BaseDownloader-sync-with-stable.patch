@@ -1,0 +1,20 @@
+From 892d360905171b498ecdec96e9cd90a2997d7f06 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Mon, 21 Jun 2021 00:06:30 +0300
+Subject: [PATCH 111/150] [BaseDownloader] sync with stable
+
+---
+ src/pyload/plugins/base/downloader.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/src/pyload/plugins/base/downloader.py
++++ b/src/pyload/plugins/base/downloader.py
+@@ -16,7 +16,7 @@ from .hoster import BaseHoster
+ class BaseDownloader(BaseHoster):
+     __name__ = "BaseDownloader"
+     __type__ = "downloader"
+-    __version__ = "0.80"
++    __version__ = "0.81"
+     __status__ = "stable"
+ 
+     __pattern__ = r"^unmatchable$"

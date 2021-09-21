@@ -1,0 +1,36 @@
+From 842ecd125d461c12d4d0ac051e07493917b53dde Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Thu, 13 May 2021 02:10:21 +0300
+Subject: [PATCH 023/150] pathchooser bugfix
+
+---
+ src/pyload/webui/app/themes/modern/templates/js/settings.js | 4 ++--
+ src/pyload/webui/app/themes/pyplex/templates/js/settings.js | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+--- a/src/pyload/webui/app/themes/modern/templates/js/settings.js
++++ b/src/pyload/webui/app/themes/modern/templates/js/settings.js
+@@ -227,8 +227,8 @@ SettingsUI = (function() {
+         path_p.text(iframe.cwd);
+         path_p.prop("title", iframe.cwd);
+         $("#chooser_confirm_button").attr("disabled", !iframe.submit);
+-        $("#path_type0").attr("checked", !iframe.isabsolute);
+-        $("#path_type1").attr("checked", iframe.isabsolute);
++        $("#path_type0").prop("checked", !iframe.isabsolute);
++        $("#path_type1").prop("checked", iframe.isabsolute);
+     };
+     return a;
+ })();
+--- a/src/pyload/webui/app/themes/pyplex/templates/js/settings.js
++++ b/src/pyload/webui/app/themes/pyplex/templates/js/settings.js
+@@ -227,8 +227,8 @@ SettingsUI = (function() {
+         path_p.text(iframe.cwd);
+         path_p.prop("title", iframe.cwd);
+         $("#chooser_confirm_button").attr("disabled", !iframe.submit);
+-        $("#path_type0").attr("checked", !iframe.isabsolute);
+-        $("#path_type1").attr("checked", iframe.isabsolute);
++        $("#path_type0").prop("checked", !iframe.isabsolute);
++        $("#path_type1").prop("checked", iframe.isabsolute);
+     };
+     return a;
+ })();

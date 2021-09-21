@@ -1,0 +1,95 @@
+From 5fb660f7d593ab069343fb902c0ec62620a89764 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sun, 30 May 2021 21:59:01 +0300
+Subject: [PATCH 069/150] fix #3970
+
+---
+ src/pyload/plugins/anticaptchas/AdsCaptcha.py | 62 -------------------
+ .../plugins/downloaders/RapidgatorNet.py      |  3 +-
+ 2 files changed, 1 insertion(+), 64 deletions(-)
+ delete mode 100644 src/pyload/plugins/anticaptchas/AdsCaptcha.py
+
+--- a/src/pyload/plugins/anticaptchas/AdsCaptcha.py
++++ /dev/null
+@@ -1,62 +0,0 @@
+-# -*- coding: utf-8 -*-
+-import random
+-import re
+-
+-from ..base.captcha_service import CaptchaService
+-
+-
+-class AdsCaptcha(CaptchaService):
+-    __name__ = "AdsCaptcha"
+-    __type__ = "anticaptcha"
+-    __version__ = "0.14"
+-    __status__ = "testing"
+-
+-    __description__ = """AdsCaptcha captcha service plugin"""
+-    __license__ = "GPLv3"
+-    __authors__ = [("pyLoad team", "admin@pyload.net")]
+-
+-    CAPTCHAID_PATTERN = r"api\.adscaptcha\.com/Get\.aspx\?.*?CaptchaId=(\d+)"
+-    PUBLICKEY_PATTERN = r"api\.adscaptcha\.com/Get\.aspx\?.*?PublicKey=([\w\-]+)"
+-
+-    def detect_key(self, data=None):
+-        html = data or self.retrieve_data()
+-
+-        m = re.search(self.PUBLICKEY_PATTERN, html)
+-        n = re.search(self.CAPTCHAID_PATTERN, html)
+-        if m and n:
+-            #: Key is the tuple(PublicKey, CaptchaId)
+-            key = m.group(1).strip()
+-            id = n.group(1).strip()
+-            self.key = (key, id)
+-            self.log_debug(f"Key: {key} | ID: {id}")
+-            return self.key
+-        else:
+-            self.log_debug("Key or id pattern not found")
+-            return None
+-
+-    def challenge(self, key=None, data=None):
+-        PublicKey, CaptchaId = key or self.retrieve_key(data)
+-
+-        html = self.pyfile.plugin.load(
+-            "http://api.adscaptcha.com/Get.aspx",
+-            get={"CaptchaId": CaptchaId, "PublicKey": PublicKey},
+-        )
+-        try:
+-            challenge = re.search("challenge: '(.+?)',", html).group(1)
+-            server = re.search("server: '(.+?)',", html).group(1)
+-
+-        except AttributeError:
+-            self.fail(self._("AdsCaptcha challenge pattern not found"))
+-
+-        self.log_debug(f"Challenge: {challenge}")
+-
+-        return self.result(server, challenge), challenge
+-
+-    def result(self, server, challenge):
+-        result = self.decrypt(
+-            "{}Challenge.aspx".format(server),
+-            get={"cid": challenge, "dummy": random.random()},
+-            cookies=True,
+-            input_type="jpg",
+-        )
+-        return result
+--- a/src/pyload/plugins/downloaders/RapidgatorNet.py
++++ b/src/pyload/plugins/downloaders/RapidgatorNet.py
+@@ -15,7 +15,7 @@ from ..base.simple_downloader import Sim
+ class RapidgatorNet(SimpleDownloader):
+     __name__ = "RapidgatorNet"
+     __type__ = "downloader"
+-    __version__ = "0.56"
++    __version__ = "0.57"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?(?:rapidgator\.(?:net|asia|)|rg\.to)/file/(?P<ID>\w+)"
+@@ -59,7 +59,6 @@ class RapidgatorNet(SimpleDownloader):
+     LINK_FREE_PATTERN = r"return '(https?://\w+.rapidgator.net/.*)';"
+ 
+     RECAPTCHA_PATTERN = r'"http://api\.recaptcha\.net/challenge\?k=(.*?)"'
+-    ADSCAPTCHA_PATTERN = r'(http://api\.adscaptcha\.com/Get\.aspx[^"\']+)'
+     SOLVEMEDIA_PATTERN = r'http://api\.solvemedia\.com/papi/challenge\.script\?k=(.*?)"'
+ 
+     URL_REPLACEMENTS = [(__pattern__ + '.*', r'https://rapidgator.net/file/\g<ID>')]

@@ -1,0 +1,23 @@
+From a832491f169b4cd78d59610afc1d6b4c25b56a6d Mon Sep 17 00:00:00 2001
+From: Ozzieisaacs <ozzie.fernandez.isaacs@googlemail.com>
+Date: Sun, 8 Aug 2021 13:44:16 +0200
+Subject: [PATCH 130/150] Fix downloads with Uploadgig
+
+---
+ src/pyload/plugins/downloaders/UploadgigCom.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/src/pyload/plugins/downloaders/UploadgigCom.py
++++ b/src/pyload/plugins/downloaders/UploadgigCom.py
+@@ -70,9 +70,9 @@ class UploadgigCom(SimpleDownloader):
+             except:
+                 self.fail(self._("Illegal response from the server"))
+ 
+-            if any([_x not in res for _x in ('cd', 'fopg', 'fghre')]):
++            if any([_x not in res for _x in ('cd', 'sp', 'q', 'id')]):
+                 self.fail(self._("Illegal response from the server"))
+ 
+             self.wait(res['cd'])
+ 
+-            self.link = "http://" + res['fopg'] + res['fghre'] + "/dlfile"
++            self.link = res['sp'] + "id=" + str(res['id'] - 5) + "&" + res['q']

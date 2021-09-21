@@ -1,0 +1,29 @@
+From b060155dab6bd8549d4840d9186dcd29fa28c30a Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sun, 16 May 2021 23:57:53 +0300
+Subject: [PATCH 057/150] [LeechThreeHundreedSixtyCom] sync with stable
+
+---
+ src/pyload/plugins/accounts/LeechThreeHundreedSixtyCom.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/src/pyload/plugins/accounts/LeechThreeHundreedSixtyCom.py
++++ b/src/pyload/plugins/accounts/LeechThreeHundreedSixtyCom.py
+@@ -10,7 +10,7 @@ from ..base.multi_account import MultiAc
+ class LeechThreeHundreedSixtyCom(MultiAccount):
+     __name__ = "LeechThreeHundreedSixtyCom"
+     __type__ = "account"
+-    __version__ = "0.01"
++    __version__ = "0.02"
+     __status__ = "testing"
+ 
+     __description__ = """Leech360.com account plugin"""
+@@ -64,7 +64,7 @@ class LeechThreeHundreedSixtyCom(MultiAc
+         # TODO: Remove `>> 10` in 0.6.x
+         trafficleft = (
+             536_870_912_000 - int(api_data["data"].get("total_used", 0))
+-        ) >> 10
++        )
+         return {
+             "premium": premium,
+             "validuntil": validuntil,

@@ -1,0 +1,26 @@
+From d72232665e75b6e4c4ff75112d6df901d4254ca5 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sat, 22 May 2021 04:24:50 +0300
+Subject: [PATCH 063/150] add some comments
+
+---
+ src/pyload/webui/app/blueprints/json_blueprint.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/src/pyload/webui/app/blueprints/json_blueprint.py
++++ b/src/pyload/webui/app/blueprints/json_blueprint.py
+@@ -33,12 +33,12 @@ def links():
+         for link in links:
+             ids.append(link["fid"])
+ 
+-            if link["status"] == 12:
++            if link["status"] == 12:  #: downloading
+                 formatted_eta = link["format_eta"]
+                 formatted_speed = format.speed(link["speed"])
+                 link["info"] = f"{formatted_eta} @ {formatted_speed}"
+ 
+-            elif link["status"] == 5:
++            elif link["status"] == 5:  #: waiting
+                 link["percent"] = 0
+                 link["size"] = 0
+                 link["bleft"] = 0

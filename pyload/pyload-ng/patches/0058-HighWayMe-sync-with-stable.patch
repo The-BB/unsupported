@@ -1,0 +1,129 @@
+From b20940c475070f08f7361cf95ab4e0223e86f73f Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Mon, 17 May 2021 02:10:04 +0300
+Subject: [PATCH 058/150] [HighWayMe] sync with stable
+
+---
+ src/pyload/plugins/accounts/HighWayMe.py    | 42 ++++++++++-----------
+ src/pyload/plugins/downloaders/HighWayMe.py | 13 ++++---
+ 2 files changed, 27 insertions(+), 28 deletions(-)
+
+--- a/src/pyload/plugins/accounts/HighWayMe.py
++++ b/src/pyload/plugins/accounts/HighWayMe.py
+@@ -6,9 +6,9 @@ from ..base.multi_account import MultiAc
+ 
+ 
+ class HighWayMe(MultiAccount):
+-    __name__ = "HighWayMe.py"
++    __name__ = "HighWayMe"
+     __type__ = "account"
+-    __version__ = "0.10"
++    __version__ = "0.12"
+     __status__ = "testing"
+ 
+     __config__ = [
+@@ -19,11 +19,20 @@ class HighWayMe(MultiAccount):
+ 
+     __description__ = """High-Way.me account plugin"""
+     __license__ = "GPLv3"
+-    __authors__ = [("EvolutionClip", "evolutionclip@live.de")]
++    __authors__ = [("EvolutionClip", "evolutionclip@live.de"),
++                   ("GammaC0de", "nitzo2001[AT]yahoo[DOT]com")]
++
++    API_URL = "https://high-way.me/api.php"
++
++    def api_request(self, method, **kwargs):
++        post = dict([(k.lstrip('_'), v) for k, v in kwargs.items()])
++        json_data = self.load(self.API_URL,
++                              get={method: ''},
++                              post=post)
++        return json.loads(json_data)
+ 
+     def grab_hosters(self, user, password, data):
+-        html = self.load("https://high-way.me/api.php", get={"hoster": 1})
+-        json_data = json.loads(html)
++        json_data = self.api_request("hoster")
+         return [element["name"] for element in json_data["hoster"]]
+ 
+     def grab_info(self, user, password, data):
+@@ -31,24 +40,16 @@ class HighWayMe(MultiAccount):
+         validuntil = -1
+         trafficleft = None
+ 
+-        json_data = self.load("https://high-way.me/api.php?user")
+-
+-        self.log_debug(f"JSON data: {json_data}")
+-
+-        json_data = json.loads(json_data)
++        json_data = self.api_request("user")
+ 
+         if "premium" in json_data["user"] and json_data["user"]["premium"]:
+             premium = True
+ 
+-        if "premium_bis" in json_data["user"] and json_data["user"]["premium_bis"]:
++        if 'premium_bis' in json_data['user'] and json_data['user']['premium_bis']:
+             validuntil = float(json_data["user"]["premium_bis"])
+ 
+-        if (
+-            "premium_traffic" in json_data["user"]
+-            and json_data["user"]["premium_traffic"]
+-        ):
+-            # TODO: Remove `>> 10` in 0.6.x
+-            trafficleft = float(json_data["user"]["premium_traffic"]) >> 10
++        if 'premium_traffic' in json_data['user'] and json_data['user']['premium_traffic']:
++            trafficleft = int(json_data["user"]["premium_traffic"])
+ 
+         return {
+             "premium": premium,
+@@ -57,10 +58,7 @@ class HighWayMe(MultiAccount):
+         }
+ 
+     def signin(self, user, password, data):
+-        html = self.load(
+-            "https://high-way.me/api.php?login",
+-            post={"login": "1", "user": user, "pass": password},
+-        )
++        json_data = self.api_request("login", user=user, _pass=password)
+ 
+-        if "UserOrPassInvalid" in html:
++        if not json_data.get('loggedin', False):
+             self.fail_login()
+--- a/src/pyload/plugins/downloaders/HighWayMe.py
++++ b/src/pyload/plugins/downloaders/HighWayMe.py
+@@ -10,7 +10,7 @@ from ..base.multi_downloader import Mult
+ class HighWayMe(MultiDownloader):
+     __name__ = "HighWayMe"
+     __type__ = "downloader"
+-    __version__ = "0.24"
++    __version__ = "0.25"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://.+high-way\.my"
+@@ -64,21 +64,22 @@ class HighWayMe(MultiDownloader):
+                 self.log_debug("JSON data: " + self.data)
+                 break
+         else:
+-            self.log_info(self._("Unable to get API data, waiting 1 minute and retry"))
++            self.log_warning(self._("Unable to get API data, waiting 1 minute and retry"))
+             self.retry(5, 60, self._("Unable to get API data"))
+ 
+         self.check_errors()
+ 
+         try:
+-            self.pyfile.name = re.search(r"<name>(.+?)</name>", self.data).group(1)
++            self.pyfile.name = re.search(r'<name>(.+?)</name>', self.data).group(1)
+ 
+         except AttributeError:
+-            self.pyfile.name = ""
++            self.log_warning(self._("Name pattern not found"))
+ 
+         try:
+-            self.pyfile.size = re.search(r"<size>(\d+)</size>", self.data).group(1)
++            self.pyfile.size = re.search(r'<size>(\d+)</size>', self.data).group(1)
+ 
+         except AttributeError:
++            self.log_warning(self._("Size pattern not found"))
+             self.pyfile.size = 0
+ 
+-        self.link = re.search(r"<download>(.+?)</download>", self.data).group(1)
++        self.link = re.search(r'<download>(.+?)</download>', self.data).group(1)

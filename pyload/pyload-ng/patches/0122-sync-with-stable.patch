@@ -1,0 +1,20 @@
+From 7d38fb4623d25d3a38090ee9f73e689f888c4a78 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Wed, 30 Jun 2021 19:42:12 +0300
+Subject: [PATCH 122/150] sync with stable
+
+---
+ src/pyload/plugins/downloaders/TurbobitNet.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/src/pyload/plugins/downloaders/TurbobitNet.py
++++ b/src/pyload/plugins/downloaders/TurbobitNet.py
+@@ -13,7 +13,7 @@ from ..base.simple_downloader import Sim
+ class TurbobitNet(SimpleDownloader):
+     __name__ = "TurbobitNet"
+     __type__ = "downloader"
+-    __version__ = "0.39"
++    __version__ = "0.40"
+     __status__ = "testing"
+ 
+     __pattern__ = r'https?://(?:(?:www|m)\.)?(?:turbobit\.net|turbo?\.(?:to|cc))/(?:download/free/)?(?P<ID>\w+)'

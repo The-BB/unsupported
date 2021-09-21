@@ -1,0 +1,29 @@
+From d4daf83a578b2a084dc33238dfff459f7f189eec Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Thu, 17 Jun 2021 00:19:52 +0300
+Subject: [PATCH 099/150] [VimeoCom] sync with stable
+
+---
+ src/pyload/plugins/downloaders/VimeoCom.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/src/pyload/plugins/downloaders/VimeoCom.py
++++ b/src/pyload/plugins/downloaders/VimeoCom.py
+@@ -9,7 +9,7 @@ from ..base.simple_downloader import Sim
+ class VimeoCom(SimpleDownloader):
+     __name__ = "VimeoCom"
+     __type__ = "downloader"
+-    __version__ = "0.12"
++    __version__ = "0.13"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?(player\.)?vimeo\.com/(video/)?(?P<ID>\d+)"
+@@ -98,7 +98,7 @@ class VimeoCom(SimpleDownloader):
+ 
+         for q in qlevel:
+             if q in videos.keys():
+-                self.download(videos[q], fixurl=False)
++                self.download(videos[q])
+                 return
+ 
+             else:

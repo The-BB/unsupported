@@ -1,0 +1,52 @@
+From b2d06f749c732591fbac3b9bfabdc5e9c346a7d4 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sat, 15 May 2021 00:12:16 +0300
+Subject: [PATCH 034/150] [EasybytezCom] sync with stable
+
+---
+ src/pyload/plugins/accounts/EasybytezCom.py         | 2 +-
+ src/pyload/plugins/decrypters/EasybytezComFolder.py | 2 +-
+ src/pyload/plugins/downloaders/EasybytezCom.py      | 4 +++-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
+
+--- a/src/pyload/plugins/accounts/EasybytezCom.py
++++ b/src/pyload/plugins/accounts/EasybytezCom.py
+@@ -6,7 +6,7 @@ from ..base.xfs_account import XFSAccoun
+ class EasybytezCom(XFSAccount):
+     __name__ = "EasybytezCom"
+     __type__ = "account"
+-    __version__ = "0.18"
++    __version__ = "0.20"
+     __status__ = "testing"
+ 
+     __description__ = """EasyBytez.com account plugin"""
+--- a/src/pyload/plugins/decrypters/EasybytezComFolder.py
++++ b/src/pyload/plugins/decrypters/EasybytezComFolder.py
+@@ -6,7 +6,7 @@ from ..base.xfs_decrypter import XFSDecr
+ class EasybytezComFolder(XFSDecrypter):
+     __name__ = "EasybytezComFolder"
+     __type__ = "decrypter"
+-    __version__ = "0.17"
++    __version__ = "0.19"
+     __status__ = "testing"
+ 
+     __pattern__ = r"http://(?:www\.)?easybytez\.com/users/\d+/\d+"
+--- a/src/pyload/plugins/downloaders/EasybytezCom.py
++++ b/src/pyload/plugins/downloaders/EasybytezCom.py
+@@ -6,7 +6,7 @@ from ..base.xfs_downloader import XFSDow
+ class EasybytezCom(XFSDownloader):
+     __name__ = "EasybytezCom"
+     __type__ = "downloader"
+-    __version__ = "0.30"
++    __version__ = "0.32"
+     __status__ = "testing"
+ 
+     __pattern__ = r"http://(?:www\.)?easybytez\.com/\w{12}"
+@@ -26,5 +26,7 @@ class EasybytezCom(XFSDownloader):
+     ]
+ 
+     PLUGIN_DOMAIN = "easybytez.com"
++
+     OFFLINE_PATTERN = r">File not available"
++
+     LINK_PATTERN = r'(http://(\w+\.(easybytez|easyload|ezbytez|ezybytez|zingload)\.(com|to)|\d+\.\d+\.\d+\.\d+)/files/\d+/\w+/.+?)["\'<]'

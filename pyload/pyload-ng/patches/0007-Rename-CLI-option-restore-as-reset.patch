@@ -1,0 +1,126 @@
+From 0a8dd751b7327d1e47bbd68b0ac26a834bc18177 Mon Sep 17 00:00:00 2001
+From: Walter Purcaro <vuolter@gmail.com>
+Date: Mon, 3 May 2021 01:29:33 +0200
+Subject: [PATCH 007/150] Rename CLI option `restore` as `reset`
+
+---
+ src/pyload/__main__.py                            |  4 ++--
+ src/pyload/core/__init__.py                       | 15 ++++++++-------
+ src/pyload/webui/app/templates/admin.html         |  2 +-
+ src/pyload/webui/app/templates/login.html         |  2 +-
+ .../webui/app/themes/modern/templates/admin.html  |  2 +-
+ .../webui/app/themes/pyplex/templates/admin.html  |  2 +-
+ 6 files changed, 14 insertions(+), 13 deletions(-)
+
+--- a/src/pyload/__main__.py
++++ b/src/pyload/__main__.py
+@@ -81,7 +81,7 @@ def _parse_args(cmd_args):
+     )
+     parser.add_argument(
+         "-r",
+-        "--restore",
++        "--reset",
+         action="store_true",
+         help="reset default username/password",
+         default=None,
+@@ -130,7 +130,7 @@ def main(cmd_args=sys.argv[1:]):
+     Entry point for console_scripts.
+     """
+     args = _parse_args(cmd_args)
+-    core_args = (args.userdir, args.tempdir, args.storagedir, args.debug, args.restore, args.dry_run)
++    core_args = (args.userdir, args.tempdir, args.storagedir, args.debug, args.reset, args.dry_run)
+ 
+     run(core_args, args.daemon)
+ 
+--- a/src/pyload/core/__init__.py
++++ b/src/pyload/core/__init__.py
+@@ -75,8 +75,8 @@ class Core:
+     def debug(self):
+         return self._debug
+ 
+-    # NOTE: should `restore` reset config as well?
+-    def __init__(self, userdir, tempdir, storagedir, debug=None, restore=False, dry=False):
++    # NOTE: should `reset` restore the user config as well?
++    def __init__(self, userdir, tempdir, storagedir, debug=None, reset=False, dry=False):
+         self._running = Event()
+         self._exiting = False
+         self._do_restart = False
+@@ -94,7 +94,7 @@ class Core:
+         self._init_config(userdir, tempdir, storagedir, debug)
+         self._init_log()
+ 
+-        self._init_database(restore and not dry)
++        self._init_database(reset and not dry)
+         self._init_network()
+         self._init_api()
+         self._init_managers()
+@@ -161,7 +161,7 @@ class Core:
+ 
+         self.webserver = WebServerThread(self)
+ 
+-    def _init_database(self, restore):
++    def _init_database(self, reset):
+         from .threads.database_thread import DatabaseThread
+ 
+         db_path = os.path.join(self.userdir, "data", DatabaseThread.DB_FILENAME)
+@@ -172,12 +172,13 @@ class Core:
+ 
+         userpw = (self.DEFAULT_USERNAME, self.DEFAULT_PASSWORD)
+         # nousers = bool(self.db.list_users())
+-        if restore or newdb:
++        if reset or newdb:
+             self.db.add_user(*userpw, reset=True)
+-        if restore:
++
++        if reset:
+             self.log.info(
+                 self._(
+-                    "Successfully restored default login credentials `{}|{}`"
++                    "Successfully reset default login credentials `{}|{}`"
+                 ).format(*userpw)
+             )
+ 
+--- a/src/pyload/webui/app/templates/admin.html
++++ b/src/pyload/webui/app/templates/admin.html
+@@ -15,7 +15,7 @@
+     <br>
+     <br>
+ 
+-    {{ _("To restore default admin login run:") }} <b>pyload -r</b><br>
++    {{ _("To reset default admin login run:") }} <b>pyload -r</b><br>
+     {{ _("Important: Admin user have always all permissions!") }}
+ 
+     <form action="" method="POST">
+--- a/src/pyload/webui/app/templates/login.html
++++ b/src/pyload/webui/app/templates/login.html
+@@ -28,7 +28,7 @@
+ 
+ {% if errors %}
+ <p>{{_("Your username and password didn't match. Please try again.")}}</p>
+-  {{ _("To restore default admin login run:") }} <b>pyload -r</b>
++  {{ _("To reset default admin login run:") }} <b>pyload -r</b>
+ {% endif %}
+ 
+ </div>
+--- a/src/pyload/webui/app/themes/modern/templates/admin.html
++++ b/src/pyload/webui/app/themes/modern/templates/admin.html
+@@ -15,7 +15,7 @@
+ <div class="row">
+   <div class="col-sm-5 col-sm-offset-0">
+     <div class="alert alert-danger" style="padding:8px;">
+-      <p class="align-middle">{{ _("To restore default admin login run:") }} <b>pyload -r</b></p>
++      <p class="align-middle">{{ _("To reset default admin login run:") }} <b>pyload -r</b></p>
+       <br style="line-height: 2px;">
+       <p class="align-middle"><b>{{_('Important:')}}</b> {{_('Admin user have always all permissions!')}}</p>
+     </div>
+--- a/src/pyload/webui/app/themes/pyplex/templates/admin.html
++++ b/src/pyload/webui/app/themes/pyplex/templates/admin.html
+@@ -15,7 +15,7 @@
+ <div class="row">
+   <div class="col-sm-5 col-sm-offset-0">
+     <div class="alert alert-danger" style="padding:8px;">
+-      <p class="align-middle">{{ _("To restore default admin login run:") }} <b>pyload -r</b></p>
++      <p class="align-middle">{{ _("To reset default admin login run:") }} <b>pyload -r</b></p>
+       <br style="line-height: 2px;">
+       <p class="align-middle"><b>{{_('Important:')}}</b> {{_('Admin user have always all permissions!')}}</p>
+     </div>

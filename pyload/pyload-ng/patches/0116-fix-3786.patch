@@ -1,0 +1,120 @@
+From 8f8c281072e337cf95f563be80fd90c780b059fb Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sat, 26 Jun 2021 22:24:09 +0300
+Subject: [PATCH 116/150] fix #3786
+
+---
+ src/pyload/plugins/containers/CCF.py     | 22 +++++++++++++---------
+ src/pyload/plugins/containers/RSDF.py    | 13 +++++++++----
+ src/pyload/plugins/decrypters/CriptTo.py |  6 +++---
+ 3 files changed, 25 insertions(+), 16 deletions(-)
+
+--- a/src/pyload/plugins/containers/CCF.py
++++ b/src/pyload/plugins/containers/CCF.py
+@@ -4,7 +4,7 @@ import base64
+ import os
+ import re
+ 
+-import requests
++from pyload.core.network.http.http_request import FormFile
+ 
+ from ..base.container import BaseContainer
+ 
+@@ -32,17 +32,21 @@ class CCF(BaseContainer):
+     __authors__ = [
+         ("Willnix", "Willnix@pyload.net"),
+         ("Walter Purcaro", "vuolter@gmail.com"),
++        ("GammaC0de", "nitzo2001[AT]yahoo[DOT]com"),
+     ]
+ 
+     def decrypt(self, pyfile):
+         fs_filename = os.fsdecode(pyfile.url)
+ 
+-        with open(fs_filename, mode="rb") as fp:
+-            dlc_content = requests.post(
+-                "http://service.jdownloader.net/dlcrypt/getDLC.php",
+-                data={"src": "ccf", "filename": "test.ccf"},
+-                files={"upload": file},
+-            ).read()
++        dlc_content = self.load(
++            "http://service.jdownloader.net/dlcrypt/getDLC.php",
++            post={
++                "src": "ccf",
++                "filename": "test.ccf",
++                "upload": FormFile(fs_filename),
++            },
++            multipart=True,
++        )
+ 
+         dl_folder = self.pyload.config.get("general", "storage_folder")
+         dlc_file = os.path.join(dl_folder, "tmp_{}.dlc".format(pyfile.name))
+@@ -55,7 +59,7 @@ class CCF(BaseContainer):
+         except AttributeError:
+             self.fail(self._("Container is corrupted"))
+ 
+-        with open(dlc_file, mode="w") as tempdlc:
+-            tempdlc.write(dlc)
++        with open(dlc_file, mode="wb") as fp:
++            fp.write(dlc)
+ 
+         self.links = [dlc_file]
+--- a/src/pyload/plugins/containers/RSDF.py
++++ b/src/pyload/plugins/containers/RSDF.py
+@@ -6,6 +6,8 @@ import re
+ from cryptography.hazmat.backends import default_backend
+ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+ 
++from pyload.core.utils.convert import to_str
++
+ from ..base.container import BaseContainer
+ 
+ 
+@@ -44,14 +46,17 @@ class RSDF(BaseContainer):
+ 
+         backend = default_backend()
+ 
+-        cipher = Cipher(algorithms.AES(KEY), modes.ECB, backend=backend)
++        ecb = Cipher(algorithms.AES(KEY), modes.ECB(), backend=backend).encryptor()
++        iv = ecb.update(IV) + ecb.finalize()
++
++        cipher = Cipher(algorithms.AES(KEY), modes.CFB(iv), backend=backend)
+         encryptor = cipher.encryptor()
+         iv = encryptor.update(IV) + encryptor.finalize()
+ 
+         try:
+             fs_filename = os.fsdecode(pyfile.url)
+-            with open(fs_filename, mode="rb") as rsdf:
+-                data = rsdf.read()
++            with open(fs_filename, mode="r") as fp:
++                data = fp.read()
+ 
+         except IOError as exc:
+             self.fail(exc)
+@@ -71,6 +76,6 @@ class RSDF(BaseContainer):
+                     continue
+                 cipher = Cipher(algorithms.AES(KEY), modes.CFB(iv), backend=backend)
+                 decryptor = cipher.decryptor()
+-                value = decryptor.update(base64.b64decode(link) + decryptor.finalize())
++                value = to_str(decryptor.update(base64.b64decode(link) + decryptor.finalize()))
+                 link = value.replace("CCF: ", "")
+                 self.links.append(link)
+--- a/src/pyload/plugins/decrypters/CriptTo.py
++++ b/src/pyload/plugins/decrypters/CriptTo.py
+@@ -184,8 +184,8 @@ class CriptTo(SimpleDecrypter):
+                 text = decryptor.update(base64.b64decode(crypted)) + decryptor.finalize()
+ 
+                 #: Extract links
+-                text = to_str(text).replace("\x00", "").replace("\r", "")
+-                links = filter(bool, text.split('\n'))
++                text = to_str(text).replace("\x00", "")
++                links = [item for item in text.splitlines() if item]
+ 
+         return links
+ 
+@@ -241,4 +241,4 @@ class CriptTo(SimpleDecrypter):
+             self.packages.extend([(name or self.pyfile.name, links, name or self.pyfile.name)
+                                   for name, links in packages])
+ 
+-        return []
+\ No newline at end of file
++        return []

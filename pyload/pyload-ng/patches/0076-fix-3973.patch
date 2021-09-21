@@ -1,0 +1,20 @@
+From 2981ff5b054159c286fb3a29e167118fe52897fc Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sat, 12 Jun 2021 23:29:04 +0300
+Subject: [PATCH 076/150] fix #3973
+
+---
+ src/pyload/plugins/base/xfs_account.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/src/pyload/plugins/base/xfs_account.py
++++ b/src/pyload/plugins/base/xfs_account.py
+@@ -98,7 +98,7 @@ class XFSAccount(BaseAccount):
+ 
+             previous_locale = locale.getlocale(locale.LC_TIME)
+             try:
+-                locale.setlocale(locale.LC_TIME, "en_US")
++                locale.setlocale(locale.LC_TIME, "en_US.utf8")
+                 validuntil = time.mktime(time.strptime(expiredate, "%d %B %Y"))
+ 
+             except Exception as exc:

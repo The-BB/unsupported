@@ -1,0 +1,20 @@
+From 47ed1ee8ee3278c1e7d7f7ed48b4d174164c7a1b Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sun, 16 May 2021 17:48:34 +0300
+Subject: [PATCH 046/150] typo
+
+---
+ src/pyload/plugins/accounts/DebridlinkFr.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/src/pyload/plugins/accounts/DebridlinkFr.py
++++ b/src/pyload/plugins/accounts/DebridlinkFr.py
+@@ -37,7 +37,7 @@ class DebridlinkFr(MultiAccount):
+             self.req.http.c.setopt(
+                 pycurl.HTTPHEADER, ["Authorization: Bearer " + api_token]
+             )
+-        self.req.http.c.setopt(pycurl.USERAGENT, "pyLoad/%s" % self.pyload.version)
++        self.req.http.c.setopt(pycurl.USERAGENT, "pyLoad/{}".format(self.pyload.version))
+         try:
+             json_data = self.load(self.API_URL + method, get=get, post=post)
+         except BadHeader as exc:

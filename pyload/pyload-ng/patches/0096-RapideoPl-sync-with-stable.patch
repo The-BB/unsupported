@@ -1,0 +1,30 @@
+From 8205e09f27b58425b8ea5d2540189c0e136640c2 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Wed, 16 Jun 2021 22:04:34 +0300
+Subject: [PATCH 096/150] [RapideoPl] sync with stable
+
+---
+ src/pyload/plugins/downloaders/RapideoPl.py | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+--- a/src/pyload/plugins/downloaders/RapideoPl.py
++++ b/src/pyload/plugins/downloaders/RapideoPl.py
+@@ -7,7 +7,7 @@ from ..base.multi_downloader import Mult
+ class RapideoPl(MultiDownloader):
+     __name__ = "RapideoPl"
+     __type__ = "downloader"
+-    __version__ = "0.13"
++    __version__ = "0.14"
+     __status__ = "testing"
+ 
+     __pattern__ = r"^unmatchable$"
+@@ -106,8 +106,7 @@ class RapideoPl(MultiDownloader):
+         pyfile.size = parsed["filesize"]
+ 
+         try:
+-            link = self.run_file_query(pyfile.url, "filedownload")
+-            self.download(link, fixurl=False)
++            self.link = self.run_file_query(pyfile.url, "filedownload")
+ 
+         except Exception:
+             self.temp_offline("Query error #2")

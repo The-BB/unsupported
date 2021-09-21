@@ -1,0 +1,44 @@
+From 8aee23c41c5a34ac6d563fb3879815683230aab6 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sat, 15 May 2021 19:41:45 +0300
+Subject: [PATCH 041/150] [ClickNLoad] bugfix when web uses INADDR_ANY
+ ("0.0.0.0") or IPv6 IN6ADDR_ANY ("::")
+
+---
+ src/pyload/plugins/addons/ClickNLoad.py | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+--- a/src/pyload/plugins/addons/ClickNLoad.py
++++ b/src/pyload/plugins/addons/ClickNLoad.py
+@@ -1,5 +1,7 @@
+ # -*- coding: utf-8 -*-
++
+ import socket
++import ssl
+ import threading
+ import time
+ 
+@@ -8,13 +10,7 @@ from pyload.core.utils.struct.lock impor
+ from ..base.addon import BaseAddon, threaded
+ from ..helpers import forward
+ 
+-try:
+-    import ssl
+-except ImportError:
+-    pass
+-
+ 
+-# TODO: IPv6 support
+ class ClickNLoad(BaseAddon):
+     __name__ = "ClickNLoad"
+     __type__ = "addon"
+@@ -52,6 +48,9 @@ class ClickNLoad(BaseAddon):
+         if self.pyload.config.get("webui", "enabled"):
+             web_host = self.pyload.config.get("webui", "host")
+             web_port = self.pyload.config.get("webui", "port")
++            if web_host in ("0.0.0.0", "::"):
++                web_host = "127.0.0.1"
++
+             try:
+                 addrinfo = socket.getaddrinfo(
+                     web_host, web_port, socket.AF_UNSPEC,

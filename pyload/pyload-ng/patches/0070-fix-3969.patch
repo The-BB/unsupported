@@ -1,0 +1,20 @@
+From 4f5c75bc478dd51f91316527fe6e878de350ee37 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Mon, 31 May 2021 01:10:20 +0300
+Subject: [PATCH 070/150] fix #3969
+
+---
+ src/pyload/webui/app/blueprints/json_blueprint.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/src/pyload/webui/app/blueprints/json_blueprint.py
++++ b/src/pyload/webui/app/blueprints/json_blueprint.py
+@@ -141,7 +141,7 @@ def add_package():
+ 
+     package_name = flask.request.form.get("add_name", "New Package").strip()
+     queue = int(flask.request.form["add_dest"])
+-    links = flask.request.form["add_links"].split("\n")
++    links = [l.strip() for l in flask.request.form["add_links"].splitlines()]
+     pw = flask.request.form.get("add_password", "").strip("\n\r")
+ 
+     try:

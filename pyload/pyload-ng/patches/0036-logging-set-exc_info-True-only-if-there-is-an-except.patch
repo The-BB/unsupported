@@ -1,0 +1,42 @@
+From 02c25b9f983de3b94a150c04d5c39c2e1ba2e909 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sat, 15 May 2021 04:15:40 +0300
+Subject: [PATCH 036/150] logging: set exc_info=True only if there is an
+ exception
+
+---
+ src/pyload/plugins/base/plugin.py | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+--- a/src/pyload/plugins/base/plugin.py
++++ b/src/pyload/plugins/base/plugin.py
+@@ -2,6 +2,7 @@
+ 
+ import inspect
+ import os
++import sys
+ 
+ import pycurl
+ from pyload.core.network.exceptions import Fail, Skip
+@@ -88,12 +89,18 @@ class BasePlugin:
+         self._log("warning", self.__type__, self.__name__, args, kwargs)
+ 
+     def log_error(self, *args, **kwargs):
+-        kwargs["exc_info"] = kwargs["exc_info"] if "exc_info" in kwargs else self.pyload.debug > 1
+-        kwargs["stack_info"] = kwargs["stack_info"] if "stack_info" in kwargs else self.pyload.debug > 2
++        kwargs["exc_info"] = (
++            kwargs["exc_info"]
++            if "exc_info" in kwargs
++            else self.pyload.debug > 1 and sys.exc_info() != (None, None, None)
++        )
++        kwargs["stack_info"] = (
++            kwargs["stack_info"] if "stack_info" in kwargs else self.pyload.debug > 2
++        )
+         self._log("error", self.__type__, self.__name__, args, kwargs)
+ 
+     def log_critical(self, *args, **kwargs):
+-        kwargs["exc_info"] = kwargs.get("exc_info", True)
++        kwargs["exc_info"] = kwargs.get("exc_info", True) and sys.exc_info() != (None, None, None,)
+         kwargs["stack_info"] = kwargs.get("stack_info", True)
+         self._log("critical", self.__type__, self.__name__, args, kwargs)
+ 

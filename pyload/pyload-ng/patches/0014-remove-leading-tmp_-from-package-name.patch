@@ -1,0 +1,20 @@
+From 64567a4a76dc56dfc42dfdc6a9a1b1973de2eebf Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Wed, 5 May 2021 02:54:35 +0300
+Subject: [PATCH 014/150] remove leading "tmp_" from package name
+
+---
+ src/pyload/plugins/containers/TXT.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/src/pyload/plugins/containers/TXT.py
++++ b/src/pyload/plugins/containers/TXT.py
+@@ -38,7 +38,7 @@ class TXT(BaseContainer):
+ 
+         fs_filename = os.fsdecode(pyfile.url)
+         with open(fs_filename, encoding=encoding) as txt:
+-            cur_pack = "Parsed links from {}".format(pyfile.name)
++            cur_pack = "Parsed links from {}".format(pyfile.name.split("tmp_")[-1])
+             packages = {cur_pack: []}
+ 
+             for link in txt.readlines():

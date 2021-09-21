@@ -1,0 +1,20 @@
+From f342193d2b71a1522d2268f44572ff79471aedbb Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Fri, 7 May 2021 14:51:46 +0300
+Subject: [PATCH 015/150] fix #3954
+
+---
+ src/pyload/webui/app/blueprints/app_blueprint.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/src/pyload/webui/app/blueprints/app_blueprint.py
++++ b/src/pyload/webui/app/blueprints/app_blueprint.py
+@@ -162,7 +162,7 @@ def files():
+     return render_template("files.html", files=data)
+ 
+ 
+-@bp.route("/files/get/<filename>", endpoint="get_file")
++@bp.route("/files/get/<path:filename>", endpoint="get_file")
+ @login_required("DOWNLOAD")
+ def get_file(filename):
+     api = flask.current_app.config["PYLOAD_API"]

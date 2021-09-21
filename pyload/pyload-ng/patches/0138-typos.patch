@@ -1,0 +1,32 @@
+From 4850df02ddc19d42290f5abbbabe734fe5935251 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sat, 4 Sep 2021 00:31:31 +0300
+Subject: [PATCH 138/150] typos
+
+---
+ src/pyload/core/managers/thread_manager.py | 2 +-
+ src/pyload/core/network/browser.py         | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+--- a/src/pyload/core/managers/thread_manager.py
++++ b/src/pyload/core/managers/thread_manager.py
+@@ -266,7 +266,7 @@ class ThreadManager:
+     # ----------------------------------------------------------------------
+     def assign_job(self):
+         """
+-        assing a job to a thread if possible.
++        assign a job to a thread if possible.
+         """
+         if self.pause or not self.pyload.api.is_time_download():
+             return
+--- a/src/pyload/core/network/browser.py
++++ b/src/pyload/core/network/browser.py
+@@ -15,7 +15,7 @@ class Browser:
+         self.options = options  #: holds pycurl options
+         self.bucket = bucket
+ 
+-        self.cj = None  #: needs to be setted later
++        self.cj = None  #: needs to be set later
+         self.http = None
+         self._size = 0
+ 

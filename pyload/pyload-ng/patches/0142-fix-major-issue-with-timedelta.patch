@@ -1,0 +1,555 @@
+From b73426925b0a4d66a1d3b85eea9450906f090aa5 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Wed, 8 Sep 2021 00:58:19 +0300
+Subject: [PATCH 142/150] fix major issue with timedelta
+
+---
+ src/pyload/core/managers/thread_manager.py         | 14 +++++++-------
+ src/pyload/core/network/cookie_jar.py              |  2 +-
+ src/pyload/core/threads/info_thread.py             |  2 +-
+ src/pyload/core/utils/seconds.py                   |  2 +-
+ src/pyload/plugins/accounts/CatShareNet.py         |  2 +-
+ .../plugins/accounts/LeechThreeHundreedSixtyCom.py |  2 +-
+ src/pyload/plugins/accounts/MegaRapidoNet.py       |  6 +++---
+ src/pyload/plugins/accounts/MyfastfileCom.py       |  2 +-
+ src/pyload/plugins/addons/DeleteFinished.py        |  2 +-
+ src/pyload/plugins/addons/LogMarker.py             |  2 +-
+ src/pyload/plugins/addons/UpdateManager.py         |  6 +++---
+ src/pyload/plugins/base/account.py                 |  2 +-
+ src/pyload/plugins/base/multi_account.py           | 10 +++++-----
+ src/pyload/plugins/base/xfs_downloader.py          |  4 ++--
+ src/pyload/plugins/downloaders/BezvadataCz.py      |  4 ++--
+ src/pyload/plugins/downloaders/BigfileTo.py        |  2 +-
+ src/pyload/plugins/downloaders/DepositfilesCom.py  |  2 +-
+ src/pyload/plugins/downloaders/EuroshareEu.py      |  2 +-
+ src/pyload/plugins/downloaders/FastshareCz.py      |  2 +-
+ src/pyload/plugins/downloaders/FileSharkPl.py      |  4 ++--
+ src/pyload/plugins/downloaders/FilefactoryCom.py   |  4 ++--
+ src/pyload/plugins/downloaders/FileserveCom.py     |  2 +-
+ src/pyload/plugins/downloaders/FlyFilesNet.py      |  2 +-
+ src/pyload/plugins/downloaders/FreakshareCom.py    |  2 +-
+ src/pyload/plugins/downloaders/MegasharesCom.py    |  6 +++---
+ src/pyload/plugins/downloaders/QuickshareCz.py     |  2 +-
+ src/pyload/plugins/downloaders/RapidgatorNet.py    |  4 ++--
+ src/pyload/plugins/downloaders/SimplydebridCom.py  |  2 +-
+ src/pyload/plugins/downloaders/UnibytesCom.py      |  2 +-
+ src/pyload/plugins/downloaders/UploadheroCom.py    |  4 ++--
+ src/pyload/plugins/downloaders/YoutubeCom.py       |  4 ++--
+ src/pyload/plugins/helpers.py                      |  2 +-
+ 32 files changed, 55 insertions(+), 55 deletions(-)
+
+--- a/src/pyload/core/managers/thread_manager.py
++++ b/src/pyload/core/managers/thread_manager.py
+@@ -71,7 +71,7 @@ class ThreadManager:
+         start a thread whichs fetches online status and other infos
+         data = [ .. () .. ]
+         """
+-        self.timestamp = time.time() + timedelta(minutes=5).seconds
++        self.timestamp = time.time() + timedelta(minutes=5).total_seconds()
+ 
+         InfoThread(self, data, pid)
+ 
+@@ -80,7 +80,7 @@ class ThreadManager:
+         """
+         creates a thread to fetch online status, returns result id.
+         """
+-        self.timestamp = time.time() + timedelta(minutes=5).seconds
++        self.timestamp = time.time() + timedelta(minutes=5).total_seconds()
+ 
+         rid = self.result_ids
+         self.result_ids += 1
+@@ -94,7 +94,7 @@ class ThreadManager:
+         """
+         returns result and clears it.
+         """
+-        self.timestamp = time.time() + timedelta(minutes=5).seconds
++        self.timestamp = time.time() + timedelta(minutes=5).total_seconds()
+ 
+         if rid in self.info_results:
+             data = self.info_results[rid]
+@@ -274,7 +274,7 @@ class ThreadManager:
+         # if self.downloaded > 20:
+         #    if not self.clean_py_curl(): return
+ 
+-        free = [x for x in self.threads if not x.active]
++        free_threads = [x for x in self.threads if not x.active]
+ 
+         inuse = set(
+             [
+@@ -297,7 +297,7 @@ class ThreadManager:
+             )
+             for x in inuse
+         ]
+-        onlimit = [x[0] for x in inuse if x[1] > 0 and x[2] >= x[1]]
++        onlimit = [x[0] for x in inuse if x[2] >= x[1] > 0]
+ 
+         occ = sorted(
+             [
+@@ -332,8 +332,8 @@ class ThreadManager:
+                     self.pyload.log.warning(self._("Not enough space left on device"))
+                     self.pause = True
+ 
+-                if free and not self.pause:
+-                    thread = free[0]
++                if free_threads and not self.pause:
++                    thread = free_threads[0]
+                     # self.downloaded += 1
+ 
+                     thread.put(job)
+--- a/src/pyload/core/network/cookie_jar.py
++++ b/src/pyload/core/network/cookie_jar.py
+@@ -33,7 +33,7 @@ class CookieJar:
+         name,
+         value,
+         path="/",
+-        exp=time.time() + timedelta(hours=744).total_seconds(),  #: 31 days retention
++        exp=time.time() + timedelta(days=31).total_seconds(),  #: 31 days retention
+     ):
+         self.cookies[
+             name
+--- a/src/pyload/core/threads/info_thread.py
++++ b/src/pyload/core/threads/info_thread.py
+@@ -120,7 +120,7 @@ class InfoThread(PluginThread):
+ 
+             self.m.info_results[self.rid]["ALL_INFO_FETCHED"] = {}
+ 
+-        self.m.timestamp = time.time() + timedelta(minutes=5).seconds
++        self.m.timestamp = time.time() + timedelta(minutes=5).total_seconds()
+ 
+     def update_db(self, plugin, result):
+         self.pyload.files.update_file_info(result, self.pid)
+--- a/src/pyload/core/utils/seconds.py
++++ b/src/pyload/core/utils/seconds.py
+@@ -31,7 +31,7 @@ def to_midnight(utc=None, strict=False):
+         hour=0, minute=0 if strict else 1, second=0, microsecond=0
+     ) + datetime.timedelta(days=1)
+ 
+-    return (midnight - now).seconds
++    return (midnight - now).total_seconds()
+ 
+ 
+ def to_nexthour(strict=False):
+--- a/src/pyload/plugins/accounts/CatShareNet.py
++++ b/src/pyload/plugins/accounts/CatShareNet.py
+@@ -38,7 +38,7 @@ class CatShareNet(BaseAccount):
+                 validuntil = time.time()
+                 for n, u in m:
+                     validuntil += (
+-                        timedelta(hours=n).seconds
++                        timedelta(hours=n).total_seconds()
+                         * {"tydzień": 168, "dni": 24, "godzin": 1}[u]
+                     )
+ 
+--- a/src/pyload/plugins/accounts/LeechThreeHundreedSixtyCom.py
++++ b/src/pyload/plugins/accounts/LeechThreeHundreedSixtyCom.py
+@@ -23,7 +23,7 @@ class LeechThreeHundreedSixtyCom(MultiAc
+         ("mh_interval", "int", "Reload interval in hours", 12),
+     ]
+ 
+-    LOGIN_TIMEOUT = timedelta(minutes=8).seconds
++    LOGIN_TIMEOUT = timedelta(minutes=8).total_seconds()
+     TUNE_TIMEOUT = False
+ 
+     API_URL = "https://leech360.com/api/get_"
+--- a/src/pyload/plugins/accounts/MegaRapidoNet.py
++++ b/src/pyload/plugins/accounts/MegaRapidoNet.py
+@@ -100,9 +100,9 @@ class MegaRapidoNet(MultiAccount):
+             #: Hier weitermachen!!! (müssen umbedingt die zeit richtig machen damit! (sollte aber möglich))
+             validuntil = (
+                 time.time()
+-                + timedelta(hours=int(validuntil.group(1)) * 24).seconds
+-                + timedelta(hours=int(validuntil.group(2))).seconds
+-                + timedelta(minutes=int(validuntil.group(3))).seconds
++                + timedelta(hours=int(validuntil.group(1)) * 24).total_seconds()
++                + timedelta(hours=int(validuntil.group(2))).total_seconds()
++                + timedelta(minutes=int(validuntil.group(3))).total_seconds()
+                 + int(validuntil.group(4))
+             )
+             trafficleft = -1
+--- a/src/pyload/plugins/accounts/MyfastfileCom.py
++++ b/src/pyload/plugins/accounts/MyfastfileCom.py
+@@ -32,7 +32,7 @@ class MyfastfileCom(MultiAccount):
+     def grab_info(self, user, password, data):
+         if "days_left" in self.json_data:
+             validuntil = (
+-                time.time() + timedelta(hours=self.json_data["days_left"] * 24).seconds
++                time.time() + timedelta(hours=self.json_data["days_left"] * 24).total_seconds()
+             )
+             return {"premium": True, "validuntil": validuntil, "trafficleft": -1}
+         else:
+--- a/src/pyload/plugins/addons/DeleteFinished.py
++++ b/src/pyload/plugins/addons/DeleteFinished.py
+@@ -43,7 +43,7 @@ class DeleteFinished(BaseAddon):
+     def activate(self):
+         self.info["sleep"] = True
+         self.add_event("package_finished", self.wakeup)
+-        self.periodical.start(timedelta(hours=self.config.get("interval")).seconds)
++        self.periodical.start(timedelta(hours=self.config.get("interval")).total_seconds())
+ 
+     ## own methods ##
+     @style.queue
+--- a/src/pyload/plugins/addons/LogMarker.py
++++ b/src/pyload/plugins/addons/LogMarker.py
+@@ -26,7 +26,7 @@ class LogMarker(BaseAddon):
+ 
+     def activated(self):
+         self.periodical.start(
+-            timedelta(hours=1).seconds - 1, delay=seconds.to_nexthour(strict=True) - 1
++            timedelta(hours=1).total_seconds() - 1, delay=seconds.to_nexthour(strict=True) - 1
+         )
+ 
+     def periodical_task(self):
+--- a/src/pyload/plugins/addons/UpdateManager.py
++++ b/src/pyload/plugins/addons/UpdateManager.py
+@@ -38,7 +38,7 @@ class UpdateManager(BaseAddon):
+     # SERVER_URL     = "http://updatemanager.pyload.net"
+     # SERVER_URL = "http://updatemanager-spyload.rhcloud.com"
+     SERVER_URL = "https://raw.githubusercontent.com/pyload/updates/master/plugins.txt"
+-    CHECK_INTERVAL = timedelta(hours=3).seconds  #: 3 hours
++    MIN_CHECK_INTERVAL = timedelta(hours=3).total_seconds()  #: minimum is 3 hours
+ 
+     def activate(self):
+         if self.checkonstart:
+@@ -79,8 +79,8 @@ class UpdateManager(BaseAddon):
+             self.config.get("checkperiod")
+             and time.time()
+             - max(
+-                self.CHECK_INTERVAL,
+-                timedelta(hours=self.config.get("checkinterval")).seconds,
++                self.MIN_CHECK_INTERVAL,
++                timedelta(hours=self.config.get("checkinterval")).total_seconds(),
+             )
+             > self.info["last_check"]
+         ):
+--- a/src/pyload/plugins/base/account.py
++++ b/src/pyload/plugins/base/account.py
+@@ -24,7 +24,7 @@ class BaseAccount(BasePlugin):
+     __authors__ = [("Walter Purcaro", "vuolter@gmail.com")]
+ 
+     #: Relogin account every 30 minutes, use -1 for never expire, you have to explicitly call relogin() when needed
+-    LOGIN_TIMEOUT = timedelta(minutes=30).seconds
++    LOGIN_TIMEOUT = timedelta(minutes=30).total_seconds()
+     TUNE_TIMEOUT = True  #: Automatically tune relogin interval
+ 
+     def __init__(self, manager, accounts):
+--- a/src/pyload/plugins/base/multi_account.py
++++ b/src/pyload/plugins/base/multi_account.py
+@@ -338,7 +338,7 @@ class MultiAccount(BaseAccount):
+                         )
+                     )
+ 
+-                self.periodical.set_interval(timedelta(minutes=5).seconds)
++                self.periodical.set_interval(timedelta(minutes=5).total_seconds())
+ 
+             else:
+                 if reloading:
+@@ -377,7 +377,7 @@ class MultiAccount(BaseAccount):
+                             )
+                         )
+ 
+-                    self.periodical.set_interval(timedelta(minutes=5).seconds)
++                    self.periodical.set_interval(timedelta(minutes=5).total_seconds())
+ 
+                 else:
+                     if reloading:
+@@ -418,7 +418,7 @@ class MultiAccount(BaseAccount):
+                             "Failed to load hoster list for user `{}`, retry in 5 minutes"
+                         ).format(self.user)
+                     )
+-                    self.periodical.set_interval(timedelta(minutes=5).seconds)
++                    self.periodical.set_interval(timedelta(minutes=5).total_seconds())
+ 
+                 else:
+                     self.log_error(
+@@ -433,7 +433,7 @@ class MultiAccount(BaseAccount):
+         if self.fail_count:
+             self.fail_count = 0
+ 
+-            interval = timedelta(hours=self.config.get("mh_interval", 12)).seconds
++            interval = timedelta(hours=self.config.get("mh_interval", 12)).total_seconds()
+             self.periodical.set_interval(interval)
+ 
+         self._override()
+@@ -470,7 +470,7 @@ class MultiAccount(BaseAccount):
+     def update_accounts(self, user, password=None, options={}):
+         super().update_accounts(user, password, options)
+         if self.need_reactivate:
+-            interval = timedelta(hours=self.config.get("mh_interval", 12)).seconds
++            interval = timedelta(hours=self.config.get("mh_interval", 12)).total_seconds()
+             self.periodical.restart(interval, threaded=True, delay=2)
+ 
+         self.need_reactivate = True
+--- a/src/pyload/plugins/base/xfs_downloader.py
++++ b/src/pyload/plugins/base/xfs_downloader.py
+@@ -168,7 +168,7 @@ class XFSDownloader(SimpleDownloader):
+             self.data = self.load(action, post=inputs)
+ 
+         elif "Can not leech file" in stmsg:
+-            self.retry(20, timedelta(minutes=3).seconds, self._("Can not leech file"))
++            self.retry(20, timedelta(minutes=3).total_seconds(), self._("Can not leech file"))
+ 
+         elif "today" in stmsg:
+             self.retry(
+@@ -225,7 +225,7 @@ class XFSDownloader(SimpleDownloader):
+                     self.set_wait(wait_time)
+                     if (
+                         wait_time
+-                        < timedelta(minutes=self.config.get("max_wait", 10)).seconds
++                        < timedelta(minutes=self.config.get("max_wait", 10)).total_seconds()
+                         or not self.pyload.config.get("reconnect", "enabled")
+                         or not self.pyload.api.is_time_reconnect()
+                     ):
+--- a/src/pyload/plugins/downloaders/BezvadataCz.py
++++ b/src/pyload/plugins/downloaders/BezvadataCz.py
+@@ -69,7 +69,7 @@ class BezvadataCz(SimpleDownloader):
+         #: countdown
+         m = re.search(r'id="countdown">(\d\d):(\d\d)<', self.data)
+         wait_time = (
+-            (timedelta(minutes=int(m.group(1))).seconds + int(m.group(2))) if m else 120
++            (timedelta(minutes=int(m.group(1))).total_seconds() + int(m.group(2))) if m else 120
+         )
+         self.wait(wait_time, False)
+ 
+@@ -79,7 +79,7 @@ class BezvadataCz(SimpleDownloader):
+         if "images/button-download-disable.png" in self.data:
+             #: Parallel dl limit
+             self.retry(
+-                timedelta(minutes=5).seconds, 24, self._("Download limit reached")
++                timedelta(minutes=5).total_seconds(), 24, self._("Download limit reached")
+             )
+         elif '<div class="infobox' in self.data:
+             self.temp_offline()
+--- a/src/pyload/plugins/downloaders/BigfileTo.py
++++ b/src/pyload/plugins/downloaders/BigfileTo.py
+@@ -79,7 +79,7 @@ class BigfileTo(SimpleDownloader):
+     def check_download(self):
+         if self.scan_download({"wait": re.compile("Please wait for")}):
+             self.log_info(self._("Downloadlimit reached, please wait or reconnect"))
+-            self.wait(timedelta(hours=1).seconds, True)
++            self.wait(timedelta(hours=1).total_seconds(), True)
+             self.retry()
+ 
+         return SimpleDownloader.check_download(self)
+--- a/src/pyload/plugins/downloaders/DepositfilesCom.py
++++ b/src/pyload/plugins/downloaders/DepositfilesCom.py
+@@ -92,7 +92,7 @@ class DepositfilesCom(SimpleDownloader):
+     def handle_premium(self, pyfile):
+         if '<span class="html_download_api-gold_traffic_limit">' in self.data:
+             self.log_warning(self._("Download limit reached"))
+-            self.retry(25, timedelta(hours=1).seconds, "Download limit reached")
++            self.retry(25, timedelta(hours=1).total_seconds(), "Download limit reached")
+ 
+         elif 'onClick="show_gold_offer' in self.data:
+             self.account.relogin()
+--- a/src/pyload/plugins/downloaders/EuroshareEu.py
++++ b/src/pyload/plugins/downloaders/EuroshareEu.py
+@@ -48,7 +48,7 @@ class EuroshareEu(SimpleDownloader):
+     def handle_free(self, pyfile):
+         if re.search(self.DL_LIMIT_PATTERN, self.data):
+             self.retry(
+-                timedelta(minutes=5).seconds, 12, self._("Download limit reached")
++                timedelta(minutes=5).total_seconds(), 12, self._("Download limit reached")
+             )
+ 
+         self.data = self.load(pyfile.url, get={"download": "true"})
+--- a/src/pyload/plugins/downloaders/FastshareCz.py
++++ b/src/pyload/plugins/downloaders/FastshareCz.py
+@@ -77,7 +77,7 @@ class FastshareCz(SimpleDownloader):
+         if check == "parallel-dl":
+             self.log_warning(self._("Parallel download"))
+             self.remove(self.last_download)
+-            self.retry(6, timedelta(minutes=10).seconds, self._("Paralell download"))
++            self.retry(6, timedelta(minutes=10).total_seconds(), self._("Paralell download"))
+ 
+         elif check == "wrong captcha":
+             self.log_warning(self._("Wrong captcha"))
+--- a/src/pyload/plugins/downloaders/FileSharkPl.py
++++ b/src/pyload/plugins/downloaders/FileSharkPl.py
+@@ -74,13 +74,13 @@ class FileSharkPl(SimpleDownloader):
+                 self.log_warning(errmsg)
+                 self.retry(
+                     10,
+-                    timedelta(minutes=30).seconds,
++                    timedelta(minutes=30).total_seconds(),
+                     self._("Still no free download slots available"),
+                 )
+ 
+             else:
+                 self.info["error"] = alert
+-                self.retry(10, timedelta(minutes=10).seconds, self._("Try again later"))
++                self.retry(10, timedelta(minutes=10).total_seconds(), self._("Try again later"))
+ 
+         self.info.pop("error", None)
+ 
+--- a/src/pyload/plugins/downloaders/FilefactoryCom.py
++++ b/src/pyload/plugins/downloaders/FilefactoryCom.py
+@@ -62,7 +62,7 @@ class FilefactoryCom(SimpleDownloader):
+             self.fail(self._("File too large for free download"))
+         elif "All free download slots on this server are currently in use" in self.data:
+             self.retry(
+-                50, timedelta(minutes=15).seconds, self._("All free slots are busy")
++                50, timedelta(minutes=15).total_seconds(), self._("All free slots are busy")
+             )
+ 
+         m = re.search(self.LINK_FREE_PATTERN, self.data)
+@@ -86,7 +86,7 @@ class FilefactoryCom(SimpleDownloader):
+         if check == "multiple":
+             self.log_debug("Parallel downloads detected; waiting 15 minutes")
+             self.retry(
+-                wait=timedelta(minutes=15).seconds, msg=self._("Parallel downloads")
++                wait=timedelta(minutes=15).total_seconds(), msg=self._("Parallel downloads")
+             )
+ 
+         elif check == "error":
+--- a/src/pyload/plugins/downloaders/FileserveCom.py
++++ b/src/pyload/plugins/downloaders/FileserveCom.py
+@@ -186,7 +186,7 @@ class FileserveCom(BaseDownloader):
+         wait_time = (
+             (int(m.group(1)) * {"seconds": 1, "minutes": 60, "hours": 3600}[m.group(2)])
+             if m
+-            else timedelta(minutes=12).seconds
++            else timedelta(minutes=12).total_seconds()
+         )
+         self.wait(wait_time, True)
+         self.retry()
+--- a/src/pyload/plugins/downloaders/FlyFilesNet.py
++++ b/src/pyload/plugins/downloaders/FlyFilesNet.py
+@@ -45,7 +45,7 @@ class FlyFilesNet(SimpleDownloader):
+             self.log_warning(
+                 self._("Could not get the download URL. Please wait 10 minutes")
+             )
+-            self.wait(timedelta(minutes=10).seconds, True)
++            self.wait(timedelta(minutes=10).total_seconds(), True)
+             self.retry()
+ 
+         self.link = parsed_url.replace("#downlink|", "")
+--- a/src/pyload/plugins/downloaders/FreakshareCom.py
++++ b/src/pyload/plugins/downloaders/FreakshareCom.py
+@@ -72,7 +72,7 @@ class FreakshareCom(BaseDownloader):
+ 
+             elif check == "downloadserver":
+                 self.retry(
+-                    5, timedelta(minutes=15).seconds, self._("No Download server")
++                    5, timedelta(minutes=15).total_seconds(), self._("No Download server")
+                 )
+ 
+     def prepare(self):
+--- a/src/pyload/plugins/downloaders/MegasharesCom.py
++++ b/src/pyload/plugins/downloaders/MegasharesCom.py
+@@ -57,7 +57,7 @@ class MegasharesCom(SimpleDownloader):
+ 
+     def handle_free(self, pyfile):
+         if self.NO_SLOTS_PATTERN in self.data:
+-            self.retry(wait=timedelta(minutes=5).seconds)
++            self.retry(wait=timedelta(minutes=5).total_seconds())
+ 
+         m = re.search(self.REACTIVATE_PASSPORT_PATTERN, self.data)
+         if m is not None:
+@@ -100,8 +100,8 @@ class MegasharesCom(SimpleDownloader):
+             times = [int(x) for x in m.groups()]
+             renew = (
+                 times[0]
+-                + timedelta(minutes=times[1]).seconds
+-                + timedelta(minutes=times[2]).seconds
++                + timedelta(minutes=times[1]).total_seconds()
++                + timedelta(minutes=times[2]).total_seconds()
+             )
+             self.log_debug(f"Waiting {renew} seconds for a new passport")
+             self.retry(wait=renew, msg=self._("Passport renewal"))
+--- a/src/pyload/plugins/downloaders/QuickshareCz.py
++++ b/src/pyload/plugins/downloaders/QuickshareCz.py
+@@ -84,7 +84,7 @@ class QuickshareCz(SimpleDownloader):
+         if m is not None:
+             if m.group(1) == "1":
+                 self.retry(
+-                    60, timedelta(minutes=2).seconds, "This IP is already downloading"
++                    60, timedelta(minutes=2).total_seconds(), "This IP is already downloading"
+                 )
+             elif m.group(1) == "2":
+                 self.retry(60, 60, "No free slots available")
+--- a/src/pyload/plugins/downloaders/RapidgatorNet.py
++++ b/src/pyload/plugins/downloaders/RapidgatorNet.py
+@@ -120,7 +120,7 @@ class RapidgatorNet(SimpleDownloader):
+             if m.group(1) == "daily":
+                 wait_time = seconds.to_midnight()
+             else:
+-                wait_time = timedelta(hours=1).seconds
++                wait_time = timedelta(hours=1).total_seconds()
+ 
+             self.retry(wait=wait_time, msg=m.group(0))
+ 
+@@ -130,7 +130,7 @@ class RapidgatorNet(SimpleDownloader):
+                 "You can't download more than one file within a certain time period in free mode"
+             )
+             self.log_warning(msg)
+-            self.retry(wait=timedelta(hours=24).seconds, msg=msg)
++            self.retry(wait=timedelta(hours=24).total_seconds(), msg=msg)
+ 
+     def handle_free(self, pyfile):
+         jsvars = dict(re.findall(self.JSVARS_PATTERN, self.data))
+--- a/src/pyload/plugins/downloaders/SimplydebridCom.py
++++ b/src/pyload/plugins/downloaders/SimplydebridCom.py
+@@ -55,6 +55,6 @@ class SimplydebridCom(MultiDownloader):
+ 
+     def check_download(self):
+         if self.scan_download({"error": "No address associated with hostname"}):
+-            self.retry(24, timedelta(minutes=3).seconds, self._("Bad file downloaded"))
++            self.retry(24, timedelta(minutes=3).total_seconds(), self._("Bad file downloaded"))
+ 
+         return MultiDownloader.check_download(self)
+--- a/src/pyload/plugins/downloaders/UnibytesCom.py
++++ b/src/pyload/plugins/downloaders/UnibytesCom.py
+@@ -52,7 +52,7 @@ class UnibytesCom(SimpleDownloader):
+                 ">Somebody else is already downloading using your IP-address<"
+                 in self.data
+             ):
+-                self.wait(timedelta(minutes=10).seconds, True)
++                self.wait(timedelta(minutes=10).total_seconds(), True)
+                 self.restart()
+ 
+             if post_data["step"] == "last":
+--- a/src/pyload/plugins/downloaders/UploadheroCom.py
++++ b/src/pyload/plugins/downloaders/UploadheroCom.py
+@@ -73,9 +73,9 @@ class UploadheroCom(SimpleDownloader):
+ 
+             m = re.search(self.IP_WAIT_PATTERN, self.data)
+             wait_time = (
+-                (timedelta(minutes=int(m.group(1))).seconds + int(m.group(2)))
++                (timedelta(minutes=int(m.group(1))).total_seconds() + int(m.group(2)))
+                 if m
+-                else timedelta(minutes=5).seconds
++                else timedelta(minutes=5).total_seconds()
+             )
+             self.wait(wait_time, True)
+             self.retry()
+--- a/src/pyload/plugins/downloaders/YoutubeCom.py
++++ b/src/pyload/plugins/downloaders/YoutubeCom.py
+@@ -567,7 +567,7 @@ class YoutubeCom(BaseDownloader):
+ 
+         if (
+             sig_cache_id in cache_info["cache"]
+-            and time.time() < cache_info["cache"][sig_cache_id]["time"] + timedelta(hours=24).seconds
++            and time.time() < cache_info["cache"][sig_cache_id]["time"] + timedelta(hours=24).total_seconds()
+         ):
+             self.log_debug("Using cached decode function to decrypt the URL")
+ 
+@@ -642,7 +642,7 @@ class YoutubeCom(BaseDownloader):
+ 
+         #: Remove old records from cache
+         for k in list(cache_info["cache"].keys()):
+-            if time.time() >= cache_info["cache"][k]["time"] + timedelta(hours=24).seconds:
++            if time.time() >= cache_info["cache"][k]["time"] + timedelta(hours=24).total_seconds():
+                 cache_info["cache"].pop(k, None)
+                 cache_dirty = True
+ 
+--- a/src/pyload/plugins/helpers.py
++++ b/src/pyload/plugins/helpers.py
+@@ -437,7 +437,7 @@ def replace_patterns(value, rules):
+ 
+ # TODO: Remove in 0.6.x and fix exp in CookieJar.set_cookie
+ def set_cookie(
+-    cj, domain, name, value, path="/", exp=time.time() + timedelta(hours=744).total_seconds()
++    cj, domain, name, value, path="/", exp=time.time() + timedelta(days=31).total_seconds()
+ ):  #: 31 days retention
+     args = [domain, name, value, path, int(exp)]
+     return cj.set_cookie(*args)

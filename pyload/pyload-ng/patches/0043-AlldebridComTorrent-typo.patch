@@ -1,0 +1,20 @@
+From 36e5e77a6825f6d33638b9869e2dab1f47cf8b36 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sun, 16 May 2021 12:44:08 +0300
+Subject: [PATCH 043/150] [AlldebridComTorrent] typo
+
+---
+ src/pyload/plugins/decrypters/AlldebridComTorrent.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/src/pyload/plugins/decrypters/AlldebridComTorrent.py
++++ b/src/pyload/plugins/decrypters/AlldebridComTorrent.py
+@@ -19,7 +19,7 @@ class AlldebridComTorrent(SimpleDecrypte
+     __status__ = "testing"
+ 
+     __pattern__ = r'^unmatchable$'
+-    __config__ = [("activated", "bool", "Activated", True),
++    __config__ = [("enabled", "bool", "Activated", True),
+                   ("folder_per_package", "Default;Yes;No", "Create folder for each package", "Default"),
+                   ("max_wait", "int", "Reconnect if waiting time is greater than minutes", 10),
+                   ("del_finished", "bool", "Delete downloaded torrents from the server", True)]

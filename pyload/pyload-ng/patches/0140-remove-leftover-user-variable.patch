@@ -1,0 +1,32 @@
+From b429802d928ae0b8799042cfd90e16eba47bf409 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sun, 5 Sep 2021 02:43:01 +0300
+Subject: [PATCH 140/150] remove leftover `user` variable
+
+---
+ src/pyload/plugins/base/downloader.py | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+--- a/src/pyload/plugins/base/downloader.py
++++ b/src/pyload/plugins/base/downloader.py
+@@ -46,10 +46,10 @@ class BaseDownloader(BaseHoster):
+         #: Enable simultaneous processing of multiple downloads
+         self.limit_dl = 0
+ 
+-        #:
++        #: Download chunks limit
+         self.chunk_limit = None
+ 
+-        #:
++        #: Enable download resuming if the hoster supports resuming
+         self.resume_download = False
+ 
+         #: Location where the last call to download was saved
+@@ -80,7 +80,6 @@ class BaseDownloader(BaseHoster):
+     def load_account(self):
+         if self.restart_free:
+             self.account = False
+-            self.user = None  # TODO: Remove in 0.6.x
+         else:
+             super().load_account()
+             # self.restart_free = False

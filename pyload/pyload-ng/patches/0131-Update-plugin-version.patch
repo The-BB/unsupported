@@ -1,0 +1,20 @@
+From 38910925fb76a5f7af15f96e52ebeb4adcd8cf7e Mon Sep 17 00:00:00 2001
+From: Ozzieisaacs <ozzie.fernandez.isaacs@googlemail.com>
+Date: Sun, 8 Aug 2021 13:47:51 +0200
+Subject: [PATCH 131/150] Update plugin version
+
+---
+ src/pyload/plugins/downloaders/UploadgigCom.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/src/pyload/plugins/downloaders/UploadgigCom.py
++++ b/src/pyload/plugins/downloaders/UploadgigCom.py
+@@ -9,7 +9,7 @@ from ..base.simple_downloader import Sim
+ class UploadgigCom(SimpleDownloader):
+     __name__ = "UploadgigCom"
+     __type__ = "downloader"
+-    __version__ = "0.06"
++    __version__ = "0.07"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?uploadgig.com/file/download/\w+"

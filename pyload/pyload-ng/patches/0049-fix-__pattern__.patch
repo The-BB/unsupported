@@ -1,0 +1,148 @@
+From 194d129804df33d645586329b8df7e248c4b6f7a Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sun, 16 May 2021 18:44:54 +0300
+Subject: [PATCH 049/150] fix __pattern__
+
+---
+ src/pyload/plugins/decrypters/DevhostStFolder.py     | 4 +---
+ src/pyload/plugins/decrypters/MediafireComFolder.py  | 4 +---
+ src/pyload/plugins/decrypters/NitroflareComFolder.py | 4 +---
+ src/pyload/plugins/downloaders/DailymotionCom.py     | 4 +---
+ src/pyload/plugins/downloaders/EdiskCz.py            | 4 +---
+ src/pyload/plugins/downloaders/FilecloudIo.py        | 4 +---
+ src/pyload/plugins/downloaders/MegasharesCom.py      | 4 +---
+ src/pyload/plugins/downloaders/RealdebridCom.py      | 4 +---
+ src/pyload/plugins/downloaders/XDCC.py               | 4 +---
+ src/pyload/plugins/downloaders/XdadevelopersCom.py   | 4 +---
+ 10 files changed, 10 insertions(+), 30 deletions(-)
+
+--- a/src/pyload/plugins/decrypters/DevhostStFolder.py
++++ b/src/pyload/plugins/decrypters/DevhostStFolder.py
+@@ -17,9 +17,7 @@ class DevhostStFolder(SimpleDecrypter):
+     __version__ = "0.12"
+     __status__ = "testing"
+ 
+-    __pattern__ = (
+-        r"http://(?:www\.)?d-h\.st/users/(?P<USER>\w+)(/\?fld_id=(?P<ID>\d+))?"
+-    )
++    __pattern__ = r"http://(?:www\.)?d-h\.st/users/(?P<USER>\w+)(/\?fld_id=(?P<ID>\d+))?"
+     __config__ = [
+         ("enabled", "bool", "Activated", True),
+         ("use_premium", "bool", "Use premium account if available", True),
+--- a/src/pyload/plugins/decrypters/MediafireComFolder.py
++++ b/src/pyload/plugins/decrypters/MediafireComFolder.py
+@@ -11,9 +11,7 @@ class MediafireComFolder(BaseDecrypter):
+     __version__ = "0.25"
+     __status__ = "testing"
+ 
+-    __pattern__ = (
+-        r"https?://(?:www\.)?mediafire\.com/(?:folder/|\?sharekey=|\?)(?P<ID>\w+)"
+-    )
++    __pattern__ = r"https?://(?:www\.)?mediafire\.com/(?:folder/|\?sharekey=|\?)(?P<ID>\w+)"
+     __config__ = [
+         ("enabled", "bool", "Activated", True),
+         ("use_premium", "bool", "Use premium account if available", True),
+--- a/src/pyload/plugins/decrypters/NitroflareComFolder.py
++++ b/src/pyload/plugins/decrypters/NitroflareComFolder.py
+@@ -11,9 +11,7 @@ class NitroflareComFolder(SimpleDecrypte
+     __version__ = "0.08"
+     __status__ = "testing"
+ 
+-    __pattern__ = (
+-        r"https?://(?:www\.)?nitroflare\.com/folder/(?P<USER>\d+)/(?P<ID>[\w=]+)"
+-    )
++    __pattern__ = r"https?://(?:www\.)?nitroflare\.com/folder/(?P<USER>\d+)/(?P<ID>[\w=]+)"
+     __config__ = [
+         ("enabled", "bool", "Activated", True),
+         ("use_premium", "bool", "Use premium account if available", True),
+--- a/src/pyload/plugins/downloaders/DailymotionCom.py
++++ b/src/pyload/plugins/downloaders/DailymotionCom.py
+@@ -47,9 +47,7 @@ class DailymotionCom(BaseDownloader):
+     __version__ = "0.30"
+     __status__ = "testing"
+ 
+-    __pattern__ = (
+-        r"https?://(?:www\.)?(dailymotion\.com/.*video|dai\.ly)/(?P<ID>[\w^_]+)"
+-    )
++    __pattern__ = r"https?://(?:www\.)?(dailymotion\.com/.*video|dai\.ly)/(?P<ID>[\w^_]+)"
+     __config__ = [
+         ("enabled", "bool", "Activated", True),
+         (
+--- a/src/pyload/plugins/downloaders/EdiskCz.py
++++ b/src/pyload/plugins/downloaders/EdiskCz.py
+@@ -10,9 +10,7 @@ class EdiskCz(SimpleDownloader):
+     __version__ = "0.28"
+     __status__ = "testing"
+ 
+-    __pattern__ = (
+-        r"http://(?:www\.)?edisk\.(cz|sk|eu)/(stahni|sk/stahni|en/download)/.+"
+-    )
++    __pattern__ = r"http://(?:www\.)?edisk\.(cz|sk|eu)/(stahni|sk/stahni|en/download)/.+"
+     __config__ = [
+         ("enabled", "bool", "Activated", True),
+         ("use_premium", "bool", "Use premium account if available", True),
+--- a/src/pyload/plugins/downloaders/FilecloudIo.py
++++ b/src/pyload/plugins/downloaders/FilecloudIo.py
+@@ -12,9 +12,7 @@ class FilecloudIo(SimpleDownloader):
+     __version__ = "0.16"
+     __status__ = "testing"
+ 
+-    __pattern__ = (
+-        r"https?://(?:www\.)?(?:filecloud\.io|ifile\.it|mihd\.net)/(?P<ID>\w+)"
+-    )
++    __pattern__ = r"https?://(?:www\.)?(?:filecloud\.io|ifile\.it|mihd\.net)/(?P<ID>\w+)"
+     __config__ = [
+         ("enabled", "bool", "Activated", True),
+         ("use_premium", "bool", "Use premium account if available", True),
+--- a/src/pyload/plugins/downloaders/MegasharesCom.py
++++ b/src/pyload/plugins/downloaders/MegasharesCom.py
+@@ -13,9 +13,7 @@ class MegasharesCom(SimpleDownloader):
+     __version__ = "0.37"
+     __status__ = "testing"
+ 
+-    __pattern__ = (
+-        r"http://(?:www\.)?(d\d{2}\.)?megashares\.com/((index\.php)?\?d\d{2}=|dl/)\w+"
+-    )
++    __pattern__ = r"http://(?:www\.)?(d\d{2}\.)?megashares\.com/((index\.php)?\?d\d{2}=|dl/)\w+"
+     __config__ = [
+         ("enabled", "bool", "Activated", True),
+         ("use_premium", "bool", "Use premium account if available", True),
+--- a/src/pyload/plugins/downloaders/RealdebridCom.py
++++ b/src/pyload/plugins/downloaders/RealdebridCom.py
+@@ -18,9 +18,7 @@ class RealdebridCom(MultiDownloader):
+     __version__ = "0.81"
+     __status__ = "testing"
+ 
+-    __pattern__ = (
+-        r"https?://((?:www\.|s\d+\.)?real-debrid\.com/dl?/|[\w^_]\.rdb\.so/d/)[\w^_]+"
+-    )
++    __pattern__ = r"https?://((?:www\.|s\d+\.)?real-debrid\.com/dl?/|[\w^_]\.rdb\.so/d/)[\w^_]+"
+     __config__ = [
+         ("use_premium", "bool", "Use premium account if available", True),
+         ("fallback", "bool", "Fallback to free download if premium fails", False),
+--- a/src/pyload/plugins/downloaders/XDCC.py
++++ b/src/pyload/plugins/downloaders/XDCC.py
+@@ -538,9 +538,7 @@ class XDCC(BaseDownloader):
+     __version__ = "0.49"
+     __status__ = "testing"
+ 
+-    __pattern__ = (
+-        r"xdcc://(?P<SERVER>.*?)/#?(?P<CHAN>.*?)/(?P<BOT>.*?)/#?(?P<PACK>\d+)/?"
+-    )
++    __pattern__ = r"xdcc://(?P<SERVER>.*?)/#?(?P<CHAN>.*?)/(?P<BOT>.*?)/#?(?P<PACK>\d+)/?"
+     __config__ = [
+         ("nick", "str", "Nickname", "pyload"),
+         ("ident", "str", "Ident", "pyloadident"),
+--- a/src/pyload/plugins/downloaders/XdadevelopersCom.py
++++ b/src/pyload/plugins/downloaders/XdadevelopersCom.py
+@@ -14,9 +14,7 @@ class XdadevelopersCom(SimpleDownloader)
+     __version__ = "0.08"
+     __status__ = "testing"
+ 
+-    __pattern__ = (
+-        r"https?://(?:www\.)?forum\.xda-developers\.com/devdb/project/dl/\?id=\d+"
+-    )
++    __pattern__ = r"https?://(?:www\.)?forum\.xda-developers\.com/devdb/project/dl/\?id=\d+"
+     __config__ = [
+         ("enabled", "bool", "Activated", True),
+         ("use_premium", "bool", "Use premium account if available", True),
