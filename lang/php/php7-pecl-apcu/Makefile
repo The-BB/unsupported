@@ -1,17 +1,17 @@
-# SPDX-License-Identifier: GPL-2.0-only
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
 PECL_NAME:=apcu
 PECL_LONGNAME:=APCu - APC User Cache
 
-PKG_VERSION:=5.1.20
+PKG_VERSION:=5.1.21
 PKG_RELEASE:=1
 
 PKG_NAME:=php7-pecl-$(PECL_NAME)
 PKG_SOURCE:=$(PECL_NAME)-$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=https://pecl.php.net/get/
-PKG_HASH:=b99d40fafec06f4d132fcee53e7526ddbfc1d041ea6e04e17389dfad28f9c390
+PKG_HASH:=1033530448696ee7cadec85050f6df5135fb1330072ef2a74569392acfecfbc1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/pecl-php7/$(PECL_NAME)-$(PKG_VERSION)
 
