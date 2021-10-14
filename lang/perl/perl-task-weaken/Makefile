@@ -1,7 +1,4 @@
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
@@ -23,7 +20,7 @@ define Package/perl-task-weaken
   SECTION:=lang
   CATEGORY:=Languages
   TITLE:=Ensure that a platform has weaken support
-  URL:=https://github.com/karenetheridge/Task-Weaken
+  URL:=https://metacpan.org/pod/Task::Weaken
   DEPENDS:=+perl 
 endef
 
