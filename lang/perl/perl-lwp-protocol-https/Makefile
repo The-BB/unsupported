@@ -1,17 +1,14 @@
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=perl-lwp-protocol-https
-PKG_VERSION:=6.09
+PKG_VERSION:=6.10
 PKG_RELEASE:=1
 
 PKG_SOURCE:=LWP-Protocol-https-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://cpan.metacpan.org/authors/id/O/OA/OALDERS
-PKG_HASH:=16cfe1a511690b066db5667c8714802ee2b9c5d28a31a3e7bd36fbc70a3af592
+PKG_HASH:=cecfc31fe2d4fc854cac47fce13d3a502e8fdfe60c5bc1c09535743185f2a86c
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/perl/LWP-Protocol-https-$(PKG_VERSION)
 
@@ -23,7 +20,7 @@ define Package/perl-lwp-protocol-https
   SECTION:=lang
   CATEGORY:=Languages
   TITLE:=Provide https support for LWP::UserAgent
-  URL:=https://github.com/libwww-perl/LWP-Protocol-https
+  URL:=https://metacpan.org/dist/LWP-Protocol-https
   DEPENDS:=+perl 
 endef
 
