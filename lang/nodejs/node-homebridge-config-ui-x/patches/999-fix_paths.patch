@@ -1,0 +1,75 @@
+--- a/dist/bin/platforms/linux.js
++++ b/dist/bin/platforms/linux.js
+@@ -21,7 +21,7 @@ class LinuxInstaller {
+         return path.resolve('/etc/default', this.systemdServiceName);
+     }
+     get runPartsPath() {
+-        return path.resolve('/etc/hb-service', this.hbService.serviceName.toLowerCase(), 'prestart.d');
++        return path.resolve('/opt/etc/hb-service', this.hbService.serviceName.toLowerCase(), 'prestart.d');
+     }
+     async install() {
+         this.checkForRoot();
+@@ -102,7 +102,7 @@ class LinuxInstaller {
+     async rebuild(all = false) {
+         try {
+             this.checkForRoot();
+-            const npmGlobalPath = child_process.execSync('/bin/echo -n "$(npm --no-update-notifier -g prefix)/lib/node_modules"').toString('utf8');
++            const npmGlobalPath = child_process.execSync('/opt/bin/echo -n "$(npm --no-update-notifier -g prefix)/lib/node_modules"').toString('utf8');
+             const targetNodeVersion = child_process.execSync('node -v').toString('utf8').trim();
+             child_process.execSync('npm rebuild --unsafe-perm', {
+                 cwd: process.env.UIX_BASE_PATH,
+@@ -353,7 +353,7 @@ class LinuxInstaller {
+     async createUfwRules() {
+         var _a;
+         try {
+-            const status = child_process.execSync('/bin/echo -n "$(ufw status)" 2> /dev/null').toString('utf8');
++            const status = child_process.execSync('/opt/bin/echo -n "$(ufw status)" 2> /dev/null').toString('utf8');
+             if (!status.includes('Status: active')) {
+                 return;
+             }
+@@ -373,7 +373,7 @@ class LinuxInstaller {
+     async createFirewallCmdRules() {
+         var _a;
+         try {
+-            const status = child_process.execSync('/bin/echo -n "$(firewall-cmd --state)" 2> /dev/null').toString('utf8');
++            const status = child_process.execSync('/opt/bin/echo -n "$(firewall-cmd --state)" 2> /dev/null').toString('utf8');
+             if (status !== 'running') {
+                 return;
+             }
+--- a/dist/main.js
++++ b/dist/main.js
+@@ -67758,7 +67758,7 @@ let TerminalService = class TerminalServ
+             return;
+         }
+         this.logger.log('Starting terminal session');
+-        const shell = await fs.pathExists('/bin/bash') ? '/bin/bash' : '/bin/sh';
++        const shell = await fs.pathExists('/opt/bin/bash') ? '/opt/bin/bash' : '/bin/sh';
+         const term = this.nodePtyService.spawn(shell, [], {
+             name: 'xterm-color',
+             cols: size.cols,
+@@ -68923,9 +68923,8 @@ let PluginsService = PluginsService_1 =
+                 paths.push(path.join(process.env.APPDATA, 'npm/node_modules'));
+             }
+             else {
+-                paths.push('/usr/local/lib/node_modules');
+-                paths.push('/usr/lib/node_modules');
+-                paths.push(child_process.execSync('/bin/echo -n "$(npm --no-update-notifier -g prefix)/lib/node_modules"').toString('utf8'));
++                paths.push('/opt/lib/node_modules');
++                paths.push(child_process.execSync('/opt/bin/echo -n "$(npm --no-update-notifier -g prefix)/lib/node_modules"').toString('utf8'));
+             }
+         }
+         paths = paths.filter(x => x !== path.join(process.env.UIX_BASE_PATH, 'node_modules'));
+--- a/dist/modules/plugins/plugins.service.js
++++ b/dist/modules/plugins/plugins.service.js
+@@ -718,9 +718,8 @@ let PluginsService = PluginsService_1 =
+                 paths.push(path.join(process.env.APPDATA, 'npm/node_modules'));
+             }
+             else {
+-                paths.push('/usr/local/lib/node_modules');
+-                paths.push('/usr/lib/node_modules');
+-                paths.push(child_process.execSync('/bin/echo -n "$(npm --no-update-notifier -g prefix)/lib/node_modules"').toString('utf8'));
++                paths.push('/opt/lib/node_modules');
++                paths.push(child_process.execSync('/opt/bin/echo -n "$(npm --no-update-notifier -g prefix)/lib/node_modules"').toString('utf8'));
+             }
+         }
+         paths = paths.filter(x => x !== path.join(process.env.UIX_BASE_PATH, 'node_modules'));
