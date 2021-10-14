@@ -1,0 +1,138 @@
+--- a/ebfc/Makefile
++++ b/ebfc/Makefile
+@@ -1,7 +1,7 @@
+ #  Makefile for ebfc
+ 
+-CC = gcc
+-CFLAGS = -Wall -Wextra -Wno-missing-field-initializers
++CC ?= gcc
++CFLAGS += -Wall -Wextra -Wno-missing-field-initializers
+ 
+ # The main program.
+ 
+--- a/elfls/Makefile
++++ b/elfls/Makefile
+@@ -1,7 +1,7 @@
+ #  Makefile for elfls
+ 
+-CC = gcc
+-CFLAGS = -Wall -Wextra -I../elfrw
++CC ?= gcc
++CFLAGS += -Wall -Wextra -I../elfrw
+ 
+ elfls: elfls.c ../elfrw/libelfrw.a
+ 
+--- a/elfrw/Makefile
++++ b/elfrw/Makefile
+@@ -1,7 +1,7 @@
+ #  Makefile for libelfrw.a
+ 
+-CC = gcc
+-CFLAGS = -Wall -Wextra -O3
++CC ?= gcc
++CFLAGS += -Wall -Wextra -O3
+ 
+ LIBOBJS = elfrw.o elfrw_dyn.o elfrw_ehdr.o elfrw_phdr.o elfrw_rel.o \
+           elfrw_shdr.o elfrw_sym.o elfrw_ver.o
+--- a/elftoc/Makefile
++++ b/elftoc/Makefile
+@@ -1,8 +1,9 @@
+ #  Makefile for elftoc
+ 
+-CC = gcc
+-CFLAGS = -Wall -Wextra
+-LDFLAGS = -Wall -Wextra
++CC ?= gcc
++HOSTCC = gcc
++CFLAGS += -Wall -Wextra
++LDFLAGS += -Wall -Wextra
+ 
+ OBJS = gen.o names.o address.o readelf.o shdrtab.o phdrtab.o dynamic.o \
+        pieces.o outbase.o outitems.o outelf64.o outelf32.o out.o elftoc.o
+@@ -37,7 +38,9 @@ elfnames.c: mknames
+ 	rm -f ./~elftmp.c
+ 
+ mknames: mknames.o
++	$(HOSTCC) -Wall -Wextra  mknames.o -o mknames
+ mknames.o: mknames.c
++	$(HOSTCC) -Wall -Wextra -c -o mknames.o mknames.c
+ 
+ clean:
+ 	rm -f $(OBJS) elftoc elfnames.c mknames mknames.o
+--- a/infect/Makefile
++++ b/infect/Makefile
+@@ -1,7 +1,7 @@
+ #  Makefile for infect
+ 
+-CC = gcc
+-CFLAGS = -Wall -Wextra
++CC ?= gcc
++CFLAGS += -Wall -Wextra
+ 
+ infect: infect.c
+ 
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,8 @@
+ #  The top-level makefile simply invokes all the other makefiles
+ 
+-prefix = /usr/local
++prefix = /opt
++
++DESTDIR ?=
+ 
+ PROGRAMS = elfls objres rebind sstrip elftoc ebfc infect
+ 
+@@ -24,10 +26,10 @@ ebfc: bin/ebfc doc/ebfc.1
+ infect: bin/infect doc/infect.1
+ 
+ install: $(PROGRAMS)
+-	mkdir -p $(prefix)/bin
+-	cp bin/* $(prefix)/bin/.
+-	mkdir -p $(prefix)/share/man/man1
+-	cp doc/* $(prefix)/share/man/man1/.
++	mkdir -p $(DESTDIR)$(prefix)/bin
++	cp bin/* $(DESTDIR)$(prefix)/bin/.
++#	mkdir -p $(prefix)/share/man/man1
++#	cp doc/* $(prefix)/share/man/man1/.
+ 
+ clean:
+ 	for dir in elfrw $(PROGRAMS) ; do $(MAKE) -C$$dir clean ; done
+--- a/objres/Makefile
++++ b/objres/Makefile
+@@ -1,8 +1,8 @@
+ #  Makefile for objres
+ 
+-CC = gcc
+-CFLAGS = -Wall -Wextra -I../elfrw
+-LDFLAGS = -Wall -Wextra
++CC ?= gcc
++CFLAGS += -Wall -Wextra -I../elfrw
++LDFLAGS += -Wall -Wextra
+ 
+ objres: objres.o ../elfrw/libelfrw.a
+ 
+--- a/rebind/Makefile
++++ b/rebind/Makefile
+@@ -1,7 +1,7 @@
+ #  Makefile for rebind
+ 
+-CC = gcc
+-CFLAGS = -Wall -Wextra -I../elfrw
++CC ?= gcc
++CFLAGS += -Wall -Wextra -I../elfrw
+ 
+ rebind: rebind.c ../elfrw/libelfrw.a
+ 
+--- a/sstrip/Makefile
++++ b/sstrip/Makefile
+@@ -1,7 +1,7 @@
+ #  Makefile for sstrip
+ 
+-CC = gcc
+-CFLAGS = -Wall -Wextra -I../elfrw
++CC ?= gcc
++CFLAGS += -Wall -Wextra -I../elfrw
+ 
+ sstrip: sstrip.c ../elfrw/libelfrw.a
+ 
