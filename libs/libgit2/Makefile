@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0-only
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
@@ -10,7 +10,7 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/libgit2/libgit2/tar.gz/refs/tags/v$(PKG_VERSION)?
 PKG_HASH:=41a6d5d740fd608674c7db8685685f45535323e73e784062cf000a633d420d1e
 
-PKG_LICENSE:=GPL-2.0-only
+PKG_LICENSE:=WTFPL
 PKG_LICENSE_FILES:=COPYING
 
 include $(INCLUDE_DIR)/package.mk
