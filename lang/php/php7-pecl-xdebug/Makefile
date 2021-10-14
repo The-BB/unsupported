@@ -1,17 +1,17 @@
-# SPDX-License-Identifier: GPL-2.0-only
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
 PECL_NAME:=xdebug
 PECL_LONGNAME:=Step Debugger and Debugging Aid for PHP
 
-PKG_VERSION:=3.0.4
+PKG_VERSION:=3.1.0
 PKG_RELEASE:=1
 
 PKG_NAME:=php7-pecl-$(PECL_NAME)
 PKG_SOURCE:=$(PECL_NAME)-$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=http://pecl.php.net/get/
-PKG_HASH:=b27290491f4634b0cd3badfc3a2be98fb1e3c0c3710a706724d8b195baad72af
+PKG_HASH:=b956930adaef4a20e7573ad637a2f0e7f9a94ae2adaf122856bc8bf0d1e39d3a
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/pecl-php7/$(PECL_NAME)-$(PKG_VERSION)
 
