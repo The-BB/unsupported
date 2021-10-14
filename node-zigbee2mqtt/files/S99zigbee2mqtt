@@ -1,7 +1,5 @@
 #!/bin/sh
 
-export HOME="/opt/var/lib"
-
 ENABLED=yes
 PROCS=zigbee2mqtt
 ARGS=""
