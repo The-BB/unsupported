@@ -1,17 +1,14 @@
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=perl-mozilla-ca
-PKG_VERSION:=20200520
+PKG_VERSION:=20211001
 PKG_RELEASE:=1
 
 PKG_SOURCE:=Mozilla-CA-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://cpan.metacpan.org/authors/id/A/AB/ABH
-PKG_HASH:=b3ca0002310bf24a16c0d5920bdea97a2f46e77e7be3e7377e850d033387c726
+PKG_HASH:=122c8900000a9d388aa8e44f911cab6c118fe8497417917a84a8ec183971b449
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/perl/Mozilla-CA-$(PKG_VERSION)
 
