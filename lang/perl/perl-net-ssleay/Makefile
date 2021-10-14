@@ -1,17 +1,14 @@
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=perl-net-ssleay
-PKG_VERSION:=1.88
+PKG_VERSION:=1.90
 PKG_RELEASE:=1
 
 PKG_SOURCE:=Net-SSLeay-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://cpan.metacpan.org/authors/id/C/CH/CHRISN
-PKG_HASH:=2000da483c8471a0b61e06959e92a6fca7b9e40586d5c828de977d3d2081cfdd
+PKG_HASH:=f8696cfaca98234679efeedc288a9398fcf77176f1f515dbc589ada7c650dc93
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/perl/Net-SSLeay-$(PKG_VERSION)
 
@@ -23,7 +20,7 @@ define Package/perl-net-ssleay
   SECTION:=lang
   CATEGORY:=Languages
   TITLE:=Perl extension for using OpenSSL
-  URL:=https://metacpan.org/pod/distribution/Net-SSLeay/lib/Net/SSLeay.pod
+  URL:=https://metacpan.org/dist/Net-SSLeay
   DEPENDS:=+perl +libopenssl
 endef
 
