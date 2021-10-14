@@ -4,12 +4,12 @@ include $(TOPDIR)/rules.mk
 
 PKG_NPM_NAME:=node-red
 PKG_NAME:=$(PKG_NPM_NAME)
-PKG_VERSION:=1.2.9
+PKG_VERSION:=2.0.6
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NPM_NAME)-$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=https://registry.npmjs.org/$(PKG_NPM_NAME)/-/
-PKG_HASH:=ce7984f40a9bbb8342faeaefc8d863de4807ddf84953078d459e8b7209a8ca4d
+PKG_HASH:=3a9d37b84ebe4c2d06f3e8b340ba97e681b0c78cf49d49d0f41ac8606a3d22b7
 
 PKG_LICENSE:=Apache-2.0
 
@@ -24,14 +24,17 @@ define Package/node-red
   SUBMENU:=Node.js
   SECTION:=lang
   CATEGORY:=Languages
-  TITLE:=Node-RED is a programming tool
-  URL:=https://nodered.org
-  DEPENDS:=+node-npm
+  TITLE:=A visual tool for wiring the Internet of Things
+  URL:=https://nodered.org/
+  DEPENDS:=+node +node-npm +node-bcrypt +node-bufferutil +node-utf-8-validate
 endef
 
 define Package/node-red/description
- Low-code programming for event-driven applications.
+  A visual tool for wiring the Internet of Things
 endef
+
+TAR_OPTIONS+= --strip-components 1
+TAR_CMD=$(HOST_TAR) -C $(1) $(TAR_OPTIONS)
 
 NODEJS_CPU:=$(subst powerpc,ppc,$(subst aarch64,arm64,$(subst x86_64,x64,$(subst i386,ia32,$(ARCH)))))
 TMPNPM:=$(shell mktemp -u XXXXXXXXXX)
@@ -39,33 +42,37 @@ TMPNPM:=$(shell mktemp -u XXXXXXXXXX)
 TARGET_CFLAGS += $(FPIC)
 TARGET_CXXFLAGS += $(FPIC)
 
-define Build/Prepare
-	$(INSTALL_DIR) $(PKG_BUILD_DIR)
-endef
-
 define Build/Compile
+	cd $(PKG_BUILD_DIR); \
 	$(MAKE_VARS) \
 	$(MAKE_FLAGS) \
-	npm_config_arch=$(NODEJS_CPU) \
-	npm_config_target_arch=$(NODEJS_CPU) \
-	npm_config_build_from_source=true \
-	npm_config_nodedir=$(STAGING_DIR)/opt \
-	npm_config_prefix=$(PKG_INSTALL_DIR)/opt \
+	npm_config_nodedir=$(STAGING_DIR)/opt/ \
 	npm_config_cache=$(TMP_DIR)/npm-cache-$(TMPNPM) \
 	npm_config_tmp=$(TMP_DIR)/npm-tmp-$(TMPNPM) \
-	npm install -g --production $(DL_DIR)/$(PKG_SOURCE)
+	npm install --production --global-style --no-save --omit=dev --no-package-lock --omit=optional --no-optional
 	rm -rf $(TMP_DIR)/npm-tmp-$(TMPNPM)
 	rm -rf $(TMP_DIR)/npm-cache-$(TMPNPM)
+	rm -f $(PKG_BUILD_DIR)/node_modules/.package-lock.json
+	find $(PKG_BUILD_DIR)/node_modules -type d -empty -print0 | xargs -0 rmdir || true
 endef
 
 define Package/node-red/install
-	$(INSTALL_DIR) $(1)/opt/lib/node_modules
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/node_modules/* $(1)/opt/lib/node_modules/
+	$(INSTALL_DIR) $(1)/opt/lib/node/$(PKG_NPM_NAME)
+	$(CP) $(PKG_BUILD_DIR)/{package.json,LICENSE} \
+		$(1)/opt/lib/node/$(PKG_NPM_NAME)/
+	$(CP) $(PKG_BUILD_DIR)/{*.md,*.js} \
+		$(1)/opt/lib/node/$(PKG_NPM_NAME)/
+	$(CP) $(PKG_BUILD_DIR)/{node_modules,bin,lib} \
+		$(1)/opt/lib/node/$(PKG_NPM_NAME)/
 	$(INSTALL_DIR) $(1)/opt/bin
-	$(LN) ../lib/node_modules/node-red/red.js $(1)/opt/bin/node-red
-	$(LN) ../lib/node_modules/node-red/bin/node-red-pi $(1)/opt/bin/node-red-pi
+	$(LN) ../lib/node/$(PKG_NPM_NAME)/red.js $(1)/opt/bin/node-red
+	$(LN) ../lib/node/$(PKG_NPM_NAME)/bin/node-red-pi $(1)/opt/bin/node-red-pi
+	$(LN) ../lib/node/$(PKG_NPM_NAME)/node_modules/node-red-admin/node-red-admin.js \
+		$(1)/opt/bin/node-red-admin
 	$(INSTALL_DIR) $(1)/opt/etc/init.d
 	$(INSTALL_BIN) ./files/S99node-red $(1)/opt/etc/init.d
+	$(INSTALL_DIR) $(1)/opt/lib/node_modules
+	$(LN) ../node/$(PKG_NPM_NAME) $(1)/opt/lib/node_modules/$(PKG_NPM_NAME)
 	# XXX fix exec path in scripts
 	$(FIND) $(1)/opt/lib -type f -exec \
 	$(SED) \
@@ -74,8 +81,6 @@ define Package/node-red/install
 	    $(1)/opt/lib/node_modules/node-red/node_modules/bcryptjs/bin/bcrypt
 	$(SED) 's,^exec .*node,exec /opt/bin/node,' \
 	    $(1)/opt/lib/node_modules/node-red/bin/node-red-pi
-	$(SED) 's,^#!.*sh,#!/bin/sh,' \
-	    $(1)/opt/lib/node_modules/node-red/node_modules/ajv/scripts/prepare-tests
 endef
 
 $(eval $(call BuildPackage,node-red))
