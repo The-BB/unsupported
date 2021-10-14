@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0-only
+# SPDX-License-Identifier: WTFPL
 
 # Based on https://git.archive.openwrt.org/?p=packages.git;a=blob_plain;f=net/stun/Makefile;hb=HEAD
 
