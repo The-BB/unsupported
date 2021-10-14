@@ -1,0 +1,57 @@
+--- a/src/arch-arm.c
++++ b/src/arch-arm.c
+@@ -832,7 +832,7 @@ PL_ARCH = {
+   .R_COPY = R_ARM_COPY,
+   .R_RELATIVE = R_ARM_RELATIVE,
+   .rtype_class_valid = RTYPE_CLASS_VALID,
+-  .dynamic_linker = "/lib/ld-linux.so.3",
++  .dynamic_linker = "/opt/lib/ld-linux.so.3",
+   .adjust_dyn = arm_adjust_dyn,
+   .adjust_rel = arm_adjust_rel,
+   .adjust_rela = arm_adjust_rela,
+--- a/src/arch-i386.c
++++ b/src/arch-i386.c
+@@ -1098,7 +1098,7 @@ PL_ARCH = {
+   .R_COPY = R_386_COPY,
+   .R_RELATIVE = R_386_RELATIVE,
+   .rtype_class_valid = RTYPE_CLASS_VALID,
+-  .dynamic_linker = "/lib/ld-linux.so.2",
++  .dynamic_linker = "/opt/lib/ld-linux.so.2",
+   .adjust_dyn = i386_adjust_dyn,
+   .adjust_rel = i386_adjust_rel,
+   .adjust_rela = i386_adjust_rela,
+--- a/src/arch-mips.c
++++ b/src/arch-mips.c
+@@ -1000,7 +1000,7 @@ PL_ARCH = {
+   .class = ELFCLASS32,
+   .machine = EM_MIPS,
+   .max_reloc_size = 4,
+-  .dynamic_linker = "/lib/ld.so.1",
++  .dynamic_linker = "/opt/lib/ld.so.1",
+   /* MIPS does not use COPY relocs or jump slots.  Pick a value outside
+      the ELF32_R_TYPE range.  */
+   .R_COPY = ~0U,
+--- a/src/arch-x86_64.c
++++ b/src/arch-x86_64.c
+@@ -532,7 +532,7 @@ PL_ARCH = {
+   .R_COPY = R_X86_64_COPY,
+   .R_RELATIVE = R_X86_64_RELATIVE,
+   .rtype_class_valid = RTYPE_CLASS_VALID,
+-  .dynamic_linker = "/lib64/ld-linux-x86-64.so.2",
++  .dynamic_linker = "/opt/lib/ld-linux-x86-64.so.2",
+   .adjust_dyn = x86_64_adjust_dyn,
+   .adjust_rel = x86_64_adjust_rel,
+   .adjust_rela = x86_64_adjust_rela,
+--- a/src/main.c
++++ b/src/main.c
+@@ -28,8 +28,8 @@
+ 
+ #include "prelink.h"
+ 
+-#define PRELINK_CONF "/etc/prelink.conf"
+-#define PRELINK_CACHE "/etc/prelink.cache"
++#define PRELINK_CONF "/opt/etc/prelink.conf"
++#define PRELINK_CACHE "/opt/etc/prelink.cache"
+ 
+ int all;
+ int force;
