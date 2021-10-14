@@ -1,15 +1,15 @@
-# SPDX-License-Identifier: GPL-2.0-only
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
 PKG_NPM_NAME:=bufferutil
 PKG_NAME:=node-$(PKG_NPM_NAME)
-PKG_VERSION:=4.0.3
+PKG_VERSION:=4.0.5
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NPM_NAME)-$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=https://registry.npmjs.org/$(PKG_NPM_NAME)/-/
-PKG_HASH:=248d75d99ff66be04fef3f271dff224d4e0183a693d4777387e4bce9481bfe90
+PKG_HASH:=8cb0f1abb48cd4578f5a497134fb0eb1ec9d1da27e8dfb618203feb3ff190865
 
 PKG_LICENSE:=MIT
 
