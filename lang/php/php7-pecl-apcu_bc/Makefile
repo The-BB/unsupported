@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0-only
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
@@ -19,7 +19,7 @@ PKG_LICENSE:=PHP-3.01
 
 PKG_BUILD_PARALLEL:=1
 
-#APCU:=apcu-5.1.20.tgz
+#APCU:=apcu-5.1.21.tgz
 
 #define prepare_source_directory
 #	mkdir -p $(PKG_BUILD_DIR)/ext/apcu
