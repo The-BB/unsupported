@@ -18,7 +18,7 @@
              const targetNodeVersion = child_process.execSync('node -v').toString('utf8').trim();
              child_process.execSync('npm rebuild --unsafe-perm', {
                  cwd: process.env.UIX_BASE_PATH,
-@@ -353,7 +353,7 @@ class LinuxInstaller {
+@@ -354,7 +354,7 @@ class LinuxInstaller {
      async createUfwRules() {
          var _a;
          try {
@@ -27,7 +27,7 @@
              if (!status.includes('Status: active')) {
                  return;
              }
-@@ -373,7 +373,7 @@ class LinuxInstaller {
+@@ -374,7 +374,7 @@ class LinuxInstaller {
      async createFirewallCmdRules() {
          var _a;
          try {
@@ -38,7 +38,7 @@
              }
 --- a/dist/main.js
 +++ b/dist/main.js
-@@ -67758,7 +67758,7 @@ let TerminalService = class TerminalServ
+@@ -68780,7 +68780,7 @@ let TerminalService = class TerminalServ
              return;
          }
          this.logger.log('Starting terminal session');
@@ -47,7 +47,7 @@
          const term = this.nodePtyService.spawn(shell, [], {
              name: 'xterm-color',
              cols: size.cols,
-@@ -68923,9 +68923,8 @@ let PluginsService = PluginsService_1 =
+@@ -69952,9 +69952,8 @@ let PluginsService = PluginsService_1 =
                  paths.push(path.join(process.env.APPDATA, 'npm/node_modules'));
              }
              else {
@@ -61,7 +61,7 @@
          paths = paths.filter(x => x !== path.join(process.env.UIX_BASE_PATH, 'node_modules'));
 --- a/dist/modules/plugins/plugins.service.js
 +++ b/dist/modules/plugins/plugins.service.js
-@@ -718,9 +718,8 @@ let PluginsService = PluginsService_1 =
+@@ -719,9 +719,8 @@ let PluginsService = PluginsService_1 =
                  paths.push(path.join(process.env.APPDATA, 'npm/node_modules'));
              }
              else {
