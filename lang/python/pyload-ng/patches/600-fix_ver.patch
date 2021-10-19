@@ -1,6 +1,6 @@
 --- a/setup.cfg
 +++ b/setup.cfg
-@@ -51,8 +51,8 @@ package_dir =
+@@ -52,8 +52,8 @@ package_dir =
  	= src
  install_requires = 
  	Cheroot~=8.4
