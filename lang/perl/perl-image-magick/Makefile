@@ -23,7 +23,7 @@ define Package/perl-image-magick
   CATEGORY:=Languages
   TITLE:=interface to ImageMagick
   URL:=https://metacpan.org/dist/Image-Magick
-  DEPENDS:=+imagemagick +perl
+  DEPENDS:=+imagemagick +perlbase-http-tiny
 endef
 
 define Build/Configure
