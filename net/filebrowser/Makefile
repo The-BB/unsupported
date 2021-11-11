@@ -3,7 +3,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=filebrowser
-PKG_VERSION:=2.17.2
+PKG_VERSION:=2.18.0
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/filebrowser/filebrowser
@@ -12,7 +12,7 @@ GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 
 #!!! uncomment PKG_SOURCE to download fixed version
 #PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=bf303c536ae000036d810639cc13fcf4e082e0cb
+PKG_COMMIT=7f2d2210839bff90e999c60406d22e5b5cb4054b
 PKG_HASH:=skip
 
 PKG_LICENSE:=Apache-2.0
