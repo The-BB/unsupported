@@ -4,12 +4,12 @@ include $(TOPDIR)/rules.mk
 
 PKG_NPM_NAME:=homebridge-config-ui-x
 PKG_NAME:=node-$(PKG_NPM_NAME)
-PKG_VERSION:=4.41.3
+PKG_VERSION:=4.41.5
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NPM_NAME)-$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=https://registry.npmjs.org/$(PKG_NPM_NAME)/-/
-PKG_HASH:=27a4835d32d13d8c156a97b3894d48d49171d02966854447a7bab74ce011c4b9
+PKG_HASH:=8e537231f655251d253a40473e17fb521bd55fe9626b7dbfff4ab4eab7c84d1c
 
 PKG_BUILD_DEPENDS:=node/host
 PKG_USE_MIPS16:=0
@@ -96,6 +96,18 @@ define Package/node-homebridge-config-ui-x/install
 		's,^#!.*bash$$$$,#!/opt/bin/bash,;s,^#!.*node$$$$,#!/opt/bin/node,' {} +
 	$(INSTALL_DIR) $(1)/opt/var/log
 	touch $(1)/opt/var/log/homebridge.log
+endef
+
+define Package/node-homebridge-config-ui-x/postrm
+#!/bin/sh
+
+if [ -L "/opt/lib/node_modules/$(PKG_NPM_NAME)" ]; then
+  rm -f /opt/lib/node_modules/$(PKG_NPM_NAME)
+fi
+
+if [ -d "/opt/lib/node/$(PKG_NPM_NAME)" ]; then
+  rm -rf /opt/lib/node/$(PKG_NPM_NAME)
+fi
 endef
 
 $(eval $(call BuildPackage,node-homebridge-config-ui-x))

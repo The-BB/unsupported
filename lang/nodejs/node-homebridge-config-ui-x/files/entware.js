@@ -22,11 +22,12 @@ class LinuxInstaller {
         await this.hbService.configCheck();
         try {
             await this.createRunPartsPath();
+            await this.start();
             await this.hbService.printPostInstallInstructions();
         }
         catch (e) {
             console.error(e.toString());
-            this.hbService.logger(`ERROR: Failed Operation`, 'fail');
+            this.hbService.logger('ERROR: Failed Operation', 'fail');
         }
     }
     async uninstall() {
@@ -52,7 +53,7 @@ class LinuxInstaller {
             this.hbService.logger(`${this.hbService.serviceName} Stopped`, 'succeed');
         }
         catch (e) {
-            this.hbService.logger(`Failed to stop homebridge`, 'fail');
+            this.hbService.logger('Failed to stop homebridge', 'fail');
         }
     }
     async restart() {
@@ -67,7 +68,7 @@ class LinuxInstaller {
         }
     }
     async rebuild(all = false) {
-        this.hbService.logger(`You cannot rebuild in the Entware.`);
+        this.hbService.logger('You cannot rebuild in the Entware.');
     }
     async getId() {
         if (process.getuid() === 0 && this.hbService.asUser) {
@@ -88,7 +89,7 @@ class LinuxInstaller {
     getPidOfPort(port) {
         try {
             if (this.hbService.docker) {
-                return child_process.execSync(`pidof homebridge`).toString('utf8').trim();
+                return child_process.execSync('pidof homebridge').toString('utf8').trim();
             }
             else {
                 return child_process.execSync(`fuser ${port}/tcp 2>/dev/null`).toString('utf8').trim();
@@ -99,13 +100,13 @@ class LinuxInstaller {
         }
     }
     async updateNodejs(job) {
-        this.hbService.logger(`You cannot update Nodejs in the Entware.`);
+        this.hbService.logger('You cannot update Nodejs in the Entware.');
     }
     async updateNodeFromTarball(job, targetPath) {
-        this.hbService.logger(`You cannot update Nodejs in the Entware.`);
+        this.hbService.logger('You cannot update Nodejs in the Entware.');
     }
     async updateNodeFromNodesource(job) {
-        this.hbService.logger(`You cannot update Nodejs in the Entware.`);
+        this.hbService.logger('You cannot update Nodejs in the Entware.');
     }
     checkForRoot() {
         if (process.getuid() !== 0) {
@@ -131,15 +132,15 @@ class LinuxInstaller {
         await fs.mkdirp(this.runPartsPath);
         const permissionScriptPath = path.resolve(this.runPartsPath, '10-fix-permissions');
         const permissionScript = [
-            `#!/bin/sh`,
-            ``,
-            `# Ensure the storage path permissions are correct`,
-            `if [ -n "$UIX_STORAGE_PATH" ] && [ -n "$USER" ]; then`,
-            `  echo "Ensuring $UIX_STORAGE_PATH is owned by $USER"`,
-            `  [ -d $UIX_STORAGE_PATH ] || mkdir -p $UIX_STORAGE_PATH`,
-            `  chown -R $USER: $UIX_STORAGE_PATH`,
-            `fi`,
-            ``,
+            '#!/bin/sh',
+            '',
+            '# Ensure the storage path permissions are correct',
+            'if [ -n "$UIX_STORAGE_PATH" ] && [ -n "$USER" ]; then',
+            '  echo "Ensuring $UIX_STORAGE_PATH is owned by $USER"',
+            '  [ -d $UIX_STORAGE_PATH ] || mkdir -p $UIX_STORAGE_PATH',
+            '  chown -R $USER: $UIX_STORAGE_PATH',
+            'fi',
+            '',
         ].filter(x => x !== null).join('\n');
         await fs.writeFile(permissionScriptPath, permissionScript);
         await fs.chmod(permissionScriptPath, '755');

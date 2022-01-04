@@ -18,6 +18,25 @@
              const targetNodeVersion = child_process.execSync('node -v').toString('utf8').trim();
              child_process.execSync('npm rebuild --unsafe-perm', {
                  cwd: process.env.UIX_BASE_PATH,
+@@ -317,15 +317,15 @@ class LinuxInstaller {
+         try {
+             const npmPath = child_process.execSync('which npm').toString('utf8').trim();
+             const shutdownPath = child_process.execSync('which shutdown').toString('utf8').trim();
+-            const sudoersEntry = `${this.hbService.asUser}    ALL=(ALL) NOPASSWD:SETENV: ${shutdownPath}, ${npmPath}, /usr/bin/npm, /usr/local/bin/npm`;
+-            const sudoers = fs.readFileSync('/etc/sudoers', 'utf-8');
++            const sudoersEntry = `${this.hbService.asUser}    ALL=(ALL) NOPASSWD:SETENV: ${shutdownPath}, ${npmPath}, /opt/bin/npm`;
++            const sudoers = fs.readFileSync('/opt/etc/sudoers', 'utf-8');
+             if (sudoers.includes(sudoersEntry)) {
+                 return;
+             }
+             child_process.execSync(`echo '${sudoersEntry}' | sudo EDITOR='tee -a' visudo`);
+         }
+         catch (e) {
+-            this.hbService.logger('WARNING: Failed to setup /etc/sudoers, you may not be able to shutdown/restart your server from the Homebridge UI.', 'warn');
++            this.hbService.logger('WARNING: Failed to setup /opt/etc/sudoers, you may not be able to shutdown/restart your server from the Homebridge UI.', 'warn');
+         }
+     }
+     fixPermissions() {
 @@ -355,7 +355,7 @@ class LinuxInstaller {
      async createUfwRules() {
          var _a;
@@ -38,7 +57,7 @@
              }
 --- a/dist/main.js
 +++ b/dist/main.js
-@@ -68361,7 +68361,7 @@ let TerminalService = class TerminalServ
+@@ -74438,7 +74438,7 @@ let TerminalService = class TerminalServ
              return;
          }
          this.logger.log('Starting terminal session');
@@ -47,7 +66,7 @@
          const term = this.nodePtyService.spawn(shell, [], {
              name: 'xterm-color',
              cols: size.cols,
-@@ -69533,9 +69533,8 @@ let PluginsService = PluginsService_1 =
+@@ -75610,9 +75610,8 @@ let PluginsService = PluginsService_1 =
                  paths.push(path.join(process.env.APPDATA, 'npm/node_modules'));
              }
              else {
