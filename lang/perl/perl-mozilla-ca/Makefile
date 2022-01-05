@@ -20,7 +20,7 @@ define Package/perl-mozilla-ca
   SECTION:=lang
   CATEGORY:=Languages
   TITLE:=Mozilla's CA cert bundle in PEM format
-  URL:=https://metacpan.org/pod/Mozilla::CA
+  URL:=https://metacpan.org/dist/Mozilla-CA
   DEPENDS:=+perl 
 endef
 
