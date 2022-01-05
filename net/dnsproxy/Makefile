@@ -3,7 +3,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dnsproxy
-PKG_VERSION:=v0.36.0
+PKG_VERSION:=v0.40.3
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/AdguardTeam/dnsproxy
@@ -12,7 +12,7 @@ GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 
 #!!! uncomment PKG_SOURCE to download fixed version
 #PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=94393538312a58e287bc9460b469f2b336b355da
+PKG_COMMIT=3df41338ea7116b54117ea00f362510bb2ac636d
 PKG_HASH:=skip
 
 PKG_LICENSE:=GPL-3.0-only
