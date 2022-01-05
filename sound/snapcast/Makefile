@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=snapcast
-PKG_VERSION:=0.25.0
+PKG_VERSION:=0.26.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/badaix/snapcast/tar.gz/refs/tags/v$(PKG_VERSION)?
-PKG_HASH:=c4e449cb693e091261727421f4965492be049632537e034fa9c59c92d091a846
+PKG_HASH:=skip
 
 PKG_LICENSE:=GPL-3.0-or-later
 
