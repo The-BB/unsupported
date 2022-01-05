@@ -20,7 +20,7 @@ define Package/perl-time-date
   SECTION:=lang
   CATEGORY:=Languages
   TITLE:=A time and date object for Perl
-  URL:=https://metacpan.org/pod/Time::Date
+  URL:=https://metacpan.org/dist/Time-Date
   DEPENDS:=+perl 
 endef
 
