@@ -20,7 +20,7 @@ define Package/perl-task-weaken
   SECTION:=lang
   CATEGORY:=Languages
   TITLE:=Ensure that a platform has weaken support
-  URL:=https://metacpan.org/pod/Task::Weaken
+  URL:=https://metacpan.org/dist/Task-Weaken
   DEPENDS:=+perl 
 endef
 
