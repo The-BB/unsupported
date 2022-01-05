@@ -20,7 +20,7 @@ define Package/perl-class-inspector
   SECTION:=lang
   CATEGORY:=Languages
   TITLE:=Get information about a class and its structure
-  URL:=https://metacpan.org/pod/Class::Inspector
+  URL:=https://metacpan.org/dist/Class-Inspector
   DEPENDS:=+perl 
 endef
 
