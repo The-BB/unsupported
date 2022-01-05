@@ -3,8 +3,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=odoh-client-go
-PKG_VERSION:=0
-PKG_RELEASE:=2
+PKG_VERSION:=0.0.1
+PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/cloudflare/odoh-client-go
 
@@ -13,7 +13,7 @@ GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 #!!! uncomment PKG_SOURCE to download fixed version
 #PKG_SOURCE=$(GOPKG_SOURCE)
 PKG_COMMIT=8d45d054d3e85da96d5764c0634475deb5e88c4c
-PKG_HASH:=8b334fc1160609306cba82029e74c234275fe5fba8cb04c8d800b4d2b22e35fe
+PKG_HASH:=skip
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
