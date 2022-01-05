@@ -7,7 +7,7 @@ PKG_VERSION:=1.6.12
 PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)_$(PKG_VERSION).orig.tar.gz
-PKG_SOURCE_URL:=http://http.debian.net/debian/pool/main/g/geoip
+PKG_SOURCE_URL:=@DEBIAN/pool/main/g/geoip
 PKG_HASH:=99b119f8e21e94f1dfd6d49fbeed29a70df1544896e76cd456f25e397b07d476
 
 PKG_LICENSE:=LGPL-2.1-only
