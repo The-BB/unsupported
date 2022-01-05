@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pax-utils
-PKG_VERSION:=1.3.2
+PKG_VERSION:=1.3.3
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
-PKG_SOURCE_URL:=http://distfiles.gentoo.org/distfiles
-PKG_HASH:=02eba0c305ad349ad6ff1f30edae793061ce95680fd5bdee0e14caf731dee1e7
+PKG_SOURCE_URL:=https://gentoo.osuosl.org/distfiles/
+PKG_HASH:=eeca7fbd98bc66bead4a77000c2025d9f17ea8201b84245882406ce00b9b6b14
 
 PKG_LICENSE:=GPL-2.0-or-later
 PKG_LICENSE_FILES:=COPYING
