@@ -20,7 +20,7 @@ define Package/perl-soap-lite
   SECTION:=lang
   CATEGORY:=Languages
   TITLE:=Perl's Web Services Toolkit
-  URL:=https://metacpan.org/pod/SOAP::Lite
+  URL:=https://metacpan.org/dist/SOAP-Lite
   DEPENDS:=+perl +perl-class-inspector +perl-io-socket-ssl +perl-lwp-protocol-https \
 		+perl-mozilla-ca +perl-net-ssleay +perl-task-weaken +perl-time-date \
 		+perl-try-tiny +perl-uri +perl-www +perl-xml-parser # +perlbase* 
