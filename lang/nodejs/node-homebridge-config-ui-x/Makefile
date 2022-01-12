@@ -91,7 +91,7 @@ define Package/node-homebridge-config-ui-x/install
 	$(LN) ../node/$(PKG_NPM_NAME) $(1)/opt/lib/node_modules/$(PKG_NPM_NAME)
 	chmod +x $(1)/opt/lib/node/$(PKG_NPM_NAME)/dist/bin/hb-service.js
 	chmod +x $(1)/opt/lib/node/$(PKG_NPM_NAME)/dist/bin/standalone.js
-	# Entware specific: fix exec path in scripts
+	# XXX Entware specific: fix exec path in scripts
 	$(FIND) $(1)/opt/lib/node/$(PKG_NPM_NAME) -type f -exec $(SED) \
 		's,^#!.*bash$$$$,#!/opt/bin/bash,;s,^#!.*node$$$$,#!/opt/bin/node,' {} +
 	$(INSTALL_DIR) $(1)/opt/var/log

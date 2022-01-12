@@ -80,5 +80,4 @@ define Package/node-pty-prebuilt-multiarch/install
 		's,^#!.*node$$$$,#!/opt/bin/node,' {} +
 endef
 
-
 $(eval $(call BuildPackage,node-pty-prebuilt-multiarch))

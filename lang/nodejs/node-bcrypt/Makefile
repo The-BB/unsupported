@@ -69,16 +69,6 @@ define Package/node-bcrypt/install
 		$(1)/opt/lib/node/$(PKG_NPM_NAME)/
 	$(INSTALL_DIR) $(1)/opt/lib/node_modules
 	$(LN) ../node/$(PKG_NPM_NAME) $(1)/opt/lib/node_modules/$(PKG_NPM_NAME)
-#	# XXX fix exec path in scripts
-#	$(FIND) $(1)/opt/lib -type f -exec \
-#	$(SED) \
-#	    's,^#!.*bash$$$$,#!/opt/bin/bash,;s,^#!.*node$$$$,#!/opt/bin/node,' {} \;
-#	$(SED) 's,^#!.*node,#!/opt/bin/node,' \
-#	    $(1)/opt/lib/node_modules/node-red/node_modules/bcryptjs/bin/bcrypt
-#	$(SED) 's,^exec .*node,exec /opt/bin/node,' \
-#	    $(1)/opt/lib/node_modules/node-red/bin/node-red-pi
-#	$(SED) 's,^#!.*sh,#!/bin/sh,' \
-#	    $(1)/opt/lib/node_modules/node-red/node_modules/ajv/scripts/prepare-tests
 endef
 
 $(eval $(call BuildPackage,node-bcrypt))
