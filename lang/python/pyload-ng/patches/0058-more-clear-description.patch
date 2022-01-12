@@ -1,0 +1,24 @@
+From c0663e5c4a8555272b7512ef280a7d7087248dd6 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sat, 25 Dec 2021 21:21:24 +0200
+Subject: [PATCH 58/73] more clear description
+
+---
+ src/pyload/core/config/default.cfg | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/pyload/core/config/default.cfg b/src/pyload/core/config/default.cfg
+index 2c6a5bbe0..3f043ab35 100644
+--- a/src/pyload/core/config/default.cfg
++++ b/src/pyload/core/config/default.cfg
+@@ -61,6 +61,6 @@ log - "Log":
+     int syslog_port : "Syslog remote port" = 514
+     bool filelog : "Save log to file" = True
+     int filelog_size : "Maximum file size (in KiB)" = 5120
+-    folder filelog_folder : "File folder" =
++    folder filelog_folder : "Log file folder" =
+     int filelog_entries : "Maximum log files" = 10
+     bool filelog_rotate : "Log rotate" = True
+-- 
+2.30.2
+

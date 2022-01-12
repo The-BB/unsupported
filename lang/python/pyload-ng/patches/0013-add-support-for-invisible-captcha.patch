@@ -1,0 +1,273 @@
+From 4e5080079a56cdd8ecbd68663e5d0db479737fc3 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Tue, 23 Nov 2021 03:07:48 +0200
+Subject: [PATCH 13/73] add support for invisible captcha
+
+---
+ src/pyload/core/managers/captcha_manager.py   |  8 +++-
+ src/pyload/plugins/base/captcha.py            | 42 ++++++++++++++++++-
+ src/pyload/webui/app/templates/captcha.html   | 13 ++++--
+ .../app/themes/modern/templates/captcha.html  | 19 ++++++---
+ .../app/themes/modern/templates/js/base.js    | 14 +++++--
+ .../app/themes/pyplex/templates/captcha.html  | 17 +++++---
+ .../app/themes/pyplex/templates/js/base.js    |  4 +-
+ 7 files changed, 97 insertions(+), 20 deletions(-)
+
+diff --git a/src/pyload/core/managers/captcha_manager.py b/src/pyload/core/managers/captcha_manager.py
+index f22bac426..faf00ebcd 100644
+--- a/src/pyload/core/managers/captcha_manager.py
++++ b/src/pyload/core/managers/captcha_manager.py
+@@ -84,7 +84,7 @@ class CaptchaTask:
+         return self.captcha_params, self.captcha_format, self.captcha_result_type
+ 
+     def set_result(self, result):
+-        if self.is_textual() or self.is_interactive():
++        if self.is_textual() or self.is_interactive() or self.is_invisible():
+             self.result = result
+ 
+         elif self.is_positional():
+@@ -131,6 +131,12 @@ class CaptchaTask:
+         """
+         return self.captcha_result_type == "interactive"
+ 
++    def is_invisible(self):
++        """
++        returns if invisible (browser only, no user interaction) captcha.
++        """
++        return self.captcha_result_type == "invisible"
++
+     def set_waiting_for_user(self, exclusive):
+         if exclusive:
+             self.status = "user"
+diff --git a/src/pyload/plugins/base/captcha.py b/src/pyload/plugins/base/captcha.py
+index 5e72cf762..4f8e91832 100644
+--- a/src/pyload/plugins/base/captcha.py
++++ b/src/pyload/plugins/base/captcha.py
+@@ -11,7 +11,7 @@ from .plugin import BasePlugin
+ class BaseCaptcha(BasePlugin):
+     __name__ = "BaseCaptcha"
+     __type__ = "anticaptcha"
+-    __version__ = "0.58"
++    __version__ = "0.59"
+     __status__ = "stable"
+ 
+     __description__ = """Base anti-captcha plugin"""
+@@ -198,6 +198,46 @@ class BaseCaptcha(BasePlugin):
+ 
+         return result
+ 
++    def decrypt_invisible(self, params={}, timeout=120):
++        captcha_manager = self.pyload.captcha_manager
++        timeout = max(timeout, 50)
++
++        try:
++            params.update(
++                {"captcha_plugin": self.__name__, "plugin": self.pyfile.plugin.__name__}
++            )
++            self.task = captcha_manager.new_task("invisible", params, "invisible")
++
++            captcha_manager.handle_captcha(self.task, timeout)
++
++            while self.task.is_waiting():
++                self.pyfile.plugin.check_status()
++                time.sleep(1)
++
++        finally:
++            captcha_manager.remove_task(self.task)
++
++        result = self.task.result
++
++        if self.task.error:
++            if not self.task.handler and not self.pyload.is_client_connected():
++                self.log_warning(self._("No Client connected for captcha decrypting"))
++                self.fail(self._("No Client connected for captcha decrypting"))
++            else:
++                self.pyfile.plugin.retry_captcha(msg=self.task.error)
++
++        elif self.task.result:
++            self.log_info(self._("Captcha result: `{}`").format(result))
++
++        else:
++            self.pyfile.plugin.retry_captcha(
++                msg=self._(
++                    "No captcha result obtained in appropriate timing ({}s)"
++                ).format(timeout)
++            )
++
++        return result
++
+     def invalid(self, msg=""):
+         if not self.task:
+             return
+diff --git a/src/pyload/webui/app/templates/captcha.html b/src/pyload/webui/app/templates/captcha.html
+index 4af6801ef..7f65a6bd6 100644
+--- a/src/pyload/webui/app/templates/captcha.html
++++ b/src/pyload/webui/app/templates/captcha.html
+@@ -24,14 +24,21 @@
+ 
+         <div id="cap_interactive" style="display: none; text-align: center; padding-bottom: 15px;">
+             <div id="cap_iframe_clipping" style="overflow: hidden;">
+-                <iframe src="" id="cap_interactive_iframe" sandbox="allow-scripts allow-forms allow-same-origin" frameborder="0" scrolling="no" style="position: relative; height: 100%; width: 100%; overflow: hidden;">
++                <iframe src="" id="cap_interactive_iframe" sandbox="allow-scripts allow-forms allow-same-origin" style="position: relative; height: 100%; width: 100%; overflow: hidden; border: 0;">
+                     <p>{{_('Your browser does not support iframes.')}}</p>
+                 </iframe>
+             </div>
+             <div id="cap_interactive_loading">
+                 <p style="white-space: nowrap;">{{_("The captcha may take a few seconds to load.")}}</p>
+                 <p>{{_("Note: to solve this interactive captchas")}}<br>
+-                {{_("Please install the <a href='https://tampermonkey.net/' target='_blank'>Tampermonkey</a> add-on in your browser and add the ")}}<a href="{{url_for('static', filename='js/captcha-interactive.user.js')}}">{{_("pyload userscript")}}</a>.</p></div>
++                {{_("Please install the <a href='https://tampermonkey.net/' target='_blank'>Tampermonkey</a> add-on in your browser and add the ")}}<a href="{{url_for('static', filename='js/captcha-interactive.user.js')}}">{{_("pyload userscript")}}</a>.</p>
++            </div>
++            <div id="cap_invisible_loading">
++              <p style="white-space: nowrap;">{{_("Invisible captcha is in background progress,")}}<br>
++              <p style="white-space: nowrap;">{{_("this window will automatically close, please wait.")}}</p><br>
++              <p>{{_("Note: to solve this interactive captchas")}}<br>
++                {{_("Please install the <a href='https://tampermonkey.net/' target='_blank'>Tampermonkey</a> add-on in your browser and add the ")}}<a href="{{url_for('static', filename='js/captcha-interactive.user.js')}}">{{_("pyload userscript")}}</a>.</p>
++            </div>
+         </div>
+ 
+         <div id="button_bar" style="text-align: center">
+@@ -45,4 +52,4 @@
+ 
+     </form>
+ 
+-</div>
+\ No newline at end of file
++</div>
+diff --git a/src/pyload/webui/app/themes/modern/templates/captcha.html b/src/pyload/webui/app/themes/modern/templates/captcha.html
+index 69a979692..ad04aab90 100644
+--- a/src/pyload/webui/app/themes/modern/templates/captcha.html
++++ b/src/pyload/webui/app/themes/modern/templates/captcha.html
+@@ -26,17 +26,26 @@
+           </div>
+           <div id="cap_interactive" style="display: none; text-align: center; padding-bottom: 15px;">
+             <div id="cap_iframe_clipping" style="overflow: hidden;">
+-              <iframe src="" id="cap_interactive_iframe" sandbox="allow-scripts allow-forms allow-same-origin" frameborder="0" scrolling="no" style="position: relative; height: 100%; width: 100%; overflow: hidden;">
++              <iframe src="" id="cap_interactive_iframe" sandbox="allow-scripts allow-forms allow-same-origin" style="position: relative; height: 100%; width: 100%; overflow: hidden; border: 0;">
+                 <p>{{_('Your browser does not support iframes.')}}</p>
+               </iframe>
+             </div>
+             <div id="cap_interactive_loading">
+               <p style="white-space: nowrap;">{{_("The captcha may take a few seconds to load.")}}</p>
+-              <p>{{_("Note: to solve this interactive captchas")}}<br>
+-              {{_("Please install the <a href='https://tampermonkey.net/' target='_blank'>Tampermonkey</a> add-on in your browser and add the ")}}<a href="{{url_for('static', filename='js/captcha-interactive.user.js')}}">{{_("pyload userscript")}}</a>.</p></div>
++              <p>{{_("Note: to solve this interactive captcha")}}<br>
++                {{_("Please install the <a href='https://tampermonkey.net/' target='_blank'>Tampermonkey</a> add-on in your browser and add the ")}}<a href="{{url_for('static', filename='js/captcha-interactive.user.js')}}">{{_("pyload userscript")}}</a>.
++              </p>
++            </div>
++            <div id="cap_invisible_loading">
++              <p style="white-space: nowrap;">{{_("Invisible captcha is in background progress,")}}<br>
++              <p style="white-space: nowrap;">{{_("this window will automatically close, please wait.")}}</p><br>
++              <p>{{_("Note: to solve this invisible captcha")}}<br>
++                {{_("Please install the <a href='https://tampermonkey.net/' target='_blank'>Tampermonkey</a> add-on in your browser and add the ")}}<a href="{{url_for('static', filename='js/captcha-interactive.user.js')}}">{{_("pyload userscript")}}</a>.
++              </p>
++            </div>
++            <button class="btn btn-primary pull-right" id="cap_submit" type="submit" style="margin-left: 5px;">{{_('Submit')}}</button>
++            <div class="btn btn-warning pull-right" data-dismiss="modal" id="cap_reset">{{_('Close')}}</div>
+           </div>
+-          <button class="btn btn-primary pull-right" id="cap_submit" type="submit" style="margin-left: 5px;">{{_('Submit')}}</button>
+-          <div class="btn btn-warning pull-right" data-dismiss="modal" id="cap_reset" >{{_('Close')}}</div>
+         </form>
+       </div>
+     </div>
+diff --git a/src/pyload/webui/app/themes/modern/templates/js/base.js b/src/pyload/webui/app/themes/modern/templates/js/base.js
+index 2390e885d..327ef6824 100644
+--- a/src/pyload/webui/app/themes/modern/templates/js/base.js
++++ b/src/pyload/webui/app/themes/modern/templates/js/base.js
+@@ -18,7 +18,7 @@ function indicateSuccess(message) {
+    }
+ 
+     indicateFinish();
+-    var bar = new $.peekABar({
++    const bar = new $.peekABar({
+         html: "<h4>" + message + '.' + "</h4>",
+         padding: "6px",
+         backgroundColor: '#B5BFC2',
+@@ -393,6 +393,14 @@ function set_captcha(a) {
+             $("#cap_interactive").css("display", "block");
+             interactiveCaptchaHandlerInstance.startInteraction(params.url, params);
+         }
++    } else if (a.result_type === "invisible") {
++        $("#cap_box #cap_title").text("");
++        if(interactiveCaptchaHandlerInstance == null) {
++            interactiveCaptchaHandlerInstance = new interactiveCaptchaHandler("cap_interactive_iframe", "cap_invisible_loading", submit_interactive_captcha);
++        }
++        if(params.url !== undefined && params.url.indexOf("http") === 0) {
++            interactiveCaptchaHandlerInstance.startInteraction(params.url, params);
++        }
+     }
+     return true;
+ }
+@@ -460,11 +468,11 @@ function submit_interactive_captcha(c) {
+ 
+ function interactiveCaptchaHandler(iframeId, loadingid, captchaResponseCallback) {
+     this._iframeId = iframeId;
+-    this._loadingid = loadingid;
++    this._loadingId = loadingid;
+     this._captchaResponseCallback = captchaResponseCallback;
+     this._active = false; // true: link grabbing is running, false: standby
+ 
+-    $("#" + this._loadingid).css("display", "block");
++    $("#" + this._loadingId).css("display", "block");
+     $("#" + this._iframeId).on("load", this, this.iframeLoaded);
+ 
+     // Register event listener for communication with iframe
+diff --git a/src/pyload/webui/app/themes/pyplex/templates/captcha.html b/src/pyload/webui/app/themes/pyplex/templates/captcha.html
+index 8f0a29394..8f41dd6b8 100644
+--- a/src/pyload/webui/app/themes/pyplex/templates/captcha.html
++++ b/src/pyload/webui/app/themes/pyplex/templates/captcha.html
+@@ -26,17 +26,24 @@
+           </div>
+           <div id="cap_interactive" style="display: none; text-align: center; padding-bottom: 15px;">
+             <div id="cap_iframe_clipping" style="overflow: hidden;">
+-              <iframe src="" id="cap_interactive_iframe" sandbox="allow-scripts allow-forms allow-same-origin" frameborder="0" scrolling="no" style="position: relative; height: 100%; width: 100%; overflow: hidden;">
++              <iframe src="" id="cap_interactive_iframe" sandbox="allow-scripts allow-forms allow-same-origin" style="position: relative; height: 100%; width: 100%; overflow: hidden; border: 0;">
+                 <p>{{_('Your browser does not support iframes.')}}</p>
+               </iframe>
+             </div>
+             <div id="cap_interactive_loading">
+               <p style="white-space: nowrap;">{{_("The captcha may take a few seconds to load.")}}</p>
+-              <p>{{_("Note: to solve this interactive captchas")}}<br>
+-              {{_("Please install the <a href='https://tampermonkey.net/' target='_blank'>Tampermonkey</a> add-on in your browser and add the ")}}<a href="{{url_for('static', filename='js/captcha-interactive.user.js')}}">{{_("pyload userscript")}}</a>.</p></div>
++              <p>{{_("Note: to solve this interactive captcha")}}<br>
++              {{_("Please install the <a href='https://tampermonkey.net/' target='_blank'>Tampermonkey</a> add-on in your browser and add the ")}}<a href="{{url_for('static', filename='js/captcha-interactive.user.js')}}">{{_("pyload userscript")}}</a>.</p>
++            </div>
++            <div id="cap_invisible_loading">
++              <p style="white-space: nowrap;">{{_("Invisible captcha is in background progress,")}}<br>
++              <p style="white-space: nowrap;">{{_("this window will automatically close, please wait.")}}</p><br>
++              <p>{{_("Note: to solve this interactive captcha")}}<br>
++              {{_("Please install the <a href='https://tampermonkey.net/' target='_blank'>Tampermonkey</a> add-on in your browser and add the ")}}<a href="{{url_for('static', filename='js/captcha-interactive.user.js')}}">{{_("pyload userscript")}}</a>.</p>
++            </div>
++            <button class="btn btn-success pull-right" id="cap_submit" type="submit" style="margin-left: 5px;">{{_('Submit')}}</button>
++            <div class="btn btn-warning pull-right" data-dismiss="modal" id="cap_reset" >{{_('Close')}}</div>
+           </div>
+-          <button class="btn btn-success pull-right" id="cap_submit" type="submit" style="margin-left: 5px;">{{_('Submit')}}</button>
+-          <div class="btn btn-warning pull-right" data-dismiss="modal" id="cap_reset" >{{_('Close')}}</div>
+         </form>
+       </div>
+     </div>
+diff --git a/src/pyload/webui/app/themes/pyplex/templates/js/base.js b/src/pyload/webui/app/themes/pyplex/templates/js/base.js
+index 2390e885d..88376a5aa 100644
+--- a/src/pyload/webui/app/themes/pyplex/templates/js/base.js
++++ b/src/pyload/webui/app/themes/pyplex/templates/js/base.js
+@@ -18,7 +18,7 @@ function indicateSuccess(message) {
+    }
+ 
+     indicateFinish();
+-    var bar = new $.peekABar({
++    const bar = new $.peekABar({
+         html: "<h4>" + message + '.' + "</h4>",
+         padding: "6px",
+         backgroundColor: '#B5BFC2',
+@@ -464,7 +464,7 @@ function interactiveCaptchaHandler(iframeId, loadingid, captchaResponseCallback)
+     this._captchaResponseCallback = captchaResponseCallback;
+     this._active = false; // true: link grabbing is running, false: standby
+ 
+-    $("#" + this._loadingid).css("display", "block");
++    $("#" + this._loadingId).css("display", "block");
+     $("#" + this._iframeId).on("load", this, this.iframeLoaded);
+ 
+     // Register event listener for communication with iframe
+-- 
+2.30.2
+

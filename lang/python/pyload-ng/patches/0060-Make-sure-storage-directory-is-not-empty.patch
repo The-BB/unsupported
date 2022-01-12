@@ -1,0 +1,27 @@
+From 5ad6c3fa39dc2b3e5845356d8c45659e6e9aa11f Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sat, 25 Dec 2021 22:57:13 +0200
+Subject: [PATCH 60/73] Make sure storage directory is not empty
+
+---
+ src/pyload/core/__init__.py | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/pyload/core/__init__.py b/src/pyload/core/__init__.py
+index 20e77181e..45ef1fc7b 100644
+--- a/src/pyload/core/__init__.py
++++ b/src/pyload/core/__init__.py
+@@ -126,6 +126,10 @@ class Core:
+         # otherwise save setting to config dir
+         if storagedir is None:
+             storagedir = self.config.get("general", "storage_folder")
++            # Make sure storage directory is not empty
++            if not storagedir:
++                self.config.set("general", "storage_folder", "~/Downloads/pyLoad")
++                storagedir = self.config.get("general", "storage_folder")
+         else:
+             self.config.set("general", "storage_folder", storagedir)
+         os.makedirs(storagedir, exist_ok=True)
+-- 
+2.30.2
+

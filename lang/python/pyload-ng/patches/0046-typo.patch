@@ -1,0 +1,25 @@
+From 1a39f36e2062b145017fdb41392e5559ac3638eb Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sat, 11 Dec 2021 19:31:04 +0200
+Subject: [PATCH 46/73] typo
+
+---
+ src/pyload/core/__init__.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/pyload/core/__init__.py b/src/pyload/core/__init__.py
+index d87bddbc1..20e77181e 100644
+--- a/src/pyload/core/__init__.py
++++ b/src/pyload/core/__init__.py
+@@ -279,7 +279,7 @@ class Core:
+         self.acm.get_account_infos()
+         # self.scheduler.add_job(0, self.acm.get_account_infos)
+ 
+-        self.log.info(self._("Activating Plugins..."))
++        self.log.info(self._("Activating plugins..."))
+         self.adm.core_ready()
+ 
+     def _start_webserver(self):
+-- 
+2.30.2
+

@@ -1,0 +1,36 @@
+From 55ace916122b043b8732a3db604857c8ad21480c Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Mon, 20 Dec 2021 02:51:42 +0200
+Subject: [PATCH 53/73] [SimpleDownloader] fix #4045 (2)
+
+---
+ src/pyload/plugins/base/simple_downloader.py | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/src/pyload/plugins/base/simple_downloader.py b/src/pyload/plugins/base/simple_downloader.py
+index 338d38d6b..ca0abb870 100644
+--- a/src/pyload/plugins/base/simple_downloader.py
++++ b/src/pyload/plugins/base/simple_downloader.py
+@@ -12,7 +12,7 @@ from .downloader import BaseDownloader
+ class SimpleDownloader(BaseDownloader):
+     __name__ = "SimpleDownloader"
+     __type__ = "downloader"
+-    __version__ = "2.34"
++    __version__ = "2.35"
+     __status__ = "stable"
+ 
+     __pattern__ = r"^unmatchable$"
+@@ -457,9 +457,8 @@ class SimpleDownloader(BaseDownloader):
+         self.grab_info()
+         return self.info
+ 
+-    #: Override base class grab_info(), don't grab info (yet)
+     def grab_info(self):
+-        pass
++        self.pyfile.name = parse.name(self.pyfile.url)
+ 
+     def handle_direct(self, pyfile):
+         self.link = pyfile.url if self.isresource(pyfile.url) else None
+-- 
+2.30.2
+

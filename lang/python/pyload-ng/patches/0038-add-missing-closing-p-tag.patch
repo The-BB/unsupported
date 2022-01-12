@@ -1,0 +1,53 @@
+From eec3fbf60d6c2f943120ebee07c8f307ccfbad26 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sat, 4 Dec 2021 05:29:21 +0200
+Subject: [PATCH 38/73] add missing closing p tag
+
+---
+ src/pyload/webui/app/templates/captcha.html               | 2 +-
+ src/pyload/webui/app/themes/modern/templates/captcha.html | 2 +-
+ src/pyload/webui/app/themes/pyplex/templates/captcha.html | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/pyload/webui/app/templates/captcha.html b/src/pyload/webui/app/templates/captcha.html
+index 7f65a6bd6..df3873da4 100644
+--- a/src/pyload/webui/app/templates/captcha.html
++++ b/src/pyload/webui/app/templates/captcha.html
+@@ -34,7 +34,7 @@
+                 {{_("Please install the <a href='https://tampermonkey.net/' target='_blank'>Tampermonkey</a> add-on in your browser and add the ")}}<a href="{{url_for('static', filename='js/captcha-interactive.user.js')}}">{{_("pyload userscript")}}</a>.</p>
+             </div>
+             <div id="cap_invisible_loading">
+-              <p style="white-space: nowrap;">{{_("Invisible captcha is in background progress,")}}<br>
++              <p style="white-space: nowrap;">{{_("Invisible captcha is in background progress,")}}</p><br>
+               <p style="white-space: nowrap;">{{_("this window will automatically close, please wait.")}}</p><br>
+               <p>{{_("Note: to solve this interactive captchas")}}<br>
+                 {{_("Please install the <a href='https://tampermonkey.net/' target='_blank'>Tampermonkey</a> add-on in your browser and add the ")}}<a href="{{url_for('static', filename='js/captcha-interactive.user.js')}}">{{_("pyload userscript")}}</a>.</p>
+diff --git a/src/pyload/webui/app/themes/modern/templates/captcha.html b/src/pyload/webui/app/themes/modern/templates/captcha.html
+index 79b2413b7..51f515300 100644
+--- a/src/pyload/webui/app/themes/modern/templates/captcha.html
++++ b/src/pyload/webui/app/themes/modern/templates/captcha.html
+@@ -37,7 +37,7 @@
+               </p>
+             </div>
+             <div id="cap_invisible_loading">
+-              <p style="white-space: nowrap;">{{_("Invisible captcha is in background progress,")}}<br>
++              <p style="white-space: nowrap;">{{_("Invisible captcha is in background progress,")}}</p><br>
+               <p style="white-space: nowrap;">{{_("this window will automatically close, please wait.")}}</p><br>
+               <p>{{_("Note: to solve this invisible captcha")}}<br>
+                 {{_("Please install the <a href='https://tampermonkey.net/' target='_blank'>Tampermonkey</a> add-on in your browser and add the ")}}<a href="{{url_for('static', filename='js/captcha-interactive.user.js')}}">{{_("pyload userscript")}}</a>.
+diff --git a/src/pyload/webui/app/themes/pyplex/templates/captcha.html b/src/pyload/webui/app/themes/pyplex/templates/captcha.html
+index 1607edf71..3c7ec5aed 100644
+--- a/src/pyload/webui/app/themes/pyplex/templates/captcha.html
++++ b/src/pyload/webui/app/themes/pyplex/templates/captcha.html
+@@ -31,7 +31,7 @@
+               </iframe>
+             </div>
+             <div id="cap_interactive_loading">
+-              <p style="white-space: nowrap;">{{_("The captcha may take a few seconds to load.")}}</p>
++              <p style="white-space: nowrap;">{{_("The captcha may take a few seconds to load.")}}</p></p>
+               <p>{{_("Note: to solve this interactive captcha")}}<br>
+               {{_("Please install the <a href='https://tampermonkey.net/' target='_blank'>Tampermonkey</a> add-on in your browser and add the ")}}<a href="{{url_for('static', filename='js/captcha-interactive.user.js')}}">{{_("pyload userscript")}}</a>.</p>
+             </div>
+-- 
+2.30.2
+

@@ -1,0 +1,37 @@
+From a367dd4b0bfbb4daabb86912e5bc53b31627abc8 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Thu, 25 Nov 2021 02:30:12 +0200
+Subject: [PATCH 29/73] bugfix
+
+---
+ src/pyload/plugins/addons/Captcha9Kw.py | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/pyload/plugins/addons/Captcha9Kw.py b/src/pyload/plugins/addons/Captcha9Kw.py
+index 6ecc91235..cbc7e7a85 100644
+--- a/src/pyload/plugins/addons/Captcha9Kw.py
++++ b/src/pyload/plugins/addons/Captcha9Kw.py
+@@ -169,9 +169,9 @@ class Captcha9Kw(BaseAddon):
+                 "math": option["math"],
+                 "pyload": 1,
+                 "source": "pyload",
+-                "base64": 0 if task.is_interactive() else 1,
++                "base64": 0 if task.is_interactive() or task.is_invisible() else 1,
+                 "mouse": 1 if task.is_positional() else 0,
+-                "interactive": 1 if task.is_interactive() else 0,
++                "interactive": 1 if task.is_interactive() or task.is_invisible() else 0,
+                 "action": "usercaptchaupload",
+             }
+         )
+@@ -225,7 +225,7 @@ class Captcha9Kw(BaseAddon):
+         task.set_result(result)
+ 
+     def captcha_task(self, task):
+-        if task.is_interactive():
++        if task.is_interactive() or task.is_invisible():
+             if task.captcha_params[
+                 "captcha_plugin"
+             ] not in self.INTERACTIVE_TYPES.keys() or not self.config.get(
+-- 
+2.30.2
+

@@ -29,7 +29,7 @@
      bool enabled : "Activated" = True
      bool use_ssl : "Use HTTPS" = False
 -    bool develop : "Development mode" = True
-+    bool develop : "Development mode" = false
++    bool develop : "Development mode" = False
      file ssl_certfile : "SSL Certificate" = ssl.crt
      file ssl_keyfile : "SSL Key" = ssl.key
      file ssl_certchain : "CA's intermediate certificate bundle (optional)" =
@@ -48,7 +48,7 @@
      int syslog_port : "Syslog remote port" = 514
      bool filelog : "Save log to file" = True
      int filelog_size : "Maximum file size (in KiB)" = 5120
--    folder filelog_folder : "File folder" =
-+    folder filelog_folder : "File folder" = /opt/var/log
+-    folder filelog_folder : "Log file folder" =
++    folder filelog_folder : "Log file folder" = /opt/var/log
      int filelog_entries : "Maximum log files" = 10
      bool filelog_rotate : "Log rotate" = True

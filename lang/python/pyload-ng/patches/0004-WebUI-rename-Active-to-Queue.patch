@@ -1,0 +1,53 @@
+From 14fc57298a9afcb16ed7b20725e8c7a5d08347cd Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sat, 30 Oct 2021 21:51:25 +0300
+Subject: [PATCH 04/73] [WebUI] rename "Active:" to "Queue:"
+
+---
+ src/pyload/webui/app/templates/base.html               | 2 +-
+ src/pyload/webui/app/themes/modern/templates/base.html | 2 +-
+ src/pyload/webui/app/themes/pyplex/templates/base.html | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/pyload/webui/app/templates/base.html b/src/pyload/webui/app/templates/base.html
+index 19be25285..2f78608a7 100644
+--- a/src/pyload/webui/app/templates/base.html
++++ b/src/pyload/webui/app/templates/base.html
+@@ -120,7 +120,7 @@
+     <li><span class="time">{{_("Running:")}}</span><a id="time" style=" background-color: {% if status.download %}#8ffc25{% else %} #fc6e26{% endif %}; padding-left: 0cm; padding-right: 0.1cm; "> {% if status.download %}{{_("on")}}{% else %}{{_("off")}}{% endif %}</a></li>
+     <li><span class="reconnect">{{_("Reconnect:")}}</span><a id="reconnect" style=" background-color: {% if status.reconnect %}#8ffc25{% else %} #fc6e26{% endif %}; padding-left: 0cm; padding-right: 0.1cm; "> {% if status.reconnect %}{{_("on")}}{% else %}{{_("off")}}{% endif %}</a></li>
+     <li><a class="action backlink">{{_("Speed:")}} <b id="speed">{{ status.speed }}</b></a></li>
+-    <li><a class="action cog">{{_("Active:")}} <b id="actives" title="{{_("Active")}}">{{ status.active }}</b> | <b id="actives_from" title="{{_("Queued")}}">{{ status.queue }}</b> | <b id="actives_total" title="{{_("Total")}}">{{ status.total }}</b></a></li>
++    <li><a class="action cog">{{_("Queue:")}} <b id="actives" title="{{_("Active")}}">{{ status.active }}</b> | <b id="actives_from" title="{{_("Queued")}}">{{ status.queue }}</b> | <b id="actives_total" title="{{_("Total")}}">{{ status.total }}</b></a></li>
+     <li><a href=""  class="action revisions" accesskey="o" rel="nofollow">{{_("Reload page")}}</a></li>
+ </ul>
+ {% endif %}
+diff --git a/src/pyload/webui/app/themes/modern/templates/base.html b/src/pyload/webui/app/themes/modern/templates/base.html
+index 3f4ea9089..01aaca270 100644
+--- a/src/pyload/webui/app/themes/modern/templates/base.html
++++ b/src/pyload/webui/app/themes/modern/templates/base.html
+@@ -168,7 +168,7 @@
+       <button class="btn col-xs-3 col-sm-auto"><span class="hidden-sm">{{_('Running:')}}</span><span class="glyphicon glyphicon-download hidden-xs hidden-md hidden-lg"></span> <span id="time"  class="label label-{% if status.download %}success{% else %}danger{% endif %}">{% if status.download %}{{_('on')}}{% else %}{{_('off')}}{% endif %}</span></button>
+       <button type="button" class="btn col-xs-3 col-sm-auto"><span class="hidden-sm">{{_('Reconnect:')}}</span><span class="glyphicon glyphicon-refresh hidden-xs hidden-md hidden-lg"></span> <span id="reconnect" class="label label-{% if status.reconnect %}success{% else %}danger{% endif %}">{% if status.reconnect %}{{_('on')}}{% else %}{{_('off')}}{% endif %}</span></button>
+       <button type="button" class="btn col-xs-3 col-sm-auto"><span class="action backlink"><span class="hidden-xs hidden-sm">{{_('Speed:')}} </span><b id="speed">{{status.speed}}</b></span></button>
+-      <span class="btn col-xs-3 col-sm-auto" style="background-color: #F0F0F0"><span class="action cog">{{_('Active:')}} <b id="actives" title="{{_('Active')}}">{{status.active}}</b> / <b id="actives_from" title="{{_('Queued')}}">{{status.queue}}</b> / <b id="actives_total" title="{{_('Total')}}">{{status.total}}</b></span></span>
++      <span class="btn col-xs-3 col-sm-auto" style="background-color: #F0F0F0"><span class="action cog">{{_('Queue:')}} <b id="actives" title="{{_('Active')}}">{{status.active}}</b> / <b id="actives_from" title="{{_('Queued')}}">{{status.queue}}</b> / <b id="actives_total" title="{{_('Total')}}">{{status.total}}</b></span></span>
+     </div>
+ {% endif %}
+ 
+diff --git a/src/pyload/webui/app/themes/pyplex/templates/base.html b/src/pyload/webui/app/themes/pyplex/templates/base.html
+index 2e439c8e3..e7567ca1d 100644
+--- a/src/pyload/webui/app/themes/pyplex/templates/base.html
++++ b/src/pyload/webui/app/themes/pyplex/templates/base.html
+@@ -168,7 +168,7 @@
+         <button class="btn btn-dark col-xs-3 col-sm-auto"><span class="hidden-sm">{{_('Running:')}}</span><span class="glyphicon glyphicon-download hidden-xs hidden-md hidden-lg"></span> <span id="time"  class="label label-{% if status.download %}success{% else %}danger{% endif %}">{% if status.download %}{{_('on')}}{% else %}{{_('off')}}{% endif %}</span></button>
+         <button type="button" class="btn btn-dark col-xs-3 col-sm-auto"><span class="hidden-sm">{{_('Reconnect:')}}</span><span class="glyphicon glyphicon-refresh hidden-xs hidden-md hidden-lg"></span> <span id="reconnect" class="label label-{% if status.reconnect %}success{% else %}danger{% endif %}">{% if status.reconnect %}{{_('on')}}{% else %}{{_('off')}}{% endif %}</span></button>
+         <button type="button" class="btn btn-dark col-xs-3 col-sm-auto"><span class="action backlink"><span class="hidden-xs hidden-sm">{{_('Speed:')}} </span><b id="speed">{{status.speed}}</b></span></button>
+-        <span class="btn btn-dark col-xs-3 col-sm-auto"><span class="action cog">{{_('Active:')}} <b id="actives" title="{{_('Active')}}">{{status.active}}</b> / <b id="actives_from" title="{{_('Queued')}}">{{status.queue}}</b> | <b id="actives_total" title="{{_('Total')}}">{{status.total}}</b></span></span>
++        <span class="btn btn-dark col-xs-3 col-sm-auto"><span class="action cog">{{_('Queue:')}} <b id="actives" title="{{_('Active')}}">{{status.active}}</b> / <b id="actives_from" title="{{_('Queued')}}">{{status.queue}}</b> | <b id="actives_total" title="{{_('Total')}}">{{status.total}}</b></span></span>
+     </div>
+ {% endif %}
+ 
+-- 
+2.30.2
+

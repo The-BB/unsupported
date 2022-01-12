@@ -1,0 +1,46 @@
+From 5df8796fab5271830f596b69c31f25ce36feedd8 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Mon, 1 Nov 2021 02:02:12 +0200
+Subject: [PATCH 05/73] fix typo
+
+---
+ src/pyload/core/api/__init__.py          | 4 ++--
+ src/pyload/core/managers/file_manager.py | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/pyload/core/api/__init__.py b/src/pyload/core/api/__init__.py
+index ae6ffc5ed..82a633335 100644
+--- a/src/pyload/core/api/__init__.py
++++ b/src/pyload/core/api/__init__.py
+@@ -854,13 +854,13 @@ class Api:
+     @permission(Perms.MODIFY)
+     def recheck_package(self, package_id):
+         """
+-        Proofes online status of all files in a package, also a default action when
++        Probes online status of all files in a package, also a default action when
+         package is added.
+ 
+         :param package_id:
+         :return:
+         """
+-        self.pyload.files.re_check_package(int(package_id))
++        self.pyload.files.recheck_package(int(package_id))
+ 
+     @legacy("stopAllDownloads")
+     @permission(Perms.MODIFY)
+diff --git a/src/pyload/core/managers/file_manager.py b/src/pyload/core/managers/file_manager.py
+index dd92c45d0..c13dfc79b 100644
+--- a/src/pyload/core/managers/file_manager.py
++++ b/src/pyload/core/managers/file_manager.py
+@@ -603,7 +603,7 @@ class FileManager:
+                 self.pyload.addon_manager.package_finished(pyfile.package())
+                 pyfile.package().set_finished = True
+ 
+-    def re_check_package(self, pid):
++    def recheck_package(self, pid):
+         """
+         recheck links in package.
+         """
+-- 
+2.30.2
+

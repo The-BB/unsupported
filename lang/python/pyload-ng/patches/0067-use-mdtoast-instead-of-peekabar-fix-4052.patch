@@ -1,0 +1,215 @@
+From 563e38fb28f200f06e9bce612c7349af649e8db6 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Fri, 31 Dec 2021 03:21:18 +0200
+Subject: [PATCH 67/73] use mdtoast instead of peekabar (fix #4052)
+
+---
+ .../jQuery.peekABar/js/jquery.peekabar.min.js |  1 -
+ .../static/vendor/mdtoast/css/mdtoast.min.css |  1 +
+ .../static/vendor/mdtoast/js/mdtoast.min.js   |  1 +
+ .../app/themes/modern/templates/base.html     |  3 ++-
+ .../app/themes/modern/templates/js/base.js    | 25 +++----------------
+ .../jQuery.peekABar/js/jquery.peekabar.min.js |  1 -
+ .../static/vendor/mdtoast/css/mdtoast.min.css |  1 +
+ .../static/vendor/mdtoast/js/mdtoast.min.js   |  1 +
+ .../app/themes/pyplex/templates/base.html     |  3 ++-
+ .../app/themes/pyplex/templates/js/base.js    | 25 +++----------------
+ 10 files changed, 14 insertions(+), 48 deletions(-)
+ delete mode 100644 src/pyload/webui/app/themes/modern/static/vendor/jQuery/jQuery.peekABar/js/jquery.peekabar.min.js
+ create mode 100644 src/pyload/webui/app/themes/modern/static/vendor/mdtoast/css/mdtoast.min.css
+ create mode 100644 src/pyload/webui/app/themes/modern/static/vendor/mdtoast/js/mdtoast.min.js
+ delete mode 100644 src/pyload/webui/app/themes/pyplex/static/vendor/jQuery/jQuery.peekABar/js/jquery.peekabar.min.js
+ create mode 100644 src/pyload/webui/app/themes/pyplex/static/vendor/mdtoast/css/mdtoast.min.css
+ create mode 100644 src/pyload/webui/app/themes/pyplex/static/vendor/mdtoast/js/mdtoast.min.js
+
+diff --git a/src/pyload/webui/app/themes/modern/static/vendor/jQuery/jQuery.peekABar/js/jquery.peekabar.min.js b/src/pyload/webui/app/themes/modern/static/vendor/jQuery/jQuery.peekABar/js/jquery.peekabar.min.js
+deleted file mode 100644
+index 66e74fd9f..000000000
+--- a/src/pyload/webui/app/themes/modern/static/vendor/jQuery/jQuery.peekABar/js/jquery.peekabar.min.js
++++ /dev/null
+@@ -1 +0,0 @@
+-!function(a){"use strict";a.peekABar=function(b){var c=this,d=parseInt(1e8*Math.random(),0);this.bar={},this.settings={};var e={html:"Your Message Here",delay:3e3,autohide:!1,padding:"1em",backgroundColor:"rgb(195, 195, 195)",animation:{type:"slide",duration:"slow"},cssClass:null,opacity:"1",position:"top",onShow:function(){},onHide:function(){},closeOnClick:!1},f=function(){c.settings=a.extend({},e,b),g(),h()};this.show=function(a){switch(void 0!==a&&a.html&&this.bar.html(a.html),this.settings.animation.type){case"slide":this.bar.slideDown(c.settings.animation.duration);break;case"fade":this.bar.fadeIn(c.settings.animation.duration)}this.settings.autohide&&setTimeout(function(){c.hide()},this.settings.delay),this.settings.onShow.call(this,a)},this.hide=function(){switch(this.settings.animation.type){case"slide":this.bar.slideUp(c.settings.animation.duration);break;case"fade":this.bar.fadeOut(c.settings.animation.duration)}this.settings.onHide.call(this)};var g=function(){c.bar=a("<div></div>").addClass("peek-a-bar").attr("id","__peek_a_bar_"+d),a("html").append(c.bar),c.bar.hide()},h=function(){i(),j(),k(),l(),n(),m(),o(),p()},i=function(){c.bar.html(c.settings.html)},j=function(){c.settings.autohide&&setTimeout(function(){c.hide()},c.settings.delay)},k=function(){c.bar.css("padding",c.settings.padding)},l=function(){c.bar.css("background-color",c.settings.backgroundColor)},m=function(){null!==c.settings.cssClass&&c.bar.addClass(c.settings.cssClass)},n=function(){c.bar.css("opacity",c.settings.opacity)},o=function(){switch(c.settings.position){case"top":c.bar.css("top",0);break;case"bottom":c.bar.css("bottom",0);break;default:c.bar.css("top",0)}},p=function(){c.settings.closeOnClick&&c.bar.click(function(){c.hide()})};return f(),this}}(jQuery);
+diff --git a/src/pyload/webui/app/themes/modern/static/vendor/mdtoast/css/mdtoast.min.css b/src/pyload/webui/app/themes/modern/static/vendor/mdtoast/css/mdtoast.min.css
+new file mode 100644
+index 000000000..2a0b8b896
+--- /dev/null
++++ b/src/pyload/webui/app/themes/modern/static/vendor/mdtoast/css/mdtoast.min.css
+@@ -0,0 +1 @@
++@import url("https://fonts.googleapis.com/css?family=Roboto:400,500");.mdtoast{position:fixed;display:flex;flex-direction:row;align-items:center;justify-content:flex-start;box-sizing:border-box;padding:0 24px;color:#fff;font-family:Roboto,sans-serif;font-size:16px;text-align:left;outline:none;pointer-events:auto;touch-action:auto;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-color:#323232;transform:translateY(0);transition:transform .23s cubic-bezier(0,0,.2,1) 0ms;will-change:transform;z-index:100002}.mdtoast[data-position="bottom left"]{left:24px;bottom:24px}.mdtoast[data-position="bottom center"]{bottom:24px;left:50%;transform:translateY(0) translateX(-50%)}.mdtoast[data-position="bottom right"]{right:24px;bottom:24px}.mdtoast[data-position="top left"]{top:24px;left:24px}.mdtoast[data-position="top center"]{top:24px;left:50%;transform:translateY(0) translateX(-50%)}.mdtoast[data-position="top right"]{top:24px;right:24px}.mdtoast .mdt-message{display:flex;align-items:center;min-height:48px;padding:8px 0;opacity:1;margin-left:0;box-sizing:border-box;transition:opacity .3s cubic-bezier(.4,0,1,1) 0ms}.mdtoast .mdt-message:after{content:"";min-height:32px;font-size:0}.mdtoast .mdt-action{display:flex;align-items:center;color:#ffeb3b;text-decoration:none;cursor:pointer;letter-spacing:.07em;font-weight:500;padding:8px;margin:0 0 0 24px;opacity:1;min-height:32px;background:none;border:none;outline:none;box-sizing:border-box;border-radius:4px;transition:opacity .3s cubic-bezier(.4,0,1,1) 0ms,background-color .15s linear}.mdtoast .mdt-action:focus,.mdtoast .mdt-action:hover{background-color:hsla(0,0%,100%,.075)}.mdtoast .mdt-action:active{background-color:hsla(0,0%,100%,.15)}.mdtoast.mdt--load{transition:transform .23s cubic-bezier(.4,0,1,1) 0ms}.mdtoast.mdt--load[data-position*=bottom]{transform:translateY(150%)}.mdtoast.mdt--load[data-position*=top]{transform:translateY(-150%)}.mdtoast.mdt--load .mdt-action,.mdtoast.mdt--load .mdt-message{opacity:0}.mdtoast.mdt--interactive{padding-right:16px}.mdtoast.mdt--interactive .mdt-message{margin-right:auto}.mdtoast.mdt--info{background-color:#1565c0}.mdtoast.mdt--error{background-color:#e53935}.mdtoast.mdt--warning{background-color:#ef6c00}.mdtoast.mdt--success{background-color:#2e7d32}@media (min-width:600px){.mdtoast{min-width:288px;max-width:568px;border-radius:4px}.mdtoast.mdt--load[data-position="bottom center"]{transform:translateY(150%) translateX(-50%)}.mdtoast.mdt--load[data-position="top center"]{transform:translateY(-150%) translateX(-50%)}}@media (max-width:599px){.mdtoast{left:0!important;right:0!important;font-size:14px;max-width:100%;transform:translateY(0)}.mdtoast[data-position*=bottom]{bottom:0;transform:translateY(0)}.mdtoast[data-position*=top]{top:0;transform:translateY(0)}.mdtoast.mdt--load{transform:translateY(100%)}}body.mdtoast--modal{pointer-events:none;touch-action:none;-ms-user-select:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}
+\ No newline at end of file
+diff --git a/src/pyload/webui/app/themes/modern/static/vendor/mdtoast/js/mdtoast.min.js b/src/pyload/webui/app/themes/modern/static/vendor/mdtoast/js/mdtoast.min.js
+new file mode 100644
+index 000000000..8dc1cd1a7
+--- /dev/null
++++ b/src/pyload/webui/app/themes/modern/static/vendor/mdtoast/js/mdtoast.min.js
+@@ -0,0 +1 @@
++!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define(e):(t="undefined"!=typeof globalThis?globalThis:t||self).mdtoast=e()}(this,function(){"use strict";function r(t,e){for(var n=0;n<e.length;n++){var o=e[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(t,o.key,o)}}var t="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:{},e=function(t){return t&&t.Math==Math&&t},n=e("object"==typeof globalThis&&globalThis)||e("object"==typeof window&&window)||e("object"==typeof self&&self)||e("object"==typeof t&&t)||function(){return this}()||Function("return this")(),o={exports:{}},i=function(t){try{return!!t()}catch(t){return!0}},a=!i(function(){return 7!=Object.defineProperty({},1,{get:function(){return 7}})[1]}),c={},s=function(t){return"object"==typeof t?null!==t:"function"==typeof t},u=s,l=n.document,f=u(l)&&u(l.createElement),d=function(t){return f?l.createElement(t):{}},p=!a&&!i(function(){return 7!=Object.defineProperty(d("div"),"a",{get:function(){return 7}}).a}),m=s,y=s,h=p,g=function(t){if(!m(t))throw TypeError(String(t)+" is not an object");return t},b=function(t,e){if(!y(t))return t;var n,o;if(e&&"function"==typeof(n=t.toString)&&!y(o=n.call(t)))return o;if("function"==typeof(n=t.valueOf)&&!y(o=n.call(t)))return o;if(!e&&"function"==typeof(n=t.toString)&&!y(o=n.call(t)))return o;throw TypeError("Can't convert object to primitive value")},v=Object.defineProperty;c.f=a?v:function(t,e,n){if(g(t),e=b(e,!0),g(n),h)try{return v(t,e,n)}catch(t){}if("get"in n||"set"in n)throw TypeError("Accessors not supported");return"value"in n&&(t[e]=n.value),t};var S=c,w=function(t,e){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:e}},T=a?function(t,e,n){return S.f(t,e,w(1,n))}:function(t,e,n){return t[e]=n,t},j=n,O=T,e=function(e,n){try{O(j,e,n)}catch(t){j[e]=n}return n},t="__core-js_shared__",u=n[t]||e(t,{}),E=u;(o.exports=function(t,e){return E[t]||(E[t]=void 0!==e?e:{})})("versions",[]).push({version:"3.15.2",mode:"global",copyright:"© 2021 Denis Pushkarev (zloirock.ru)"});function C(t){return"function"==typeof t?t:void 0}var k=function(t){if(null==t)throw TypeError("Can't call method on "+t);return t},x=function(t){return Object(k(t))},M={}.hasOwnProperty,p=Object.hasOwn||function(t,e){return M.call(x(t),e)},L=0,P=Math.random(),c=function(t){return"Symbol("+String(void 0===t?"":t)+")_"+(++L+P).toString(36)},F=n,_=n,a=function(t,e){return arguments.length<2?C(F[t])||C(_[t]):F[t]&&F[t][e]||_[t]&&_[t][e]}("navigator","userAgent")||"",t=n.process,t=t&&t.versions,t=t&&t.v8;t?z=(N=t.split("."))[0]<4?1:N[0]+N[1]:a&&(!(N=a.match(/Edge\/(\d+)/))||74<=N[1])&&(N=a.match(/Chrome\/(\d+)/))&&(z=N[1]);var A=z&&+z,t=!!Object.getOwnPropertySymbols&&!i(function(){var t=Symbol();return!String(t)||!(Object(t)instanceof Symbol)||!Symbol.sham&&A&&A<41}),a=t&&!Symbol.sham&&"symbol"==typeof Symbol.iterator,N=n,z=o.exports,I=p,i=c,R=t,t=a,D=z("wks"),W=N.Symbol,q=t?W:W&&W.withoutSetter||i,a=function(t){return I(D,t)&&(R||"string"==typeof D[t])||(R&&I(W,t)?D[t]=W[t]:D[t]=q("Symbol."+t)),D[t]},z={};z[a("toStringTag")]="z";var N="[object z]"===String(z),t={exports:{}},i=u,B=Function.toString;"function"!=typeof i.inspectSource&&(i.inspectSource=function(t){return B.call(t)});var G,U,H,K,J,Q,V,X,z=i.inspectSource,i=n.WeakMap,i="function"==typeof i&&/native code/.test(z(i)),o=o.exports,Y=c,Z=o("keys"),$=s,tt=T,et=p,c=function(t){return Z[t]||(Z[t]=Y(t))},o={},nt="Object already initialized",s=n.WeakMap;V=i||u.state?(G=u.state||(u.state=new s),U=G.get,H=G.has,K=G.set,J=function(t,e){if(H.call(G,t))throw new TypeError(nt);return e.facade=t,K.call(G,t,e),e},Q=function(t){return U.call(G,t)||{}},function(t){return H.call(G,t)}):(o[X=c("state")]=!0,J=function(t,e){if(et(t,X))throw new TypeError(nt);return e.facade=t,tt(t,X,e),e},Q=function(t){return et(t,X)?t[X]:{}},function(t){return et(t,X)});var c={set:J,get:Q,has:V,enforce:function(t){return V(t)?Q(t):J(t,{})},getterFor:function(n){return function(t){var e;if(!$(t)||(e=Q(t)).type!==n)throw TypeError("Incompatible receiver, "+n+" required");return e}}},ot=n,rt=T,it=p,at=e,ct=z,st=c.get,ut=c.enforce,lt=String(String).split("String");(t.exports=function(t,e,n,o){var r=!!o&&!!o.unsafe,i=!!o&&!!o.enumerable,a=!!o&&!!o.noTargetGet;"function"==typeof n&&("string"!=typeof e||it(n,"name")||rt(n,"name",e),(o=ut(n)).source||(o.source=lt.join("string"==typeof e?e:""))),t!==ot?(r?!a&&t[e]&&(i=!0):delete t[e],i?t[e]=n:rt(t,e,n)):i?t[e]=n:at(e,n)})(Function.prototype,"toString",function(){return"function"==typeof this&&st(this).source||ct(this)});var ft={}.toString,c=N,dt=function(t){return ft.call(t).slice(8,-1)},pt=a("toStringTag"),mt="Arguments"==dt(function(){return arguments}()),yt=c?dt:function(t){var e;return void 0===t?"Undefined":null===t?"Null":"string"==typeof(t=function(t,e){try{return t[e]}catch(t){}}(e=Object(t),pt))?t:mt?dt(e):"Object"==(t=dt(e))&&"function"==typeof e.callee?"Arguments":t},t=t.exports;N||t(Object.prototype,"toString",N?{}.toString:function(){return"[object "+yt(this)+"]"},{unsafe:!0});var ht={defaults:{init:!1,duration:5e3,type:"default",position:"bottom left",modal:!1,interaction:!1,interactionTimeout:null,actionText:"OK",action:function(){this.hide()},callbacks:{}},toastOpenClass:"mdtoast--open",toastModalClass:"mdtoast--modal"};function gt(t){var n={},o=!1,e=0,r=arguments.length;"[object Boolean]"===Object.prototype.toString.call(t)&&(o=t,e++);for(;e<r;e++)!function(t){for(var e in t)Object.prototype.hasOwnProperty.call(t,e)&&(o&&"[object Object]"===Object.prototype.toString.call(t[e])?n[e]=gt(!0,n[e],t[e]):n[e]=t[e])}(arguments[e]);return n}function bt(t,e,n,o){t=document.createElement(t);return t.className=e,void 0!==n&&(t[o?"innerHTML":"innerText"]=n),t}function vt(){function t(t){t.target.matches(".mdt-action")&&("click"===t.type||"keypress"===t.type&&13===t.keyCode)&&o.action&&o.action.call(n,t)}var e,n=this,o=n.options;n.docFrag=document.createDocumentFragment(),n.toast=bt("div","mdtoast mdt--load"),n.toast.tabIndex=0,n.docFrag.appendChild(n.toast),"default"!==o.type&&n.toast.classList.add("mdt--"+o.type),n.toast.setAttribute("data-position",o.position),e=bt("div","mdt-message",n.message,!0),n.toast.appendChild(e),e=bt("span","mdt-action"),o.interaction&&(e.innerText=o.actionText,e.tabIndex=0,n.toast.classList.add("mdt--interactive"),n.toast.appendChild(e)),n.toast.addEventListener("click",t,!1),n.toast.addEventListener("keypress",t,!1),(n.toast.mdtoast=n).options.init||n.show()}function St(t){var e=this,n=document.body,o=e.options.callbacks;n.appendChild(e.docFrag),setTimeout(function(){e.toast.classList.remove("mdt--load"),setTimeout(function(){o&&o.shown&&o.shown.call(e),t&&"function"==typeof t&&t.call(e)},e.animateTime),e.options.interaction?e.options.interactionTimeout&&(e.timeout=setTimeout(function(){e.hide()},e.options.interactionTimeout)):e.options.duration&&(e.timeout=setTimeout(function(){e.hide()},e.options.duration)),n.classList.add(ht.toastOpenClass),e.options.modal&&n.classList.add(ht.toastModalClass)},15)}var wt,Tt,jt,Ot=function(){function o(t,e){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,o);var n=arguments;this.animateTime=230,this.message=n[0],this.options=gt(!0,o._defaults||ht.defaults,n[1]),this.timeout=null,this.options.init||vt.call(this)}var t,e,n;return t=o,(e=[{key:"show",value:function(t){var e=this,n=document.getElementsByClassName("mdtoast");if(!document.body.contains(e.toast))if(e.options.init&&vt.apply(e),0<n.length)for(var o=n.length-1;0<=o;o--)n[o].mdtoast.hide(function(){o<0&&St.call(e,t)});else St.call(e,t)}},{key:"hide",value:function(t){var e=this,n=e.options.callbacks,o=document.body;clearTimeout(e.timeout),e.toast.classList.add("mdt--load"),o.classList.remove(ht.toastOpenClass),o.classList.remove(ht.toastModalClass),setTimeout(function(){o.removeChild(e.toast),n&&n.hidden&&n.hidden.call(e),t&&"function"==typeof t&&t.call(e)},e.animateTime)}}])&&r(t.prototype,e),n&&r(t,n),o}();function Et(t){return new Ot(t,1<arguments.length&&void 0!==arguments[1]?arguments[1]:{})}return jt=null,(Tt="_defaults")in(wt=Ot)?Object.defineProperty(wt,Tt,{value:jt,enumerable:!0,configurable:!0,writable:!0}):wt[Tt]=jt,Et.info=function(t){return Et(t,gt(!0,1<arguments.length&&void 0!==arguments[1]?arguments[1]:{},{type:"info"}))},Et.error=function(t){return Et(t,gt(!0,1<arguments.length&&void 0!==arguments[1]?arguments[1]:{},{type:"error"}))},Et.warning=function(t){return Et(t,gt(!0,1<arguments.length&&void 0!==arguments[1]?arguments[1]:{},{type:"warning"}))},Et.success=function(t){return Et(t,gt(!0,1<arguments.length&&void 0!==arguments[1]?arguments[1]:{},{type:"success"}))},Et.defaults=function(t){Ot._defaults=gt(!0,ht.defaults,t)},Object.defineProperties(Et,{INFO:{value:"info"},ERROR:{value:"error"},WARNING:{value:"warning"},SUCCESS:{value:"success"}}),Element.prototype.matches||(Element.prototype.matches=Element.prototype.matchesSelector||Element.prototype.mozMatchesSelector||Element.prototype.msMatchesSelector||Element.prototype.oMatchesSelector||Element.prototype.webkitMatchesSelector||function(t){for(var e=(this.document||this.ownerDocument).querySelectorAll(t),n=e.length;0<=--n&&e.item(n)!==this;);return-1<n}),Et});
+\ No newline at end of file
+diff --git a/src/pyload/webui/app/themes/modern/templates/base.html b/src/pyload/webui/app/themes/modern/templates/base.html
+index 01aaca270..16a53b526 100644
+--- a/src/pyload/webui/app/themes/modern/templates/base.html
++++ b/src/pyload/webui/app/themes/modern/templates/base.html
+@@ -8,6 +8,7 @@
+ 
+     <link rel="stylesheet" type="text/css" href="{{theme_static('vendor/Bootstrap/css/bootstrap.min.css')}}">
+     <link rel="stylesheet" type="text/css" href="{{theme_static('vendor/jQuery/jQuery UI/jquery-ui.min.css')}}"/>
++    <link rel="stylesheet" type="text/css" href="{{theme_static('vendor/mdtoast/css/mdtoast.min.css')}}"/>
+     <link rel="stylesheet" type="text/css" href="{{theme_static('css/base.css')}}" />
+ 
+     <link rel="icon" href="{{theme_static('img/favicon.ico')}}"/>
+@@ -234,7 +235,7 @@
+ 
+ <script type="text/javascript" src="{{theme_static('vendor/jQuery/jquery.min.js')}}"></script>
+ <script type="text/javascript" src="{{theme_static('vendor/jQuery/jQuery UI/jquery-ui.min.js')}}"></script>
+-<script type="text/javascript" src="{{theme_static('vendor/jQuery/jQuery.peekABar/js/jquery.peekabar.min.js')}}"></script>
++<script type="text/javascript" src="{{theme_static('vendor/mdtoast/js/mdtoast.min.js')}}"></script>
+ <script type="text/javascript" src="{{theme_static('vendor/Bootstrap/js/bootstrap.min.js')}}"></script>
+ <script type="text/javascript" src="{{theme_template('js/base.js')}}" nopoll={{no_status_polling}}></script>
+ 
+diff --git a/src/pyload/webui/app/themes/modern/templates/js/base.js b/src/pyload/webui/app/themes/modern/templates/js/base.js
+index ecfdac57a..2805b6939 100644
+--- a/src/pyload/webui/app/themes/modern/templates/js/base.js
++++ b/src/pyload/webui/app/themes/modern/templates/js/base.js
+@@ -18,13 +18,7 @@ function indicateSuccess(message) {
+    }
+ 
+     indicateFinish();
+-    const bar = new $.peekABar({
+-        html: "<h4>" + message + '.' + "</h4>",
+-        padding: "6px",
+-        backgroundColor: '#B5BFC2',
+-        autohide: true
+-    });
+-    bar.show();
++    mdtoast(message + '.', {position: "bottom center", type: "success", duration: 3000});
+ }
+ 
+ function indicateFail(message) {
+@@ -33,13 +27,7 @@ function indicateFail(message) {
+    }
+ 
+     indicateFinish();
+-    var bar = new $.peekABar({
+-        html: "<h4>" + message + '.' + "</h4>",
+-        padding: "6px",
+-        backgroundColor: '#FF4500',
+-        autohide: true
+-    });
+-    bar.show();
++    mdtoast(message + '.', {position: "bottom center", type: "error", duration: 4000});
+ }
+ 
+ function humanFileSize(f) {
+@@ -329,14 +317,7 @@ function LoadJsonToContent(a) {
+         var notificationVisible = ($cap_info.css("display") !== "none");
+         if (!notificationVisible) {
+             $cap_info.css('display','inline');
+-            var bar = new $.peekABar({
+-                html: "<h4>{{_('New Captcha Request')}}</h4>",
+-                padding: "6px",
+-                backgroundColor: '#5CB85C',
+-                delay: 5000,
+-                autohide: true
+-            });
+-            bar.show();
++            mdtoast("{{_('New Captcha Request')}}", {position: "bottom center", type: "info", duration: 6000});
+         }
+         if (desktopNotifications && !document.hasFocus() && !notificationVisible) {
+             notification = new Notification('pyLoad', {
+diff --git a/src/pyload/webui/app/themes/pyplex/static/vendor/jQuery/jQuery.peekABar/js/jquery.peekabar.min.js b/src/pyload/webui/app/themes/pyplex/static/vendor/jQuery/jQuery.peekABar/js/jquery.peekabar.min.js
+deleted file mode 100644
+index 66e74fd9f..000000000
+--- a/src/pyload/webui/app/themes/pyplex/static/vendor/jQuery/jQuery.peekABar/js/jquery.peekabar.min.js
++++ /dev/null
+@@ -1 +0,0 @@
+-!function(a){"use strict";a.peekABar=function(b){var c=this,d=parseInt(1e8*Math.random(),0);this.bar={},this.settings={};var e={html:"Your Message Here",delay:3e3,autohide:!1,padding:"1em",backgroundColor:"rgb(195, 195, 195)",animation:{type:"slide",duration:"slow"},cssClass:null,opacity:"1",position:"top",onShow:function(){},onHide:function(){},closeOnClick:!1},f=function(){c.settings=a.extend({},e,b),g(),h()};this.show=function(a){switch(void 0!==a&&a.html&&this.bar.html(a.html),this.settings.animation.type){case"slide":this.bar.slideDown(c.settings.animation.duration);break;case"fade":this.bar.fadeIn(c.settings.animation.duration)}this.settings.autohide&&setTimeout(function(){c.hide()},this.settings.delay),this.settings.onShow.call(this,a)},this.hide=function(){switch(this.settings.animation.type){case"slide":this.bar.slideUp(c.settings.animation.duration);break;case"fade":this.bar.fadeOut(c.settings.animation.duration)}this.settings.onHide.call(this)};var g=function(){c.bar=a("<div></div>").addClass("peek-a-bar").attr("id","__peek_a_bar_"+d),a("html").append(c.bar),c.bar.hide()},h=function(){i(),j(),k(),l(),n(),m(),o(),p()},i=function(){c.bar.html(c.settings.html)},j=function(){c.settings.autohide&&setTimeout(function(){c.hide()},c.settings.delay)},k=function(){c.bar.css("padding",c.settings.padding)},l=function(){c.bar.css("background-color",c.settings.backgroundColor)},m=function(){null!==c.settings.cssClass&&c.bar.addClass(c.settings.cssClass)},n=function(){c.bar.css("opacity",c.settings.opacity)},o=function(){switch(c.settings.position){case"top":c.bar.css("top",0);break;case"bottom":c.bar.css("bottom",0);break;default:c.bar.css("top",0)}},p=function(){c.settings.closeOnClick&&c.bar.click(function(){c.hide()})};return f(),this}}(jQuery);
+diff --git a/src/pyload/webui/app/themes/pyplex/static/vendor/mdtoast/css/mdtoast.min.css b/src/pyload/webui/app/themes/pyplex/static/vendor/mdtoast/css/mdtoast.min.css
+new file mode 100644
+index 000000000..2a0b8b896
+--- /dev/null
++++ b/src/pyload/webui/app/themes/pyplex/static/vendor/mdtoast/css/mdtoast.min.css
+@@ -0,0 +1 @@
++@import url("https://fonts.googleapis.com/css?family=Roboto:400,500");.mdtoast{position:fixed;display:flex;flex-direction:row;align-items:center;justify-content:flex-start;box-sizing:border-box;padding:0 24px;color:#fff;font-family:Roboto,sans-serif;font-size:16px;text-align:left;outline:none;pointer-events:auto;touch-action:auto;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-color:#323232;transform:translateY(0);transition:transform .23s cubic-bezier(0,0,.2,1) 0ms;will-change:transform;z-index:100002}.mdtoast[data-position="bottom left"]{left:24px;bottom:24px}.mdtoast[data-position="bottom center"]{bottom:24px;left:50%;transform:translateY(0) translateX(-50%)}.mdtoast[data-position="bottom right"]{right:24px;bottom:24px}.mdtoast[data-position="top left"]{top:24px;left:24px}.mdtoast[data-position="top center"]{top:24px;left:50%;transform:translateY(0) translateX(-50%)}.mdtoast[data-position="top right"]{top:24px;right:24px}.mdtoast .mdt-message{display:flex;align-items:center;min-height:48px;padding:8px 0;opacity:1;margin-left:0;box-sizing:border-box;transition:opacity .3s cubic-bezier(.4,0,1,1) 0ms}.mdtoast .mdt-message:after{content:"";min-height:32px;font-size:0}.mdtoast .mdt-action{display:flex;align-items:center;color:#ffeb3b;text-decoration:none;cursor:pointer;letter-spacing:.07em;font-weight:500;padding:8px;margin:0 0 0 24px;opacity:1;min-height:32px;background:none;border:none;outline:none;box-sizing:border-box;border-radius:4px;transition:opacity .3s cubic-bezier(.4,0,1,1) 0ms,background-color .15s linear}.mdtoast .mdt-action:focus,.mdtoast .mdt-action:hover{background-color:hsla(0,0%,100%,.075)}.mdtoast .mdt-action:active{background-color:hsla(0,0%,100%,.15)}.mdtoast.mdt--load{transition:transform .23s cubic-bezier(.4,0,1,1) 0ms}.mdtoast.mdt--load[data-position*=bottom]{transform:translateY(150%)}.mdtoast.mdt--load[data-position*=top]{transform:translateY(-150%)}.mdtoast.mdt--load .mdt-action,.mdtoast.mdt--load .mdt-message{opacity:0}.mdtoast.mdt--interactive{padding-right:16px}.mdtoast.mdt--interactive .mdt-message{margin-right:auto}.mdtoast.mdt--info{background-color:#1565c0}.mdtoast.mdt--error{background-color:#e53935}.mdtoast.mdt--warning{background-color:#ef6c00}.mdtoast.mdt--success{background-color:#2e7d32}@media (min-width:600px){.mdtoast{min-width:288px;max-width:568px;border-radius:4px}.mdtoast.mdt--load[data-position="bottom center"]{transform:translateY(150%) translateX(-50%)}.mdtoast.mdt--load[data-position="top center"]{transform:translateY(-150%) translateX(-50%)}}@media (max-width:599px){.mdtoast{left:0!important;right:0!important;font-size:14px;max-width:100%;transform:translateY(0)}.mdtoast[data-position*=bottom]{bottom:0;transform:translateY(0)}.mdtoast[data-position*=top]{top:0;transform:translateY(0)}.mdtoast.mdt--load{transform:translateY(100%)}}body.mdtoast--modal{pointer-events:none;touch-action:none;-ms-user-select:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}
+\ No newline at end of file
+diff --git a/src/pyload/webui/app/themes/pyplex/static/vendor/mdtoast/js/mdtoast.min.js b/src/pyload/webui/app/themes/pyplex/static/vendor/mdtoast/js/mdtoast.min.js
+new file mode 100644
+index 000000000..8dc1cd1a7
+--- /dev/null
++++ b/src/pyload/webui/app/themes/pyplex/static/vendor/mdtoast/js/mdtoast.min.js
+@@ -0,0 +1 @@
++!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define(e):(t="undefined"!=typeof globalThis?globalThis:t||self).mdtoast=e()}(this,function(){"use strict";function r(t,e){for(var n=0;n<e.length;n++){var o=e[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(t,o.key,o)}}var t="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:{},e=function(t){return t&&t.Math==Math&&t},n=e("object"==typeof globalThis&&globalThis)||e("object"==typeof window&&window)||e("object"==typeof self&&self)||e("object"==typeof t&&t)||function(){return this}()||Function("return this")(),o={exports:{}},i=function(t){try{return!!t()}catch(t){return!0}},a=!i(function(){return 7!=Object.defineProperty({},1,{get:function(){return 7}})[1]}),c={},s=function(t){return"object"==typeof t?null!==t:"function"==typeof t},u=s,l=n.document,f=u(l)&&u(l.createElement),d=function(t){return f?l.createElement(t):{}},p=!a&&!i(function(){return 7!=Object.defineProperty(d("div"),"a",{get:function(){return 7}}).a}),m=s,y=s,h=p,g=function(t){if(!m(t))throw TypeError(String(t)+" is not an object");return t},b=function(t,e){if(!y(t))return t;var n,o;if(e&&"function"==typeof(n=t.toString)&&!y(o=n.call(t)))return o;if("function"==typeof(n=t.valueOf)&&!y(o=n.call(t)))return o;if(!e&&"function"==typeof(n=t.toString)&&!y(o=n.call(t)))return o;throw TypeError("Can't convert object to primitive value")},v=Object.defineProperty;c.f=a?v:function(t,e,n){if(g(t),e=b(e,!0),g(n),h)try{return v(t,e,n)}catch(t){}if("get"in n||"set"in n)throw TypeError("Accessors not supported");return"value"in n&&(t[e]=n.value),t};var S=c,w=function(t,e){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:e}},T=a?function(t,e,n){return S.f(t,e,w(1,n))}:function(t,e,n){return t[e]=n,t},j=n,O=T,e=function(e,n){try{O(j,e,n)}catch(t){j[e]=n}return n},t="__core-js_shared__",u=n[t]||e(t,{}),E=u;(o.exports=function(t,e){return E[t]||(E[t]=void 0!==e?e:{})})("versions",[]).push({version:"3.15.2",mode:"global",copyright:"© 2021 Denis Pushkarev (zloirock.ru)"});function C(t){return"function"==typeof t?t:void 0}var k=function(t){if(null==t)throw TypeError("Can't call method on "+t);return t},x=function(t){return Object(k(t))},M={}.hasOwnProperty,p=Object.hasOwn||function(t,e){return M.call(x(t),e)},L=0,P=Math.random(),c=function(t){return"Symbol("+String(void 0===t?"":t)+")_"+(++L+P).toString(36)},F=n,_=n,a=function(t,e){return arguments.length<2?C(F[t])||C(_[t]):F[t]&&F[t][e]||_[t]&&_[t][e]}("navigator","userAgent")||"",t=n.process,t=t&&t.versions,t=t&&t.v8;t?z=(N=t.split("."))[0]<4?1:N[0]+N[1]:a&&(!(N=a.match(/Edge\/(\d+)/))||74<=N[1])&&(N=a.match(/Chrome\/(\d+)/))&&(z=N[1]);var A=z&&+z,t=!!Object.getOwnPropertySymbols&&!i(function(){var t=Symbol();return!String(t)||!(Object(t)instanceof Symbol)||!Symbol.sham&&A&&A<41}),a=t&&!Symbol.sham&&"symbol"==typeof Symbol.iterator,N=n,z=o.exports,I=p,i=c,R=t,t=a,D=z("wks"),W=N.Symbol,q=t?W:W&&W.withoutSetter||i,a=function(t){return I(D,t)&&(R||"string"==typeof D[t])||(R&&I(W,t)?D[t]=W[t]:D[t]=q("Symbol."+t)),D[t]},z={};z[a("toStringTag")]="z";var N="[object z]"===String(z),t={exports:{}},i=u,B=Function.toString;"function"!=typeof i.inspectSource&&(i.inspectSource=function(t){return B.call(t)});var G,U,H,K,J,Q,V,X,z=i.inspectSource,i=n.WeakMap,i="function"==typeof i&&/native code/.test(z(i)),o=o.exports,Y=c,Z=o("keys"),$=s,tt=T,et=p,c=function(t){return Z[t]||(Z[t]=Y(t))},o={},nt="Object already initialized",s=n.WeakMap;V=i||u.state?(G=u.state||(u.state=new s),U=G.get,H=G.has,K=G.set,J=function(t,e){if(H.call(G,t))throw new TypeError(nt);return e.facade=t,K.call(G,t,e),e},Q=function(t){return U.call(G,t)||{}},function(t){return H.call(G,t)}):(o[X=c("state")]=!0,J=function(t,e){if(et(t,X))throw new TypeError(nt);return e.facade=t,tt(t,X,e),e},Q=function(t){return et(t,X)?t[X]:{}},function(t){return et(t,X)});var c={set:J,get:Q,has:V,enforce:function(t){return V(t)?Q(t):J(t,{})},getterFor:function(n){return function(t){var e;if(!$(t)||(e=Q(t)).type!==n)throw TypeError("Incompatible receiver, "+n+" required");return e}}},ot=n,rt=T,it=p,at=e,ct=z,st=c.get,ut=c.enforce,lt=String(String).split("String");(t.exports=function(t,e,n,o){var r=!!o&&!!o.unsafe,i=!!o&&!!o.enumerable,a=!!o&&!!o.noTargetGet;"function"==typeof n&&("string"!=typeof e||it(n,"name")||rt(n,"name",e),(o=ut(n)).source||(o.source=lt.join("string"==typeof e?e:""))),t!==ot?(r?!a&&t[e]&&(i=!0):delete t[e],i?t[e]=n:rt(t,e,n)):i?t[e]=n:at(e,n)})(Function.prototype,"toString",function(){return"function"==typeof this&&st(this).source||ct(this)});var ft={}.toString,c=N,dt=function(t){return ft.call(t).slice(8,-1)},pt=a("toStringTag"),mt="Arguments"==dt(function(){return arguments}()),yt=c?dt:function(t){var e;return void 0===t?"Undefined":null===t?"Null":"string"==typeof(t=function(t,e){try{return t[e]}catch(t){}}(e=Object(t),pt))?t:mt?dt(e):"Object"==(t=dt(e))&&"function"==typeof e.callee?"Arguments":t},t=t.exports;N||t(Object.prototype,"toString",N?{}.toString:function(){return"[object "+yt(this)+"]"},{unsafe:!0});var ht={defaults:{init:!1,duration:5e3,type:"default",position:"bottom left",modal:!1,interaction:!1,interactionTimeout:null,actionText:"OK",action:function(){this.hide()},callbacks:{}},toastOpenClass:"mdtoast--open",toastModalClass:"mdtoast--modal"};function gt(t){var n={},o=!1,e=0,r=arguments.length;"[object Boolean]"===Object.prototype.toString.call(t)&&(o=t,e++);for(;e<r;e++)!function(t){for(var e in t)Object.prototype.hasOwnProperty.call(t,e)&&(o&&"[object Object]"===Object.prototype.toString.call(t[e])?n[e]=gt(!0,n[e],t[e]):n[e]=t[e])}(arguments[e]);return n}function bt(t,e,n,o){t=document.createElement(t);return t.className=e,void 0!==n&&(t[o?"innerHTML":"innerText"]=n),t}function vt(){function t(t){t.target.matches(".mdt-action")&&("click"===t.type||"keypress"===t.type&&13===t.keyCode)&&o.action&&o.action.call(n,t)}var e,n=this,o=n.options;n.docFrag=document.createDocumentFragment(),n.toast=bt("div","mdtoast mdt--load"),n.toast.tabIndex=0,n.docFrag.appendChild(n.toast),"default"!==o.type&&n.toast.classList.add("mdt--"+o.type),n.toast.setAttribute("data-position",o.position),e=bt("div","mdt-message",n.message,!0),n.toast.appendChild(e),e=bt("span","mdt-action"),o.interaction&&(e.innerText=o.actionText,e.tabIndex=0,n.toast.classList.add("mdt--interactive"),n.toast.appendChild(e)),n.toast.addEventListener("click",t,!1),n.toast.addEventListener("keypress",t,!1),(n.toast.mdtoast=n).options.init||n.show()}function St(t){var e=this,n=document.body,o=e.options.callbacks;n.appendChild(e.docFrag),setTimeout(function(){e.toast.classList.remove("mdt--load"),setTimeout(function(){o&&o.shown&&o.shown.call(e),t&&"function"==typeof t&&t.call(e)},e.animateTime),e.options.interaction?e.options.interactionTimeout&&(e.timeout=setTimeout(function(){e.hide()},e.options.interactionTimeout)):e.options.duration&&(e.timeout=setTimeout(function(){e.hide()},e.options.duration)),n.classList.add(ht.toastOpenClass),e.options.modal&&n.classList.add(ht.toastModalClass)},15)}var wt,Tt,jt,Ot=function(){function o(t,e){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,o);var n=arguments;this.animateTime=230,this.message=n[0],this.options=gt(!0,o._defaults||ht.defaults,n[1]),this.timeout=null,this.options.init||vt.call(this)}var t,e,n;return t=o,(e=[{key:"show",value:function(t){var e=this,n=document.getElementsByClassName("mdtoast");if(!document.body.contains(e.toast))if(e.options.init&&vt.apply(e),0<n.length)for(var o=n.length-1;0<=o;o--)n[o].mdtoast.hide(function(){o<0&&St.call(e,t)});else St.call(e,t)}},{key:"hide",value:function(t){var e=this,n=e.options.callbacks,o=document.body;clearTimeout(e.timeout),e.toast.classList.add("mdt--load"),o.classList.remove(ht.toastOpenClass),o.classList.remove(ht.toastModalClass),setTimeout(function(){o.removeChild(e.toast),n&&n.hidden&&n.hidden.call(e),t&&"function"==typeof t&&t.call(e)},e.animateTime)}}])&&r(t.prototype,e),n&&r(t,n),o}();function Et(t){return new Ot(t,1<arguments.length&&void 0!==arguments[1]?arguments[1]:{})}return jt=null,(Tt="_defaults")in(wt=Ot)?Object.defineProperty(wt,Tt,{value:jt,enumerable:!0,configurable:!0,writable:!0}):wt[Tt]=jt,Et.info=function(t){return Et(t,gt(!0,1<arguments.length&&void 0!==arguments[1]?arguments[1]:{},{type:"info"}))},Et.error=function(t){return Et(t,gt(!0,1<arguments.length&&void 0!==arguments[1]?arguments[1]:{},{type:"error"}))},Et.warning=function(t){return Et(t,gt(!0,1<arguments.length&&void 0!==arguments[1]?arguments[1]:{},{type:"warning"}))},Et.success=function(t){return Et(t,gt(!0,1<arguments.length&&void 0!==arguments[1]?arguments[1]:{},{type:"success"}))},Et.defaults=function(t){Ot._defaults=gt(!0,ht.defaults,t)},Object.defineProperties(Et,{INFO:{value:"info"},ERROR:{value:"error"},WARNING:{value:"warning"},SUCCESS:{value:"success"}}),Element.prototype.matches||(Element.prototype.matches=Element.prototype.matchesSelector||Element.prototype.mozMatchesSelector||Element.prototype.msMatchesSelector||Element.prototype.oMatchesSelector||Element.prototype.webkitMatchesSelector||function(t){for(var e=(this.document||this.ownerDocument).querySelectorAll(t),n=e.length;0<=--n&&e.item(n)!==this;);return-1<n}),Et});
+\ No newline at end of file
+diff --git a/src/pyload/webui/app/themes/pyplex/templates/base.html b/src/pyload/webui/app/themes/pyplex/templates/base.html
+index e7567ca1d..2dad69b95 100644
+--- a/src/pyload/webui/app/themes/pyplex/templates/base.html
++++ b/src/pyload/webui/app/themes/pyplex/templates/base.html
+@@ -8,6 +8,7 @@
+ 
+     <link rel="stylesheet" type="text/css" href="{{theme_static('vendor/Bootstrap/css/bootstrap.min.css')}}">
+     <link rel="stylesheet" type="text/css" href="{{theme_static('vendor/jQuery/jQuery UI/jquery-ui.min.css')}}"/>
++    <link rel="stylesheet" type="text/css" href="{{theme_static('vendor/mdtoast/css/mdtoast.min.css')}}"/>
+     <link rel="stylesheet" type="text/css" href="{{theme_static('css/base.css')}}" />
+ 
+     <link rel="icon" href="{{theme_static('img/favicon.ico')}}"/>
+@@ -234,7 +235,7 @@
+ 
+ <script type="text/javascript" src="{{theme_static('vendor/jQuery/jquery.min.js')}}"></script>
+ <script type="text/javascript" src="{{theme_static('vendor/jQuery/jQuery UI/jquery-ui.min.js')}}"></script>
+-<script type="text/javascript" src="{{theme_static('vendor/jQuery/jQuery.peekABar/js/jquery.peekabar.min.js')}}"></script>
++<script type="text/javascript" src="{{theme_static('vendor/mdtoast/js/mdtoast.min.js')}}"></script>
+ <script type="text/javascript" src="{{theme_static('vendor/Bootstrap/js/bootstrap.min.js')}}"></script>
+ <script type="text/javascript" src="{{theme_template('js/base.js')}}" nopoll={{no_status_polling}}></script>
+ 
+diff --git a/src/pyload/webui/app/themes/pyplex/templates/js/base.js b/src/pyload/webui/app/themes/pyplex/templates/js/base.js
+index 02eb7a7f3..f0f3e3885 100644
+--- a/src/pyload/webui/app/themes/pyplex/templates/js/base.js
++++ b/src/pyload/webui/app/themes/pyplex/templates/js/base.js
+@@ -18,13 +18,7 @@ function indicateSuccess(message) {
+    }
+ 
+     indicateFinish();
+-    const bar = new $.peekABar({
+-        html: "<h4>" + message + '.' + "</h4>",
+-        padding: "6px",
+-        backgroundColor: '#B5BFC2',
+-        autohide: true
+-    });
+-    bar.show();
++    mdtoast(message + '.', {position: "bottom center", type: "success", duration: 3000});
+ }
+ 
+ function indicateFail(message) {
+@@ -33,13 +27,7 @@ function indicateFail(message) {
+    }
+ 
+     indicateFinish();
+-    var bar = new $.peekABar({
+-        html: "<h4>" + message + '.' + "</h4>",
+-        padding: "6px",
+-        backgroundColor: '#FF4500',
+-        autohide: true
+-    });
+-    bar.show();
++    mdtoast(message + '.', {position: "bottom center", type: "error", duration: 4000});
+ }
+ 
+ function humanFileSize(f) {
+@@ -329,14 +317,7 @@ function LoadJsonToContent(a) {
+         var notificationVisible = ($cap_info.css("display") !== "none");
+         if (!notificationVisible) {
+             $cap_info.css('display','inline');
+-            var bar = new $.peekABar({
+-                html: "<h4>{{_('New Captcha Request')}}</h4>",
+-                padding: "6px",
+-                backgroundColor: '#5CB85C',
+-                delay: 5000,
+-                autohide: true
+-            });
+-            bar.show();
++            mdtoast("{{_('New Captcha Request')}}", {position: "bottom center", type: "info", duration: 6000});
+         }
+         if (desktopNotifications && !document.hasFocus() && !notificationVisible) {
+             notification = new Notification('pyLoad', {
+-- 
+2.30.2
+

@@ -1,0 +1,1290 @@
+From 9fd8c3b6e4f64be742126d67278fbfe8be60509c Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Thu, 9 Dec 2021 00:51:06 +0200
+Subject: [PATCH 43/73] fix #4044
+
+---
+ src/pyload/plugins/accounts/FileboomMe.py     | 10 +++-----
+ src/pyload/plugins/accounts/Keep2ShareCc.py   |  8 +++---
+ src/pyload/plugins/accounts/TenluaVn.py       | 10 +++-----
+ src/pyload/plugins/accounts/WebshareCz.py     |  9 +++----
+ src/pyload/plugins/base/dead_decrypter.py     |  7 +++---
+ src/pyload/plugins/base/dead_downloader.py    |  7 +++---
+ src/pyload/plugins/base/hoster.py             | 24 +++++++++---------
+ src/pyload/plugins/base/multi_downloader.py   | 14 +++--------
+ src/pyload/plugins/base/simple_decrypter.py   | 25 ++++++++-----------
+ src/pyload/plugins/base/simple_downloader.py  | 25 ++++++++-----------
+ src/pyload/plugins/decrypters/CriptTo.py      | 10 +++-----
+ .../plugins/decrypters/MegadyskPlFolder.py    | 11 +++-----
+ .../plugins/decrypters/TenluaVnFolder.py      |  9 +++----
+ src/pyload/plugins/downloaders/CloudMailRu.py |  7 +++---
+ .../plugins/downloaders/DdownloadCom.py       | 16 +++++-------
+ src/pyload/plugins/downloaders/FileboomMe.py  | 15 +++++------
+ src/pyload/plugins/downloaders/FshareVn.py    | 13 ++++------
+ .../plugins/downloaders/Keep2ShareCc.py       | 15 +++++------
+ src/pyload/plugins/downloaders/MegadyskPl.py  | 11 +++-----
+ .../plugins/downloaders/NitroflareCom.py      | 11 +++-----
+ .../plugins/downloaders/OneFichierCom.py      |  5 +---
+ src/pyload/plugins/downloaders/OpenloadIo.py  | 16 +++++-------
+ .../plugins/downloaders/PixeldrainCom.py      | 11 +++-----
+ src/pyload/plugins/downloaders/PornhubCom.py  |  7 +++---
+ src/pyload/plugins/downloaders/RapiduNet.py   | 15 +++++------
+ src/pyload/plugins/downloaders/SmuleCom.py    |  7 +++---
+ src/pyload/plugins/downloaders/TenluaVn.py    | 18 ++++++-------
+ src/pyload/plugins/downloaders/UploadedTo.py  | 12 ++++-----
+ src/pyload/plugins/downloaders/VimeoCom.py    |  7 +++---
+ src/pyload/plugins/downloaders/WebshareCz.py  | 16 +++++-------
+ src/pyload/plugins/downloaders/YadiSk.py      |  7 +++---
+ src/pyload/plugins/downloaders/ZDF.py         |  5 +---
+ 32 files changed, 150 insertions(+), 233 deletions(-)
+
+diff --git a/src/pyload/plugins/accounts/FileboomMe.py b/src/pyload/plugins/accounts/FileboomMe.py
+index f6eda365e..65fc8290e 100644
+--- a/src/pyload/plugins/accounts/FileboomMe.py
++++ b/src/pyload/plugins/accounts/FileboomMe.py
+@@ -5,7 +5,6 @@ import re
+ 
+ from pyload.core.datatypes.pyfile import PyFile
+ from pyload.core.network.HTTPRequest import BadHeader
+-from pyload.core.network.request_factory import get_url
+ 
+ from ..anticaptchas.ReCaptcha import ReCaptcha
+ from ..base.account import BaseAccount
+@@ -15,7 +14,7 @@ from ..base.captcha import BaseCaptcha
+ class FileboomMe(BaseAccount):
+     __name__ = "FileboomMe"
+     __type__ = "account"
+-    __version__ = "0.03"
++    __version__ = "0.04"
+     __status__ = "testing"
+ 
+     __description__ = """Fileboom.me account plugin"""
+@@ -27,10 +26,9 @@ class FileboomMe(BaseAccount):
+     API_URL = "https://fileboom.me/api/v2/"
+     #: Actually this is Keep2ShareCc API, see https://keep2share.github.io/api/ https://github.com/keep2share/api
+ 
+-    @classmethod
+-    def api_request(cls, method, **kwargs):
+-        html = get_url(cls.API_URL + method,
+-                       post=json.dumps(kwargs))
++    def api_request(self, method, **kwargs):
++        html = self.load(self.API_URL + method,
++                         post=json.dumps(kwargs))
+         return json.loads(html)
+ 
+     def grab_info(self, user, password, data):
+diff --git a/src/pyload/plugins/accounts/Keep2ShareCc.py b/src/pyload/plugins/accounts/Keep2ShareCc.py
+index 384f581d7..128737670 100644
+--- a/src/pyload/plugins/accounts/Keep2ShareCc.py
++++ b/src/pyload/plugins/accounts/Keep2ShareCc.py
+@@ -5,7 +5,6 @@ import re
+ 
+ from pyload.core.datatypes.pyfile import PyFile
+ from pyload.core.network.http.exceptions import BadHeader
+-from pyload.core.network.request_factory import get_url
+ 
+ from ..anticaptchas.ReCaptcha import ReCaptcha
+ from ..base.account import BaseAccount
+@@ -15,7 +14,7 @@ from ..base.captcha import BaseCaptcha
+ class Keep2ShareCc(BaseAccount):
+     __name__ = "Keep2ShareCc"
+     __type__ = "account"
+-    __version__ = "0.18"
++    __version__ = "0.19"
+     __status__ = "testing"
+ 
+     __description__ = """Keep2Share.cc account plugin"""
+@@ -31,9 +30,8 @@ class Keep2ShareCc(BaseAccount):
+     API_URL = "https://keep2share.cc/api/v2/"
+     #: See https://keep2share.github.io/api/ https://github.com/keep2share/api
+ 
+-    @classmethod
+-    def api_request(cls, method, **kwargs):
+-        html = get_url(cls.API_URL + method, post=json.dumps(kwargs))
++    def api_request(self, method, **kwargs):
++        html = self.load(self.API_URL + method, post=json.dumps(kwargs))
+         return json.loads(html)
+ 
+     def grab_info(self, user, password, data):
+diff --git a/src/pyload/plugins/accounts/TenluaVn.py b/src/pyload/plugins/accounts/TenluaVn.py
+index b5ab1c5df..b5de733f4 100644
+--- a/src/pyload/plugins/accounts/TenluaVn.py
++++ b/src/pyload/plugins/accounts/TenluaVn.py
+@@ -3,7 +3,6 @@ import json
+ import time
+ 
+ from pyload.core.network.http.exceptions import BadHeader
+-from pyload.core.network.request_factory import get_url
+ 
+ from ..base.account import BaseAccount
+ 
+@@ -11,7 +10,7 @@ from ..base.account import BaseAccount
+ class TenluaVn(BaseAccount):
+     __name__ = "TenluaVn"
+     __type__ = "account"
+-    __version__ = "0.01"
++    __version__ = "0.02"
+     __status__ = "testing"
+ 
+     __description__ = """TenluaVn account plugin"""
+@@ -20,13 +19,12 @@ class TenluaVn(BaseAccount):
+ 
+     API_URL = "https://api2.tenlua.vn/"
+ 
+-    @classmethod
+-    def api_request(cls, method, **kwargs):
++    def api_request(self, method, **kwargs):
+         kwargs["a"] = method
+         sid = kwargs.pop("sid", None)
+         return json.loads(
+-            get_url(
+-                cls.API_URL,
++            self.load(
++                self.API_URL,
+                 get={"sid": sid} if sid is not None else {},
+                 post=json.dumps([kwargs]),
+             )
+diff --git a/src/pyload/plugins/accounts/WebshareCz.py b/src/pyload/plugins/accounts/WebshareCz.py
+index 1916ab815..28e6d9fd8 100644
+--- a/src/pyload/plugins/accounts/WebshareCz.py
++++ b/src/pyload/plugins/accounts/WebshareCz.py
+@@ -3,8 +3,6 @@ import hashlib
+ import re
+ import time
+ 
+-from pyload.core.network.request_factory import get_url
+-
+ from ..base.account import BaseAccount
+ 
+ try:
+@@ -16,7 +14,7 @@ except ImportError:
+ class WebshareCz(BaseAccount):
+     __name__ = "WebshareCz"
+     __type__ = "account"
+-    __version__ = "0.17"
++    __version__ = "0.18"
+     __status__ = "testing"
+ 
+     __description__ = """Webshare.cz account plugin"""
+@@ -32,9 +30,8 @@ class WebshareCz(BaseAccount):
+ 
+     API_URL = "https://webshare.cz/api/"
+ 
+-    @classmethod
+-    def api_request(cls, method, **kwargs):
+-        return get_url(cls.API_URL + method + "/", post=kwargs)
++    def api_request(self, method, **kwargs):
++        return self.load(self.API_URL + method + "/", post=kwargs)
+ 
+     def grab_info(self, user, password, data):
+         user_data = self.api_request("user_data", wst=data["wst"])
+diff --git a/src/pyload/plugins/base/dead_decrypter.py b/src/pyload/plugins/base/dead_decrypter.py
+index e3ad81edb..599cf4971 100644
+--- a/src/pyload/plugins/base/dead_decrypter.py
++++ b/src/pyload/plugins/base/dead_decrypter.py
+@@ -7,7 +7,7 @@ from .decrypter import BaseDecrypter
+ class DeadDecrypter(BaseDecrypter):
+     __name__ = "DeadDecrypter"
+     __type__ = "decrypter"
+-    __version__ = "0.14"
++    __version__ = "0.15"
+     __status__ = "stable"
+ 
+     __pattern__ = r"^unmatchable$"
+@@ -17,9 +17,8 @@ class DeadDecrypter(BaseDecrypter):
+     __license__ = "GPLv3"
+     __authors__ = [("stickell", "l.stickell@yahoo.it")]
+ 
+-    @classmethod
+-    def get_info(cls, *args, **kwargs):
+-        info = super(DeadDecrypter, cls).get_info(*args, **kwargs)
++    def get_info(self, *args, **kwargs):
++        info = super(DeadDecrypter, self).get_info(*args, **kwargs)
+         info["status"] = 1
+         return info
+ 
+diff --git a/src/pyload/plugins/base/dead_downloader.py b/src/pyload/plugins/base/dead_downloader.py
+index 3fffea971..aa9004dce 100644
+--- a/src/pyload/plugins/base/dead_downloader.py
++++ b/src/pyload/plugins/base/dead_downloader.py
+@@ -7,7 +7,7 @@ from .downloader import BaseDownloader
+ class DeadDownloader(BaseDownloader):
+     __name__ = "DeadDownloader"
+     __type__ = "downloader"
+-    __version__ = "0.24"
++    __version__ = "0.25"
+     __status__ = "stable"
+ 
+     __pattern__ = r"^unmatchable$"
+@@ -17,9 +17,8 @@ class DeadDownloader(BaseDownloader):
+     __license__ = "GPLv3"
+     __authors__ = [("zoidberg", "zoidberg@mujmail.cz")]
+ 
+-    @classmethod
+-    def get_info(cls, *args, **kwargs):
+-        info = super(DeadDownloader, cls).get_info(*args, **kwargs)
++    def get_info(self, *args, **kwargs):
++        info = super(DeadDownloader, self).get_info(*args, **kwargs)
+         info["status"] = 1
+         return info
+ 
+diff --git a/src/pyload/plugins/base/hoster.py b/src/pyload/plugins/base/hoster.py
+index f8e83cae7..2e2aa92cf 100644
+--- a/src/pyload/plugins/base/hoster.py
++++ b/src/pyload/plugins/base/hoster.py
+@@ -28,7 +28,7 @@ def parse_file_info(klass, url="", html=""):
+ class BaseHoster(BasePlugin):
+     __name__ = "BaseHoster"
+     __type__ = "base"
+-    __version__ = "0.39"
++    __version__ = "0.40"
+     __status__ = "stable"
+ 
+     __pattern__ = r"^unmatchable$"
+@@ -43,8 +43,7 @@ class BaseHoster(BasePlugin):
+ 
+     URL_REPLACEMENTS = []
+ 
+-    @classmethod
+-    def get_info(cls, url="", html=""):
++    def get_info(self, url="", html=""):
+         url = fixurl(url, unquote=True)
+         info = {
+             "name": parse.name(url),
+@@ -52,11 +51,11 @@ class BaseHoster(BasePlugin):
+             "pattern": {},
+             "size": 0,
+             "status": 7 if url else 8,
+-            "url": replace_patterns(url, cls.URL_REPLACEMENTS),
++            "url": replace_patterns(url, self.URL_REPLACEMENTS),
+         }
+ 
+         try:
+-            info["pattern"] = re.match(cls.__pattern__, url).groupdict()
++            info["pattern"] = re.match(self.__pattern__, url).groupdict()
+ 
+         except Exception:
+             pass
+@@ -221,17 +220,18 @@ class BaseHoster(BasePlugin):
+         self._update_status()
+ 
+     def grab_info(self):
+-        self.log_info(self._("Grabbing link info..."))
++        if self.pyfile.status != 2:
++            self.log_info(self._("Grabbing link info..."))
+ 
+-        old_info = dict(self.info)
+-        new_info = self.get_info(replace_patterns(self.pyfile.url, self.URL_REPLACEMENTS), self.data)
++            old_info = dict(self.info)
++            new_info = self.get_info(replace_patterns(self.pyfile.url, self.URL_REPLACEMENTS), self.data)
+ 
+-        self.info.update(new_info)
++            self.info.update(new_info)
+ 
+-        self.log_debug(f"Link info: {self.info}")
+-        self.log_debug(f"Previous link info: {old_info}")
++            self.log_debug(f"Link info: {self.info}")
++            self.log_debug(f"Previous link info: {old_info}")
+ 
+-        self.sync_info()
++            self.sync_info()
+ 
+     def check_status(self):
+         status = self.pyfile.status
+diff --git a/src/pyload/plugins/base/multi_downloader.py b/src/pyload/plugins/base/multi_downloader.py
+index 753b1b108..d9581b945 100644
+--- a/src/pyload/plugins/base/multi_downloader.py
++++ b/src/pyload/plugins/base/multi_downloader.py
+@@ -10,7 +10,7 @@ from .simple_downloader import SimpleDownloader
+ class MultiDownloader(SimpleDownloader):
+     __name__ = "MultiDownloader"
+     __type__ = "downloader"
+-    __version__ = "0.70"
++    __version__ = "0.71"
+     __status__ = "stable"
+ 
+     __pattern__ = r"^unmatchable$"
+@@ -35,9 +35,8 @@ class MultiDownloader(SimpleDownloader):
+ 
+     DIRECT_LINK = None
+ 
+-    @classmethod
+-    def get_info(cls, url="", html=""):
+-        return super(SimpleDownloader, cls).get_info(url, html)
++    def get_info(self, url="", html=""):
++        return super(SimpleDownloader, self).get_info(url, html)
+ 
+     def init(self):
+         self.PLUGIN_NAME = self.pyload.plugin_manager.hoster_plugins.get(
+@@ -54,13 +53,6 @@ class MultiDownloader(SimpleDownloader):
+         self.multi_dl = bool(self.account)
+         self.resume_download = self.premium
+ 
+-    # TODO: Recheck in 0.6.x
+-    def setup_base(self):
+-        klass = self.pyload.plugin_manager.load_class("downloader", self.classname)
+-        self.get_info = klass.get_info
+-
+-        super().setup_base()
+-
+     def _preload(self):
+         pass
+ 
+diff --git a/src/pyload/plugins/base/simple_decrypter.py b/src/pyload/plugins/base/simple_decrypter.py
+index 8265a60b0..096e79937 100644
+--- a/src/pyload/plugins/base/simple_decrypter.py
++++ b/src/pyload/plugins/base/simple_decrypter.py
+@@ -3,7 +3,6 @@
+ import re
+ 
+ from pyload.core.network.http.exceptions import BadHeader
+-from pyload.core.network.request_factory import get_url
+ from pyload.core.utils import parse
+ 
+ from ..helpers import replace_patterns, search_pattern
+@@ -13,7 +12,7 @@ from .decrypter import BaseDecrypter
+ class SimpleDecrypter(BaseDecrypter):
+     __name__ = "SimpleDecrypter"
+     __type__ = "decrypter"
+-    __version__ = "0.96"
++    __version__ = "0.97"
+     __status__ = "testing"
+ 
+     __pattern__ = r"^unmatchable$"
+@@ -92,15 +91,13 @@ class SimpleDecrypter(BaseDecrypter):
+     SIZE_LIMIT_PATTERN = None
+     ERROR_PATTERN = None
+ 
+-    @classmethod
+-    def api_info(cls, url):
++    def api_info(self, url):
+         return {}
+ 
+-    @classmethod
+-    def get_info(cls, url="", html=""):
+-        info = super(SimpleDecrypter, cls).get_info(url)
++    def get_info(self, url="", html=""):
++        info = super(SimpleDecrypter, self).get_info(url)
+ 
+-        info.update(cls.api_info(url))
++        info.update(self.api_info(url))
+ 
+         if not html and info["status"] != 2:
+             if not url:
+@@ -109,7 +106,7 @@ class SimpleDecrypter(BaseDecrypter):
+ 
+             elif info["status"] in (3, 7):
+                 try:
+-                    html = get_url(url, cookies=cls.COOKIES, decode=cls.TEXT_ENCODING)
++                    html = self.load(url, cookies=self.COOKIES, decode=self.TEXT_ENCODING)
+ 
+                 except BadHeader as exc:
+                     info["error"] = "{}: {}".format(exc.code, exc.content)
+@@ -118,20 +115,20 @@ class SimpleDecrypter(BaseDecrypter):
+                     pass
+ 
+         if html:
+-            if search_pattern(cls.OFFLINE_PATTERN, html) is not None:
++            if search_pattern(self.OFFLINE_PATTERN, html) is not None:
+                 info["status"] = 1
+ 
+-            elif search_pattern(cls.TEMP_OFFLINE_PATTERN, html) is not None:
++            elif search_pattern(self.TEMP_OFFLINE_PATTERN, html) is not None:
+                 info["status"] = 6
+ 
+-            elif cls.NAME_PATTERN:
+-                m = search_pattern(cls.NAME_PATTERN, html)
++            elif self.NAME_PATTERN:
++                m = search_pattern(self.NAME_PATTERN, html)
+                 if m is not None:
+                     info["status"] = 2
+                     info["pattern"].update(m.groupdict())
+ 
+         if "N" in info["pattern"]:
+-            name = replace_patterns(info["pattern"]["N"], cls.NAME_REPLACEMENTS)
++            name = replace_patterns(info["pattern"]["N"], self.NAME_REPLACEMENTS)
+             info["name"] = parse.name(name)
+ 
+         return info
+diff --git a/src/pyload/plugins/base/simple_downloader.py b/src/pyload/plugins/base/simple_downloader.py
+index 90761aadc..9cc803736 100644
+--- a/src/pyload/plugins/base/simple_downloader.py
++++ b/src/pyload/plugins/base/simple_downloader.py
+@@ -3,7 +3,6 @@ import os
+ import re
+ 
+ from pyload.core.network.http.exceptions import BadHeader
+-from pyload.core.network.request_factory import get_url
+ from pyload.core.utils import parse
+ 
+ from ..helpers import replace_patterns, search_pattern
+@@ -13,7 +12,7 @@ from .downloader import BaseDownloader
+ class SimpleDownloader(BaseDownloader):
+     __name__ = "SimpleDownloader"
+     __type__ = "downloader"
+-    __version__ = "2.32"
++    __version__ = "2.33"
+     __status__ = "stable"
+ 
+     __pattern__ = r"^unmatchable$"
+@@ -138,14 +137,12 @@ class SimpleDownloader(BaseDownloader):
+         ("Html file", rb"\A\s*<!DOCTYPE html"),
+     ]
+ 
+-    @classmethod
+-    def api_info(cls, url):
++    def api_info(self, url):
+         return {}
+ 
+-    @classmethod
+-    def get_info(cls, url="", html=""):
+-        info = super(SimpleDownloader, cls).get_info(url)
+-        info.update(cls.api_info(url))
++    def get_info(self, url="", html=""):
++        info = super(SimpleDownloader, self).get_info(url)
++        info.update(self.api_info(url))
+ 
+         if not html and info["status"] != 2:
+             if not url:
+@@ -154,7 +151,7 @@ class SimpleDownloader(BaseDownloader):
+ 
+             elif info["status"] in (3, 7):
+                 try:
+-                    html = get_url(url, cookies=cls.COOKIES, decode=cls.TEXT_ENCODING)
++                    html = self.load(url, cookies=self.COOKIES, decode=self.TEXT_ENCODING)
+ 
+                 except BadHeader as exc:
+                     info["error"] = "{}: {}".format(exc.code, exc.content)
+@@ -163,10 +160,10 @@ class SimpleDownloader(BaseDownloader):
+                     pass
+ 
+         if html:
+-            if search_pattern(cls.OFFLINE_PATTERN, html) is not None:
++            if search_pattern(self.OFFLINE_PATTERN, html) is not None:
+                 info["status"] = 1
+ 
+-            elif search_pattern(cls.TEMP_OFFLINE_PATTERN, html) is not None:
++            elif search_pattern(self.TEMP_OFFLINE_PATTERN, html) is not None:
+                 info["status"] = 6
+ 
+             else:
+@@ -177,7 +174,7 @@ class SimpleDownloader(BaseDownloader):
+                     "HASHSUM_PATTERN",
+                 ):
+                     try:
+-                        attr = getattr(cls, pattern)
++                        attr = getattr(self, pattern)
+                         pdict = search_pattern(attr, html).groupdict()
+ 
+                         if all(True for k in pdict if k not in info["pattern"]):
+@@ -190,7 +187,7 @@ class SimpleDownloader(BaseDownloader):
+                         info["status"] = 2
+ 
+         if "N" in info["pattern"]:
+-            name = replace_patterns(info["pattern"]["N"], cls.NAME_REPLACEMENTS)
++            name = replace_patterns(info["pattern"]["N"], self.NAME_REPLACEMENTS)
+             info["name"] = parse.name(name)
+ 
+         if "S" in info["pattern"]:
+@@ -198,7 +195,7 @@ class SimpleDownloader(BaseDownloader):
+                 info["pattern"]["S"] + info["pattern"]["U"]
+                 if "U" in info["pattern"]
+                 else info["pattern"]["S"],
+-                cls.SIZE_REPLACEMENTS,
++                self.SIZE_REPLACEMENTS,
+             )
+             info["size"] = parse.bytesize(size)
+ 
+diff --git a/src/pyload/plugins/decrypters/CriptTo.py b/src/pyload/plugins/decrypters/CriptTo.py
+index 339b0f3db..82df089e4 100644
+--- a/src/pyload/plugins/decrypters/CriptTo.py
++++ b/src/pyload/plugins/decrypters/CriptTo.py
+@@ -7,7 +7,6 @@ import json
+ from cryptography.hazmat.backends import default_backend
+ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+ 
+-from pyload.core.network.request_factory import get_url
+ from pyload.core.utils.convert import to_str
+ 
+ from ..anticaptchas.ReCaptcha import ReCaptcha
+@@ -20,7 +19,7 @@ from ..base.simple_decrypter import SimpleDecrypter
+ class CriptTo(SimpleDecrypter):
+     __name__ = "CriptTo"
+     __type__ = "decrypter"
+-    __version__ = "0.04"
++    __version__ = "0.05"
+     __status__ = "testing"
+ 
+     __pattern__ = r'https?://(?:www\.)?cript\.to/folder/(?P<ID>\w+)'
+@@ -39,12 +38,11 @@ class CriptTo(SimpleDecrypter):
+     WEB_LINK_PATTERN = r'href="javascript:void\(0\);" onclick="popup\(\'(.+?)\''
+     DLC_LINK_PATTERN = r'onclick="popup\(\'(https://cript\.to/dlc/.+?)\''
+ 
+-    @classmethod
+-    def api_info(cls, url):
++    def api_info(self, url):
+         info = {}
+ 
+-        folder_id = re.match(cls.__pattern__, url).group('ID')
+-        folder_info = json.loads(get_url("https://cript.to/api/v1/folder/info",
++        folder_id = re.match(self.__pattern__, url).group('ID')
++        folder_info = json.loads(self.load("https://cript.to/api/v1/folder/info",
+                                          get={'id': folder_id}))
+         if folder_info["status"] == "error":
+             info["status"] = 8
+diff --git a/src/pyload/plugins/decrypters/MegadyskPlFolder.py b/src/pyload/plugins/decrypters/MegadyskPlFolder.py
+index a8df914d3..17328320f 100644
+--- a/src/pyload/plugins/decrypters/MegadyskPlFolder.py
++++ b/src/pyload/plugins/decrypters/MegadyskPlFolder.py
+@@ -5,8 +5,6 @@ import json
+ import re
+ import urllib.parse
+ 
+-from pyload.core.network.request_factory import get_url
+-
+ from ..base.simple_decrypter import SimpleDecrypter
+ 
+ 
+@@ -23,7 +21,7 @@ def xor_decrypt(data, key):
+ class MegadyskPlFolder(SimpleDecrypter):
+     __name__ = "MegadyskPlFolder"
+     __type__ = "decrypter"
+-    __version__ = "0.03"
++    __version__ = "0.04"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?megadysk\.pl/(?:f|s)/.+"
+@@ -43,9 +41,8 @@ class MegadyskPlFolder(SimpleDecrypter):
+     __license__ = "GPLv3"
+     __authors__ = [("GammaC0de", "nitzo2001[AT]yahoo[DOT]com")]
+ 
+-    @classmethod
+-    def api_info(cls, url):
+-        html = get_url(url)
++    def api_info(self, url):
++        html = self.load(url)
+         info = {}
+ 
+         m = re.search(r"window\['.*?'\]\s*=\s*\"(.*?)\"", html)
+@@ -56,7 +53,7 @@ class MegadyskPlFolder(SimpleDecrypter):
+ 
+         encrypted_info = m.group(1)
+ 
+-        html = get_url("https://megadysk.pl/dist/index.js")
++        html = self.load("https://megadysk.pl/dist/index.js")
+ 
+         m = re.search(r't.ISK\s*=\s*"(\w+)"', html)
+         if m is None:
+diff --git a/src/pyload/plugins/decrypters/TenluaVnFolder.py b/src/pyload/plugins/decrypters/TenluaVnFolder.py
+index 52fb18e66..3b73b771c 100644
+--- a/src/pyload/plugins/decrypters/TenluaVnFolder.py
++++ b/src/pyload/plugins/decrypters/TenluaVnFolder.py
+@@ -2,15 +2,13 @@
+ 
+ import json
+ 
+-from pyload.core.network.request_factory import get_url
+-
+ from ..base.simple_decrypter import SimpleDecrypter
+ 
+ 
+ class TenluaVnFolder(SimpleDecrypter):
+     __name__ = "TenluaVnFolder"
+     __type__ = "decrypter"
+-    __version__ = "0.02"
++    __version__ = "0.03"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?tenlua\.vn/folder/.+?/(?P<ID>[0-9a-f]+)/"
+@@ -32,10 +30,9 @@ class TenluaVnFolder(SimpleDecrypter):
+ 
+     API_URL = "https://api2.tenlua.vn/"
+ 
+-    @classmethod
+-    def api_request(cls, method, **kwargs):
++    def api_request(self, method, **kwargs):
+         kwargs["a"] = method
+-        return json.loads(get_url(cls.API_URL, post=json.dumps([kwargs])))
++        return json.loads(self.load(self.API_URL, post=json.dumps([kwargs])))
+ 
+     def decrypt(self, pyfile):
+         folder_info = self.api_request(
+diff --git a/src/pyload/plugins/downloaders/CloudMailRu.py b/src/pyload/plugins/downloaders/CloudMailRu.py
+index 2a8717359..8987bf099 100644
+--- a/src/pyload/plugins/downloaders/CloudMailRu.py
++++ b/src/pyload/plugins/downloaders/CloudMailRu.py
+@@ -10,7 +10,7 @@ from ..base.downloader import BaseDownloader
+ class CloudMailRu(BaseDownloader):
+     __name__ = "CloudMailRu"
+     __type__ = "downloader"
+-    __version__ = "0.04"
++    __version__ = "0.05"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://cloud\.mail\.ru/dl\?q=(?P<QS>.+)"
+@@ -28,11 +28,10 @@ class CloudMailRu(BaseDownloader):
+ 
+     OFFLINE_PATTERN = r'"error":\s*"not_exists"'
+ 
+-    @classmethod
+-    def get_info(cls, url="", html=""):
++    def get_info(self, url="", html=""):
+         info = super().get_info(url, html)
+ 
+-        qs = re.match(cls.__pattern__, url).group('QS')
++        qs = re.match(self.__pattern__, url).group('QS')
+         file_info = json.loads(base64.b64decode(qs).decode("utf-8"))
+ 
+         info.update({
+diff --git a/src/pyload/plugins/downloaders/DdownloadCom.py b/src/pyload/plugins/downloaders/DdownloadCom.py
+index 5918e8e71..0b7cab894 100644
+--- a/src/pyload/plugins/downloaders/DdownloadCom.py
++++ b/src/pyload/plugins/downloaders/DdownloadCom.py
+@@ -3,15 +3,13 @@
+ import json
+ import re
+ 
+-from pyload.core.network.request_factory import get_url
+-
+ from ..base.xfs_downloader import XFSDownloader
+ 
+ 
+ class DdownloadCom(XFSDownloader):
+     __name__ = "DdownloadCom"
+     __type__ = "downloader"
+-    __version__ = "0.09"
++    __version__ = "0.10"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?(?:ddl\.to|ddownload\.com)/(?P<ID>\w{12})"
+@@ -40,16 +38,14 @@ class DdownloadCom(XFSDownloader):
+     API_KEY = "37699zuaj90n9hxado2m7"
+     API_URL = "https://api-v2.ddownload.com/api/"
+ 
+-    @classmethod
+-    def api_request(cls, method, **kwargs):
+-        kwargs.update({"key": cls.API_KEY})
+-        json_data = get_url(cls.API_URL + method, get=kwargs)
++    def api_request(self, method, **kwargs):
++        kwargs.update({"key": self.API_KEY})
++        json_data = self.load(self.API_URL + method, get=kwargs)
+         return json.loads(json_data)
+ 
+-    # @classmethod
+-    # def api_info(cls, url):
++    # def api_info(self, url):
+     #     info = {}
+-    #     api_data = cls.api_request("file/info", file_code=re.match(cls.__pattern__, url).group('ID'))
++    #     api_data = self.api_request("file/info", file_code=re.match(self.__pattern__, url).group('ID'))
+     #
+     #     if api_data['status'] == 200:
+     #         if api_data['result'][0]['status'] == 200:
+diff --git a/src/pyload/plugins/downloaders/FileboomMe.py b/src/pyload/plugins/downloaders/FileboomMe.py
+index 437da5fe4..4010b76f2 100644
+--- a/src/pyload/plugins/downloaders/FileboomMe.py
++++ b/src/pyload/plugins/downloaders/FileboomMe.py
+@@ -5,7 +5,6 @@ import re
+ import urllib.parse
+ 
+ from pyload.core.network.http.exceptions import BadHeader
+-from pyload.core.network.request_factory import get_url
+ 
+ from ..base.simple_downloader import SimpleDownloader
+ 
+@@ -13,7 +12,7 @@ from ..base.simple_downloader import SimpleDownloader
+ class FileboomMe(SimpleDownloader):
+     __name__ = "FileboomMe"
+     __type__ = "downloader"
+-    __version__ = "0.11"
++    __version__ = "0.12"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://f(?:ile)?boom\.me/file/(?P<ID>\w+)"
+@@ -32,15 +31,13 @@ class FileboomMe(SimpleDownloader):
+     API_URL = "https://fileboom.me/api/v2/"
+     #: Actually this is Keep2ShareCc API, see https://keep2share.github.io/api/ https://github.com/keep2share/api
+ 
+-    @classmethod
+-    def api_request(cls, method, **kwargs):
+-        html = get_url(cls.API_URL + method, post=json.dumps(kwargs))
++    def api_request(self, method, **kwargs):
++        html = self.load(self.API_URL + method, post=json.dumps(kwargs))
+         return json.loads(html)
+ 
+-    @classmethod
+-    def api_info(cls, url):
+-        file_id = re.match(cls.__pattern__, url).group("ID")
+-        file_info = cls.api_request("GetFilesInfo", ids=[file_id], extended_info=False)
++    def api_info(self, url):
++        file_id = re.match(self.__pattern__, url).group("ID")
++        file_info = self.api_request("GetFilesInfo", ids=[file_id], extended_info=False)
+ 
+         if (
+             file_info["code"] != 200
+diff --git a/src/pyload/plugins/downloaders/FshareVn.py b/src/pyload/plugins/downloaders/FshareVn.py
+index 36e9ae8c4..5e7917877 100644
+--- a/src/pyload/plugins/downloaders/FshareVn.py
++++ b/src/pyload/plugins/downloaders/FshareVn.py
+@@ -5,7 +5,6 @@ import urllib.parse
+ 
+ import pycurl
+ from pyload.core.network.http.exceptions import BadHeader
+-from pyload.core.network.request_factory import get_request
+ 
+ from ..base.simple_downloader import SimpleDownloader
+ 
+@@ -13,7 +12,7 @@ from ..base.simple_downloader import SimpleDownloader
+ class FshareVn(SimpleDownloader):
+     __name__ = "FshareVn"
+     __type__ = "downloader"
+-    __version__ = "0.34"
++    __version__ = "0.35"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?fshare\.vn/file/(?P<ID>\w+)"
+@@ -65,15 +64,13 @@ class FshareVn(SimpleDownloader):
+ 
+         return json.loads(json_data)
+ 
+-    @classmethod
+-    def api_info(cls, url):
++    def api_info(self, url):
+         info = {}
+-        file_id = re.match(cls.__pattern__, url).group("ID")
+-        req = get_request()
++        file_id = re.match(self.__pattern__, url).group("ID")
+ 
+-        req.c.setopt(pycurl.HTTPHEADER, ["Accept: application/json, text/plain, */*"])
++        self.req.c.setopt(pycurl.HTTPHEADER, ["Accept: application/json, text/plain, */*"])
+         file_info = json.loads(
+-            req.load(
++            self.load(
+                 "https://www.fshare.vn/api/v3/files/folder", get={"linkcode": file_id}
+             )
+         )
+diff --git a/src/pyload/plugins/downloaders/Keep2ShareCc.py b/src/pyload/plugins/downloaders/Keep2ShareCc.py
+index 5d0a8a5dd..73cb63a2e 100644
+--- a/src/pyload/plugins/downloaders/Keep2ShareCc.py
++++ b/src/pyload/plugins/downloaders/Keep2ShareCc.py
+@@ -4,7 +4,6 @@ import json
+ import re
+ 
+ from pyload.core.network.http.exceptions import BadHeader
+-from pyload.core.network.request_factory import get_url
+ 
+ from ..base.simple_downloader import SimpleDownloader
+ 
+@@ -12,7 +11,7 @@ from ..base.simple_downloader import SimpleDownloader
+ class Keep2ShareCc(SimpleDownloader):
+     __name__ = "Keep2ShareCc"
+     __type__ = "downloader"
+-    __version__ = "0.45"
++    __version__ = "0.46"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?(keep2share|k2s|keep2s)\.cc/file/(?P<ID>\w+)"
+@@ -37,15 +36,13 @@ class Keep2ShareCc(SimpleDownloader):
+     API_URL = "https://keep2share.cc/api/v2/"
+     #: See https://keep2share.github.io/api/ https://github.com/keep2share/api
+ 
+-    @classmethod
+-    def api_request(cls, method, **kwargs):
+-        html = get_url(cls.API_URL + method, post=json.dumps(kwargs))
++    def api_request(self, method, **kwargs):
++        html = self.load(self.API_URL + method, post=json.dumps(kwargs))
+         return json.loads(html)
+ 
+-    @classmethod
+-    def api_info(cls, url):
+-        file_id = re.match(cls.__pattern__, url).group("ID")
+-        file_info = cls.api_request("GetFilesInfo", ids=[file_id], extended_info=False)
++    def api_info(self, url):
++        file_id = re.match(self.__pattern__, url).group("ID")
++        file_info = self.api_request("GetFilesInfo", ids=[file_id], extended_info=False)
+ 
+         if (
+             file_info["code"] != 200
+diff --git a/src/pyload/plugins/downloaders/MegadyskPl.py b/src/pyload/plugins/downloaders/MegadyskPl.py
+index 202614cf0..f7584d092 100644
+--- a/src/pyload/plugins/downloaders/MegadyskPl.py
++++ b/src/pyload/plugins/downloaders/MegadyskPl.py
+@@ -5,8 +5,6 @@ import json
+ import re
+ import urllib.parse
+ 
+-from pyload.core.network.request_factory import get_url
+-
+ from ..base.simple_downloader import SimpleDownloader
+ 
+ 
+@@ -23,7 +21,7 @@ def xor_decrypt(data, key):
+ class MegadyskPl(SimpleDownloader):
+     __name__ = "MegadyskPl"
+     __type__ = "downloader"
+-    __version__ = "0.04"
++    __version__ = "0.05"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?megadysk\.pl/dl/.+"
+@@ -44,9 +42,8 @@ class MegadyskPl(SimpleDownloader):
+ 
+     OFFLINE_PATTERN = r"(?:Nothing has been found|have been deleted)<"
+ 
+-    @classmethod
+-    def api_info(cls, url):
+-        html = get_url(url)
++    def api_info(self, url):
++        html = self.load(url)
+         info = {}
+ 
+         m = re.search(r"window\['.*?'\]\s*=\s*\"(.*?)\"", html)
+@@ -57,7 +54,7 @@ class MegadyskPl(SimpleDownloader):
+ 
+         encrypted_info = m.group(1)
+ 
+-        html = get_url("https://megadysk.pl/dist/index.js")
++        html = self.load("https://megadysk.pl/dist/index.js")
+ 
+         m = re.search(r't.ISK\s*=\s*"(\w+)"', html)
+         if m is None:
+diff --git a/src/pyload/plugins/downloaders/NitroflareCom.py b/src/pyload/plugins/downloaders/NitroflareCom.py
+index 44efa3da6..7162010d5 100644
+--- a/src/pyload/plugins/downloaders/NitroflareCom.py
++++ b/src/pyload/plugins/downloaders/NitroflareCom.py
+@@ -3,8 +3,6 @@
+ import json
+ import re
+ 
+-from pyload.core.network.request_factory import get_url
+-
+ from ..anticaptchas.HCaptcha import HCaptcha
+ from ..anticaptchas.ReCaptcha import ReCaptcha
+ from ..base.simple_downloader import SimpleDownloader
+@@ -13,7 +11,7 @@ from ..base.simple_downloader import SimpleDownloader
+ class NitroflareCom(SimpleDownloader):
+     __name__ = "NitroflareCom"
+     __type__ = "downloader"
+-    __version__ = "0.32"
++    __version__ = "0.33"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?(?:nitro\.download|nitroflare\.com)/view/(?P<ID>[\w^_]+)"
+@@ -46,13 +44,12 @@ class NitroflareCom(SimpleDownloader):
+ 
+     URL_REPLACEMENTS = [(r"nitro\.download", "nitroflare.com")]
+ 
+-    @classmethod
+-    def api_info(cls, url):
++    def api_info(self, url):
+         info = {}
+-        file_id = re.search(cls.__pattern__, url).group("ID")
++        file_id = re.search(self.__pattern__, url).group("ID")
+ 
+         data = json.loads(
+-            get_url("https://nitroflare.com/api/v2/getFileInfo", get={"files": file_id})
++            self.load("https://nitroflare.com/api/v2/getFileInfo", get={"files": file_id})
+         )
+ 
+         if data["type"] == "success":
+diff --git a/src/pyload/plugins/downloaders/OneFichierCom.py b/src/pyload/plugins/downloaders/OneFichierCom.py
+index 3bf77188e..b21e7e26c 100644
+--- a/src/pyload/plugins/downloaders/OneFichierCom.py
++++ b/src/pyload/plugins/downloaders/OneFichierCom.py
+@@ -2,16 +2,13 @@
+ 
+ import re
+ 
+-from pyload.core.network.request_factory import get_url
+-
+ from ..base.simple_downloader import SimpleDownloader
+-from ..helpers import format_exc
+ 
+ 
+ class OneFichierCom(SimpleDownloader):
+     __name__ = "OneFichierCom"
+     __type__ = "downloader"
+-    __version__ = "1.18"
++    __version__ = "1.19"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?(?:(?P<ID1>\w+)\.)?(?P<HOST>1fichier\.com|alterupload\.com|cjoint\.net|d(?:es)?fichiers\.com|dl4free\.com|megadl\.fr|mesfichiers\.org|piecejointe\.net|pjointe\.com|tenvoi\.com)(?:/\?(?P<ID2>\w+))?"
+diff --git a/src/pyload/plugins/downloaders/OpenloadIo.py b/src/pyload/plugins/downloaders/OpenloadIo.py
+index 94dbdf33f..9e0decc07 100644
+--- a/src/pyload/plugins/downloaders/OpenloadIo.py
++++ b/src/pyload/plugins/downloaders/OpenloadIo.py
+@@ -3,15 +3,13 @@
+ import json
+ import re
+ 
+-from pyload.core.network.request_factory import get_url
+-
+ from ..base.simple_downloader import SimpleDownloader
+ 
+ 
+ class OpenloadIo(SimpleDownloader):
+     __name__ = "OpenloadIo"
+     __type__ = "downloader"
+-    __version__ = "0.20"
++    __version__ = "0.21"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?openload\.(co|io)/(f|embed)/(?P<ID>[\w\-]+)"
+@@ -33,15 +31,13 @@ class OpenloadIo(SimpleDownloader):
+     # https://openload.co/api
+     API_URL = "https://api.openload.co/1"
+ 
+-    @classmethod
+-    def api_request(cls, file_id, method, **kwargs):
++    def api_request(self, file_id, method, **kwargs):
+         kwargs["file"] = file_id
+-        return json.loads(get_url(cls.API_URL + "/file/" + method, get=kwargs))
++        return json.loads(self.load(self.API_URL + "/file/" + method, get=kwargs))
+ 
+-    @classmethod
+-    def api_info(cls, url):
+-        file_id = re.match(cls.__pattern__, url).group("ID")
+-        info_json = cls.api_request(file_id, "info")
++    def api_info(self, url):
++        file_id = re.match(self.__pattern__, url).group("ID")
++        info_json = self.api_request(file_id, "info")
+         file_info = info_json["result"][file_id]
+ 
+         return {"name": file_info["name"], "size": file_info["size"]}
+diff --git a/src/pyload/plugins/downloaders/PixeldrainCom.py b/src/pyload/plugins/downloaders/PixeldrainCom.py
+index d8c68770a..43ef3b3cf 100644
+--- a/src/pyload/plugins/downloaders/PixeldrainCom.py
++++ b/src/pyload/plugins/downloaders/PixeldrainCom.py
+@@ -3,15 +3,13 @@
+ import json
+ import re
+ 
+-from pyload.core.network.request_factory import get_url
+-
+ from ..base.simple_downloader import SimpleDownloader
+ 
+ 
+ class PixeldrainCom(SimpleDownloader):
+     __name__ = "PixeldrainCom"
+     __type__ = "downloader"
+-    __version__ = "0.01"
++    __version__ = "0.02"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?pixeldrain\.com/u/(?P<ID>\w+)"
+@@ -32,10 +30,9 @@ class PixeldrainCom(SimpleDownloader):
+     API_URL = "https://pixeldrain.com/api/"
+     #: See https://pixeldrain.com/api/
+ 
+-    @classmethod
+-    def api_info(cls, url):
+-        file_id = re.match(cls.__pattern__, url).group("ID")
+-        json_data = get_url(f"{cls.API_URL}/file/{file_id}/info")
++    def api_info(self, url):
++        file_id = re.match(self.__pattern__, url).group("ID")
++        json_data = self.load(f"{self.API_URL}/file/{file_id}/info")
+         file_info = json.loads(json_data)
+ 
+         if file_info["success"] is False:
+diff --git a/src/pyload/plugins/downloaders/PornhubCom.py b/src/pyload/plugins/downloaders/PornhubCom.py
+index bb2b7659d..90584c151 100644
+--- a/src/pyload/plugins/downloaders/PornhubCom.py
++++ b/src/pyload/plugins/downloaders/PornhubCom.py
+@@ -11,7 +11,7 @@ from ..base.simple_downloader import SimpleDownloader
+ class PornhubCom(SimpleDownloader):
+     __name__ = "PornhubCom"
+     __type__ = "downloader"
+-    __version__ = "0.60"
++    __version__ = "0.61"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?pornhub\.com/view_video\.php\?viewkey=\w+"
+@@ -35,9 +35,8 @@ class PornhubCom(SimpleDownloader):
+     TEMP_OFFLINE_PATTERN = r"^unmatchable$"  #: Who knows?
+     OFFLINE_PATTERN = r"^unmatchable$"  #: Who knows?
+ 
+-    @classmethod
+-    def get_info(cls, url="", html=""):
+-        info = super(PornhubCom, cls).get_info(url, html)
++    def get_info(self, url="", html=""):
++        info = super(PornhubCom, self).get_info(url, html)
+         # Unfortunately, NAME_PATTERN does not include file extension so we blindly add '.mp4' as an extension.
+         # (hopefully all links are '.mp4' files)
+         if "name" in info:
+diff --git a/src/pyload/plugins/downloaders/RapiduNet.py b/src/pyload/plugins/downloaders/RapiduNet.py
+index 39e510c29..e08c0cca2 100644
+--- a/src/pyload/plugins/downloaders/RapiduNet.py
++++ b/src/pyload/plugins/downloaders/RapiduNet.py
+@@ -5,7 +5,6 @@ import re
+ import time
+ 
+ import pycurl
+-from pyload.core.network.request_factory import get_url
+ from pyload.core.utils import seconds
+ 
+ from ..anticaptchas.ReCaptcha import ReCaptcha
+@@ -15,7 +14,7 @@ from ..base.simple_downloader import SimpleDownloader
+ class RapiduNet(SimpleDownloader):
+     __name__ = "RapiduNet"
+     __type__ = "downloader"
+-    __version__ = "0.19"
++    __version__ = "0.20"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?rapidu\.net/(?P<ID>\d+)"
+@@ -43,15 +42,13 @@ class RapiduNet(SimpleDownloader):
+     # https://rapidu.net/documentation/api/
+     API_URL = "http://rapidu.net/api/"
+ 
+-    @classmethod
+-    def api_request(cls, method, **kwargs):
+-        json_data = get_url(cls.API_URL + method + "/", post=kwargs)
++    def api_request(self, method, **kwargs):
++        json_data = self.load(self.API_URL + method + "/", post=kwargs)
+         return json.loads(json_data)
+ 
+-    @classmethod
+-    def api_info(cls, url):
+-        file_id = re.match(cls.__pattern__, url).group("ID")
+-        api_data = cls.api_request("getFileDetails", id=file_id)["0"]
++    def api_info(self, url):
++        file_id = re.match(self.__pattern__, url).group("ID")
++        api_data = self.api_request("getFileDetails", id=file_id)["0"]
+ 
+         if api_data["fileStatus"] == 1:
+             return {
+diff --git a/src/pyload/plugins/downloaders/SmuleCom.py b/src/pyload/plugins/downloaders/SmuleCom.py
+index 0523fc4d7..2db1e2e84 100644
+--- a/src/pyload/plugins/downloaders/SmuleCom.py
++++ b/src/pyload/plugins/downloaders/SmuleCom.py
+@@ -9,7 +9,7 @@ from ..base.simple_downloader import SimpleDownloader
+ class SmuleCom(SimpleDownloader):
+     __name__ = "SmuleCom"
+     __type__ = "downloader"
+-    __version__ = "0.04"
++    __version__ = "0.05"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?smule\.com/recording/.+"
+@@ -28,9 +28,8 @@ class SmuleCom(SimpleDownloader):
+     COMMUNITY_JS_PATTERN = r'<script.+?src=["\']/*(\w[^"\']*community.+?js)["\']'
+     OFFLINE_PATTERN = r"Page Not Found"
+ 
+-    @classmethod
+-    def get_info(cls, url="", html=""):
+-        info = SimpleDownloader.get_info(url, html)
++    def get_info(self, url="", html=""):
++        info = super(SimpleDownloader, self).get_info(url, html)
+         # Unfortunately, NAME_PATTERN does not include file extension so we blindly add '.mp4' as an extension.
+         # (hopefully all links are '.mp4' files)
+         if "name" in info:
+diff --git a/src/pyload/plugins/downloaders/TenluaVn.py b/src/pyload/plugins/downloaders/TenluaVn.py
+index 3d5410d7a..0a7c1a559 100644
+--- a/src/pyload/plugins/downloaders/TenluaVn.py
++++ b/src/pyload/plugins/downloaders/TenluaVn.py
+@@ -4,8 +4,6 @@ import json
+ import random
+ import re
+ 
+-from pyload.core.network.request_factory import get_url
+-
+ from ..base.simple_downloader import SimpleDownloader
+ 
+ 
+@@ -16,7 +14,7 @@ def gen_r():
+ class TenluaVn(SimpleDownloader):
+     __name__ = "TenluaVn"
+     __type__ = "downloader"
+-    __version__ = "0.03"
++    __version__ = "0.04"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?tenlua\.vn(?!/folder)/.+?/(?P<ID>[0-9a-f]+)/"
+@@ -34,22 +32,20 @@ class TenluaVn(SimpleDownloader):
+ 
+     API_URL = "https://api2.tenlua.vn/"
+ 
+-    @classmethod
+-    def api_request(cls, method, **kwargs):
++    def api_request(self, method, **kwargs):
+         kwargs["a"] = method
+         sid = kwargs.pop("sid", None)
+         return json.loads(
+-            get_url(
+-                cls.API_URL,
++            self.load(
++                self.API_URL,
+                 get={"sid": sid} if sid is not None else {},
+                 post=json.dumps([kwargs]),
+             )
+         )
+ 
+-    @classmethod
+-    def api_info(cls, url):
+-        file_id = re.match(cls.__pattern__, url).group("ID")
+-        file_info = cls.api_request(
++    def api_info(self, url):
++        file_id = re.match(self.__pattern__, url).group("ID")
++        file_info = self.api_request(
+             "filemanager_builddownload_getinfo", n=file_id, r=gen_r()
+         )[0]
+ 
+diff --git a/src/pyload/plugins/downloaders/UploadedTo.py b/src/pyload/plugins/downloaders/UploadedTo.py
+index 0406e10c0..dfa778fe0 100644
+--- a/src/pyload/plugins/downloaders/UploadedTo.py
++++ b/src/pyload/plugins/downloaders/UploadedTo.py
+@@ -4,7 +4,6 @@ import os
+ import re
+ import time
+ 
+-from pyload.core.network.request_factory import get_url
+ from pyload.core.utils.convert import to_bytes, to_str
+ 
+ from ..anticaptchas.ReCaptcha import ReCaptcha
+@@ -14,7 +13,7 @@ from ..base.simple_downloader import SimpleDownloader
+ class UploadedTo(SimpleDownloader):
+     __name__ = "UploadedTo"
+     __type__ = "downloader"
+-    __version__ = "1.10"
++    __version__ = "1.11"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?(uploaded\.(to|net)|ul\.to)(/file/|/?\?id=|.*?&id=|/)(?P<ID>\w+)"
+@@ -52,16 +51,15 @@ class UploadedTo(SimpleDownloader):
+         r"You have reached the max. number of possible free downloads for this hour"
+     )
+ 
+-    @classmethod
+-    def api_info(cls, url):
++    def api_info(self, url):
+         info = {}
+ 
+         for _ in range(5):
+-            html = get_url(
++            html = self.load(
+                 "http://uploaded.net/api/filemultiple",
+                 get={
+-                    "apikey": cls.API_KEY,
+-                    "id_0": re.match(cls.__pattern__, url).group("ID"),
++                    "apikey": self.API_KEY,
++                    "id_0": re.match(self.__pattern__, url).group("ID"),
+                 },
+                 decode=False,
+             )
+diff --git a/src/pyload/plugins/downloaders/VimeoCom.py b/src/pyload/plugins/downloaders/VimeoCom.py
+index fbe362522..ba4bb20ab 100644
+--- a/src/pyload/plugins/downloaders/VimeoCom.py
++++ b/src/pyload/plugins/downloaders/VimeoCom.py
+@@ -9,7 +9,7 @@ from ..base.simple_downloader import SimpleDownloader
+ class VimeoCom(SimpleDownloader):
+     __name__ = "VimeoCom"
+     __type__ = "downloader"
+-    __version__ = "0.13"
++    __version__ = "0.14"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?(player\.)?vimeo\.com/(video/)?(?P<ID>\d+)"
+@@ -37,9 +37,8 @@ class VimeoCom(SimpleDownloader):
+ 
+     COOKIES = [("vimeo.com", "language", "en")]
+ 
+-    @classmethod
+-    def get_info(cls, url="", html=""):
+-        info = super(VimeoCom, cls).get_info(url, html)
++    def get_info(self, url="", html=""):
++        info = super(VimeoCom, self).get_info(url, html)
+         # Unfortunately, NAME_PATTERN does not include file extension so we blindly add '.mp4' as an extension.
+         # (hopefully all links are '.mp4' files)
+         if "name" in info:
+diff --git a/src/pyload/plugins/downloaders/WebshareCz.py b/src/pyload/plugins/downloaders/WebshareCz.py
+index 08a59f3c7..d962cb742 100644
+--- a/src/pyload/plugins/downloaders/WebshareCz.py
++++ b/src/pyload/plugins/downloaders/WebshareCz.py
+@@ -1,15 +1,13 @@
+ # -*- coding: utf-8 -*-
+ import re
+ 
+-from pyload.core.network.request_factory import get_url
+-
+ from ..base.simple_downloader import SimpleDownloader
+ 
+ 
+ class WebshareCz(SimpleDownloader):
+     __name__ = "WebshareCz"
+     __type__ = "downloader"
+-    __version__ = "0.25"
++    __version__ = "0.26"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?(en\.)?webshare\.cz/(?:#/)?(file/)?(?P<ID>\w+)"
+@@ -32,15 +30,13 @@ class WebshareCz(SimpleDownloader):
+ 
+     API_URL = "https://webshare.cz/api/"
+ 
+-    @classmethod
+-    def api_request(cls, method, **kwargs):
+-        return get_url(cls.API_URL + method + "/", post=kwargs)
++    def api_request(self, method, **kwargs):
++        return self.load(self.API_URL + method + "/", post=kwargs)
+ 
+-    @classmethod
+-    def api_info(cls, url):
++    def api_info(self, url):
+         info = {}
+-        api_data = cls.api_request(
+-            "file_info", ident=re.match(cls.__pattern__, url).group("ID"), wst=""
++        api_data = self.api_request(
++            "file_info", ident=re.match(self.__pattern__, url).group("ID"), wst=""
+         )
+ 
+         if re.search(r"<status>OK", api_data):
+diff --git a/src/pyload/plugins/downloaders/YadiSk.py b/src/pyload/plugins/downloaders/YadiSk.py
+index 31c48b93b..08d90be47 100644
+--- a/src/pyload/plugins/downloaders/YadiSk.py
++++ b/src/pyload/plugins/downloaders/YadiSk.py
+@@ -10,7 +10,7 @@ from ..base.simple_downloader import SimpleDownloader
+ class YadiSk(SimpleDownloader):
+     __name__ = "YadiSk"
+     __type__ = "downloader"
+-    __version__ = "0.11"
++    __version__ = "0.12"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://yadi\.sk/d/[\w\-]+"
+@@ -28,9 +28,8 @@ class YadiSk(SimpleDownloader):
+ 
+     OFFLINE_PATTERN = r"Nothing found"
+ 
+-    @classmethod
+-    def get_info(cls, url="", html=""):
+-        info = SimpleDownloader.get_info(url, html)
++    def get_info(self, url="", html=""):
++        info = super(SimpleDownloader, self).get_info(url, html)
+ 
+         if html:
+             if "idclient" not in info:
+diff --git a/src/pyload/plugins/downloaders/ZDF.py b/src/pyload/plugins/downloaders/ZDF.py
+index 360d3ff97..a39a76a48 100644
+--- a/src/pyload/plugins/downloaders/ZDF.py
++++ b/src/pyload/plugins/downloaders/ZDF.py
+@@ -3,9 +3,6 @@ import re
+ import json
+ import os
+ 
+-from pyload.core.network.request_factory import get_url
+-import xml.etree.ElementTree as etree
+-
+ import pycurl
+ from ..base.downloader import BaseDownloader
+ 
+@@ -14,7 +11,7 @@ from ..base.downloader import BaseDownloader
+ class ZDF(BaseDownloader):
+     __name__ = "ZDF Mediathek"
+     __type__ = "downloader"
+-    __version__ = "0.92"
++    __version__ = "0.93"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https://(?:www\.)?zdf\.de/(?P<ID>[/\w-]+)\.html"
+-- 
+2.30.2
+

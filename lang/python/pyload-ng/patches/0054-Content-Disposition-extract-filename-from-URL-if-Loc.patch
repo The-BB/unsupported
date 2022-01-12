@@ -1,0 +1,31 @@
+From da5a1f0b28371607ba691e89e0573d0ffb79536b Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Wed, 22 Dec 2021 01:19:05 +0200
+Subject: [PATCH 54/73] Content-Disposition: extract filename from URL if
+ "Location" is empty
+
+---
+ src/pyload/core/network/http/http_chunk.py | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/src/pyload/core/network/http/http_chunk.py b/src/pyload/core/network/http/http_chunk.py
+index 49fccbef1..83b1a8ea1 100644
+--- a/src/pyload/core/network/http/http_chunk.py
++++ b/src/pyload/core/network/http/http_chunk.py
+@@ -334,8 +334,11 @@ class HTTPChunk(HTTPRequest):
+                                 self.log.warning("Content-Disposition: | error: Error when decoding string from iso-8859-1.")
+                                 continue
+ 
+-                    elif disposition_type.lower() == "attachment" and location is not None:
+-                        fname = parse.name(location)
++                    elif disposition_type.lower() == "attachment":
++                        if location is not None:
++                            fname = parse.name(location)
++                        else:
++                            fname = parse.name(self.p.url)
+ 
+                     else:
+                         continue
+-- 
+2.30.2
+

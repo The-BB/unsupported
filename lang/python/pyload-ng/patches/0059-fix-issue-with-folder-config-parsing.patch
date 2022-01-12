@@ -1,0 +1,25 @@
+From aade9f8bbf28e4117ff14f8c41d30d1807162839 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sat, 25 Dec 2021 22:22:10 +0200
+Subject: [PATCH 59/73] fix issue with folder config parsing
+
+---
+ src/pyload/core/config/parser.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/pyload/core/config/parser.py b/src/pyload/core/config/parser.py
+index 2dcf7511e..ce31142d7 100644
+--- a/src/pyload/core/config/parser.py
++++ b/src/pyload/core/config/parser.py
+@@ -287,7 +287,7 @@ class ConfigParser:
+             return value
+ 
+         elif typ in ("file", "folder"):
+-            return "" if value is None else os.path.realpath(os.path.expanduser(os.fsdecode(value)))
++            return "" if value in (None, "") else os.path.realpath(os.path.expanduser(os.fsdecode(value)))
+ 
+         else:
+             return value
+-- 
+2.30.2
+
