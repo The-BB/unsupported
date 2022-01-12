@@ -4,12 +4,12 @@ include $(TOPDIR)/rules.mk
 
 PKG_NPM_NAME:=zigbee2mqtt
 PKG_NAME:=node-$(PKG_NPM_NAME)
-PKG_VERSION:=1.22.1
+PKG_VERSION:=1.22.2
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NPM_NAME)-$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=https://registry.npmjs.org/$(PKG_NPM_NAME)/-/
-PKG_HASH:=2b0376248a891662626a9f8429cabac5e2eb7bb1054f6cbdf37a936b16bc9ac2
+PKG_HASH:=c2e63a00a91fcc606cf640e1de8ceff03b89c4b542dc7f08a530fe97a040669c
 
 PKG_LICENSE:=GPL-3.0-only
 
@@ -88,14 +88,14 @@ define Package/node-zigbee2mqtt/install
 	$(LN) ../lib/node/$(PKG_NPM_NAME)/cli.js $(1)/opt/bin/$(PKG_NPM_NAME)
 	$(INSTALL_DIR) $(1)/opt/etc/init.d
 	$(INSTALL_BIN) ./files/S99zigbee2mqtt $(1)/opt/etc/init.d
-	# XXX fix exec path in scripts
+	# XXX Entware specific: fix exec path in scripts
 	$(FIND) $(1)/opt/lib -type f -exec $(SED) \
 		's,^#!.*bash,#!/opt/bin/bash,;s,^#!.*node$$$$,#!/opt/bin/node,;s,^#!.* sh,#!/bin/sh,' {} +
 	$(INSTALL_DIR) $(1)/opt/var/lib/.z2m
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/data/configuration.yaml $(1)/opt/var/lib/.z2m
 endef
 
-define Package/node-zigbee2mqtt/preinst
+define Package/node-zigbee2mqtt/postrm
 #!/bin/sh
 
 if [ -L "/opt/lib/node_modules/zigbee2mqtt" ]; then
