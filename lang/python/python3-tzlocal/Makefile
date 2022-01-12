@@ -23,7 +23,8 @@ define Package/python3-tzlocal
   TITLE:=tzinfo object for the local timezone
   URL:=https://github.com/regebro/tzlocal
   DEPENDS:= \
-	+python3-light
+	+python3-light \
+	+python3-tzdata
 endef
 
 define Package/python3-tzlocal/description
