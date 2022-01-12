@@ -4,12 +4,12 @@ include $(TOPDIR)/rules.mk
 
 PKG_NPM_NAME:=bufferutil
 PKG_NAME:=node-$(PKG_NPM_NAME)
-PKG_VERSION:=4.0.5
+PKG_VERSION:=4.0.6
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NPM_NAME)-$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=https://registry.npmjs.org/$(PKG_NPM_NAME)/-/
-PKG_HASH:=8cb0f1abb48cd4578f5a497134fb0eb1ec9d1da27e8dfb618203feb3ff190865
+PKG_HASH:=2e8fd2ca2229152fda90dd123ad66adbb19e2ddf97e56e02de067205eb19e6c3
 
 PKG_LICENSE:=MIT
 
@@ -70,16 +70,6 @@ define Package/node-bufferutil/install
 		$(1)/opt/lib/node/$(PKG_NPM_NAME)/build/Release/
 	$(INSTALL_DIR) $(1)/opt/lib/node_modules
 	$(LN) ../node/$(PKG_NPM_NAME) $(1)/opt/lib/node_modules/$(PKG_NPM_NAME)
-#	# XXX fix exec path in scripts
-#	$(FIND) $(1)/opt/lib -type f -exec \
-#	$(SED) \
-#	    's,^#!.*bash$$$$,#!/opt/bin/bash,;s,^#!.*node$$$$,#!/opt/bin/node,' {} \;
-#	$(SED) 's,^#!.*node,#!/opt/bin/node,' \
-#	    $(1)/opt/lib/node_modules/node-red/node_modules/bcryptjs/bin/bcrypt
-#	$(SED) 's,^exec .*node,exec /opt/bin/node,' \
-#	    $(1)/opt/lib/node_modules/node-red/bin/node-red-pi
-#	$(SED) 's,^#!.*sh,#!/bin/sh,' \
-#	    $(1)/opt/lib/node_modules/node-red/node_modules/ajv/scripts/prepare-tests
 endef
 
 $(eval $(call BuildPackage,node-bufferutil))
