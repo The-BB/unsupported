@@ -3,14 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rrdtool-latest
-PKG_VERSION:=1.7.2
-PKG_RELEASE:=2
+PKG_VERSION:=1.8.0
+PKG_RELEASE:=1
 
-PKG_SOURCE_URL:=http://oss.oetiker.ch/rrdtool/pub
 PKG_SOURCE:=rrdtool-$(PKG_VERSION).tar.gz
-PKG_HASH:=a199faeb7eff7cafc46fac253e682d833d08932f3db93a550a4a5af180ca58db
+PKG_SOURCE_URL:=https://codeload.github.com/oetiker/rrdtool-1.x/tar.gz/refs/tags/v$(PKG_VERSION)?
+PKG_HASH:=88a59a645161d0cfd1af898459fc033af975816278cf132cc66bf0dd8d0559cc
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/rrdtool-$(PKG_VERSION)
+PKG_BUILD_DIR:=$(BUILD_DIR)/rrdtool-1.x-$(PKG_VERSION)
 
 LICENSE:=GPL-2.0-or-later
 
@@ -89,7 +89,7 @@ endef
 
 define Package/librrd-latest/install
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/librrd.so.* $(1)/opt/lib/
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/librrd.so* $(1)/opt/lib/
 endef
 
 define Package/rrdcgi-latest/install
