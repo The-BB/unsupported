@@ -6,7 +6,7 @@ PECL_NAME:=smbclient
 PECL_LONGNAME:=A PHP wrapper for libsmbclient
 
 PKG_VERSION:=1.0.6
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 
 PKG_NAME:=php8-pecl-$(PECL_NAME)
 PKG_SOURCE:=$(PECL_NAME)-$(PKG_VERSION).tgz
