@@ -6,7 +6,7 @@ Packages not supported by the Entware team.
 2. To use these packages, add the following line to the feeds.conf in the Entware buildroot, e.g.:
 
 ```
-echo 'src-git unsupported https://github.com/The-BB/unsupported.git' >> feeds.conf
+echo 'src-git-full unsupported https://github.com/The-BB/unsupported.git' >> feeds.conf
 ```
 
 To install all its package definitions, run:
