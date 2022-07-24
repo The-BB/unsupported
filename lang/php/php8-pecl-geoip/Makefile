@@ -6,7 +6,7 @@ PECL_NAME:=geoip
 PECL_LONGNAME:=Map IP address to geographic places
 
 PKG_VERSION:=1.1.1
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 
 PKG_NAME:=php8-pecl-$(PECL_NAME)
 PKG_SOURCE:=$(PECL_NAME)-$(PKG_VERSION).tgz
