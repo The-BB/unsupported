@@ -1,0 +1,33 @@
+--- a/bin/chkstow
++++ b/bin/chkstow
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!/opt/bin/perl
+ #
+ # This file is part of GNU Stow.
+ #
+@@ -23,7 +23,7 @@ require 5.006_001;
+ use File::Find;
+ use Getopt::Long;
+ 
+-my $DEFAULT_TARGET = $ENV{STOW_DIR} || '/usr/local/';
++my $DEFAULT_TARGET = $ENV{STOW_DIR} || '/opt/';
+ 
+ our $Wanted   = \&bad_links;
+ our %Package  = ();
+--- a/bin/stow
++++ b/bin/stow
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!/opt/bin/perl
+ 
+ # GNU Stow - manage farms of symbolic links
+ # Copyright (C) 1993, 1994, 1995, 1996 by Bob Glickstein
+--- a/lib/Stow.pm
++++ b/lib/Stow.pm
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!/opt/bin/perl
+ #
+ # This file is part of GNU Stow.
+ #
