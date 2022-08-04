@@ -62,6 +62,12 @@ endef
 
 Package/navidrome_nohf/description=$(Package/navidrome/description)
 
+define Package/navidrome/conffiles
+/opt/etc/navidrome.toml
+endef
+
+Package/navidrome_nohf/conffiles=$(Package/navidrome/conffiles)
+
 GIT_SHA:=$(shell echo $(PKG_COMMIT) | cut -b -9)
 GIT_TAG:=v$(PKG_VERSION)
 
@@ -92,6 +98,10 @@ endef
 define Package/navidrome/install
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/navidrome $(1)/opt/bin
+	$(INSTALL_DIR) $(1)/opt/etc
+	$(INSTALL_DATA) files/navidrome.toml $(1)/opt/etc
+	$(INSTALL_DIR) $(1)/opt/etc/init.d
+	$(INSTALL_BIN) files/S91navidrome $(1)/opt/etc/init.d
 endef
 
 Package/navidrome_nohf/install=$(Package/navidrome/install)
