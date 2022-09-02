@@ -5,8 +5,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=alist
-PKG_VERSION:=2.6.3
-PKG_RELEASE:=1
+PKG_VERSION:=2.6.4
+PKG_RELEASE:=2
 
 PKG_GOGET:=github.com/alist-org/alist
 
@@ -14,7 +14,7 @@ GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 
 #!!! uncomment PKG_SOURCE to download fixed version
 #PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=1d3b86985f32e68f8406e120f0fb5d8c7d8a68eb
+PKG_COMMIT=bd52df19266754ffa22078ed315345ecd4c4508e
 PKG_HASH:=skip
 
 PKG_MAINTAINER:=Entware team, https://entware.net
@@ -59,7 +59,7 @@ endef
 Package/alist_nohf/description=$(Package/alist/description)
 
 define Download/web-v2
-  VERSION:=35209fa443914d66b10edd6a6c1a866fed404c97
+  VERSION:=b095d5d28aa94ffb5ce87008dc67e3db95fbff72
   SUBDIR:=web-v2
   FILE:=web-v2-$$(VERSION).tar.xz
   URL:=https://github.com/alist-org/web-v2.git
@@ -77,7 +77,7 @@ BUILD_DATE:=$(shell date +'%F %T %z')
 GIT_COMMIT:=$(shell echo $(PKG_COMMIT) | cut -b -9)
 GIT_TAG:=v$(PKG_VERSION)-$(GIT_COMMIT)
 GO_VER:=$(shell $(GOROOT)/bin/go version | sed 's/go version //;s,/.*,/$(GOARCH),')
-WEB_COMMIT:=35209fa44
+WEB_COMMIT:=b095d5d28
 
 define Build/Compile
 	$(eval $(call Download,web-v2))
@@ -88,7 +88,7 @@ define Build/Compile
 		pushd $(PKG_BUILD_DIR)/src/$(PKG_GOGET)/web-v2; \
 		yarn install; \
 		yarn build; \
-		$(SED) "s/\/CDN_URL\//\//g;s/assets/\/assets/g" dist/index.html; \
+		$(SED) 's,/CDN_URL/,/,g;s,assets,/assets,g' dist/index.html; \
 		mv dist/* ../public/ ; \
 		popd; \
 		\
@@ -113,6 +113,8 @@ endef
 define Package/alist/install
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/alist $(1)/opt/bin
+	$(INSTALL_DIR) $(1)/opt/etc/init.d
+	$(INSTALL_BIN) files/S99alist $(1)/opt/etc/init.d
 endef
 
 Package/alist_nohf/install=$(Package/alist/install)
