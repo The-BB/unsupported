@@ -22,7 +22,8 @@ define Package/python3-filetype
   SUBMENU:=Python
   TITLE:=Infer file type and MIME type of any file/buffer
   URL:=https://github.com/h2non/filetype.py
-  DEPENDS:=+python3-light
+  DEPENDS:= \
+	+python3-light
 endef
 
 define Package/python3-filetype/description
