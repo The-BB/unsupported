@@ -23,7 +23,8 @@ define Package/python3-flask-caching
   TITLE:=Adds easy cache support to Flask
   URL:=https://github.com/sh4nks/flask-caching
   DEPENDS:= \
-	+python3-flask
+	+python3-flask \
+	+python3-logging
 endef
 
 define Package/python3-flask-caching/description
