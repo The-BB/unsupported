@@ -25,6 +25,12 @@ define Package/python3-cheroot
   TITLE:=Highly-optimized, pure-python HTTP server
   URL:=https://cheroot.cherrypy.org/
   DEPENDS:= \
+	+python3-ctypes \
+	+python3-email \
+	+python3-logging \
+	+python3-openssl \
+	+python3-urllib
+  DEPENDS+= \
 	+python3-jaraco-functools \
 	+python3-more-itertools \
 	+python3-six
