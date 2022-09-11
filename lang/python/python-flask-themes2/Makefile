@@ -3,11 +3,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-flask-themes2
-PKG_VERSION:=0.1.5
+PKG_VERSION:=1.0.0
 PKG_RELEASE:=1
 
 PYPI_NAME:=Flask-Themes2
-PKG_HASH:=aafabdf38ab4d4b39a1f9a5b38c2a81285e2b84615d1a1764b1752fb9ae671d2
+PKG_HASH:=d14d1c49d05d75bf7e206dc253acd43e5c5a261425c4e57a38b8319cd0c2872f
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -23,8 +23,7 @@ define Package/python3-flask-themes2
   TITLE:=Easily theme your Flask app
   URL:=https://github.com/sysr-q/flask-themes2
   DEPENDS:= \
-	+python3-flask \
-	+python3-simplejson
+	+python3-flask
 endef
 
 define Package/python3-flask-themes2/description
