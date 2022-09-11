@@ -9,11 +9,11 @@
 -my $CCFLAGS_magick = "$Config{'ccflags'} -I/usr/include/freetype2 -g -O2 -Wall -pthread -DMAGICKCORE_HDRI_ENABLE=1 -DMAGICKCORE_QUANTUM_DEPTH=16";
 -my $LDFLAGS_magick   = "-L/usr/local/lib -lMagickCore-7.Q16HDRI $Config{'ldflags'} ";
 -my $LDDLFLAGS_magick = "-L/usr/local/lib -lMagickCore-7.Q16HDRI $Config{'lddlflags'} ";
-+my $INC_magick = '-I$STAGING_DIR/opt/include/ImageMagick-7 -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=8 -I$STAGING_DIR/opt/include/libxml2';
-+my $LIBS_magick = '-L$STAGING_DIR/opt/lib -lMagickCore-7.Q8 -lm -L' . $Config{'archlib'} . '/CORE';
-+my $CCFLAGS_magick = "$Config{'ccflags'} -I$STAGING_DIR/opt/include/freetype2 -g -O2 -Wall -pthread -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=8";
-+my $LDFLAGS_magick   = "-L$STAGING_DIR/opt/lib -lMagickCore-7.Q8 $Config{'ldflags'} ";
-+my $LDDLFLAGS_magick = "-L$STAGING_DIR/opt/lib -lMagickCore-7.Q8 $Config{'lddlflags'} ";
++my $INC_magick = '-I@STAGING_DIR@/opt/include/ImageMagick-7 -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=8 -I@STAGING_DIR@/opt/include/libxml2';
++my $LIBS_magick = '-L@STAGING_DIR@/opt/lib -lMagickCore-7.Q8 -lm -L' . $Config{'archlib'} . '/CORE';
++my $CCFLAGS_magick = "$Config{'ccflags'} -I@STAGING_DIR@/opt/include/freetype2 -g -O2 -Wall -pthread -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=8";
++my $LDFLAGS_magick   = "-L@STAGING_DIR@/opt/lib -lMagickCore-7.Q8 $Config{'ldflags'} ";
++my $LDDLFLAGS_magick = "-L@STAGING_DIR@/opt/lib -lMagickCore-7.Q8 $Config{'lddlflags'} ";
  
  if (($^O eq 'MSWin32') && ($Config{cc} =~ /gcc/)) {
    my($Ipaths, $Lpaths) = AutodetectWin32gcc();

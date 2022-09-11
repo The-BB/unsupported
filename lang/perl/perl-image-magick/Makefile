@@ -27,7 +27,7 @@ define Package/perl-image-magick
 endef
 
 define Build/Configure
-	$(SED) 's,$$$$STAGING_DIR,$(STAGING_DIR),g' $(PKG_BUILD_DIR)/Makefile.PL
+	$(SED) 's,@STAGING_DIR@,$(STAGING_DIR),g' $(PKG_BUILD_DIR)/Makefile.PL
 	$(call perlmod/Configure,,)
 endef
 
