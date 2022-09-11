@@ -1,0 +1,29 @@
+From d1fd3f4f26d12ea982aad1dfe24b244b659313ad Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Tue, 30 Aug 2022 22:29:00 +0300
+Subject: [PATCH 24/25] [FilecryptCc] fix #4195
+
+---
+ src/pyload/plugins/decrypters/FilecryptCc.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/pyload/plugins/decrypters/FilecryptCc.py b/src/pyload/plugins/decrypters/FilecryptCc.py
+index 0be3eafe7..4aeff4965 100644
+--- a/src/pyload/plugins/decrypters/FilecryptCc.py
++++ b/src/pyload/plugins/decrypters/FilecryptCc.py
+@@ -25,10 +25,10 @@ from ..base.decrypter import BaseDecrypter
+ class FilecryptCc(BaseDecrypter):
+     __name__ = "FilecryptCc"
+     __type__ = "decrypter"
+-    __version__ = "0.45"
++    __version__ = "0.46"
+     __status__ = "testing"
+ 
+-    __pattern__ = r"https?://(?:www\.)?filecrypt\.cc/Container/\w+"
++    __pattern__ = r"https?://(?:www\.)?filecrypt\.(?:cc|co)/Container/\w+"
+     __config__ = [
+         ("enabled", "bool", "Activated", True),
+         ("handle_mirror_pages", "bool", "Handle Mirror Pages", True),
+-- 
+2.30.2
+

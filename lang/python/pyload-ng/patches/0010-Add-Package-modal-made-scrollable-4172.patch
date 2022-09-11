@@ -1,0 +1,52 @@
+From 43dda72aea72c8965a8810fd987d2170f923aafe Mon Sep 17 00:00:00 2001
+From: Daniel Schramm <38858589+danoslas@users.noreply.github.com>
+Date: Wed, 13 Jul 2022 23:00:21 +0200
+Subject: [PATCH 10/25] "Add Package" modal made scrollable (#4172)
+
+* Pyplex modal made scrollable
+
+* Modern modal made scrollable
+---
+ src/pyload/webui/app/themes/modern/static/css/base.css | 5 +++++
+ src/pyload/webui/app/themes/pyplex/static/css/base.css | 2 ++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/src/pyload/webui/app/themes/modern/static/css/base.css b/src/pyload/webui/app/themes/modern/static/css/base.css
+index 2fe7afab7..476f7bc30 100644
+--- a/src/pyload/webui/app/themes/modern/static/css/base.css
++++ b/src/pyload/webui/app/themes/modern/static/css/base.css
+@@ -154,6 +154,11 @@ textarea.form-control {
+   user-select: none;
+ }
+ 
++.modal-body,
++.modal-header {
++  overflow: auto;
++}
++
+ .modal-footer {
+   padding: 6px 12px;
+   border-top: none;
+diff --git a/src/pyload/webui/app/themes/pyplex/static/css/base.css b/src/pyload/webui/app/themes/pyplex/static/css/base.css
+index 745046472..9e23308d4 100644
+--- a/src/pyload/webui/app/themes/pyplex/static/css/base.css
++++ b/src/pyload/webui/app/themes/pyplex/static/css/base.css
+@@ -393,6 +393,7 @@ textarea.form-control:focus {
+ }
+ 
+ .modal-body {
++  overflow: auto;
+   background-color: #282828;
+ }
+ 
+@@ -401,6 +402,7 @@ textarea.form-control:focus {
+ }
+ 
+ .modal-header {
++  overflow: auto;
+   border-bottom: 1px solid #212121;
+ }
+ 
+-- 
+2.30.2
+

@@ -1,0 +1,100 @@
+From 925487549c0276735a6c542fc7a2ef7ddf1e5a37 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Wed, 17 Aug 2022 02:38:27 +0300
+Subject: [PATCH 20/25] [FileStoreTo] support premium download (#4185)
+
+---
+ src/pyload/plugins/accounts/FileStoreTo.py    | 45 +++++++++++++++++++
+ src/pyload/plugins/downloaders/FileStoreTo.py | 17 ++++++-
+ 2 files changed, 61 insertions(+), 1 deletion(-)
+ create mode 100644 src/pyload/plugins/accounts/FileStoreTo.py
+
+diff --git a/src/pyload/plugins/accounts/FileStoreTo.py b/src/pyload/plugins/accounts/FileStoreTo.py
+new file mode 100644
+index 000000000..0b801a836
+--- /dev/null
++++ b/src/pyload/plugins/accounts/FileStoreTo.py
+@@ -0,0 +1,45 @@
++# -*- coding: utf-8 -*-
++
++import re
++import time
++
++from ..base.account import BaseAccount
++
++
++class FileStoreTo(BaseAccount):
++    __name__ = "FileStoreTo"
++    __type__ = "account"
++    __version__ = "0.01"
++    __status__ = "testing"
++
++    __description__ = """Filestore.to account plugin"""
++    __license__ = "GPLv3"
++    __authors__ = [("GammaC0de", "nitzo2001[AT]yahoo[DOT]com")]
++
++    LOGIN_URL = "http://filestore.to/login"
++    VALID_UNTIL_PATTERN = r'<small>Premium-Status</small><div class="value text-success">([\d\.]+? - [\d:]+)'
++
++    def grab_info(self, user, password, data):
++        premium = False
++        validuntil = None
++
++        html = self.load("http://filestore.to/konto")
++        m = re.search(self.VALID_UNTIL_PATTERN, html)
++        if m is not None:
++            validuntil = time.mktime(time.strptime(m.group(1), "%d.%m.%Y - %H:%M"))
++            premium = validuntil > time.time()
++
++        return {"validuntil": validuntil, "trafficleft": -1, "premium": premium}
++
++    def signin(self, user, password, data):
++        html = self.load(self.LOGIN_URL)
++        if 'href="logout"' in html:
++            self.skip_login()
++
++        else:
++            html = self.load(
++                self.LOGIN_URL,
++                post={"Email": user, "Password": password, "Aktion": "Login"},
++            )
++            if 'href="logout"' not in html:
++                self.fail_login()
+diff --git a/src/pyload/plugins/downloaders/FileStoreTo.py b/src/pyload/plugins/downloaders/FileStoreTo.py
+index 82be12c77..3cf71c7b0 100644
+--- a/src/pyload/plugins/downloaders/FileStoreTo.py
++++ b/src/pyload/plugins/downloaders/FileStoreTo.py
+@@ -7,7 +7,7 @@ from ..base.simple_downloader import SimpleDownloader
+ class FileStoreTo(SimpleDownloader):
+     __name__ = "FileStoreTo"
+     __type__ = "downloader"
+-    __version__ = "0.14"
++    __version__ = "0.15"
+     __status__ = "testing"
+ 
+     __pattern__ = r"http://(?:www\.)?filestore\.to/\?d=(?P<ID>\w+)"
+@@ -62,6 +62,21 @@ class FileStoreTo(SimpleDownloader):
+         if m is not None:
+             self.link = m.group(1)
+ 
++    def handle_premium(self, pyfile):
++        m = re.search(r'name="DID" value="(.+?)"', self.data)
++        if m is None:
++            self.fail(self._("DID pattern not found"))
++
++        self.data = self.load(
++            pyfile.url, post={"DID": m.group(1), "Aktion": "Downloading"}
++        )
++
++        self.check_errors()
++
++        m = re.search(self.LINK_PATTERN, self.data)
++        if m is not None:
++            self.link = m.group(1)
++
+     def check_errors(self, data=None):
+         if re.search(self.NO_FREESLOTS_PATTERN, self.data) is not None:
+             self.log_warning(self._("No free slot available"))
+-- 
+2.30.2
+

@@ -1,0 +1,51 @@
+From 0628198bf5b0fb66c6d742bbe82e7c57cebb2270 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Thu, 4 Aug 2022 00:46:52 +0300
+Subject: [PATCH 17/25] allow basic auth with API calls
+ (https://github.com/pyload/pyload-bookmarklet/issues/7)
+
+---
+ .../webui/app/blueprints/api_blueprint.py     | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/src/pyload/webui/app/blueprints/api_blueprint.py b/src/pyload/webui/app/blueprints/api_blueprint.py
+index aaee4ee34..4d2c6ba68 100644
+--- a/src/pyload/webui/app/blueprints/api_blueprint.py
++++ b/src/pyload/webui/app/blueprints/api_blueprint.py
+@@ -21,9 +21,21 @@ bp = flask.Blueprint("api", __name__)
+ @bp.route("/api/<func>/<args>", methods=["GET", "POST"], endpoint="rpc")
+ # @apiver_check
+ def rpc(func, args=""):
+-
+     api = flask.current_app.config["PYLOAD_API"]
+-    s = flask.session
++
++    if flask.request.authorization:
++        user = flask.request.authorization.get("username", "")
++        password = flask.request.authorization.get("password", "")
++    else:
++        user = flask.request.form.get("u", "")
++        password = flask.request.form.get("p", "")
++
++    if user:
++        user_info = api.check_auth(user, password)
++        s = set_session(user_info)
++    else:
++        s = flask.session
++
+     if (
+             "role" not in s or
+             "perms" not in s or
+@@ -38,7 +50,8 @@ def rpc(func, args=""):
+     kwargs = {}
+ 
+     for x, y in chain(flask.request.args.items(), flask.request.form.items()):
+-        kwargs[x] = unquote(y)
++        if x not in ("u", "p"):
++            kwargs[x] = unquote(y)
+ 
+     try:
+         response = call_api(func, *args, **kwargs)
+-- 
+2.30.2
+

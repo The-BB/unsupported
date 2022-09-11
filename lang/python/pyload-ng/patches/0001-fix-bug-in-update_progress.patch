@@ -1,0 +1,25 @@
+From 680bf0b6775e020ed0119d623ca88e90f6dc1335 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sun, 29 May 2022 01:46:02 +0300
+Subject: [PATCH 01/25] fix bug in update_progress()
+
+---
+ src/pyload/core/network/xdcc/request.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/pyload/core/network/xdcc/request.py b/src/pyload/core/network/xdcc/request.py
+index 61f18ebba..f45f19790 100644
+--- a/src/pyload/core/network/xdcc/request.py
++++ b/src/pyload/core/network/xdcc/request.py
+@@ -170,7 +170,7 @@ class XDCCRequest:
+ 
+     def update_progress(self):
+         if self.status_notify:
+-            self.status_notify(self.percent)
++            self.status_notify({"progress": self.percent})
+ 
+     @property
+     def size(self):
+-- 
+2.30.2
+

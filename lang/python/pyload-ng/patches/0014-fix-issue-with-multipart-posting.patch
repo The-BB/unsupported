@@ -1,0 +1,27 @@
+From 6facc4e96efefbf86525634d74d29ea6271335d2 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sat, 30 Jul 2022 05:17:54 +0300
+Subject: [PATCH 14/25] fix issue with multipart posting
+
+---
+ src/pyload/core/network/http/http_request.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/pyload/core/network/http/http_request.py b/src/pyload/core/network/http/http_request.py
+index f74c5d1f8..4f0d1ea34 100644
+--- a/src/pyload/core/network/http/http_request.py
++++ b/src/pyload/core/network/http/http_request.py
+@@ -227,8 +227,8 @@ class HTTPRequest:
+             else:
+                 multipart_post = []
+                 for k, v in post.items():
+-                    if isinstance(v, str):
+-                        multipart_post.append((k, v.encode('utf8')))
++                    if isinstance(v, (str, bool, int)):
++                        multipart_post.append((k, to_str(v)))
+ 
+                     elif isinstance(v, FormFile):
+                         filename = os.path.basename(v.filename).encode('utf8')
+-- 
+2.30.2
+

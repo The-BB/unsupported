@@ -1,0 +1,48 @@
+From 8be54556b75f4e6926b5f1e38888d743dddf09a5 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Wed, 24 Aug 2022 01:43:06 +0300
+Subject: [PATCH 23/25] isort + cosmetic changes
+
+---
+ src/pyload/plugins/downloaders/FileStoreTo.py | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/src/pyload/plugins/downloaders/FileStoreTo.py b/src/pyload/plugins/downloaders/FileStoreTo.py
+index fa6737831..98528b187 100644
+--- a/src/pyload/plugins/downloaders/FileStoreTo.py
++++ b/src/pyload/plugins/downloaders/FileStoreTo.py
+@@ -1,9 +1,11 @@
+ # -*- coding: utf-8 -*-
+-import re
+ import random
+-from ..base.simple_downloader import SimpleDownloader
++import re
++
+ from pyload.core.network.http.exceptions import BadHeader
+ 
++from ..base.simple_downloader import SimpleDownloader
++
+ 
+ class FileStoreTo(SimpleDownloader):
+     __name__ = "FileStoreTo"
+@@ -69,12 +71,15 @@ class FileStoreTo(SimpleDownloader):
+             return super().process(pyfile)
+ 
+         except BadHeader as exc:
+-            self.log_debug(f"FileStore.to httpcode: {exc.code}")
++            self.log_debug(self._(f"FileStore.to httpcode: {exc.code}"))
+             if exc.code == 503 and self.config.get("beadheader_retry", True):
+                 rand_delay = random.randrange(0, 6) * 5
+-                self.log_warning("Temporary server error, retrying...")
++                self.log_warning(self._("Temporary server error, retrying..."))
+                 self.retry(10, 10 + rand_delay)
+ 
++            else:
++                raise
++
+     def handle_premium(self, pyfile):
+         m = re.search(r'name="DID" value="(.+?)"', self.data)
+         if m is None:
+-- 
+2.30.2
+

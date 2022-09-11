@@ -2,7 +2,7 @@
 
 ENABLED=yes
 PROCS=pyload
-ARGS="--userdir /opt/var/lib/pyLoad"
+ARGS="--userdir /opt/var/lib/pyLoad --pidfile /opt/var/run/pyload.pid --daemon"
 PREARGS=""
 DESC=$PROCS
 PATH=/opt/sbin:/opt/bin:/opt/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin

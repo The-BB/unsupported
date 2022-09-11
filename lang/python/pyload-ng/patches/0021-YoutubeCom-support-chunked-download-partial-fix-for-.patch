@@ -1,0 +1,43 @@
+From b9d23572fd4f0774793e90052a7f30f20bccadb9 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sat, 20 Aug 2022 04:51:26 +0300
+Subject: [PATCH 21/25] [YoutubeCom] support chunked download (partial fix for
+ #4022)
+
+---
+ src/pyload/plugins/downloaders/YoutubeCom.py | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/pyload/plugins/downloaders/YoutubeCom.py b/src/pyload/plugins/downloaders/YoutubeCom.py
+index 75b0f69ff..4945577c9 100644
+--- a/src/pyload/plugins/downloaders/YoutubeCom.py
++++ b/src/pyload/plugins/downloaders/YoutubeCom.py
+@@ -231,7 +231,7 @@ class Ffmpeg:
+ class YoutubeCom(BaseDownloader):
+     __name__ = "YoutubeCom"
+     __type__ = "downloader"
+-    __version__ = "0.85"
++    __version__ = "0.86"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:[^/]*\.)?(?:youtu\.be/|youtube\.com/watch\?(?:.*&)?v=)[\w\-]+"
+@@ -790,7 +790,7 @@ class YoutubeCom(BaseDownloader):
+         self.pyfile.name = self.file_name + file_suffix
+ 
+         try:
+-            filename = self.download(url, disposition=False, resume=False)
++            filename = self.download(url, disposition=False)
+         except Skip as exc:
+             filename = os.path.join(
+                 self.pyload.config.get("general", "storage_folder"),
+@@ -1220,6 +1220,7 @@ class YoutubeCom(BaseDownloader):
+ 
+     def setup(self):
+         self.resume_download = True
++        self.chunk_limit = -1
+         self.multi_dl = True
+ 
+         try:
+-- 
+2.30.2
+

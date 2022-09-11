@@ -1,0 +1,68 @@
+From 0a39f018d360f671273ab28b0f2f8ca3f40d1509 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Tue, 21 Jun 2022 00:46:23 +0300
+Subject: [PATCH 08/25] captcha command shortcut was conflicting with the
+ collector shortcut, rename to ca
+
+---
+ src/pyload/plugins/addons/IRC.py    | 2 +-
+ src/pyload/plugins/base/chat_bot.py | 9 +++++++--
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/src/pyload/plugins/addons/IRC.py b/src/pyload/plugins/addons/IRC.py
+index 3e010d172..eab861671 100644
+--- a/src/pyload/plugins/addons/IRC.py
++++ b/src/pyload/plugins/addons/IRC.py
+@@ -107,7 +107,7 @@ class IRC(ChatBot):
+             url = re.search(r"src='([^']+)'", html).group(1)
+             self.response(self._("New Captcha Request: {}").format(url))
+             self.response(
+-                self._("Answer with 'c {} text on the captcha'").format(task.id)
++                self._("Answer with 'ca {} text on the captcha'").format(task.id)
+             )
+ 
+     def run(self):
+diff --git a/src/pyload/plugins/base/chat_bot.py b/src/pyload/plugins/base/chat_bot.py
+index 1df8e0c36..04de54a06 100644
+--- a/src/pyload/plugins/base/chat_bot.py
++++ b/src/pyload/plugins/base/chat_bot.py
+@@ -25,6 +25,7 @@ class ChatBot(Thread, BaseAddon):
+     SHORTCUT_COMMANDS = {
+         "a": "add",
+         "c": "collector",
++        "ca": "captcha",
+         "f": "freespace",
+         "h": "help",
+         "i": "info",
+@@ -308,7 +309,7 @@ class ChatBot(Thread, BaseAddon):
+         self.pyload.api.pull_from_queue(package_id)
+         return [self._("INFO: Pulled package #{} from queue to collector.").format(package_id)]
+ 
+-    def _cmd_c(self, args):
++    def _cmd_captcha(self, args):
+         """
+         Captcha answer.
+         """
+@@ -400,6 +401,7 @@ class ChatBot(Thread, BaseAddon):
+         lines = [
+             "The following commands are available:",
+             "add <package|packid> <links> [...] Adds link to package. (creates new package if it does not exist)",
++            "captcha <id> <answer>              Solve a captcha task with id <id>",
+             "collector                          Shows all packages in collector",
+             "del -p|-l <id> [...]               Deletes all packages|links with the ids specified",
+             "deletefinished                     Deletes all finished files and completly finished packages",
+@@ -422,7 +424,10 @@ class ChatBot(Thread, BaseAddon):
+             "unpause                            Starts all downloads"
+         ]
+         lines.append("Shortcuts:")
+-        lines.append(", ".join(cmd_short + ": " + cmd_long for cmd_short, cmd_long in self.SHORTCUT_COMMANDS.items()))
++        lines.append(", ".join(
++            cmd_short + ": " + cmd_long
++            for cmd_short, cmd_long in self.SHORTCUT_COMMANDS.items())
++        )
+ 
+         return lines
+ 
+-- 
+2.30.2
+

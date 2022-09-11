@@ -1,0 +1,53 @@
+From b6a761f63680b3b9f9d784f05f54aa78cab37f1b Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Wed, 27 Jul 2022 00:54:28 +0300
+Subject: [PATCH 13/25] [FiregetCom] fix #4175
+
+---
+ src/pyload/plugins/downloaders/FiregetCom.py | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/src/pyload/plugins/downloaders/FiregetCom.py b/src/pyload/plugins/downloaders/FiregetCom.py
+index 1cdd02897..53fe43b9e 100644
+--- a/src/pyload/plugins/downloaders/FiregetCom.py
++++ b/src/pyload/plugins/downloaders/FiregetCom.py
+@@ -9,7 +9,7 @@ from ..base.simple_downloader import SimpleDownloader
+ class FiregetCom(SimpleDownloader):
+     __name__ = "FiregetCom"
+     __type__ = "downloader"
+-    __version__ = "0.02"
++    __version__ = "0.03"
+     __status__ = "testing"
+ 
+     __pattern__ = r"http://(?:www\.)?fireget\.com/(?P<ID>\w{12})/.+"
+@@ -55,10 +55,11 @@ class FiregetCom(SimpleDownloader):
+         if not inputs:
+             self.error("Form F1 not found")
+ 
+-        self.captcha = ReCaptcha(pyfile)
+-        captcha_key = self.captcha.detect_key()
++        recaptcha = ReCaptcha(pyfile)
++        captcha_key = recaptcha.detect_key()
+ 
+         if captcha_key:
++            self.captcha = recaptcha
+             response = self.captcha.challenge(captcha_key)
+             inputs["g-recaptcha-response"] = response
+ 
+@@ -78,7 +79,12 @@ class FiregetCom(SimpleDownloader):
+                 inputs["code"] = captcha_code
+ 
+             else:
+-                self.error("Captcha not found")
++                m = re.search(r'<img src="(http://fireget.com/captchas/.+?)"', self.data)
++                if m is not None:
++                    captcha_code = self.captcha.decrypt(m.group(1))
++                    inputs["code"] = captcha_code
++                else:
++                    self.error("Captcha not found")
+ 
+         self.download(pyfile.url, post=inputs)
+ 
+-- 
+2.30.2
+

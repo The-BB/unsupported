@@ -1,0 +1,48 @@
+From 797b2f9826ec4b328865a90e212f042478edab90 Mon Sep 17 00:00:00 2001
+From: GammaC0de <gammac0de@users.noreply.github.com>
+Date: Sun, 4 Sep 2022 02:01:08 +0300
+Subject: [PATCH 25/25] [FilecryptCc] fix #4195 (2)
+
+---
+ src/pyload/plugins/decrypters/FilecryptCc.py | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/pyload/plugins/decrypters/FilecryptCc.py b/src/pyload/plugins/decrypters/FilecryptCc.py
+index 4aeff4965..aa744980b 100644
+--- a/src/pyload/plugins/decrypters/FilecryptCc.py
++++ b/src/pyload/plugins/decrypters/FilecryptCc.py
+@@ -20,12 +20,13 @@ from ..anticaptchas.CoinHive import CoinHive
+ from ..anticaptchas.ReCaptcha import ReCaptcha
+ from ..anticaptchas.SolveMedia import SolveMedia
+ from ..base.decrypter import BaseDecrypter
++from ..helpers import replace_patterns
+ 
+ 
+ class FilecryptCc(BaseDecrypter):
+     __name__ = "FilecryptCc"
+     __type__ = "decrypter"
+-    __version__ = "0.46"
++    __version__ = "0.47"
+     __status__ = "testing"
+ 
+     __pattern__ = r"https?://(?:www\.)?filecrypt\.(?:cc|co)/Container/\w+"
+@@ -42,6 +43,7 @@ class FilecryptCc(BaseDecrypter):
+     ]
+ 
+     COOKIES = [("filecrypt.cc", "lang", "en")]
++    URL_REPLACEMENTS = [(r"filecrypt.co", "filecrypt.cc")]
+ 
+     DLC_LINK_PATTERN = r'onclick="DownloadDLC\(\'(.+)\'\);">'
+     WEBLINK_PATTERN = r"<button onclick=\"openLink.?'([\w\-]*)',"
+@@ -68,6 +70,8 @@ class FilecryptCc(BaseDecrypter):
+         )
+ 
+     def decrypt(self, pyfile):
++        pyfile.url = replace_patterns(pyfile.url, self.URL_REPLACEMENTS)
++
+         self.data = self._filecrypt_load_url(pyfile.url)
+ 
+         # @NOTE: "content notfound" is NOT a typo
+-- 
+2.30.2
+
