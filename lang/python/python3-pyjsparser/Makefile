@@ -23,7 +23,7 @@ define Package/python3-pyjsparser
   TITLE:=Fast JavaScript parser for Python
   URL:=https://github.com/PiotrDabkowski/pyjsparser
   DEPENDS:= \
-	+python3-light
+	+python3-codecs
 endef
 
 define Package/python3-pyjsparser/description
