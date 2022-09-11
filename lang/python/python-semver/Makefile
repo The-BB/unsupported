@@ -23,7 +23,7 @@ define Package/python3-semver
   TITLE:=Python helper for Semantic Versioning
   URL:=https://semver.org/
   DEPENDS:= \
-	+python3-light
+	+python3-pydoc
 endef
 
 define Package/python3-semver/description
