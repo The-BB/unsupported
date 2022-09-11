@@ -23,7 +23,8 @@ define Package/python3-send2trash
   TITLE:=Send file to trash natively
   URL:=https://github.com/arsenetar/send2trash
   DEPENDS:= \
-	+python3-light
+	+python3-ctypes \
+	+python3-urllib
 endef
 
 define Package/python3-send2trash/description
