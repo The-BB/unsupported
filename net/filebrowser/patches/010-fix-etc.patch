@@ -9,7 +9,7 @@
  
  The precedence of the configuration values are as follows:
  
-@@ -389,7 +389,7 @@ func initConfig() {
+@@ -395,7 +395,7 @@ func initConfig() {
  		checkErr(err)
  		v.AddConfigPath(".")
  		v.AddConfigPath(home)
