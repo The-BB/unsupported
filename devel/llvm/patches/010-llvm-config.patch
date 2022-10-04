@@ -1,0 +1,13 @@
+--- a/tools/llvm-config/llvm-config.cpp
++++ b/tools/llvm-config/llvm-config.cpp
+@@ -309,6 +309,10 @@ int main(int argc, char **argv) {
+   CurrentExecPrefix =
+       sys::path::parent_path(sys::path::parent_path(CurrentPath)).str();
+ 
++#ifdef LLVM_CONFIG_EXEC_PREFIX
++  CurrentExecPrefix = LLVM_CONFIG_EXEC_PREFIX;
++#endif
++
+   // Check to see if we are inside a development tree by comparing to possible
+   // locations (prefix style or CMake style).
+   if (sys::fs::equivalent(CurrentExecPrefix, LLVM_OBJ_ROOT)) {

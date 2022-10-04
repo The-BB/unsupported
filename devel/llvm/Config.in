@@ -1,0 +1,40 @@
+config LLVM_TARGET_ARCH
+	string
+	default "AArch64" if aarch64
+	default "ARM" if arm
+	default "Mips" if (mips||mipsel)
+	default "X86" if (i386||x86_64)
+
+config LLVM_RTTI
+	bool "Enable run time type information (RTTI)"
+	default n
+	help
+		Build LLVM with run-time type information. LLVM can be built
+		without rtti, but turning it off changes the ABI of C++
+		programs.
+
+		This features is needed to build the Gallium Nouveau driver
+		or the Clover OpenCL state tracker when llvm support is
+		enabled.
+
+		https://llvm.org/docs/HowToSetUpLLVMStyleRTTI.html
+
+comment "LLVM backends"
+
+config LLVM_AMDGPU
+	bool "AMDGPU backend"
+	default n
+	help
+		Build AMDGPU target.
+
+config LLVM_BPF
+	bool "BPF backend"
+	default n
+	help
+		Build BPF target.
+
+config LLVM_WEBASSEMBLY
+	bool "WebAssembly backend"
+	default n
+	help
+		Build WebAssembly target (WASM).
