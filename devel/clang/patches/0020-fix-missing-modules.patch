@@ -1,0 +1,353 @@
+--- /dev/null
++++ b/cmake/modules/EnableLanguageNolink.cmake
+@@ -0,0 +1,11 @@
++macro(llvm_enable_language_nolink)
++  # Set CMAKE_TRY_COMPILE_TARGET_TYPE to STATIC_LIBRARY to disable linking
++  # in the compiler sanity checks. When bootstrapping the toolchain,
++  # the toolchain itself is still incomplete and sanity checks that include
++  # linking may fail.
++  set(__SAVED_TRY_COMPILE_TARGET_TYPE ${CMAKE_TRY_COMPILE_TARGET_TYPE})
++  set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
++  enable_language(${ARGV})
++  set(CMAKE_TRY_COMPILE_TARGET_TYPE ${__SAVED_TRY_COMPILE_TARGET_TYPE})
++  unset(__SAVED_TRY_COMPILE_TARGET_TYPE)
++endmacro()
+--- /dev/null
++++ b/cmake/modules/ExtendPath.cmake
+@@ -0,0 +1,19 @@
++# Extend the path in `base_path` with the path in `current_segment`, returning
++# the result in `joined_path`. If `current_segment` is an absolute path then
++# just return it, in effect overriding `base_path`, and issue a warning.
++#
++# Note that the code returns a relative path (avoiding introducing leading
++# slashes) if `base_path` is empty.
++function(extend_path joined_path base_path current_segment)
++  if("${current_segment}" STREQUAL "")
++    set(temp_path "${base_path}")
++  elseif("${base_path}" STREQUAL "")
++    set(temp_path "${current_segment}")
++  elseif(IS_ABSOLUTE "${current_segment}")
++    message(WARNING "Since \"${current_segment}\" is absolute, it overrides base path: \"${base_path}\".")
++    set(temp_path "${current_segment}")
++  else()
++    set(temp_path "${base_path}/${current_segment}")
++  endif()
++  set(${joined_path} "${temp_path}" PARENT_SCOPE)
++endfunction()
+--- /dev/null
++++ b/cmake/modules/FindPrefixFromConfig.cmake
+@@ -0,0 +1,41 @@
++# Find the prefix from the `*Config.cmake` file being generated.
++#
++# When generating an installed `*Config.cmake` file, we often want to be able
++# to refer to the ancestor directory which contains all the installed files.
++#
++# We want to do this without baking in an absolute path when the config file is
++# generated, in order to allow for a "relocatable" binary distribution that
++# doesn't need to know what path it ends up being installed at when it is
++# built.
++#
++# The solution that we know the relative path that the config file will be at
++# within that prefix, like `"${prefix_var}/lib/cmake/${project}"`, so we count
++# the number of components in that path to figure out how many parent dirs we
++# need to traverse from the location of the config file to get to the prefix
++# dir.
++#
++# out_var:
++#   variable to set the "return value" of the function, which is the code to
++#   include in the config file under construction.
++#
++# prefix_var:
++#   Name of the variable to define in the returned code (not directory for the
++#   faller!) that will contain the prefix path.
++#
++# path_to_leave:
++#   Path from the prefix to the config file, a relative path which we wish to
++#   go up and out from to find the prefix directory.
++function(find_prefix_from_config out_var prefix_var path_to_leave)
++  set(config_code
++    "# Compute the installation prefix from this LLVMConfig.cmake file location."
++    "get_filename_component(${prefix_var} \"\${CMAKE_CURRENT_LIST_FILE}\" PATH)")
++  # Construct the proper number of get_filename_component(... PATH)
++  # calls to compute the installation prefix.
++  string(REGEX REPLACE "/" ";" _count "${path_to_leave}")
++  foreach(p ${_count})
++    list(APPEND config_code
++      "get_filename_component(${prefix_var} \"\${${prefix_var}}\" PATH)")
++  endforeach(p)
++  string(REPLACE ";" "\n" config_code "${config_code}")
++  set("${out_var}" "${config_code}" PARENT_SCOPE)
++endfunction()
+--- /dev/null
++++ b/cmake/modules/GNUInstallPackageDir.cmake
+@@ -0,0 +1,33 @@
++# Mimick `GNUInstallDirs` for one more install directory, the one where
++# project's installed cmake subdirs go.
++
++# These functions are internal functions vendored in from GNUInstallDirs (with
++# new names), so we don't depend on unstable implementation details. They are
++# also simplified to only handle the cases we need.
++#
++# The purpose would appear to be making `CACHE PATH` vars in a way that
++# bypasses the legacy oddity that `-D<PATH>` gets canonicalized, despite
++# non-canonical `CACHE PATH`s being perfectly valid.
++
++macro(_GNUInstallPackageDir_cache_convert_to_path var description)
++  get_property(_GNUInstallPackageDir_cache_type CACHE ${var} PROPERTY TYPE)
++  if(_GNUInstallPackageDir_cache_type STREQUAL "UNINITIALIZED")
++    file(TO_CMAKE_PATH "${${var}}" _GNUInstallPackageDir_cmakepath)
++    set_property(CACHE ${var} PROPERTY TYPE PATH)
++    set_property(CACHE ${var} PROPERTY VALUE "${_GNUInstallPackageDir_cmakepath}")
++    set_property(CACHE ${var} PROPERTY HELPSTRING "${description}")
++    unset(_GNUInstallPackageDir_cmakepath)
++  endif()
++  unset(_GNUInstallPackageDir_cache_type)
++endmacro()
++
++# Create a cache variable with default for a path.
++macro(_GNUInstallPackageDir_cache_path var default description)
++  if(NOT DEFINED ${var})
++    set(${var} "${default}" CACHE PATH "${description}")
++  endif()
++  _GNUInstallPackageDir_cache_convert_to_path("${var}" "${description}")
++endmacro()
++
++_GNUInstallPackageDir_cache_path(CMAKE_INSTALL_PACKAGEDIR "lib${LLVM_LIBDIR_SUFFIX}/cmake"
++  "Directories containing installed CMake modules (lib/cmake)")
+--- /dev/null
++++ b/cmake/modules/HandleCompilerRT.cmake
+@@ -0,0 +1,101 @@
++# Check if compile-rt library file path exists.
++# If found, cache the path in:
++#    COMPILER_RT_LIBRARY-<name>-<target>
++# If err_flag is true OR path not found, emit a message and set:
++#    COMPILER_RT_LIBRARY-<name>-<target> to NOTFOUND
++function(cache_compiler_rt_library err_flag name target library_file)
++  if(err_flag OR NOT EXISTS "${library_file}")
++    message(STATUS "Failed to find compiler-rt ${name} library for ${target}")
++    set(COMPILER_RT_LIBRARY_${name}_${target} "NOTFOUND" CACHE INTERNAL
++        "compiler-rt ${name} library for ${target}")
++  else()
++    message(STATUS "Found compiler-rt ${name} library: ${library_file}")
++    set(COMPILER_RT_LIBRARY_${name}_${target} "${library_file}" CACHE INTERNAL
++        "compiler-rt ${name} library for ${target}")
++  endif()
++endfunction()
++
++function(get_component_name name variable)
++  if(APPLE)
++    if(NOT name MATCHES "builtins.*")
++      set(component_name "${name}_")
++    endif()
++    # TODO: Support ios, tvos and watchos as well.
++    set(component_name "${component_name}osx")
++  else()
++    set(component_name "${name}")
++  endif()
++  set(${variable} "${component_name}" PARENT_SCOPE)
++endfunction()
++
++# Find the path to compiler-rt library `name` (e.g. "builtins") for the
++# specified `TARGET` (e.g. "x86_64-linux-gnu") and return it in `variable`.
++# This calls cache_compiler_rt_library that caches the path to speed up
++# repeated invocations with the same `name` and `target`.
++function(find_compiler_rt_library name variable)
++  cmake_parse_arguments(ARG "" "TARGET;FLAGS" "" ${ARGN})
++  # While we can use compiler-rt runtimes with other compilers, we need to
++  # query the compiler for runtime location and thus we require Clang.
++  if(NOT CMAKE_CXX_COMPILER_ID MATCHES Clang)
++    set(${variable} "NOTFOUND" PARENT_SCOPE)
++    return()
++  endif()
++  set(target "${ARG_TARGET}")
++  if(NOT target AND CMAKE_CXX_COMPILER_TARGET)
++    set(target "${CMAKE_CXX_COMPILER_TARGET}")
++  endif()
++  if(NOT DEFINED COMPILER_RT_LIBRARY_builtins_${target})
++    # If the cache variable is not defined, invoke Clang and then
++    # set it with cache_compiler_rt_library.
++    set(clang_command ${CMAKE_CXX_COMPILER} "${ARG_FLAGS}")
++    if(target)
++      list(APPEND clang_command "--target=${target}")
++    endif()
++    get_property(cxx_flags CACHE CMAKE_CXX_FLAGS PROPERTY VALUE)
++    string(REPLACE " " ";" cxx_flags "${cxx_flags}")
++    list(APPEND clang_command ${cxx_flags})
++    execute_process(
++      COMMAND ${clang_command} "--rtlib=compiler-rt" "-print-libgcc-file-name"
++      RESULT_VARIABLE had_error
++      OUTPUT_VARIABLE library_file
++    )
++    string(STRIP "${library_file}" library_file)
++    file(TO_CMAKE_PATH "${library_file}" library_file)
++    get_filename_component(dirname ${library_file} DIRECTORY)
++    if(APPLE)
++      execute_process(
++        COMMAND ${clang_command} "--print-resource-dir"
++        RESULT_VARIABLE had_error
++        OUTPUT_VARIABLE resource_dir
++      )
++      string(STRIP "${resource_dir}" resource_dir)
++      set(dirname "${resource_dir}/lib/darwin")
++    endif()
++    get_filename_component(basename ${library_file} NAME)
++    if(basename MATCHES "libclang_rt\.([a-z0-9_\-]+)\.a")
++      set(from_name ${CMAKE_MATCH_1})
++      get_component_name(${CMAKE_MATCH_1} to_name)
++      string(REPLACE "${from_name}" "${to_name}" basename "${basename}")
++      set(library_file "${dirname}/${basename}")
++      cache_compiler_rt_library(${had_error} builtins "${target}" "${library_file}")
++    endif()
++  endif()
++  if(NOT COMPILER_RT_LIBRARY_builtins_${target})
++    set(${variable} "NOTFOUND" PARENT_SCOPE)
++    return()
++  endif()
++  if(NOT DEFINED COMPILER_RT_LIBRARY_${name}_${target})
++    # Clang gives only the builtins library path. Other library paths are
++    # obtained by substituting "builtins" with ${name} in the builtins
++    # path and then checking if the resultant path exists. The result of
++    # this check is also cached by cache_compiler_rt_library.
++    set(library_file "${COMPILER_RT_LIBRARY_builtins_${target}}")
++    if(library_file MATCHES ".*libclang_rt\.([a-z0-9_\-]+)\.a")
++      set(from_name ${CMAKE_MATCH_0})
++      get_component_name(${name} to_name)
++      string(REPLACE "${from_name}" "${to_name}" library_file "${library_file}")
++      cache_compiler_rt_library(FALSE "${name}" "${target}" "${library_file}")
++    endif()
++  endif()
++  set(${variable} "${COMPILER_RT_LIBRARY_${name}_${target}}" PARENT_SCOPE)
++endfunction()
+--- /dev/null
++++ b/cmake/modules/HandleOutOfTreeLLVM.cmake
+@@ -0,0 +1,80 @@
++if (NOT DEFINED LLVM_PATH)
++  set(LLVM_PATH ${CMAKE_CURRENT_LIST_DIR}/../../llvm CACHE PATH "" FORCE)
++endif()
++
++if(NOT IS_DIRECTORY ${LLVM_PATH})
++  message(FATAL_ERROR
++    "The provided LLVM_PATH (${LLVM_PATH}) is not a valid directory. Note that "
++    "building libc++ outside of the monorepo is not supported anymore. Please "
++    "use a Standalone build against the monorepo, a Runtimes build or a classic "
++    "monorepo build.")
++endif()
++
++set(LLVM_INCLUDE_DIR ${LLVM_PATH}/include CACHE PATH "Path to llvm/include")
++set(LLVM_PATH ${LLVM_PATH} CACHE PATH "Path to LLVM source tree")
++set(LLVM_MAIN_SRC_DIR ${LLVM_PATH})
++set(LLVM_CMAKE_DIR "${LLVM_PATH}/cmake/modules")
++set(LLVM_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
++set(LLVM_LIBRARY_OUTPUT_INTDIR "${CMAKE_CURRENT_BINARY_DIR}/lib")
++
++if (EXISTS "${LLVM_CMAKE_DIR}")
++  list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}")
++elseif (EXISTS "${LLVM_MAIN_SRC_DIR}/cmake/modules")
++  list(APPEND CMAKE_MODULE_PATH "${LLVM_MAIN_SRC_DIR}/cmake/modules")
++else()
++  message(FATAL_ERROR "Neither ${LLVM_CMAKE_DIR} nor ${LLVM_MAIN_SRC_DIR}/cmake/modules found. "
++                      "This is not a supported configuration.")
++endif()
++
++message(STATUS "Configuring for standalone build.")
++
++# By default, we target the host, but this can be overridden at CMake invocation time.
++include(GetHostTriple)
++get_host_triple(LLVM_INFERRED_HOST_TRIPLE)
++set(LLVM_HOST_TRIPLE "${LLVM_INFERRED_HOST_TRIPLE}" CACHE STRING "Host on which LLVM binaries will run")
++set(LLVM_DEFAULT_TARGET_TRIPLE "${LLVM_HOST_TRIPLE}" CACHE STRING "Target triple used by default.")
++
++# Add LLVM Functions --------------------------------------------------------
++if (WIN32)
++  set(LLVM_ON_UNIX 0)
++  set(LLVM_ON_WIN32 1)
++else()
++  set(LLVM_ON_UNIX 1)
++  set(LLVM_ON_WIN32 0)
++endif()
++
++include(AddLLVM OPTIONAL)
++
++# LLVM Options --------------------------------------------------------------
++if (NOT DEFINED LLVM_INCLUDE_TESTS)
++  set(LLVM_INCLUDE_TESTS ON)
++endif()
++if (NOT DEFINED LLVM_INCLUDE_DOCS)
++  set(LLVM_INCLUDE_DOCS ON)
++endif()
++if (NOT DEFINED LLVM_ENABLE_SPHINX)
++  set(LLVM_ENABLE_SPHINX OFF)
++endif()
++
++if (LLVM_INCLUDE_TESTS)
++  # Required LIT Configuration ------------------------------------------------
++  # Define the default arguments to use with 'lit', and an option for the user
++  # to override.
++  set(LLVM_DEFAULT_EXTERNAL_LIT "${LLVM_MAIN_SRC_DIR}/utils/lit/lit.py")
++  set(LIT_ARGS_DEFAULT "-sv --show-xfail --show-unsupported")
++  if (MSVC OR XCODE)
++    set(LIT_ARGS_DEFAULT "${LIT_ARGS_DEFAULT} --no-progress-bar")
++  endif()
++  set(LLVM_LIT_ARGS "${LIT_ARGS_DEFAULT}" CACHE STRING "Default options for lit")
++endif()
++
++# Required doc configuration
++if (LLVM_ENABLE_SPHINX)
++  find_package(Sphinx REQUIRED)
++endif()
++
++if (LLVM_ON_UNIX AND NOT APPLE)
++  set(LLVM_HAVE_LINK_VERSION_SCRIPT 1)
++else()
++  set(LLVM_HAVE_LINK_VERSION_SCRIPT 0)
++endif()
+--- /dev/null
++++ b/cmake/modules/LLVMCheckCompilerLinkerFlag.cmake
+@@ -0,0 +1,35 @@
++include(CMakePushCheckState)
++
++include(CheckCompilerFlag OPTIONAL)
++
++if(NOT COMMAND check_compiler_flag)
++  include(CheckCCompilerFlag)
++  include(CheckCXXCompilerFlag)
++endif()
++
++function(llvm_check_compiler_linker_flag lang flag out_var)
++  # If testing a flag with check_c_compiler_flag, it gets added to the compile
++  # command only, but not to the linker command in that test. If the flag
++  # is vital for linking to succeed, the test would fail even if it would
++  # have succeeded if it was included on both commands.
++  #
++  # Therefore, try adding the flag to CMAKE_REQUIRED_FLAGS, which gets
++  # added to both compiling and linking commands in the tests.
++
++  cmake_push_check_state()
++  set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} ${flag}")
++  if(COMMAND check_compiler_flag)
++    check_compiler_flag("${lang}" "" ${out_var})
++  else()
++    # Until the minimum CMAKE version is 3.19
++    # cmake builtin compatible, except we assume lang is C or CXX
++    if("${lang}" STREQUAL "C")
++      check_c_compiler_flag("" ${out_var})
++    elseif("${lang}" STREQUAL "CXX")
++      check_cxx_compiler_flag("" ${out_var})
++    else()
++      message(FATAL_ERROR "\"${lang}\" is not C or CXX")
++    endif()
++  endif()
++  cmake_pop_check_state()
++endfunction()
+--- /dev/null
++++ b/cmake/modules/SetPlatformToolchainTools.cmake
+@@ -0,0 +1,9 @@
++get_property(languages GLOBAL PROPERTY ENABLED_LANGUAGES)
++
++if(CMAKE_SYSTEM_NAME MATCHES "AIX")
++  foreach(lang IN LISTS languages)
++    set(CMAKE_${lang}_ARCHIVE_CREATE "<CMAKE_AR> -X32_64 qc <TARGET> <LINK_FLAGS> <OBJECTS>")
++    set(CMAKE_${lang}_ARCHIVE_APPEND "<CMAKE_AR> -X32_64 q <TARGET> <LINK_FLAGS> <OBJECTS>")
++    set(CMAKE_${lang}_ARCHIVE_FINISH "<CMAKE_RANLIB> -X32_64 <TARGET>")
++  endforeach()
++endif()
