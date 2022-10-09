@@ -3,20 +3,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pax-utils
-PKG_VERSION:=1.3.3
+PKG_VERSION:=1.3.5
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://gentoo.osuosl.org/distfiles/
-PKG_HASH:=eeca7fbd98bc66bead4a77000c2025d9f17ea8201b84245882406ce00b9b6b14
+PKG_HASH:=f0a5b03df2308aa2dd7aaf53b9ec0b2b48455b86129e477a1643de62904ab874
 
 PKG_LICENSE:=GPL-2.0-or-later
 PKG_LICENSE_FILES:=COPYING
 
-PKG_FIXUP:=autoreconf
-PKG_INSTALL:=1
-
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/meson.mk
 
 define Package/pax-utils
   SECTION:=devel
@@ -33,18 +31,23 @@ define Package/pax-utils/description
 endef
 
 define Package/pax-utils/config
-	if PACKAGE_pax-utils
-		config PAX_UTILS_LIBCAP
-			bool
-			prompt "build with capabilities"
-			default n
-	endif
+  if PACKAGE_pax-utils
+	config PAX_UTILS_LIBCAP
+		bool
+		prompt "build with capabilities"
+		default n
+		help
+		    Enable listing capabilities in pspax output (requires libcap)
+  endif
 endef
 
-CONFIGURE_ARGS += \
-	--with$(if $(CONFIG_PAX_UTILS_LIBCAP),,out)-caps \
-	--without-python \
-	--without-seccomp
+MESON_ARGS += \
+	-Dbuild_manpages=disabled \
+	-Dlddtree_implementation=sh \
+	-Dtests=false \
+	-Duse_fuzzing=false \
+	-Duse_libcap=$(if $(CONFIG_PAX_UTILS_LIBCAP),enabled,disabled) \
+	-Duse_seccomp=false
 
 define Package/pax-utils/install
 	$(INSTALL_DIR) $(1)/opt/bin
