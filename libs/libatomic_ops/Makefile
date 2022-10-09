@@ -3,14 +3,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libatomic_ops
-PKG_VERSION:=7.6.2
+PKG_VERSION:=7.6.14
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://www.hboehm.info/gc/gc_source/
-PKG_HASH:=219724edad3d580d4d37b22e1d7cb52f0006d282d26a9b8681b560a625142ee6
+PKG_HASH:=390f244d424714735b7050d056567615b3b8f29008a663c262fb548f1802d292
 
-PKG_LICENSE:=MIT (main library) / GPL-2.0+ (gpl extension)
+PKG_LICENSE:=GPL-2.0-or-later MIT
+PKG_LICENSE_FILES:=LICENSE
 
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
@@ -25,8 +26,9 @@ define Package/libatomic_ops
 endef
 
 define Package/libatomic_ops/description
-    Libatomic-ops implements a large collection of operations, each one of which
-is a combination of an (optional) atomic memory operation, and a memory barrier.
+  Libatomic-ops implements a large collection of operations,
+  each one of which is a combination of an (optional) atomic
+  memory operation, and a memory barrier.
 endef
 
 CONFIGURE_ARGS += \
