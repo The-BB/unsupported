@@ -3,17 +3,19 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=highlight
-PKG_VERSION:=4.2
+PKG_VERSION:=4.3
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=http://www.andre-simon.de/zip
-PKG_HASH:=ed3efdb9b416b236e503989f9dfebdd94bf515536cfd183aefe36cefdd0d0468
+PKG_HASH:=7dbc3e90f2b564d459ccae2195fa201e0b4442f6754f2da2634e172b2ac5e813
 
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=COPYING
 
 PKG_INSTALL:=1
+
+PKG_BUILD_DEPENDS:=boost
 
 include $(INCLUDE_DIR)/package.mk
 

@@ -7,31 +7,11 @@
 -PREFIX = /usr
 +PREFIX = /opt
  
- # Location of the highlight data files:
- data_dir = ${PREFIX}/share/highlight/
-@@ -28,8 +28,8 @@ doc_dir = ${PREFIX}/share/doc/highlight/
- examples_dir = ${doc_dir}extras/
- 
- # Location of the highlight config files:
--conf_dir = /etc/highlight/
--#conf_dir = ${PREFIX}/etc/highlight/
-+#conf_dir = /etc/highlight/
-+conf_dir = ${PREFIX}/etc/highlight/
- 
- # Location of additional gui files
- desktop_apps = ${PREFIX}/share/applications/
+ # Data file directory
+ data_dir = ${PREFIX}/share/
 --- a/src/makefile
 +++ b/src/makefile
-@@ -17,7 +17,7 @@ CXX ?= g++
- 
- QMAKE ?= qmake
- 
--CFLAGS:=-Wall -O2 ${CFLAGS} -DNDEBUG -std=c++11 -D_FILE_OFFSET_BITS=64
-+CFLAGS:=-Wall ${CFLAGS} -DNDEBUG -std=c++11 -D_FILE_OFFSET_BITS=64
- 
- #CFLAGS:= -fPIC -O2 -g -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fexceptions -fstack-protector-strong -grecord-gcc-switches -fasynchronous-unwind-tables -fstack-clash-protection
- 
-@@ -55,20 +55,20 @@ REGEX_DIR=${CORE_DIR}re/
+@@ -55,13 +55,13 @@ REGEX_DIR=${CORE_DIR}re/
  DILU_DIR=${CORE_DIR}Diluculum/
  
  ifndef HL_CONFIG_DIR
@@ -48,11 +28,12 @@
  endif
  
  ifdef PIC
- 	CFLAGS+=-fPIC
+@@ -69,7 +69,7 @@ ifdef PIC
  endif
  
+ ifneq ($(OS), Windows_NT)
 -LDFLAGS = -ldl
 +LDFLAGS += -ldl
+ endif
  # Do not strip by default (Mac OS X lazy pointer issues)
  # Add -static to avoid linking with shared libs (can cause trouble when highlight
- # is run as service)
