@@ -57,37 +57,42 @@ define Package/filebrowser/description
   or as a middleware.
 endef
 
+Package/filebrowser_nohf/description=$(Package/filebrowser/description)
+
 define Package/filebrowser/conffiles
 /opt/etc/filebrowser/filebrowser.conf
 endef
 
-Package/filebrowser_nohf/description=$(Package/filebrowser/description)
-
 Package/filebrowser_nohf/conffiles=$(Package/filebrowser/conffiles)
+
+VERSION_HASH:=$(shell echo $(PKG_COMMIT) | cut -b -9)
+MODULE:=$(PKG_GOGET)/v2
 
 define Build/Compile
 	( cd $(PKG_BUILD_DIR)/src/$(PKG_GOGET); \
-	\
+		\
 		pushd $(PKG_BUILD_DIR)/src/$(PKG_GOGET)/frontend ; \
-		npm ci ; \
-		npm run build ; \
-		popd ; \
-	\
+		npm ci; \
+		npm run build; \
+		popd; \
+		\
 		GOGC=off \
 		GO111MODULE=on \
 		CGO_ENABLED=0 \
 		GOOS=linux \
 		GOARCH=$(GOARCH) \
 		$(GOARM) \
-		$(GOROOT)/bin/go build \
-		-ldflags="-s -w" ; \
+		$(GOMIPS) \
+		$(GOROOT)/bin/go build -a -o $(PKG_BUILD_DIR)/bin/filebrowser \
+		-ldflags="-s -w -X $(MODULE)/version.Version=$(PKG_VERSION) \
+			-X $(MODULE)/version.CommitSHA=$(VERSION_HASH)"; \
 	)
 endef
 
 
 define Package/filebrowser/install
 	$(INSTALL_DIR) $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/$(PKG_GOGET)/filebrowser $(1)/opt/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/filebrowser $(1)/opt/bin
 
 	$(INSTALL_DIR) $(1)/opt/etc/init.d
 	$(INSTALL_BIN) files/S99filebrowser $(1)/opt/etc/init.d
