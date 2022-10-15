@@ -88,8 +88,8 @@ define Build/Compile
 		$(GOMIPS) \
 		$(GOROOT)/bin/go build -a -o $(PKG_BUILD_DIR)/bin/navidrome \
 		-ldflags="-s -w -I /opt/lib/$(DYNLINKER) \
-		-X github.com/navidrome/navidrome/consts.gitSha=$(GIT_SHA) \
-		-X github.com/navidrome/navidrome/consts.gitTag=$(GIT_TAG)-SNAPSHOT" \
+			-X $(PKG_GOGET)/consts.gitSha=$(GIT_SHA) \
+			-X $(PKG_GOGET)/consts.gitTag=$(GIT_TAG)-SNAPSHOT" \
 		-tags=netgo \
 	)
 endef
