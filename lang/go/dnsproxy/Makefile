@@ -3,7 +3,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dnsproxy
-PKG_VERSION:=v0.40.3
+PKG_VERSION:=v0.45.4
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/AdguardTeam/dnsproxy
@@ -12,7 +12,7 @@ GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 
 #!!! uncomment PKG_SOURCE to download fixed version
 #PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=3df41338ea7116b54117ea00f362510bb2ac636d
+PKG_COMMIT=571baaf1dfb8cb7ad6f04c78aa8b4ca4ded26982
 PKG_HASH:=skip
 
 PKG_LICENSE:=GPL-3.0-only
@@ -35,6 +35,7 @@ define Package/dnsproxy/Default
 	SUBMENU:=IP Addresses and Names
 	TITLE:=Simple DNS proxy with DoH, DoT, DoQ and DNSCrypt support
 	URL:=https://github.com/AdguardTeam/dnsproxy
+	DEPENDS:=+ca-bundle
 endef
 
 define Package/dnsproxy
@@ -49,7 +50,7 @@ define Package/dnsproxy_nohf
 endef
 
 define Package/dnsproxy/description
-    A simple DNS proxy server that supports all existing DNS
+  A simple DNS proxy server that supports all existing DNS
   protocols including DNS-over-TLS, DNS-over-HTTPS, DNSCrypt,
   and DNS-over-QUIC. Moreover, it can work as a DNS-over-HTTPS,
   DNS-over-TLS or DNS-over-QUIC server.
@@ -63,13 +64,15 @@ define Build/Compile
 		GOOS=linux \
 		GOARCH=$(GOARCH) \
 		$(GOARM) \
-		$(GOROOT)/bin/go build . ; \
+		$(GOMIPS) \
+		$(GOROOT)/bin/go build -a -o $(PKG_BUILD_DIR)/bin/dnsproxy \
+		-ldflags="-s -w -X main.VersionString=$(PKG_VERSION)"; \
 	)
 endef
 
 define Package/dnsproxy/install
 	$(INSTALL_DIR) $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/$(PKG_GOGET)/dnsproxy $(1)/opt/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/dnsproxy $(1)/opt/bin
 endef
 
 Package/dnsproxy_nohf/install=$(Package/dnsproxy/install)
