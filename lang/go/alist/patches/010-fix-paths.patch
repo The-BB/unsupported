@@ -1,22 +1,22 @@
---- a/src/github.com/alist-org/alist/bootstrap/log.go
-+++ b/src/github.com/alist-org/alist/bootstrap/log.go
-@@ -27,7 +27,7 @@ func InitLog() {
+--- a/src/github.com/alist-org/alist/cmd/root.go
++++ b/src/github.com/alist-org/alist/cmd/root.go
+@@ -24,7 +24,7 @@ func Execute() {
  }
  
  func init() {
--	flag.StringVar(&conf.ConfigFile, "conf", "data/config.json", "config file")
-+	flag.StringVar(&conf.ConfigFile, "conf", "/opt/var/lib/alist/data/config.json", "config file")
- 	flag.BoolVar(&conf.Debug, "debug", false, "start with debug mode")
- 	flag.BoolVar(&conf.Version, "version", false, "print version info")
- 	flag.BoolVar(&conf.Password, "password", false, "print current password")
---- a/src/github.com/alist-org/alist/conf/config.go
-+++ b/src/github.com/alist-org/alist/conf/config.go
-@@ -43,12 +43,12 @@ func DefaultConfig() *Config {
- 		Assets:      "/",
- 		SubFolder:   "",
- 		LocalAssets: "",
--		TempDir:     "data/temp",
-+		TempDir:     "/opt/var/lib/alist/data/temp",
+-	rootCmd.PersistentFlags().StringVar(&flags.Config, "conf", "data/config.json", "config file")
++	rootCmd.PersistentFlags().StringVar(&flags.Config, "conf", "/opt/var/lib/alist/data/config.json", "config file")
+ 	rootCmd.PersistentFlags().BoolVar(&flags.Debug, "debug", false, "start with debug mode")
+ 	rootCmd.PersistentFlags().BoolVar(&flags.NoPrefix, "no-prefix", false, "disable env prefix")
+ 	rootCmd.PersistentFlags().BoolVar(&flags.Dev, "dev", false, "start with dev mode")
+--- a/src/github.com/alist-org/alist/internal/conf/config.go
++++ b/src/github.com/alist-org/alist/internal/conf/config.go
+@@ -51,16 +51,16 @@ func DefaultConfig() *Config {
+ 		Port:           5244,
+ 		JwtSecret:      random.String(16),
+ 		TokenExpiresIn: 48,
+-		TempDir:        "data/temp",
++		TempDir:        "/opt/var/lib/alist/data/temp",
  		Database: Database{
  			Type:        "sqlite3",
  			Port:        0,
@@ -24,5 +24,10 @@
 -			DBFile:      "data/data.db",
 +			DBFile:      "/opt/var/lib/alist/data/data.db",
  		},
- 		Cache: CacheConfig{
- 			Expiration:      60,
+ 		Log: LogConfig{
+ 			Enable:     true,
+-			Name:       "log/log.log",
++			Name:       "/opt/var/log/alist/log.log",
+ 			MaxSize:    10,
+ 			MaxBackups: 5,
+ 			MaxAge:     28,
