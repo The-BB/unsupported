@@ -1,0 +1,22 @@
+--- a/src/github.com/cloudreve/Cloudreve/pkg/conf/defaults.go
++++ b/src/github.com/cloudreve/Cloudreve/pkg/conf/defaults.go
+@@ -12,7 +12,7 @@ var RedisConfig = &redis{
+ var DatabaseConfig = &database{
+ 	Type:    "UNSET",
+ 	Charset: "utf8",
+-	DBFile:  "cloudreve.db",
++	DBFile:  "/opt/var/lib/cloudreve/cloudreve.db",
+ 	Port:    3306,
+ }
+ 
+--- a/src/github.com/cloudreve/Cloudreve/main.go
++++ b/src/github.com/cloudreve/Cloudreve/main.go
+@@ -28,7 +28,7 @@ var staticZip string
+ var staticFS fs.FS
+ 
+ func init() {
+-	flag.StringVar(&confPath, "c", util.RelativePath("conf.ini"), "配置文件路径")
++	flag.StringVar(&confPath, "c", util.RelativePath("/opt/var/lib/cloudreve/conf.ini"), "配置文件路径")
+ 	flag.BoolVar(&isEject, "eject", false, "导出内置静态资源")
+ 	flag.StringVar(&scriptName, "database-script", "", "运行内置数据库助手脚本")
+ 	flag.Parse()

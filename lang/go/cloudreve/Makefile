@@ -81,11 +81,11 @@ define Build/Compile
 
 	( cd $(PKG_BUILD_DIR)/src/$(PKG_GOGET); \
 		\
-		pushd $(PKG_BUILD_DIR)/src/$(PKG_GOGET)/assets ; \
-		yarn install ; \
-		yarn run build ; \
+		pushd $(PKG_BUILD_DIR)/src/$(PKG_GOGET)/assets; \
+		yarn install; \
+		yarn run build; \
 		find ./build -name "*.map" -type f -delete; \
-		popd ; \
+		popd; \
 		\
 		zip -r - assets/build >assets.zip; \
 		\
@@ -98,8 +98,8 @@ define Build/Compile
 		$(GOMIPS) \
 		$(GOROOT)/bin/go build -a -o $(PKG_BUILD_DIR)/bin/cloudreve \
 		-ldflags="-s -w -I /opt/lib/$(DYNLINKER) \
-		-X $(PKG_GOGET)/v3/pkg/conf.BackendVersion=$(PKG_VERSION) \
-		-X $(PKG_GOGET)/v3/pkg/conf.LastCommit=$(PKG_COMMIT)"; \
+			-X $(PKG_GOGET)/v3/pkg/conf.BackendVersion=$(PKG_VERSION) \
+			-X $(PKG_GOGET)/v3/pkg/conf.LastCommit=$(PKG_COMMIT)"; \
 	)
 endef
 
@@ -107,6 +107,8 @@ endef
 define Package/cloudreve/install
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/cloudreve $(1)/opt/bin
+	$(INSTALL_DIR) $(1)/opt/etc/init.d
+	$(INSTALL_BIN) files/S99cloudreve $(1)/opt/etc/init.d
 endef
 
 Package/cloudreve_nohf/install=$(Package/cloudreve/install)
