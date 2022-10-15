@@ -1,6 +1,4 @@
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
@@ -34,7 +32,7 @@ define Package/node-pnpm
 endef
 
 define Package/node-pnpm/description
- Fast, reliable, and secure dependency management
+  Fast, reliable, and secure dependency management.
 endef
 
 TAR_OPTIONS+= --strip-components 1
