@@ -62,14 +62,18 @@ endef
 
 Package/git-lfs_nohf/description=$(Package/git-lfs/description)
 
+GIT_LFS_SHA:=$(shell echo $(PKG_COMMIT) | cut -b -9)
+
 define Build/Compile
 	( cd $(PKG_BUILD_DIR)/src/$(PKG_GOGET); \
+		$(GOROOT)/bin/go generate ./commands; \
+		\
 		GOOS=linux \
 		GOARCH=$(GOARCH) \
 		$(GOARM) \
 		$(GOMIPS) \
 		$(GOROOT)/bin/go build -o $(PKG_BUILD_DIR)/bin/git-lfs \
-		-ldflags="-s -w"; \
+		-ldflags="-s -w -X $(PKG_GOGET)/config.GitCommit=$(GIT_LFS_SHA)"; \
 	)
 endef
 
