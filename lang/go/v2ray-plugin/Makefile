@@ -3,7 +3,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2ray-plugin
-PKG_VERSION:=v1.3.1
+PKG_VERSION:=v1.3.2
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/shadowsocks/v2ray-plugin
@@ -12,7 +12,7 @@ GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 
 #!!! uncomment PKG_SOURCE to download fixed version
 #PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=b9717056b251747149cacb44458fe02e420b9d9b
+PKG_COMMIT=ddd7ab46b4aeee0ca8b272efed9d7da3e3a6e52c
 PKG_HASH:=skip
 
 PKG_LICENSE:=MIT
@@ -34,6 +34,7 @@ define Package/v2ray-plugin/Default
 	SUBMENU:=Web Servers/Proxies
 	TITLE:=A SIP003 plugin based on v2ray
 	URL:=https://github.com/shadowsocks/v2ray-plugin
+	DEPENDS:=@BROKEN
 endef
 
 define Package/v2ray-plugin
@@ -59,13 +60,15 @@ define Build/Compile
 		GOOS=linux \
 		GOARCH=$(GOARCH) \
 		$(GOARM) \
-		$(GOROOT)/bin/go build . ; \
+		$(GOMIPS) \
+		$(GOROOT)/bin/go build -a -o $(PKG_BUILD_DIR)/bin/v2ray-plugin \
+		-ldflags="-s -w -X main.VERSION=$(PKG_VERSION)"; \
 	)
 endef
 
 define Package/v2ray-plugin/install
 	$(INSTALL_DIR) $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/$(PKG_GOGET)/v2ray-plugin $(1)/opt/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/v2ray-plugin $(1)/opt/bin
 endef
 
 Package/v2ray-plugin_nohf/install=$(Package/v2ray-plugin/install)
