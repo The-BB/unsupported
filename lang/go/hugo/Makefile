@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hugo
-PKG_VERSION:=0.101.0
+PKG_VERSION:=0.104.3
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/gohugoio/hugo
@@ -14,7 +14,7 @@ GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 
 #!!! uncomment PKG_SOURCE to download fixed version
 #PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=466fa43c16709b4483689930a4f9ac8add5c9f66
+PKG_COMMIT=58b824581360148f2d91f5cc83f69bd22c1aa331
 PKG_HASH:=skip
 
 PKG_MAINTAINER:=Entware team, https://entware.net
@@ -69,7 +69,8 @@ define Build/Compile
 		$(GOARM) \
 		$(GOMIPS) \
 		$(GOROOT)/bin/go build -a -o $(PKG_BUILD_DIR)/bin/hugo \
-		-ldflags="-s -w -I /opt/lib/$(DYNLINKER)" -tags=extended; \
+		-ldflags="-s -w -I /opt/lib/$(DYNLINKER)" \
+		-tags=extended; \
 	)
 endef
 
