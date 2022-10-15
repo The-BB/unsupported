@@ -55,19 +55,24 @@ endef
 
 Package/odoh-client-go_nohf/description=$(Package/odoh-client-go/description)
 
+COMMIT_ID:=$(shell echo $(PKG_COMMIT) | cut -b -9)
+
 define Build/Compile
 	( cd $(PKG_BUILD_DIR)/src/$(PKG_GOGET); \
 		CGO_ENABLED=0 \
 		GOOS=linux \
 		GOARCH=$(GOARCH) \
 		$(GOARM) \
-		$(GOROOT)/bin/go build -o odoh-client ./cmd/... ; \
+		$(GOMIPS) \
+		$(GOROOT)/bin/go build -a -o $(PKG_BUILD_DIR)/bin/odoh-client \
+		-ldflags="-s -w -X main.Version=$(PKG_VERSION) \
+			-X main.CommitId=$(COMMIT_ID)" ./cmd/*; \
 	)
 endef
 
 define Package/odoh-client-go/install
 	$(INSTALL_DIR) $(1)/opt/bin
-	$(CP) $(PKG_BUILD_DIR)/src/$(PKG_GOGET)/odoh-client $(1)/opt/bin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/odoh-client $(1)/opt/bin
 endef
 
 Package/odoh-client-go_nohf/install=$(Package/odoh-client-go/install)
