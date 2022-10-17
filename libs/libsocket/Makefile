@@ -11,6 +11,7 @@ PKG_SOURCE_URL:=https://codeload.github.com/dermesser/libsocket/tar.gz/refs/tags
 PKG_HASH:=0afe2ece985caa0b44546d10426b15a506164d5b96d7242890c7d0337f479689
 
 PKG_LICENSE:=BSD-2-Clause
+PKG_LICENSE_FILES:=LICENSE
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
