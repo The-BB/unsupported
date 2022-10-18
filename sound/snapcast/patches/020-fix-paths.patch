@@ -1,0 +1,26 @@
+--- a/server/etc/index.html
++++ b/server/etc/index.html
+@@ -39,12 +39,12 @@
+     This webserver is a websocket endpoint for control clients (ws://<i>host</i>:1780/jsonrpc) and streaming clients
+     (ws://<i>host</i>:1780/stream), but it can also host simple web pages. To serve a web page, you must configure the
+     document root in the snapserver configuration file <b>snapserver.conf</b>, usually located in
+-    <b>/etc/snapserver.conf</b>
++    <b>/opt/etc/snapserver.conf</b>
+   </p>
+   <p>
+     The Snapserver installation should include a copy of <a href="https://github.com/badaix/snapweb">Snapweb</a>,
+     located in
+-    <b>/usr/share/snapserver/snapweb/</b><br>
++    <b>/opt/share/snapserver/snapweb/</b><br>
+     To activate it, please configure the <b>doc_root</b> as follows, and restart Snapserver to activate the changes:
+   </p>
+   <pre>
+@@ -55,7 +55,7 @@
+ ...
+ 
+ # serve a website from the doc_root location
+-doc_root = /usr/share/snapserver/snapweb/
++doc_root = /opt/share/snapserver/snapweb/
+ 
+ #
+ ################################################</pre>

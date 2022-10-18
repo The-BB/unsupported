@@ -1,0 +1,196 @@
+--- a/client/etc/snapclient.plist
++++ b/client/etc/snapclient.plist
+@@ -6,7 +6,7 @@
+ 		<string>de.badaix.snapcast.snapclient</string>
+ 		<key>ProgramArguments</key>
+ 		<array>
+-			<string>/usr/local/bin/snapclient</string>
++			<string>/opt/bin/snapclient</string>
+ 			<string>--logsink=system</string>
+ <!--			<string>-d</string> -->
+ 		</array>
+--- a/client/snapclient.cpp
++++ b/client/snapclient.cpp
+@@ -308,7 +308,7 @@ int main(int argc, char** argv)
+         std::unique_ptr<Daemon> daemon;
+         if (daemonOption->is_set())
+         {
+-            string pidFile = "/var/run/snapclient/pid";
++            string pidFile = "/opt/var/run/snapclient.pid";
+             if (settings.instance != 1)
+                 pidFile += "." + cpt::to_string(settings.instance);
+             string user;
+--- a/common/utils.hpp
++++ b/common/utils.hpp
+@@ -144,7 +144,7 @@ static std::string getOS()
+ #ifndef WINDOWS
+     if (os.empty())
+     {
+-        os = strutils::trim_copy(execGetOutput("grep /etc/os-release /etc/openwrt_release -e PRETTY_NAME -e DISTRIB_DESCRIPTION"));
++        os = strutils::trim_copy(execGetOutput("grep /opt/etc/entware_release -e release"));
+         if (os.find("=") != std::string::npos)
+         {
+             os = strutils::trim_copy(os.substr(os.find("=") + 1));
+--- a/server/etc/snapserver.conf
++++ b/server/etc/snapserver.conf
+@@ -30,7 +30,7 @@
+ #threads = -1
+ 
+ # the pid file when running as daemon
+-#pidfile = /var/run/snapserver/pid
++#pidfile = /opt/var/run/snapserver.pid
+ 
+ # the user to run as when daemonized
+ #user = snapserver
+@@ -39,7 +39,7 @@
+ 
+ # directory where persistent data is stored (server.json)
+ # if empty, data dir will be
+-#  - "/var/lib/snapserver/" when running as daemon
++#  - "/opt/var/lib/snapserver/" when running as daemon
+ #  - "$HOME/.config/snapserver/" when not running as daemon
+ #datadir = 
+ 
+@@ -65,7 +65,7 @@
+ 
+ # serve a website from the doc_root location
+ # disabled if commented or empty
+-doc_root = /usr/share/snapserver/snapweb
++doc_root = /opt/share/snapserver/snapweb
+ 
+ # Hostname or IP under which clients can reach this host
+ # used to serve cached cover art
+@@ -133,7 +133,7 @@ doc_root = /usr/share/snapserver/snapweb
+ # tcp client: tcp://<server IP, e.g. 127.0.0.1>:<port>?name=<name>&mode=client
+ # alsa: alsa://?name=<name>&device=<alsa device>[&send_silence=false][&idle_threshold=100][&silence_threshold_percent=0.0]
+ # meta: meta:///<name of source#1>/<name of source#2>/.../<name of source#N>?name=<name>
+-source = pipe:///tmp/snapfifo?name=default
++source = pipe:///opt/tmp/snapfifo?name=default
+ #source = tcp://127.0.0.1?name=mopidy_tcp
+ 
+ # Default sample format: <sample rate>:<bits per sample>:<channels>
+@@ -165,7 +165,7 @@ source = pipe:///tmp/snapfifo?name=defau
+ 
+ # log sink [null,system,stdout,stderr,file:<filename>]
+ # when left empty: if running as daemon "system" else "stdout"
+-#sink = 
++sink = file:/opt/var/log/snapserver.log
+ 
+ # log filter <tag>:<level>[,<tag>:<level>]* 
+ # with tag = * or <log tag> and level = [trace,debug,info,notice,warning,error,fatal]
+--- a/server/etc/snapserver.plist
++++ b/server/etc/snapserver.plist
+@@ -6,7 +6,7 @@
+ 		<string>de.badaix.snapcast.snapserver</string>
+ 		<key>ProgramArguments</key>
+ 		<array>
+-			<string>/usr/local/bin/snapserver</string>
++			<string>/opt/bin/snapserver</string>
+ 			<string>--logging.sink=system</string>
+ <!--			<string>-d</string> -->
+ 		</array>
+--- a/server/streamreader/stream_control.cpp
++++ b/server/streamreader/stream_control.cpp
+@@ -142,7 +142,7 @@ ScriptStreamControl::ScriptStreamControl
+     namespace fs = utils::file;
+     if (!fs::exists(script_))
+     {
+-        std::string plugin_path = "/usr/share/snapserver/plug-ins/";
++        std::string plugin_path = "/opt/share/snapserver/plug-ins/";
+         if (fs::exists(plugin_path + script_))
+             script_ = plugin_path + script_;
+         else
+--- a/server/config.cpp
++++ b/server/config.cpp
+@@ -43,7 +43,7 @@ void Config::init(const std::string& roo
+     if (!root_directory.empty())
+         dir = root_directory;
+     else if (getenv("HOME") == nullptr)
+-        dir = "/var/lib/snapserver/";
++        dir = "/opt/var/lib/snapserver/";
+     else
+         dir = string(getenv("HOME")) + "/.config/snapserver/";
+ 
+--- a/server/control_session_http.cpp
++++ b/server/control_session_http.cpp
+@@ -43,11 +43,11 @@ static constexpr const char* UNCONFIGURE
+     "    This webserver is a websocket endpoint for control clients (ws://<i>host</i>:1780/jsonrpc) and streaming clients"
+     "    (ws://<i>host</i>:1780/stream), but it can also host simple web pages. To serve a web page, you must configure the"
+     "    document root in the snapserver configuration file <b>snapserver.conf</b>, usually located in"
+-    "    <b>/etc/snapserver.conf</b>"
++    "    <b>/opt/etc/snapserver.conf</b>"
+     "  </p>"
+     "  <p>"
+     "    The Snapserver installation should include a copy of <a href=\"https://github.com/badaix/snapweb\">Snapweb</a>,"
+-    "    located in <b>/usr/share/snapserver/snapweb/</b><br>"
++    "    located in <b>/opt/share/snapserver/snapweb/</b><br>"
+     "    To activate it, please configure the <b>doc_root</b> as follows, and restart Snapserver to activate the changes:"
+     "  </p>"
+     "  <pre>"
+@@ -58,7 +58,7 @@ static constexpr const char* UNCONFIGURE
+     "...\n"
+     "\n"
+     "# serve a website from the doc_root location\n"
+-    "doc_root = /usr/share/snapserver/snapweb/\n"
++    "doc_root = /opt/share/snapserver/snapweb/\n"
+     "\n"
+     "#\n"
+     "################################################</pre>"
+@@ -267,7 +267,7 @@ void ControlSessionHttp::handle_request(
+ 
+     if (settings_.doc_root.empty())
+     {
+-        std::string default_page = "/usr/share/snapserver/index.html";
++        std::string default_page = "/opt/share/snapserver/index.html";
+         struct stat buffer;
+         if (stat(default_page.c_str(), &buffer) == 0)
+             path = default_page;
+--- a/server/server_settings.hpp
++++ b/server/server_settings.hpp
+@@ -30,8 +30,8 @@ struct ServerSettings
+     struct Server
+     {
+         int threads{-1};
+-        std::string pid_file{"/var/run/snapserver/pid"};
+-        std::string user{"snapserver"};
++        std::string pid_file{"/opt/var/run/snapserver.pid"};
++        std::string user{""};
+         std::string group{""};
+         std::string data_dir{""};
+     };
+--- a/server/snapserver.cpp
++++ b/server/snapserver.cpp
+@@ -57,8 +57,8 @@ int main(int argc, char* argv[])
+     try
+     {
+         ServerSettings settings;
+-        std::string pcmSource = "pipe:///tmp/snapfifo?name=default";
+-        std::string config_file = "/etc/snapserver.conf";
++        std::string pcmSource = "pipe:///opt/tmp/snapfifo?name=default";
++        std::string config_file = "/opt/etc/snapserver.conf";
+ 
+         OptionParser op("Allowed options");
+         auto helpSwitch = op.add<Switch>("h", "help", "Produce help message, use -hh to show options from config file");
+@@ -252,7 +252,7 @@ int main(int argc, char* argv[])
+                 throw std::invalid_argument("user must not be empty");
+ 
+             if (settings.server.data_dir.empty())
+-                settings.server.data_dir = "/var/lib/snapserver";
++                settings.server.data_dir = "/opt/var/lib/snapserver";
+             Config::instance().init(settings.server.data_dir, settings.server.user, settings.server.group);
+ 
+             daemon = std::make_unique<Daemon>(settings.server.user, settings.server.group, settings.server.pid_file);
+--- a/test/test_main.cpp
++++ b/test/test_main.cpp
+@@ -41,9 +41,9 @@ TEST_CASE("Uri")
+ {
+     AixLog::Log::init<AixLog::SinkCout>(AixLog::Severity::debug);
+     using namespace streamreader;
+-    StreamUri uri("pipe:///tmp/snapfifo?name=default&codec=flac");
++    StreamUri uri("pipe:///opt/tmp/snapfifo?name=default&codec=flac");
+     REQUIRE(uri.scheme == "pipe");
+-    REQUIRE(uri.path == "/tmp/snapfifo");
++    REQUIRE(uri.path == "/opt/tmp/snapfifo");
+     REQUIRE(uri.host.empty());
+ 
+     // uri = StreamUri("scheme:[//host[:port]][/]path[?query=none][#fragment]");

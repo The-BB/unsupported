@@ -1,0 +1,34 @@
+if PACKAGE_snapcast-server
+
+comment "Build Options"
+
+	config SNAPCAST_AVAHI
+		bool "Build with AVAHI support"
+		default n
+
+	config SNAPCAST_EXPAT
+		bool "Build with EXPAT support"
+		default y
+
+	config SNAPCAST_FLAC
+		bool "Build with FLAC support"
+		default y
+
+	config SNAPCAST_OPUS
+		bool "Build with OPUS support"
+		default y
+
+	config SNAPCAST_PULSE
+		bool "Build with PulseAudio support"
+		default n
+
+	config SNAPCAST_TREMOR
+		bool "Build with vorbis using TREMOR"
+		depends on SNAPCAST_VORBIS
+		default n
+
+	config SNAPCAST_VORBIS
+		bool "Build with VORBIS support"
+		default y
+
+endif
