@@ -3,7 +3,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dnsproxy
-PKG_VERSION:=v0.45.4
+PKG_VERSION:=0.46.0
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/AdguardTeam/dnsproxy
@@ -12,7 +12,7 @@ GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 
 #!!! uncomment PKG_SOURCE to download fixed version
 #PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=571baaf1dfb8cb7ad6f04c78aa8b4ca4ded26982
+PKG_COMMIT=95ef855f83c328636e7e529b130cfe50affd9d16
 PKG_HASH:=skip
 
 PKG_LICENSE:=GPL-3.0-only
@@ -58,14 +58,21 @@ endef
 
 Package/dnsproxy_nohf/description=$(Package/dnsproxy/description)
 
+define Package/dnsproxy/conffiles
+/opt/etc/dnsproxy.yaml
+endef
+
+Package/dnsproxy_nohf/conffiles=$(Package/dnsproxy/conffiles)
+
 define Build/Compile
 	( cd $(PKG_BUILD_DIR)/src/$(PKG_GOGET); \
 		CGO_ENABLED=0 \
+		GO111MODULE='on' \
 		GOOS=linux \
 		GOARCH=$(GOARCH) \
 		$(GOARM) \
 		$(GOMIPS) \
-		$(GOROOT)/bin/go build -a -o $(PKG_BUILD_DIR)/bin/dnsproxy \
+		$(GOROOT)/bin/go build -o $(PKG_BUILD_DIR)/bin/dnsproxy \
 		-ldflags="-s -w -X main.VersionString=$(PKG_VERSION)"; \
 	)
 endef
@@ -73,6 +80,13 @@ endef
 define Package/dnsproxy/install
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/dnsproxy $(1)/opt/bin
+
+	$(INSTALL_DIR) $(1)/opt/etc
+	$(CP) $(PKG_BUILD_DIR)/src/$(PKG_GOGET)/config.yaml.dist \
+		$(1)/opt/etc/dnsproxy.yaml
+
+	$(INSTALL_DIR) $(1)/opt/etc/init.d
+	$(INSTALL_BIN) files/S90dnsproxy $(1)/opt/etc/init.d
 endef
 
 Package/dnsproxy_nohf/install=$(Package/dnsproxy/install)
