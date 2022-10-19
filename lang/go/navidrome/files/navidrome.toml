@@ -1,4 +1,4 @@
-MusicFolder = './music'
+MusicFolder = '/opt/data/music'
 DataFolder = '/opt/var/lib/navidrome'
 ScanSchedule = "@every 1m"
 LogLevel = "debug"

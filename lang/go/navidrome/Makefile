@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=navidrome
-PKG_VERSION:=0.47.5
+PKG_VERSION:=0.48.0
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/navidrome/navidrome
@@ -14,7 +14,7 @@ GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 
 #!!! uncomment PKG_SOURCE to download fixed version
 #PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=86fe1e3b2c417891e79ad799a54cb0af9b35d295
+PKG_COMMIT=af5c2b5a42ed8b1038f8434ff64bab78378360a4
 PKG_HASH:=skip
 
 PKG_MAINTAINER:=Entware team, https://entware.net
@@ -90,7 +90,7 @@ define Build/Compile
 		-ldflags="-s -w -I /opt/lib/$(DYNLINKER) \
 			-X $(PKG_GOGET)/consts.gitSha=$(GIT_SHA) \
 			-X $(PKG_GOGET)/consts.gitTag=$(GIT_TAG)-SNAPSHOT" \
-		-tags=netgo \
+		-tags=netgo; \
 	)
 endef
 
@@ -98,10 +98,14 @@ endef
 define Package/navidrome/install
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/navidrome $(1)/opt/bin
+
 	$(INSTALL_DIR) $(1)/opt/etc
 	$(INSTALL_DATA) files/navidrome.toml $(1)/opt/etc
+
 	$(INSTALL_DIR) $(1)/opt/etc/init.d
 	$(INSTALL_BIN) files/S91navidrome $(1)/opt/etc/init.d
+
+	$(INSTALL_DIR) $(1)/opt/data/music
 endef
 
 Package/navidrome_nohf/install=$(Package/navidrome/install)
