@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=alist
-PKG_VERSION:=3.2.0
+PKG_VERSION:=3.2.1
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/alist-org/alist
@@ -14,7 +14,7 @@ GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 
 #!!! uncomment PKG_SOURCE to download fixed version
 #PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=549355bb296726c5b6c196ea444bcc2c40054a24
+PKG_COMMIT=b8cf02ca685e14ec856ac0c294098d6faa27b7eb
 PKG_HASH:=skip
 
 PKG_MAINTAINER:=Entware team, https://entware.net
@@ -59,7 +59,7 @@ endef
 Package/alist_nohf/description=$(Package/alist/description)
 
 define Download/alist-web
-  VERSION:=bd16d935e4ebbf1ceddd38b43b25ed6980dbf5b4
+  VERSION:=4060db6560b1d740328c62de82363babbf2b9cb3
   SUBDIR:=alist-web
   FILE:=alist-web-$$(VERSION).tar.xz
   URL:=https://github.com/alist-org/alist-web.git
@@ -78,7 +78,7 @@ GIT_COMMIT:=$(shell echo $(PKG_COMMIT) | cut -b -9)
 GIT_TAG:=v$(PKG_VERSION)-$(GIT_COMMIT)
 GO_VER:=$(shell $(GOROOT)/bin/go version | sed 's/go version //;s,/.*,/$(GOARCH),')
 MODULE:=$(PKG_GOGET)/v3/internal
-WEB_COMMIT:=bd16d935e
+WEB_COMMIT:=4060db656
 
 define Build/Compile
 	$(eval $(call Download,alist-web))
@@ -88,7 +88,7 @@ define Build/Compile
 		\
 		pushd $(PKG_BUILD_DIR)/src/$(PKG_GOGET)/alist-web; \
 		pnpm install; \
-		pnpm i18n; \
+		pnpm i18n:release; \
 		pnpm build; \
 		rm -rf ../public/dist; \
 		mv dist ../public/; \
@@ -100,14 +100,14 @@ define Build/Compile
 		GOARCH=$(GOARCH) \
 		$(GOARM) \
 		$(GOMIPS) \
-		$(GOROOT)/bin/go build -a -o $(PKG_BUILD_DIR)/bin/alist \
+		$(GOROOT)/bin/go build -o $(PKG_BUILD_DIR)/bin/alist \
 		-ldflags="-s -w -I /opt/lib/$(DYNLINKER) \
-			-X $(MODULE)/conf.BuiltAt=$(BUILD_DATE) \
-			-X $(MODULE)/conf.GoVersion=$(GO_VER) \
-			-X $(MODULE)/conf.GitAuthor=Entware \
-			-X $(MODULE)/conf.GitCommit=$(GIT_COMMIT) \
-			-X $(MODULE)/conf.Version=$(PKG_VERSION) \
-			-X $(MODULE)/conf.WebVersion=$(WEB_COMMIT)" \
+			-X '$(MODULE)/conf.BuiltAt=$(BUILD_DATE)' \
+			-X '$(MODULE)/conf.GoVersion=$(GO_VER)' \
+			-X '$(MODULE)/conf.GitAuthor=Entware' \
+			-X '$(MODULE)/conf.GitCommit=$(GIT_COMMIT)' \
+			-X '$(MODULE)/conf.Version=$(PKG_VERSION)' \
+			-X '$(MODULE)/conf.WebVersion=$(WEB_COMMIT)'" \
 		-tags=jsoniter; \
 	)
 endef
