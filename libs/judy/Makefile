@@ -22,7 +22,7 @@ define Package/judy
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=C library for creating and accessing dynamic arrays
-  URL:=http://judy.sourceforge.net/
+  URL:=https://judy.sourceforge.net/
 endef
 
 define Package/judy/description
