@@ -18,15 +18,11 @@ PKG_INSTALL:=1
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 
-define Package/cairo/Default
-  URL:=https://www.cairographics.org/
-endef
-
 define Package/libcairo
-  $(call Package/cairo/Default)
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=Cairo library
+  URL:=https://www.cairographics.org/
   DEPENDS:=+fontconfig +glib2 +libfreetype +liblzo +libpng +pixman $(INTL_DEPENDS)
 endef
 
@@ -34,50 +30,26 @@ define Package/libcairo/description
   Cairo is a 2D graphics library with support for multiple output devices.
 endef
 
-define Package/cairo-trace
-  $(call Package/cairo/Default)
-  SECTION:=utils
-  CATEGORY:=Utilities
-  TITLE:=Cairo Utilities
-  DEPENDS:=+zlib
-endef
-
-define Package/cairo-trace/description
-  This tool can be used to trace all the cairo function calls made by an
-  applications.  This is useful for either extracting a test case triggering
-  a bug from an application, or simply to get a general idea of how an
-  application is using cairo.
-endef
+CONFIGURE_ARGS += \
+	--enable-interpreter=no \
+	--enable-gtk-doc=no \
+	--enable-trace=no
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include/cairo
 	$(CP) $(PKG_INSTALL_DIR)/opt/include/cairo/*.h 	$(1)/opt/include/cairo/
 
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libcairo*.so* $(1)/opt/lib/
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libcairo*.{a,so*} $(1)/opt/lib/
 
-	$(INSTALL_DIR) $(1)/opt/usr/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/cairo{,-ft}.pc \
-		$(1)/opt/usr/lib/pkgconfig/
-
-	# XXX
-	$(SED) 's,^includedir=.*/include,includedir=$(STAGING_DIR)/opt/include,; \
-		s,^libdir=.*/lib,libdir=$(STAGING_DIR)/opt/lib,' \
-			$(1)/opt/usr/lib/pkgconfig/cairo{,-ft}.pc
+	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/cairo*.pc \
+		$(1)/opt/lib/pkgconfig/
 endef
 
 define Package/libcairo/install
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libcairo.so.* $(1)/opt/lib/
-endef
-
-define Package/cairo-trace/install
-	$(INSTALL_DIR) $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/cairo-trace $(1)/opt/bin
-
-	$(INSTALL_DIR) $(1)/opt/lib/cairo
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/cairo/libcairo-trace.so $(1)/opt/lib/cairo/
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libcairo.so* $(1)/opt/lib/
 endef
 
 $(eval $(call BuildPackage,libcairo))
-#$(eval $(call BuildPackage,cairo-trace))
