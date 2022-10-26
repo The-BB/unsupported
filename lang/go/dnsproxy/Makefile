@@ -3,7 +3,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dnsproxy
-PKG_VERSION:=0.46.0
+PKG_VERSION:=0.46.1
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/AdguardTeam/dnsproxy
@@ -12,7 +12,7 @@ GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 
 #!!! uncomment PKG_SOURCE to download fixed version
 #PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=95ef855f83c328636e7e529b130cfe50affd9d16
+PKG_COMMIT=8dfa81399b151a25200d46fa1787308107240867
 PKG_HASH:=skip
 
 PKG_LICENSE:=GPL-3.0-only
@@ -29,24 +29,24 @@ GOARM:=GOARM=5
 endif
 
 define Package/dnsproxy/Default
-	$(call Package/gopackage/Default)
-	SECTION:=net
-	CATEGORY:=Network
-	SUBMENU:=IP Addresses and Names
-	TITLE:=Simple DNS proxy with DoH, DoT, DoQ and DNSCrypt support
-	URL:=https://github.com/AdguardTeam/dnsproxy
-	DEPENDS:=+ca-bundle
+  $(call Package/gopackage/Default)
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=IP Addresses and Names
+  TITLE:=Simple DNS proxy with DoH, DoT, DoQ and DNSCrypt support
+  URL:=https://github.com/AdguardTeam/dnsproxy
+  DEPENDS:=+ca-bundle
 endef
 
 define Package/dnsproxy
-	$(call Package/dnsproxy/Default)
-	VARIANT:=hf
+  $(call Package/dnsproxy/Default)
+  VARIANT:=hf
 endef
 
 define Package/dnsproxy_nohf
-	$(call Package/dnsproxy/Default)
-	VARIANT:=nohf
-	DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  $(call Package/dnsproxy/Default)
+  VARIANT:=nohf
+  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
 endef
 
 define Package/dnsproxy/description
