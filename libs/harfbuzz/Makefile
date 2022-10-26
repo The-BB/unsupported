@@ -3,89 +3,88 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=harfbuzz
-PKG_VERSION:=2.6.7
-PKG_RELEASE:=2
+PKG_VERSION:=5.1.0
+PKG_RELEASE:=1
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
-PKG_SOURCE_URL:=https://www.freedesktop.org/software/harfbuzz/release
-PKG_HASH:=49e481d06cdff97bf68d99fa26bdf785331f411614485d892ea4c78eb479b218
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://codeload.github.com/harfbuzz/harfbuzz/tar.gz/refs/tags/$(PKG_VERSION)?
+PKG_HASH:=5352ff2eec538ea9a63a485cf01ad8332a3f63aa79921c5a2e301cef185caea1
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 
-PKG_INSTALL:=1
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_HARFBUZZ_CAIRO \
+	CONFIG_HARFBUZZ_FREETYPE \
+	CONFIG_HARFBUZZ_GLIB2 \
+	CONFIG_HARFBUZZ_ICU
+
+PKG_BUILD_DEPENDS:=glib2/host
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
-
-define Package/harfbuzz/Default
-  TITLE:=an OpenType text shaping engine
-  URL:=https://www.freedesktop.org/wiki/Software/HarfBuzz/
-endef
+include $(INCLUDE_DIR)/meson.mk
 
 define Package/libharfbuzz
-  $(call Package/harfbuzz/Default)
   SECTION:=libs
   CATEGORY:=Libraries
-  DEPENDS:=+glib2 +libfreetype $(INTL_DEPENDS)
-endef
-
-define Package/harfbuzz
-  $(call Package/harfbuzz/Default)
-  SECTION:=utils
-  CATEGORY:=Utilities
-  TITLE+=(bin)
-  DEPENDS:=+libharfbuzz @BROKEN
-endef
-
-define Package/harfbuzz/Default/description
-  HarfBuzz is an OpenType text shaping engine.
+  TITLE:=an OpenType text shaping engine
+  URL:=https://www.freedesktop.org/wiki/Software/HarfBuzz/
+  DEPENDS:= \
+	$(INTL_DEPENDS) \
+	+HARFBUZZ_CAIRO:libcairo \
+	+HARFBUZZ_FREETYPE:libfreetype \
+	+HARFBUZZ_GLIB2:glib2 \
+	+HARFBUZZ_ICU:icu
+  MENU:=1
 endef
 
 define Package/libharfbuzz/description
-  $(call Package/harfbuzz/Default/description)
-  .
-  (lib)
+  HarfBuzz is an OpenType text shaping engine.
 endef
 
-define Package/harfbuzz/description
-  $(call Package/harfbuzz/Default/description)
-  .
-  (bin)
+define Package/libharfbuzz/config
+  source "$(SOURCE)/Config.in"
 endef
 
-CONFIGURE_ARGS += \
-	--with-coretext=no \
-	--with-uniscribe=no
+MESON_ARGS += \
+	-Dbenchmark=disabled \
+	-Dcairo=$(if $(CONFIG_HARFBUZZ_CAIRO),en,dis)abled \
+	-Dcoretext=disabled \
+	-Ddirectwrite=disabled \
+	-Ddocs=disabled \
+	-Dexperimental_api=false \
+	-Dfreetype=$(if $(CONFIG_HARFBUZZ_FREETYPE),en,dis)abled \
+	-Dfuzzer_ldflags="" \
+	-Dgdi=disabled \
+	-Dglib=$(if $(CONFIG_HARFBUZZ_GLIB2),en,dis)abled \
+	-Dgobject=disabled \
+	-Dgraphite=disabled \
+	-Dicu=$(if $(CONFIG_HARFBUZZ_ICU),en,dis)abled \
+	-Dicu_builtin=false \
+	-Dintrospection=disabled \
+	-Dtests=disabled
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include/harfbuzz
-	$(CP) $(PKG_INSTALL_DIR)/opt/include/harfbuzz/hb*.h \
-		$(1)/opt/include/harfbuzz/
+	$(CP) $(PKG_INSTALL_DIR)/opt/include/harfbuzz/*.h \
+		$(1)/opt/include/harfbuzz
 
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz.so* \
-		$(1)/opt/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz{,-subset}.so* $(1)/opt/lib
 
-	$(INSTALL_DIR) $(1)/opt/usr/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/harfbuzz.pc \
-		$(1)/opt/usr/lib/pkgconfig
+	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/harfbuzz{,-subset}.pc \
+		$(1)/opt/lib/pkgconfig
 
-	# XXX
-	$(SED) 's,^includedir=.*/include,includedir=$(STAGING_DIR)/opt/include,; \
-		s,^libdir=.*/lib,libdir=$(STAGING_DIR)/opt/lib,' \
-			$(1)/opt/usr/lib/pkgconfig/harfbuzz.pc
+	$(INSTALL_DIR) $(1)/opt/lib/cmake/harfbuzz
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/cmake/harfbuzz/harfbuzz-config.cmake \
+		$(1)/opt/lib/cmake/harfbuzz
 endef
 
 define Package/libharfbuzz/install
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz.so.* $(1)/opt/lib
-endef
-
-define Package/harfbuzz/install
-	$(INSTALL_DIR) $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/hb-* $(1)/opt/bin
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz.so* $(1)/opt/lib
 endef
 
 $(eval $(call BuildPackage,libharfbuzz))
-#$(eval $(call BuildPackage,harfbuzz))
