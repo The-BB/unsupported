@@ -1,35 +1,32 @@
 # SPDX-License-Identifier: WTFPL
 
-#XXX v 1.41.1 and up use external fribidi
-
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pango
-PKG_VERSION:=1.40.14
-PKG_RELEASE:=2
+PKG_VERSION:=1.50.11
+PKG_RELEASE:=1
+
+PANGO_MAJOR_VER:=$(word 1,$(subst ., ,$(PKG_VERSION))).$(word 2,$(subst ., ,$(PKG_VERSION)))
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
-PKG_SOURCE_URL:=http://ftp.gnome.org/pub/GNOME/sources/pango/1.40/
-PKG_HASH:=90af1beaa7bf9e4c52db29ec251ec4fd0a8f2cc185d521ad1f88d01b3a6a17e3
+PKG_SOURCE_URL:=https://download.gnome.org/sources/pango/$(PANGO_MAJOR_VER)/
+PKG_HASH:=8800f812d89ee61388188703203f3a7878963c22f8695aaf1fa0a1a1428d17ae
 
-LICENSE:=LGPL-2.0-or-later
+PKG_LICENSE:=LGPL-2.0-or-later
+PKG_LICENSE_FILES:=COPYING
 
-PKG_INSTALL:=1
+PKG_BUILD_DEPENDS:=glib2/host
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
-
-define Package/pango/Default
-  TITLE:=Pango
-  URL:=http://www.pango.org/
-endef
+include $(INCLUDE_DIR)/meson.mk
 
 define Package/libpango
-  $(call Package/pango/Default)
   SECTION:=libs
   CATEGORY:=Libraries
-  TITLE+= library
-  DEPENDS:=+libcairo +libharfbuzz $(INTL_DEPENDS)
+  TITLE:=Internationalized text layout and rendering
+  URL:=http://www.pango.org/
+  DEPENDS:=+libfribidi +libharfbuzz
 endef
 
 define Package/libpango/description
@@ -37,23 +34,15 @@ define Package/libpango/description
   on internationalization.
 endef
 
-define Package/pango-view
-  $(call Package/pango/Default)
-  SECTION:=utils
-  CATEGORY:=Utilities
-  TITLE+= text viewer
-  DEPENDS:=+libpango
+MESON_ARGS += \
+	-Dintrospection=disabled \
+	-Dlibthai=disabled \
+	-Dxft=disabled
+
+define Build/Prepare
+	$(Build/Prepare/Default)
+	rm -rf $(PKG_BUILD_DIR)/subprojects/*.wrap
 endef
-
-define Package/pango-view/description
-  Pango text viewer.
-endef
-
-ADD_PKG_CONFIG_PATH=$(STAGING_DIR)/opt/usr/lib/pkgconfig
-
-CONFIGURE_ARGS += \
-	--enable-debug=no \
-	PKG_CONFIG_PATH="$(ADD_PKG_CONFIG_PATH):$$$$PKG_CONFIG_PATH"
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include/pango-1.0/pango
@@ -61,28 +50,17 @@ define Build/InstallDev
 		 $(1)/opt/include/pango-1.0/pango/
 
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libpango{,cairo,ft2}-1.0.so* \
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libpango*.so* \
 		$(1)/opt/lib/
 
-	$(INSTALL_DIR) $(1)/opt/usr/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/pango{,cairo,ft2}.pc \
-		$(1)/opt/usr/lib/pkgconfig/
-
-	# XXX
-	$(SED) 's,^includedir=.*/include,includedir=$(STAGING_DIR)/opt/include,; \
-		s,^libdir=.*/lib,libdir=$(STAGING_DIR)/opt/lib,' \
-			$(1)/opt/usr/lib/pkgconfig/*.pc
+	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/pango*.pc \
+		$(1)/opt/lib/pkgconfig/
 endef
 
 define Package/libpango/install
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libpango*.so.* $(1)/opt/lib/
-endef
-
-define Package/pango-view/install
-	$(INSTALL_DIR) $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/pango-view $(1)/opt/bin
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libpango*.so* $(1)/opt/lib
 endef
 
 $(eval $(call BuildPackage,libpango))
-#$(eval $(call BuildPackage,pango-view))
