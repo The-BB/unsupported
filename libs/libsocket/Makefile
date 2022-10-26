@@ -13,6 +13,8 @@ PKG_HASH:=0afe2ece985caa0b44546d10426b15a506164d5b96d7242890c7d0337f479689
 PKG_LICENSE:=BSD-2-Clause
 PKG_LICENSE_FILES:=LICENSE
 
+CMAKE_INSTALL:=1
+
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
@@ -58,14 +60,6 @@ endef
 define Package/libsocketpp/install
 	$(INSTALL_DIR) $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libsocket++.so $(1)/opt/lib
-endef
-
-define Build/InstallDev
-	$(INSTALL_DIR) $(1)/opt/include/libsocket
-	$(CP) $(PKG_INSTALL_DIR)/opt/include/libsocket/*.h $(1)/opt/include/libsocket
-
-	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libsocket{,++}.so $(1)/opt/lib
 endef
 
 $(eval $(call BuildPackage,libsocket))
