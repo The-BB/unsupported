@@ -1,0 +1,20 @@
+--- a/cmake/FindPythonLibsNew.cmake
++++ b/cmake/FindPythonLibsNew.cmake
+@@ -169,7 +169,8 @@ list(GET _PYTHON_VALUES 9 PYTHON_MULTIAR
+ 
+ # Make sure the Python has the same pointer-size as the chosen compiler
+ # Skip if CMAKE_SIZEOF_VOID_P is not defined
+-if(CMAKE_SIZEOF_VOID_P AND (NOT "${PYTHON_SIZEOF_VOID_P}" STREQUAL "${CMAKE_SIZEOF_VOID_P}"))
++if(NOT DEFINED CMAKE_CROSSCOMPILING)
++ if(CMAKE_SIZEOF_VOID_P AND (NOT "${PYTHON_SIZEOF_VOID_P}" STREQUAL "${CMAKE_SIZEOF_VOID_P}"))
+   if(PythonLibsNew_FIND_REQUIRED)
+     math(EXPR _PYTHON_BITS "${PYTHON_SIZEOF_VOID_P} * 8")
+     math(EXPR _CMAKE_BITS "${CMAKE_SIZEOF_VOID_P} * 8")
+@@ -179,6 +180,7 @@ if(CMAKE_SIZEOF_VOID_P AND (NOT "${PYTHO
+   set(PYTHONLIBS_FOUND FALSE)
+   set(PythonLibsNew_FOUND FALSE)
+   return()
++ endif()
+ endif()
+ 
+ # The built-in FindPython didn't always give the version numbers
