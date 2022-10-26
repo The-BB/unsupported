@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ -f "/opt/etc/kopia/kopia.conf" ]; then
+  . /opt/etc/kopia/kopia.conf
+fi
+
+ENABLED=yes
+PROCS=kopia
+ARGS="server $OPTIONS"
+PREARGS=""
+DESC=$PROCS
+PATH=/opt/sbin:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+. /opt/etc/init.d/rc.func
