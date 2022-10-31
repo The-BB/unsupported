@@ -1,0 +1,36 @@
+--- a/src/basic/user-util.c
++++ b/src/basic/user-util.c
+@@ -111,7 +111,7 @@ bool synthesize_nobody(void) {
+         static int cache = -1;
+ 
+         if (cache < 0)
+-                cache = access("/etc/systemd/dont-synthesize-nobody", F_OK) < 0;
++                cache = access("/opt/etc/systemd/dont-synthesize-nobody", F_OK) < 0;
+ 
+         return cache;
+ #endif
+--- a/src/libsystemd/sd-bus/test-bus-vtable.c
++++ b/src/libsystemd/sd-bus/test-bus-vtable.c
+@@ -8,7 +8,7 @@
+ 
+ #include "sd-bus-vtable.h"
+ 
+-#define DEFAULT_BUS_PATH "unix:path=/run/dbus/system_bus_socket"
++#define DEFAULT_BUS_PATH "unix:path=/opt/var/run/dbus/system_bus_socket"
+ 
+ struct context {
+         bool quit;
+--- a/src/libsystemd/sd-id128/sd-id128.c
++++ b/src/libsystemd/sd-id128/sd-id128.c
+@@ -81,9 +81,9 @@ _public_ int sd_id128_get_machine(sd_id1
+         assert_return(ret, -EINVAL);
+ 
+         if (sd_id128_is_null(saved_machine_id)) {
+-                r = id128_read("/etc/machine-id", ID128_PLAIN, &saved_machine_id);
++                r = id128_read("/opt/etc/machine-id", ID128_PLAIN, &saved_machine_id);
+                 if (r < 0) {
+-                        r = id128_read("/var/lib/dbus/machine-id", ID128_PLAIN, &saved_machine_id);
++                        r = id128_read("/opt/var/lib/dbus/machine-id", ID128_PLAIN, &saved_machine_id);
+                         if (r < 0)
+                                 return r;
+                 }
