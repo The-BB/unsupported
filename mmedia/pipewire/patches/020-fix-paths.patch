@@ -1,0 +1,11 @@
+--- a/src/modules/module-protocol-native/local-socket.c
++++ b/src/modules/module-protocol-native/local-socket.c
+@@ -41,7 +41,7 @@
+ 
+ #include <pipewire/pipewire.h>
+ 
+-#define DEFAULT_SYSTEM_RUNTIME_DIR "/run/pipewire"
++#define DEFAULT_SYSTEM_RUNTIME_DIR "/opt/var/run/pipewire"
+ 
+ PW_LOG_TOPIC_EXTERN(mod_topic);
+ #define PW_LOG_TOPIC_DEFAULT mod_topic

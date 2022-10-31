@@ -1,0 +1,27 @@
+# error: 'SYS_memfd_create' undeclared
+
+--- a/src/pipewire/mem.c
++++ b/src/pipewire/mem.c
+@@ -41,9 +41,14 @@
+ #include <pipewire/map.h>
+ #include <pipewire/mem.h>
+ 
++#ifndef LINUX_VERSION_CODE
++#include <linux/version.h>
++#endif
++
+ PW_LOG_TOPIC_EXTERN(log_mem);
+ #define PW_LOG_TOPIC_DEFAULT log_mem
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,18,0)
+ #if !defined(__FreeBSD__) && !defined(__MidnightBSD__) && !defined(HAVE_MEMFD_CREATE)
+ /*
+  * No glibc wrappers exist for memfd_create(2), so provide our own.
+@@ -60,6 +65,7 @@ static inline int memfd_create(const cha
+ 
+ #define HAVE_MEMFD_CREATE 1
+ #endif
++#endif
+ 
+ #if defined(__FreeBSD__) || defined(__MidnightBSD__)
+ #define MAP_LOCKED 0

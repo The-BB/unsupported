@@ -1,0 +1,54 @@
+if PACKAGE_pipewire
+
+comment "Build Options"
+
+	config PIPEWIRE_AVAHI_LIBAVAHI_CLIENT
+		bool "Enable code that depends on avahi"
+		default n
+
+	config PIPEWIRE_DBUS
+		bool "Enable code that depends on dbus"
+		default y
+
+	config PIPEWIRE_PIPEWIRE_EXAMPLES
+		bool "Build examples"
+		default n
+
+	config PIPEWIRE_UDEV
+		bool "Enable Udev integration"
+		default y
+
+	config PIPEWIRE_RAOP
+		bool "Enable module for Remote Audio Output Protocol"
+		default y
+
+comment "Libs"
+
+	config PIPEWIRE_LIBSNDFILE
+		bool "Enable code that depends on libsndfile"
+		default y
+
+	config PIPEWIRE_LIBUSB
+		bool "Enable code that depends on libusb"
+		default n
+
+	config PIPEWIRE_PULSEAUDIO
+		bool "Enable code that depends on libpulse"
+		default n
+
+comment "Plugins"
+
+	config PIPEWIRE_ALSA_LIB
+		bool "Enable alsa spa plugin & pipewire-alsa integrations"
+		default y
+
+	config PIPEWIRE_FFMPEG
+		bool "Enable ffmpeg spa plugin integration"
+		default y
+
+#	kernels are too old
+#	config PIPEWIRE_PIPEWIRE_V4L2
+#		bool "Enable v4l2 spa plugin integration"
+#		default n
+
+endif
