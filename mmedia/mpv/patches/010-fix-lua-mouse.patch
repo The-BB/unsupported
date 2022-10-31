@@ -1,0 +1,18 @@
+--- a/player/lua/osc.lua
++++ b/player/lua/osc.lua
+@@ -187,7 +187,7 @@ end
+ 
+ function set_virt_mouse_area(x0, y0, x1, y1, name)
+     local sx, sy = get_virt_scale_factor()
+-    mp.set_mouse_area(x0 / sx, y0 / sy, x1 / sx, y1 / sy, name)
++--    mp.set_mouse_area(x0 / sx, y0 / sy, x1 / sx, y1 / sy, name)
+ end
+ 
+ function scale_value(x0, x1, y0, y1, val)
+@@ -2893,5 +2893,5 @@ mp.add_key_binding(nil, "visibility", fu
+ 
+ mp.register_script_message("osc-idlescreen", idlescreen_visibility)
+ 
+-set_virt_mouse_area(0, 0, 0, 0, "input")
++--set_virt_mouse_area(0, 0, 0, 0, "input")
+ set_virt_mouse_area(0, 0, 0, 0, "window-controls")
