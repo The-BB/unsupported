@@ -1,0 +1,29 @@
+if PACKAGE_libopenmpt
+
+comment "libopenmpt Library Configuration"
+
+	config LIBOPENMPT_MPG123
+		bool "Enable use of libmpg123"
+		default y
+
+	config LIBOPENMPT_OGG
+		bool "Enable use of libogg"
+		default y
+
+	config LIBOPENMPT_VORBIS
+		bool "Enable use of libvorbis"
+		default y
+
+	config LIBOPENMPT_VORBISFILE
+		bool "Enable use of libvorbisfile" if LIBOPENMPT_VORBIS
+		default y
+
+	config LIBOPENMPT_ZLIB
+		bool "Enable use of zlib"
+		default y
+
+	config LIBOPENMPT_OPENMPT123
+		bool "Enable the openmpt123 command line player"
+		default n
+
+endif
