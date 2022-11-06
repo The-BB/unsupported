@@ -1,6 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0-only
-#
-# Copyright (C) 2022 Entware
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
@@ -10,9 +8,8 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/$(PKG_VERSION)
-PKG_HASH:=skip
+PKG_HASH:=32a6db3f42f00eb95a07369160a614420443ca4f4e90ac628db8ca508e08538e
 
-PKG_MAINTAINER:=Entware team, https://entware.net
 PKG_LICENSE:=GPL-2.0-only LGPL-2.1-or-later MIT
 PKG_LICENSE_FILES:=COPYING LICENSE
 
