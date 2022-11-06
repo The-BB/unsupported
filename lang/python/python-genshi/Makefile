@@ -7,7 +7,7 @@ PKG_VERSION:=0.7.7
 PKG_RELEASE:=1
 
 PYPI_NAME:=Genshi
-PKG_HASH:=skip
+PKG_HASH:=c100520862cd69085d10ee1a87e91289e7f59f6b3d9bd622bf58b2804e6b9aab
 
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=COPYING
@@ -24,9 +24,8 @@ define Package/python3-genshi
   URL:=https://github.com/edgewall/genshi
   DEPENDS:= \
 	+python3-cgi \
+	+python3-six \
 	+python3-xml
-  DEPENDS+= \
-	+python3-six
 endef
 
 define Package/python3-genshi/description
