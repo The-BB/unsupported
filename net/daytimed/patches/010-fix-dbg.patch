@@ -1,0 +1,50 @@
+--- a/daytimed.c
++++ b/daytimed.c
+@@ -24,6 +24,7 @@
+ #include <arpa/inet.h>
+ #include <netinet/in.h>
+ 
++#include <grp.h>
+ #include <err.h>
+ #include <pwd.h>
+ #include <signal.h>
+@@ -37,11 +38,11 @@ static int debug = 0;
+ static const char *timeformat = "%a %b %e %H:%M:%S %Z %Y\n";
+ 
+ #define ADDR		INADDR_ANY
+-#define DEBUG_ADDR	INADDR_LOOPBACK
++#define DEBUG_ADDR	INADDR_ANY
+ #define PORT		13
+-#define DEBUG_PORT	13013
+-#define _PW_USER	"_daytimed"
+-#define _PW_DIR		"/var/empty"
++#define DEBUG_PORT	13
++#define _PW_USER	""
++#define _PW_DIR		"/opt/var/empty"
+ 
+ #define DPRINTF(x...) do { if (debug) printf(x); } while (0)
+ 
+@@ -117,9 +118,11 @@ privdrop(void)
+ 	}
+ 
+ 	/* Restrict the server */
++#if !defined(__linux__) || !defined(linux) || !defined(__linux)
+ 	if (pledge("stdio inet proc", NULL) == -1) {
+ 		err(1, "pledge failed");
+ 	}
++#endif
+ 
+ 	DPRINTF("server is sandboxed\n");
+ 
+@@ -212,9 +215,11 @@ main(int argc, char **argv)
+ 		case 0: /* child */
+ 			DPRINTF("child is processing\n");
+ 			/* Restrict the child */
++#if !defined(__linux__) || !defined(linux) || !defined(__linux)
+ 			if (pledge("stdio", NULL) == -1) {
+ 				err(1, "child pledge failed");
+ 			}
++#endif
+ 			getthetime(timestr, sizeof(timestr));
+ 			size_t tslen = strnlen(timestr, sizeof(timestr));
+ 
