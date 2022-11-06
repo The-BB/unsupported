@@ -42,7 +42,7 @@ endef
 define Package/clang-analyzer
 $(call Package/clang/Default)
   TITLE:=A source code analysis framework
-  DEPENDS:=+clang-tools +perlbase-hash +perlbase-term +python3
+  DEPENDS:=+clang-tools +perlbase-findbin +perlbase-hash +perlbase-sys +perlbase-term +python3
 endef
 
 define Package/clang-dev
