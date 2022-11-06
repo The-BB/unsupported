@@ -1,6 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0-only
-#
-# Copyright (C) 2022 Entware
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
@@ -12,7 +10,6 @@ PKG_SOURCE:=SDL2-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://www.libsdl.org/release
 PKG_HASH:=bc121588b1105065598ce38078026a414c28ea95e66ed2adab4c44d80b309e1b
 
-PKG_MAINTAINER:=Entware team, https://entware.net
 PKG_LICENSE:=Zlib
 PKG_LICENSE_FILES:=LICENSE.txt
 
