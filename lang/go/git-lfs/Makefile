@@ -1,9 +1,4 @@
-#
-# Copyright (C) 2022 Entware
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
@@ -76,7 +71,6 @@ define Build/Compile
 		-ldflags="-s -w -X $(PKG_GOGET)/config.GitCommit=$(GIT_LFS_SHA)"; \
 	)
 endef
-
 
 define Package/git-lfs/install
 	$(INSTALL_DIR) $(1)/opt/bin
