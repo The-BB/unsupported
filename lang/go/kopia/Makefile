@@ -1,6 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0-only
-#
-# Copyright (C) 2022 Entware
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
@@ -17,7 +15,6 @@ GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 PKG_COMMIT=5227d74996b6520f9f96e4203cfe00b832a60d5f
 PKG_HASH:=skip
 
-PKG_MAINTAINER:=Entware team, https://entware.net
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
 
