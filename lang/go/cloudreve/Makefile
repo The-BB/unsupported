@@ -1,6 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0-only
-#
-# Copyright (C) 2022 Entware
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
@@ -17,7 +15,6 @@ GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 PKG_COMMIT=96daed26b4453093d9d1a4dfe8d9ee334a7338af
 PKG_HASH:=skip
 
-PKG_MAINTAINER:=Entware team, https://entware.net
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
 
@@ -102,7 +99,6 @@ define Build/Compile
 			-X $(PKG_GOGET)/v3/pkg/conf.LastCommit=$(PKG_COMMIT)"; \
 	)
 endef
-
 
 define Package/cloudreve/install
 	$(INSTALL_DIR) $(1)/opt/bin
