@@ -1,6 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0-only
-#
-# Copyright (C) 2022 Entware
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
@@ -14,7 +12,6 @@ PKG_HASH:=5062a1f8d0c03e38aca5cf46b72de0cba03f901279729338b7b2f93e518182d8
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/perl/Stow-v$(PKG_VERSION)
 
-PKG_MAINTAINER:=Entware team, https://entware.net
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=COPYING
 
