@@ -1,6 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0-only
-#
-# Copyright (C) 2022 Entware
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
@@ -10,9 +8,8 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)+release.autotools.tar.gz
 PKG_SOURCE_URL:=https://lib.openmpt.org/files/libopenmpt/src/
-PKG_HASH:=skip
+PKG_HASH:=6ddb9e26a430620944891796fefb1bbb38bd9148f6cfc558810c0d3f269876c7
 
-PKG_MAINTAINER:=Entware team, https://entware.net
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE
 
