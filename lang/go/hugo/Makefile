@@ -1,6 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0-only
-#
-# Copyright (C) 2022 Entware
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
@@ -17,7 +15,6 @@ GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 PKG_COMMIT=58b824581360148f2d91f5cc83f69bd22c1aa331
 PKG_HASH:=skip
 
-PKG_MAINTAINER:=Entware team, https://entware.net
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
 
@@ -73,7 +70,6 @@ define Build/Compile
 		-tags=extended; \
 	)
 endef
-
 
 define Package/hugo/install
 	$(INSTALL_DIR) $(1)/opt/bin
