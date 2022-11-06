@@ -1,0 +1,11 @@
+--- a/daytimeserv.c
++++ b/daytimeserv.c
+@@ -52,7 +52,7 @@ int main (int argc, char **argv) {
+         ticks = time (NULL);
+ 
+         /* format local time into a string */
+-        strftime (buf, sizeof (buf), "Date: %c %Z\r\n", localtime (&ticks));
++        strftime (buf, sizeof (buf), "%c\n", localtime (&ticks));
+         write (connfd, buf, strlen (buf));
+ 
+         close (connfd);

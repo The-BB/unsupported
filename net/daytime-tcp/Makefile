@@ -38,6 +38,16 @@ define Package/daytimeserv
   TITLE+= (server)
 endef
 
+define Build/Compile
+	$(TARGET_CC) $(TARGET_CPPFLAGS) $(TARGET_CFLAGS) \
+		-o $(PKG_BUILD_DIR)/daytimecli -C $(PKG_BUILD_DIR)/daytimecli.c \
+		$(TARGET_LDFLAGS)
+
+	$(TARGET_CC) $(TARGET_CPPFLAGS) $(TARGET_CFLAGS) \
+		-o $(PKG_BUILD_DIR)/daytimeserv -C $(PKG_BUILD_DIR)/daytimeserv.c \
+		$(TARGET_LDFLAGS)
+endef
+
 define Package/daytimecli/install
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/daytimecli $(1)/opt/bin
