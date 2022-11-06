@@ -1,6 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0-only
-#
-# Copyright (C) 2022 Entware
+# SPDX-License-Identifier: WTFPL
 
 include $(TOPDIR)/rules.mk
 
@@ -17,7 +15,6 @@ GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
 PKG_COMMIT=af5c2b5a42ed8b1038f8434ff64bab78378360a4
 PKG_HASH:=skip
 
-PKG_MAINTAINER:=Entware team, https://entware.net
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE
 
@@ -93,7 +90,6 @@ define Build/Compile
 		-tags=netgo; \
 	)
 endef
-
 
 define Package/navidrome/install
 	$(INSTALL_DIR) $(1)/opt/bin
