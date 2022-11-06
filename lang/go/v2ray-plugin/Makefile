@@ -28,24 +28,24 @@ GOARM:=GOARM=5
 endif
 
 define Package/v2ray-plugin/Default
-	$(call Package/gopackage/Default)
-	SECTION:=net
-	CATEGORY:=Network
-	SUBMENU:=Web Servers/Proxies
-	TITLE:=A SIP003 plugin based on v2ray
-	URL:=https://github.com/shadowsocks/v2ray-plugin
-	DEPENDS:=@BROKEN
+  $(call Package/gopackage/Default)
+  SECTION:=net
+  CATEGORY:=Network
+  SUBMENU:=Web Servers/Proxies
+  TITLE:=A SIP003 plugin based on v2ray
+  URL:=https://github.com/shadowsocks/v2ray-plugin
+  DEPENDS:=@BROKEN
 endef
 
 define Package/v2ray-plugin
-	$(call Package/v2ray-plugin/Default)
-	VARIANT:=hf
+  $(call Package/v2ray-plugin/Default)
+  VARIANT:=hf
 endef
 
 define Package/v2ray-plugin_nohf
-	$(call Package/v2ray-plugin/Default)
-	VARIANT:=nohf
-	DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  $(call Package/v2ray-plugin/Default)
+  VARIANT:=nohf
+  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
 endef
 
 define Package/v2ray-plugin/description
