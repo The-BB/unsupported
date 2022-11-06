@@ -16,6 +16,7 @@ PKG_COMMIT=ceec4dcfe6e9a0a383429429512286b8fdf31132
 PKG_HASH:=skip
 
 PKG_LICENSE:=Apache-2.0
+PKG_LICENSE_FILES:=LICENSE
 
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
@@ -88,7 +89,6 @@ define Build/Compile
 			-X $(MODULE)/version.CommitSHA=$(VERSION_HASH)"; \
 	)
 endef
-
 
 define Package/filebrowser/install
 	$(INSTALL_DIR) $(1)/opt/bin
