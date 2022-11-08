@@ -5,7 +5,7 @@
  
  static int debug = 0;
 -static const char *timeformat = "%a %b %e %H:%M:%S %Z %Y\n";
-+static const char *timeformat = "%c\n";
++static const char *timeformat = "%c\r\n";
  
  #define ADDR		INADDR_ANY
  #define DEBUG_ADDR	INADDR_ANY
