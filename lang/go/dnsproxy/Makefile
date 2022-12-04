@@ -1,35 +1,27 @@
 # SPDX-License-Identifier: WTFPL
+#
+# XXX remove feeds/packages/net/dnsproxy
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dnsproxy
-PKG_VERSION:=0.46.1
+PKG_VERSION:=0.46.4
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/AdguardTeam/dnsproxy
 
-GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
-
-#!!! uncomment PKG_SOURCE to download fixed version
-#PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=8dfa81399b151a25200d46fa1787308107240867
-PKG_HASH:=skip
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=6d9de39ae2a7fe05bb9e36c9ee937d9283a46322
+PKG_SOURCE_URL:=https://$(PKG_GOGET)
+PKG_MIRROR_HASH:=079ea6a5db6d593eec94c6bdff996f080569c65594a21d812c992b1e218fe2bb
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
 
-PKG_BUILD_PARALLEL:=1
-PKG_USE_MIPS16:=0
-
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/golang.mk
 
-ifeq ($(BUILD_VARIANT),nohf)
-GOARM:=GOARM=5
-endif
-
 define Package/dnsproxy/Default
-  $(call Package/gopackage/Default)
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=IP Addresses and Names
@@ -64,26 +56,16 @@ endef
 
 Package/dnsproxy_nohf/conffiles=$(Package/dnsproxy/conffiles)
 
-define Build/Compile
-	( cd $(PKG_BUILD_DIR)/src/$(PKG_GOGET); \
-		CGO_ENABLED=0 \
-		GO111MODULE='on' \
-		GOOS=linux \
-		GOARCH=$(GOARCH) \
-		$(GOARM) \
-		$(GOMIPS) \
-		$(GOROOT)/bin/go build -o $(PKG_BUILD_DIR)/bin/dnsproxy \
-		-ldflags="-s -w -X main.VersionString=$(PKG_VERSION)"; \
-	)
-endef
+GO_LDFLAGS += -X 'main.VersionString=$(PKG_VERSION)'
+
+GO_VARS += GO111MODULE=on
 
 define Package/dnsproxy/install
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/dnsproxy $(1)/opt/bin
 
 	$(INSTALL_DIR) $(1)/opt/etc
-	$(CP) $(PKG_BUILD_DIR)/src/$(PKG_GOGET)/config.yaml.dist \
-		$(1)/opt/etc/dnsproxy.yaml
+	$(CP) $(GO_SRC_DIR)/config.yaml.dist $(1)/opt/etc/dnsproxy.yaml
 
 	$(INSTALL_DIR) $(1)/opt/etc/init.d
 	$(INSTALL_BIN) files/S90dnsproxy $(1)/opt/etc/init.d
