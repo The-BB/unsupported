@@ -8,28 +8,18 @@ PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/kopia/kopia
 
-GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
-
-#!!! uncomment PKG_SOURCE to download fixed version
-#PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=5227d74996b6520f9f96e4203cfe00b832a60d5f
-PKG_HASH:=skip
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=5227d74996b6520f9f96e4203cfe00b832a60d5f
+PKG_SOURCE_URL:=https://$(PKG_GOGET)
+PKG_MIRROR_HASH:=5c791912e2c0310defdbb0aa72a17376a462ee3a8fe2c71d89b7517399da1daa
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
 
-PKG_BUILD_PARALLEL:=1
-PKG_USE_MIPS16:=0
-
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/golang.mk
 
-ifeq ($(BUILD_VARIANT),nohf)
-GOARM:=GOARM=5
-endif
-
 define Package/kopia/Default
-  $(call Package/gopackage/Default)
   SECTION:=utils
   CATEGORY:=Utilities
   SUBMENU:=Backup
@@ -45,7 +35,7 @@ endef
 define Package/kopia_nohf
   $(call Package/kopia/Default)
   VARIANT:=nohf
-  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
 endef
 
 define Package/kopia/description
@@ -63,16 +53,10 @@ endef
 
 Package/kopia_nohf/conffiles=$(Package/kopia/conffiles)
 
-define Build/Compile
-	( cd $(PKG_BUILD_DIR)/src/$(PKG_GOGET); \
-		GOOS=linux \
-		GOARCH=$(GOARCH) \
-		$(GOARM) \
-		$(GOMIPS) \
-		$(GOROOT)/bin/go build -o $(PKG_BUILD_DIR)/bin/kopia \
-		-ldflags="-s -w"; \
-	)
-endef
+GO_LDFLAGS += \
+	-X '$(PKG_GOGET)/repo.BuildVersion=$(PKG_VERSION)' \
+	-X '$(PKG_GOGET)/repo.BuildInfo=$(PKG_SOURCE_VERSION)' \
+	-X '$(PKG_GOGET)/repo.BuildGitHubRepo=$(PKG_NAME)'
 
 define Package/kopia/install
 	$(INSTALL_DIR) $(1)/opt/bin
