@@ -1,38 +1,29 @@
 # SPDX-License-Identifier: WTFPL
+#
+# XXX remove feeds/packages/net/git-lfs
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=git-lfs
-PKG_VERSION:=3.2.0
+PKG_VERSION:=3.3.0
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/git-lfs/git-lfs
 
-GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
-
-#!!! uncomment PKG_SOURCE to download fixed version
-#PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=45f849b999f70f5804b441f6eb5b8d5eead8bdfd
-PKG_HASH:=skip
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=77deabdf9a18f8a07ecfd3e0f4aa572ffbbab8d4
+PKG_SOURCE_URL:=https://$(PKG_GOGET)
+PKG_MIRROR_HASH:=3a59794fb2aa13af29abdbf7c365bbd145b9fea96307befd8e2595d3f207689a
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE.md
 
-PKG_BUILD_PARALLEL:=1
-PKG_USE_MIPS16:=0
-
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/golang.mk
 
-ifeq ($(BUILD_VARIANT),nohf)
-GOARM:=GOARM=5
-endif
-
 define Package/git-lfs/Default
-  $(call Package/gopackage/Default)
   SECTION:=net
   CATEGORY:=Network
-  SUBMENU:=
   TITLE:=Git Large File Storage
   URL:=https://git-lfs.github.com
   DEPENDS:=+git
@@ -57,20 +48,17 @@ endef
 
 Package/git-lfs_nohf/description=$(Package/git-lfs/description)
 
-GIT_LFS_SHA:=$(shell echo $(PKG_COMMIT) | cut -b -9)
-
-define Build/Compile
-	( cd $(PKG_BUILD_DIR)/src/$(PKG_GOGET); \
-		$(GOROOT)/bin/go generate ./commands; \
-		\
-		GOOS=linux \
-		GOARCH=$(GOARCH) \
-		$(GOARM) \
-		$(GOMIPS) \
-		$(GOROOT)/bin/go build -o $(PKG_BUILD_DIR)/bin/git-lfs \
-		-ldflags="-s -w -X $(PKG_GOGET)/config.GitCommit=$(GIT_LFS_SHA)"; \
-	)
+define Build/FixHelp
+	( cd $(GO_SRC_DIR); $(GO_BIN) generate ./commands )
 endef
+
+Hooks/Compile/Pre += Build/FixHelp
+
+GIT_LFS_SHA:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -9)
+
+GO_LDFLAGS += \
+	-X '$(PKG_GOGET)/v3/config.Vendor=Entware' \
+	-X '$(PKG_GOGET)/v3/config.GitCommit=$(GIT_LFS_SHA)'
 
 define Package/git-lfs/install
 	$(INSTALL_DIR) $(1)/opt/bin
