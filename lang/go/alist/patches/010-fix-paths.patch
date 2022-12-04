@@ -1,33 +1,38 @@
+--- a/src/github.com/alist-org/alist/cmd/flags/config.go
++++ b/src/github.com/alist-org/alist/cmd/flags/config.go
+@@ -2,6 +2,9 @@ package flags
+ 
+ var (
+ 	DataDir     string
++	TempDir     string
++	LogPath     string
++	DBPath      string
+ 	Debug       bool
+ 	NoPrefix    bool
+ 	Dev         bool
 --- a/src/github.com/alist-org/alist/cmd/root.go
 +++ b/src/github.com/alist-org/alist/cmd/root.go
 @@ -24,7 +24,7 @@ func Execute() {
  }
  
  func init() {
--	rootCmd.PersistentFlags().StringVar(&flags.Config, "conf", "data/config.json", "config file")
-+	rootCmd.PersistentFlags().StringVar(&flags.Config, "conf", "/opt/var/lib/alist/data/config.json", "config file")
+-	rootCmd.PersistentFlags().StringVar(&flags.DataDir, "data", "data", "config file")
++	rootCmd.PersistentFlags().StringVar(&flags.DataDir, "data", "/opt/var/lib/alist/data", "config file")
  	rootCmd.PersistentFlags().BoolVar(&flags.Debug, "debug", false, "start with debug mode")
  	rootCmd.PersistentFlags().BoolVar(&flags.NoPrefix, "no-prefix", false, "disable env prefix")
  	rootCmd.PersistentFlags().BoolVar(&flags.Dev, "dev", false, "start with dev mode")
 --- a/src/github.com/alist-org/alist/internal/conf/config.go
 +++ b/src/github.com/alist-org/alist/internal/conf/config.go
-@@ -51,16 +51,16 @@ func DefaultConfig() *Config {
+@@ -49,9 +49,9 @@ type Config struct {
+ }
+ 
+ func DefaultConfig() *Config {
+-	tempDir := filepath.Join(flags.DataDir, "temp")
+-	logPath := filepath.Join(flags.DataDir, "log/log.log")
+-	dbPath := filepath.Join(flags.DataDir, "data.db")
++	tempDir := filepath.Join(flags.TempDir, "/opt/var/lib/alist/data/temp")
++	logPath := filepath.Join(flags.LogPath, "/opt/var/log/alist/log.log")
++	dbPath := filepath.Join(flags.DBPath, "/opt/var/lib/alist/data/data.db")
+ 	return &Config{
+ 		Address:        "0.0.0.0",
  		Port:           5244,
- 		JwtSecret:      random.String(16),
- 		TokenExpiresIn: 48,
--		TempDir:        "data/temp",
-+		TempDir:        "/opt/var/lib/alist/data/temp",
- 		Database: Database{
- 			Type:        "sqlite3",
- 			Port:        0,
- 			TablePrefix: "x_",
--			DBFile:      "data/data.db",
-+			DBFile:      "/opt/var/lib/alist/data/data.db",
- 		},
- 		Log: LogConfig{
- 			Enable:     true,
--			Name:       "log/log.log",
-+			Name:       "/opt/var/log/alist/log.log",
- 			MaxSize:    10,
- 			MaxBackups: 5,
- 			MaxAge:     28,
