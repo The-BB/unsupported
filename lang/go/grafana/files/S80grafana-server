@@ -1,0 +1,26 @@
+#!/bin/sh
+
+CONFIG=/opt/etc/grafana/grafana.ini
+HOMEPATH=/opt/share/grafana
+LOGPATH=/opt/var/log/grafana
+DATAPATH=/opt/var/lib/grafana
+PLUGINPATH=/opt/var/lib/grafana/plugins
+DATASOURCECFGPATH=/opt/etc/grafana/datasources
+DASHBOARDSCFGPATH=/opt/etc/grafana/dashboards
+PIDFILE=/opt/var/run/grafana.pid
+
+FLAGS="
+cfg:default.paths.datasources=$DATASOURCECFGPATH
+cfg:default.paths.dashboards=$DASHBOARDSCFGPATH
+cfg:default.paths.logs=$LOGPATH
+cfg:default.paths.data=$DATAPATH
+cfg:default.paths.plugins=$PLUGINPATH"
+
+ENABLED=yes
+PROCS=grafana-server
+ARGS="-config=$CONFIG -homepath=$HOMEPATH -pidfile=$PIDFILE $FLAGS"
+PREARGS=""
+DESC=$PROCS
+PATH=/opt/sbin:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+. /opt/etc/init.d/rc.func
