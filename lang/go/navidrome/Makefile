@@ -8,36 +8,29 @@ PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/navidrome/navidrome
 
-GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
-
-#!!! uncomment PKG_SOURCE to download fixed version
-#PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=af5c2b5a42ed8b1038f8434ff64bab78378360a4
-PKG_HASH:=skip
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=af5c2b5a42ed8b1038f8434ff64bab78378360a4
+PKG_SOURCE_URL:=https://$(PKG_GOGET)
+PKG_MIRROR_HASH:=457f00d8d1e1278861b80e32a81ac42c87314c0f63818754e2f97919189e5ad3
 
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE
 
-PKG_BUILD_DEPENDS:=node/host
+PKG_CGO_ENABLED:=1
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
+
+PKG_BUILD_DEPENDS:=node/host
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/golang.mk
 
-ifeq ($(BUILD_VARIANT),nohf)
-GOARM:=GOARM=5
-endif
-
 define Package/navidrome/Default
-  $(call Package/gopackage/Default)
   SECTION:=multimedia
   CATEGORY:=Multimedia
-  SUBMENU:=
   TITLE:=Modern Music Server and Streamer
   URL:=https://www.navidrome.org/
-  DEPENDS:=+libstdcpp +taglib +zlib
-  EXTRA_DEPENDS:=ffmpeg 
+  DEPENDS:=+ffmpeg +libstdcpp +taglib +zlib
 endef
 
 define Package/navidrome
@@ -65,31 +58,21 @@ endef
 
 Package/navidrome_nohf/conffiles=$(Package/navidrome/conffiles)
 
-GIT_SHA:=$(shell echo $(PKG_COMMIT) | cut -b -9)
-GIT_TAG:=v$(PKG_VERSION)
-
-define Build/Compile
-	( cd $(PKG_BUILD_DIR)/src/$(PKG_GOGET); \
-		\
-		pushd $(PKG_BUILD_DIR)/src/$(PKG_GOGET)/ui; \
-		npm ci; \
-		npm run build; \
-		popd; \
-		\
-		CC=$(TARGET_CROSS)gcc \
-		CXX=$(TARGET_CROSS)g++ \
-		CGO_ENABLED=1 \
-		GOOS=linux \
-		GOARCH=$(GOARCH) \
-		$(GOARM) \
-		$(GOMIPS) \
-		$(GOROOT)/bin/go build -a -o $(PKG_BUILD_DIR)/bin/navidrome \
-		-ldflags="-s -w -I /opt/lib/$(DYNLINKER) \
-			-X $(PKG_GOGET)/consts.gitSha=$(GIT_SHA) \
-			-X $(PKG_GOGET)/consts.gitTag=$(GIT_TAG)-SNAPSHOT" \
-		-tags=netgo; \
-	)
+define Build/Web
+	( cd $(GO_SRC_DIR)/ui; npm ci; npm run build; )
 endef
+
+Hooks/Compile/Pre += Build/Web
+
+GIT_SHA:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -9)
+
+GO_BUILD_ARGS += -a
+
+GO_LDFLAGS += \
+	-X '$(PKG_GOGET)/consts.gitSha=$(GIT_SHA)' \
+	-X '$(PKG_GOGET)/consts.gitTag=v$(PKG_VERSION)'
+
+GO_TAGS:=-tags=netgo
 
 define Package/navidrome/install
 	$(INSTALL_DIR) $(1)/opt/bin
