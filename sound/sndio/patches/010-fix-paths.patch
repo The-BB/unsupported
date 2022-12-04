@@ -1,0 +1,11 @@
+--- a/libsndio/amsg.h
++++ b/libsndio/amsg.h
+@@ -27,7 +27,7 @@
+  * example: "/tmp/sndio-1000/sock0"
+  *
+  */
+-#define SOCKPATH_DIR	"/tmp/sndio"
++#define SOCKPATH_DIR	"/opt/var/run/sndio"
+ #define SOCKPATH_FILE	"sock"
+ #define SOCKPATH_MAX	(1 +		\
+ 	sizeof(SOCKPATH_DIR) - 1 +	\

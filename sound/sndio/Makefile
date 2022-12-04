@@ -57,7 +57,8 @@ CONFIGURE_ARGS:=$(filter-out	\
 	, $(CONFIGURE_ARGS))
 
 CONFIGURE_ARGS += \
-	--privsep-user=root
+	--privsep-user=nobody \
+	--without-libbsd
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt//include
