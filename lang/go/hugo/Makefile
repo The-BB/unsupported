@@ -3,36 +3,29 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hugo
-PKG_VERSION:=0.104.3
+PKG_VERSION:=0.107.0
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/gohugoio/hugo
 
-GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
-
-#!!! uncomment PKG_SOURCE to download fixed version
-#PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=58b824581360148f2d91f5cc83f69bd22c1aa331
-PKG_HASH:=skip
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=2221b5b30a285d01220a26a82305906ad3291880
+PKG_SOURCE_URL:=https://$(PKG_GOGET)
+PKG_MIRROR_HASH:=bcdf56874a10d6b3a5d2176e7284cbe7cdce67330ebba5b585ea4c67b0973869
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
 
+PKG_CGO_ENABLED:=1
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/golang.mk
 
-ifeq ($(BUILD_VARIANT),nohf)
-GOARM:=GOARM=5
-endif
-
 define Package/hugo/Default
-  $(call Package/gopackage/Default)
   SECTION:=net
   CATEGORY:=Network
-  SUBMENU:=
   TITLE:=framework for building websites
   URL:=https://gohugo.io/
   DEPENDS:=+libstdcpp
@@ -56,20 +49,9 @@ endef
 
 Package/hugo_nohf/description=$(Package/hugo/description)
 
-define Build/Compile
-	( cd $(PKG_BUILD_DIR)/src/$(PKG_GOGET); \
-		CC=$(TARGET_CROSS)gcc \
-		CXX=$(TARGET_CROSS)g++ \
-		CGO_ENABLED=1 \
-		GOOS=linux \
-		GOARCH=$(GOARCH) \
-		$(GOARM) \
-		$(GOMIPS) \
-		$(GOROOT)/bin/go build -a -o $(PKG_BUILD_DIR)/bin/hugo \
-		-ldflags="-s -w -I /opt/lib/$(DYNLINKER)" \
-		-tags=extended; \
-	)
-endef
+GO_TAGS:=-tags=extended
+
+GO_VARS += GO111MODULE=on
 
 define Package/hugo/install
 	$(INSTALL_DIR) $(1)/opt/bin
