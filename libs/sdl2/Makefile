@@ -72,6 +72,7 @@ CONFIGURE_ARGS += \
 	--disable-ime \
 	--disable-joystick-mfi \
 	--disable-joystick-virtual \
+	--disable-libsamplerate \
 	--disable-pulseaudio \
 	--disable-render-d3d \
 	--disable-rpath \
