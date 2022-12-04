@@ -1,9 +1,5 @@
 #!/bin/sh
 
-if [ ! -d "/opt/var/lib/cloudreve" ]; then
-	mkdir -p /opt/var/lib/cloudreve
-fi
-
 ENABLED=yes
 PROCS=cloudreve
 ARGS="-c /opt/var/lib/cloudreve/conf.ini"

@@ -11,7 +11,7 @@
  
 --- a/src/github.com/cloudreve/Cloudreve/main.go
 +++ b/src/github.com/cloudreve/Cloudreve/main.go
-@@ -28,7 +28,7 @@ var staticZip string
+@@ -27,7 +27,7 @@ var staticZip string
  var staticFS fs.FS
  
  func init() {

@@ -1,36 +1,33 @@
 # SPDX-License-Identifier: WTFPL
+#
+# XXX feeds/packages/net/cloudreve
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cloudreve
 PKG_VERSION:=3.5.3
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/cloudreve/Cloudreve
 
-GOPKG_SOURCE=GO_$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE).tar.bz2
-
-#!!! uncomment PKG_SOURCE to download fixed version
-#PKG_SOURCE=$(GOPKG_SOURCE)
-PKG_COMMIT=96daed26b4453093d9d1a4dfe8d9ee334a7338af
-PKG_HASH:=skip
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=0e5683bc3b102a474b03992eb7932ac12643bcd1
+PKG_SOURCE_URL:=https://$(PKG_GOGET)
+PKG_MIRROR_HASH:=c43ec528df19d239b06456e78aae3d9852da5cca372c157b62f1f74b03f5cc0d
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
 
-PKG_BUILD_DEPENDS:=node/host node-yarn/host
+PKG_CGO_ENABLED:=1
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
+
+PKG_BUILD_DEPENDS:=node-yarn/host
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/golang.mk
 
-ifeq ($(BUILD_VARIANT),nohf)
-GOARM:=GOARM=5
-endif
-
 define Package/cloudreve/Default
-  $(call Package/gopackage/Default)
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=
@@ -57,54 +54,50 @@ endef
 
 Package/cloudreve_nohf/description=$(Package/cloudreve/description)
 
-define Download/frontend
-  VERSION:=e428b86964988cadf329014349a1e3bf5f44b12a
-  SUBDIR:=assets
-  FILE:=frontend-$$(VERSION).tar.xz
-  URL:=https://github.com/cloudreve/frontend.git
-  MIRROR_HASH:=skip
-  PROTO:=git
-endef
+#define Download/frontend
+#  VERSION:=e432a81328c577a22698924f9703a6c684eb66d0
+#  SUBDIR:=assets
+#  FILE:=frontend-$$(VERSION).tar.xz
+#  URL:=https://github.com/cloudreve/frontend.git
+#  MIRROR_HASH:=9364558948a97c0c30ebd41e769b5ccee856249565ef7fbb37e8845a4c28cf3f
+#  PROTO:=git
+#endef
 
-define Prepare/frontend
-	$(eval $(Download/frontend))
-	xzcat $(DL_DIR)/$(FILE) | \
-		tar -C $(PKG_BUILD_DIR)/src/$(PKG_GOGET) $(TAR_OPTIONS)
-endef
+#$(eval $(call Download,frontend))
 
-define Build/Compile
-	$(eval $(call Download,frontend))
-	$(Prepare/frontend)
+#define Prepare/frontend
+#	$(eval $(Download/frontend))
+#	xzcat $(DL_DIR)/$(FILE) | tar -C $(GO_SRC_DIR) $(TAR_OPTIONS)
+#endef
 
-	( cd $(PKG_BUILD_DIR)/src/$(PKG_GOGET); \
-		\
-		pushd $(PKG_BUILD_DIR)/src/$(PKG_GOGET)/assets; \
+define Build/Web
+#	$(Prepare/frontend)
+
+	( cd $(GO_SRC_DIR)/assets; \
 		yarn install; \
 		yarn run build; \
 		find ./build -name "*.map" -type f -delete; \
-		popd; \
-		\
+		cd $(GO_SRC_DIR); \
 		zip -r - assets/build >assets.zip; \
-		\
-		CC=$(TARGET_CROSS)gcc \
-		CGO_ENABLED=1 \
-		GO111MODULE=on \
-		GOOS=linux \
-		GOARCH=$(GOARCH) \
-		$(GOARM) \
-		$(GOMIPS) \
-		$(GOROOT)/bin/go build -a -o $(PKG_BUILD_DIR)/bin/cloudreve \
-		-ldflags="-s -w -I /opt/lib/$(DYNLINKER) \
-			-X $(PKG_GOGET)/v3/pkg/conf.BackendVersion=$(PKG_VERSION) \
-			-X $(PKG_GOGET)/v3/pkg/conf.LastCommit=$(PKG_COMMIT)"; \
 	)
 endef
 
+Hooks/Compile/Pre += Build/Web
+
+GIT_COMMIT:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -9)
+
+GO_LDFLAGS += \
+	-X '$(PKG_GOGET)/v3/pkg/conf.BackendVersion=$(PKG_VERSION)' \
+	-X '$(PKG_GOGET)/v3/pkg/conf.LastCommit=$(GIT_COMMIT)'
+
+GO_VARS += GO111MODULE=on
+
 define Package/cloudreve/install
 	$(INSTALL_DIR) $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/cloudreve $(1)/opt/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/Cloudreve $(1)/opt/bin/cloudreve
 	$(INSTALL_DIR) $(1)/opt/etc/init.d
 	$(INSTALL_BIN) files/S99cloudreve $(1)/opt/etc/init.d
+	$(INSTALL_DIR) $(1)/opt/var/lib/cloudreve
 endef
 
 Package/cloudreve_nohf/install=$(Package/cloudreve/install)
