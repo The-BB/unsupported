@@ -8,7 +8,7 @@ comment "Build Options"
 
 	config HARFBUZZ_FREETYPE
 		bool "Enable freetype interop helpers"
-		default n
+		default y
 
 	config HARFBUZZ_GLIB2
 		bool "Enable GLib unicode functions"
