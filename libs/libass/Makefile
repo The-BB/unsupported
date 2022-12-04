@@ -24,7 +24,7 @@ define Package/libass
   CATEGORY:=Libraries
   TITLE:=is an SSA/ASS subtitles rendering library
   URL:=https://github.com/libass/libass
-  DEPENDS:=+fontconfig +libfreetype +libfribidi +libharfbuzz
+  DEPENDS:=+fontconfig +libfreetype +libfribidi +libharfbuzz $(ICONV_DEPENDS)
 endef
 
 define Package/libass/description
