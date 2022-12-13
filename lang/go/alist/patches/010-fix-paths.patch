@@ -1,10 +1,11 @@
 --- a/src/github.com/alist-org/alist/cmd/flags/config.go
 +++ b/src/github.com/alist-org/alist/cmd/flags/config.go
-@@ -2,6 +2,9 @@ package flags
+@@ -2,6 +2,10 @@ package flags
  
  var (
  	DataDir     string
 +	TempDir     string
++	IndexDir    string
 +	LogPath     string
 +	DBPath      string
  	Debug       bool
@@ -23,15 +24,17 @@
  	rootCmd.PersistentFlags().BoolVar(&flags.Dev, "dev", false, "start with dev mode")
 --- a/src/github.com/alist-org/alist/internal/conf/config.go
 +++ b/src/github.com/alist-org/alist/internal/conf/config.go
-@@ -49,9 +49,9 @@ type Config struct {
+@@ -50,10 +50,10 @@ type Config struct {
  }
  
  func DefaultConfig() *Config {
 -	tempDir := filepath.Join(flags.DataDir, "temp")
+-	indexDir := filepath.Join(flags.DataDir, "bleve")
 -	logPath := filepath.Join(flags.DataDir, "log/log.log")
 -	dbPath := filepath.Join(flags.DataDir, "data.db")
 +	tempDir := filepath.Join(flags.TempDir, "/opt/var/lib/alist/data/temp")
-+	logPath := filepath.Join(flags.LogPath, "/opt/var/log/alist/log.log")
++	indexDir := filepath.Join(flags.IndexDir, "/opt/var/lib/alist/data/bleve")
++	logPath := filepath.Join(flags.LogPath, "/opt/var/log/alist.log")
 +	dbPath := filepath.Join(flags.DBPath, "/opt/var/lib/alist/data/data.db")
  	return &Config{
  		Address:        "0.0.0.0",
