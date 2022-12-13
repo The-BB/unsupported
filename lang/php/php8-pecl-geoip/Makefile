@@ -16,6 +16,7 @@ PKG_HASH:=b2d05c03019d46135c249b5a7fa0dbd43ca5ee98aea8ed807bc7aa90ac8c0f06
 PKG_BUILD_DIR:=$(BUILD_DIR)/pecl-php8/$(PECL_NAME)-$(PKG_VERSION)
 
 PKG_LICENSE:=PHP-3.01
+PKG_LICENSE_FILES:=LICENSE
 
 PKG_BUILD_PARALLEL:=1
 
@@ -26,5 +27,5 @@ include $(TOPDIR)/feeds/packages/lang/php8/pecl.mk
 CONFIGURE_ARGS += \
 	--with-geoip=shared,"$(STAGING_DIR)/opt/usr"
 
-$(eval $(call PHP8PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),+geoip,30))
+$(eval $(call PHP8PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),+libgeoip,30))
 $(eval $(call BuildPackage,$(PKG_NAME)))
