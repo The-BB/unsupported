@@ -33,6 +33,7 @@ define Package/librrd-latest
   CATEGORY:=Libraries
   TITLE+= management library (v$(PKG_VERSION))
   DEPENDS:=+libpango +libxml2
+  PROVIDES:=librrd1 librrd
 endef
 
 define Package/rrdcgi-latest
@@ -41,6 +42,7 @@ define Package/rrdcgi-latest
   CATEGORY:=Utilities
   TITLE+= CGI graphing tool (v$(PKG_VERSION))
   DEPENDS:=+librrd-latest
+  PROVIDES:=rrdcgi1 rrdcgi
 endef
 
 define Package/rrdtool-latest
@@ -49,11 +51,10 @@ define Package/rrdtool-latest
   CATEGORY:=Utilities
   TITLE+= management tools (v$(PKG_VERSION))
   DEPENDS:=+librrd-latest
+  PROVIDES:=rrdtool1 rrdtool
 endef
 
 TARGET_LDFLAGS += $(if $(INTL_FULL),-lintl)
-
-ADD_PKG_CONFIG_PATH=$(STAGING_DIR)/opt/usr/lib/pkgconfig
 
 CONFIGURE_ARGS += \
 	--disable-docs \
@@ -66,8 +67,7 @@ CONFIGURE_ARGS += \
 	--disable-python \
 	--disable-ruby \
 	--disable-tcl \
-	--enable-nls \
-	PKG_CONFIG_PATH="$(ADD_PKG_CONFIG_PATH):$$$$PKG_CONFIG_PATH"
+	--enable-nls
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/usr/include
