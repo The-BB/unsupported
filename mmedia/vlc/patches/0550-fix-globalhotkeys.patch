@@ -1,0 +1,11 @@
+--- a/bin/vlc.c
++++ b/bin/vlc.c
+@@ -238,7 +238,7 @@ int main( int i_argc, const char *ppsz_a
+     libvlc_set_user_agent (vlc, "VLC media player", "VLC/"PACKAGE_VERSION);
+ 
+     libvlc_add_intf (vlc, "hotkeys,none");
+-#if !defined (__OS2__)
++#if !defined (__linux__)
+     libvlc_add_intf (vlc, "globalhotkeys,none");
+ #endif
+     if (libvlc_add_intf (vlc, NULL))

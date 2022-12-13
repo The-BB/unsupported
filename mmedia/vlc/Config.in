@@ -1,0 +1,311 @@
+if PACKAGE_libvlc-plugins
+
+comment "Optional Features and Packages:"
+
+config VLC_DBUS
+		bool "D-Bus message bus support"
+		default n
+
+comment "Optimization Options"
+
+config VLC_OPTIMIZE_SPEED
+		bool "compiler optimizations (-O3)"
+
+config VLC_LUA
+		bool "LUA scripting support"
+		default y
+
+comment "Input plugins:"
+
+config VLC_LIBARCHIVE
+		bool "libarchive support"
+		default n
+
+config VLC_LIVE555
+		bool "RTSP input through live555"
+		default n
+
+#config VLC_LIBDVDREAD
+#		bool "dvdread input module"
+#		default n
+
+#config VLC_LIBDVDNAV
+#		bool "DVD with navigation input module (dvdnav)"
+#		default n
+
+#config VLC_LIBBLURAY
+#		bool "libbluray for Blu-ray disc support"
+#		default n
+
+#config VLC_OPENCV3
+#		bool "OpenCV (computer vision) filter"
+#		default n
+
+config VLC_SAMBA4
+		bool "SMB/CIFS support"
+		default n
+
+config VLC_LIBSSH2
+		bool "support SFTP file transfer via libssh2"
+		default n
+
+config VLC_LIBNFS
+		bool "support NFS protocol via libnfs"
+		default n
+
+config VLC_LIBV4L
+		bool "Video4Linux version 2"
+		default n
+
+#config VLC_LIBCDDB
+#		bool "CDDB for Audio CD"
+#		default n
+
+#config VLC_LIBVNCSERVER
+#		bool "VNC/rfb client support"
+#		default n
+
+#config VLC_FREERDP
+#		bool "RDP/Remote Desktop client support"
+#		default n
+
+comment "Mux/Demux plugins:"
+
+#config VLC_LIBDVBPSI
+#		bool "dvbpsi support"
+#		default n
+
+#config VLC_LIBSIDPLAY2
+#		bool "C64 sid demux support"
+#		default n
+
+config VLC_LIBOGG
+		bool "Ogg demux support"
+		default n
+
+config VLC_LIBMATROSKA
+		bool "MKV format support"
+		default n
+
+#config VLC_LIBMODPLUG
+#		bool "Use libmodplug"
+#		default n
+
+config VLC_MUSEPACK
+		bool "Use libmpcdec"
+		default n
+
+comment "Codec plugins:"
+
+config VLC_LIBMAD
+		bool "libmad module"
+		default n
+
+config VLC_MPG123
+		bool "libmpg123 decoder support"
+		default n
+
+config VLC_GST1_PLUGINS_BASE
+		bool "GStreamer based decoding support"
+		select PACKAGE_gstreamer1-plugins-base
+		select PACKAGE_libgst1app
+		select PACKAGE_libgst1video
+		default n
+
+config VLC_FFMPEG
+		bool "merge FFmpeg-based plugins"
+		select PACKAGE_libffmpeg-full
+		default n
+
+config VLC_FFMPEG_AVCODEC
+		bool "libavcodec codec"
+		depends on VLC_FFMPEG_AVFORMAT
+		default n
+
+config VLC_FFMPEG_AVFORMAT
+		bool "libavformat containers"
+		depends on VLC_FFMPEG
+		default n
+
+config VLC_FFMPEG_SWSCALE
+		bool "libswscale image scaling and conversion"
+		depends on VLC_FFMPEG_AVCODEC
+		default n
+
+config VLC_FFMPEG_POSTPROC
+		bool "libpostproc image post-processing"
+		depends on VLC_FFMPEG
+		default n
+
+config VLC_FAAD
+		bool "faad codec"
+		default n
+
+#config VLC_LIBVA
+#		bool "VAAPI GPU decoding support"
+#		default n
+
+#config VLC_DAV1D
+#		bool "AV1 decoder"
+#		default n
+
+config VLC_LIBVPX
+		bool "libvpx VP8/VP9 encoder and decoder"
+		default n
+
+config VLC_FLAC
+		bool "libflac decoder/encoder support"
+		default n
+
+config VLC_LIBMPEG2
+		bool "libmpeg2 decoder support"
+		default n
+
+config VLC_LIBVORBIS
+		bool "Vorbis decoder and encoder"
+		default n
+
+config VLC_TREMOR
+		bool "Tremor decoder support"
+		default n
+
+config VLC_SPEEX
+		bool "Speex support"
+		default n
+
+config VLC_OPUS
+		bool "Opus support"
+		default n
+
+
+config VLC_LIBTHEORA
+		bool "experimental theora codec"
+		default n
+
+config VLC_OGGSPOTS
+		bool "experimental OggSpots codec"
+		default n
+
+config VLC_LIBPNG
+		bool "PNG support"
+		default n
+
+config VLC_LIBJPEG
+		bool "JPEG support"
+		default n
+
+config VLC_X264
+		bool "H264 encoding support with libx264"
+		select PACKAGE_libx264
+		default n
+
+config VLC_X26410b
+		bool "H264 10-bit encoding support with libx264"
+		depends on VLC_X264
+		default n
+
+#config VLC_X265
+#		bool "HEVC/H.265 encoder"
+#		default n
+
+#config VLC_FLUIDSYNTH
+#		bool "MIDI synthetiser with libfluidsynth"
+#		default n
+
+config VLC_LIBASS
+		bool "Subtitle support using libass"
+		default n
+
+comment "Video plugins:"
+
+#config VLC_SDL_IMAGE
+#		bool "SDL image support"
+#		default n
+
+config VLC_FRIBIDI
+		bool "fribidi support"
+		default n
+
+config VLC_FREETYPE
+		bool "freetype support"
+		default n
+
+config VLC_HARFBUZZ
+		bool "harfbuzz support"
+		select HARFBUZZ_FREETYPE
+		default n
+
+config VLC_FONTCONFIG
+		bool "fontconfig support"
+		depends on VLC_FREETYPE
+		default n
+
+#config VLC_LIBRSVG
+#		bool "SVG rendering library"
+#		default n
+
+comment "Audio plugins:"
+
+config VLC_PULSEAUDIO
+		bool "use the PulseAudio client library"
+		default n
+
+config VLC_ALSA_LIB
+		bool "support the Advanced Linux Sound Architecture"
+		default y
+
+config VLC_LIBSAMPLERATE
+		bool "Resampler with libsamplerate"
+		default n
+
+config VLC_LIBSOXR
+		bool "SoX Resampler library"
+		default n
+
+config VLC_SNDIO
+		bool "support the OpenBSD sndio"
+		default n
+
+comment "Interface plugins:"
+
+config VLC_NCURSES
+		bool "ncurses text-based interface"
+		default y
+
+comment "Service Discovery plugins:"
+
+config VLC_LIBAVAHI_CLIENT
+		bool "Zeroconf services discovery"
+		default n
+
+config VLC_UDEV
+		bool "Linux udev services discovery"
+		default n
+
+config VLC_LIBUPNP
+		bool "Intel UPNP SDK"
+		default n
+
+comment "Misc options:"
+
+config VLC_LIBXML2
+		bool "libxml2 support"
+		default y
+
+config VLC_LIBGCRYPT
+		bool "gcrypt support"
+		default n
+
+config VLC_GNUTLS
+		bool "GNU TLS TLS/SSL support"
+		default n
+
+config VLC_TAGLIB
+		bool "use TagLib"
+		default n
+
+#config VLC_LIBSECRET
+#		bool "use libsecret for keystore"
+#		default n
+
+endif

@@ -1,0 +1,27 @@
+--- a/bin/Makefile.am
++++ b/bin/Makefile.am
+@@ -77,15 +77,15 @@ endif
+ #
+ # Static (debug) VLC executable
+ #
+-vlc_static_SOURCES = $(vlc_SOURCES)
+-vlc_static_CFLAGS = $(AM_CFLAGS) \
+-	-DTOP_BUILDDIR=\"$$(cd "$(top_builddir)"; pwd)\" \
+-	-DTOP_SRCDIR=\"$$(cd "$(top_srcdir)"; pwd)\" \
+-	$(NULL)
+-vlc_static_CPPFLAGS = $(vlc_CPPFLAGS)
+-vlc_static_DEPENDENCIES = $(vlc_DEPENDENCIES)
+-vlc_static_LDADD = $(vlc_LDADD)
+-vlc_static_LDFLAGS = $(vlc_LDFLAGS) -no-install -static
++#vlc_static_SOURCES = $(vlc_SOURCES)
++#vlc_static_CFLAGS = $(AM_CFLAGS) \
++#	-DTOP_BUILDDIR=\"$$(cd "$(top_builddir)"; pwd)\" \
++#	-DTOP_SRCDIR=\"$$(cd "$(top_srcdir)"; pwd)\" \
++#	$(NULL)
++#vlc_static_CPPFLAGS = $(vlc_CPPFLAGS)
++#vlc_static_DEPENDENCIES = $(vlc_DEPENDENCIES)
++#vlc_static_LDADD = $(vlc_LDADD)
++#vlc_static_LDFLAGS = $(vlc_LDFLAGS) -no-install -static
+ 
+ #
+ # Root wrapper

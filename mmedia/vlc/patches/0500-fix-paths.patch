@@ -1,0 +1,84 @@
+--- a/modules/codec/fluidsynth.c
++++ b/modules/codec/fluidsynth.c
+@@ -129,8 +129,8 @@ static int Open (vlc_object_t *p_this)
+     {
+         glob_t gl;
+ 
+-        glob("/usr/share/sounds/sf2/*.sf2", GLOB_NOESCAPE, NULL, &gl);
+-        glob("/usr/share/soundfonts/*.sf2", GLOB_NOESCAPE | GLOB_APPEND, NULL,
++        glob("/opt/share/sounds/sf2/*.sf2", GLOB_NOESCAPE, NULL, &gl);
++        glob("/opt/share/soundfonts/*.sf2", GLOB_NOESCAPE | GLOB_APPEND, NULL,
+              &gl);
+ 
+         for (size_t i = 0; i < gl.gl_pathc; i++)
+--- a/modules/text_renderer/freetype/platform_fonts.h
++++ b/modules/text_renderer/freetype/platform_fonts.h
+@@ -73,9 +73,9 @@ extern "C" {
+ # define SYSTEM_DEFAULT_MONOSPACE_FONT_FILE "/system/fonts/DroidSansMono.ttf"
+ # define SYSTEM_DEFAULT_MONOSPACE_FAMILY "Monospace"
+ #else
+-# define SYSTEM_DEFAULT_FONT_FILE "/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf"
++# define SYSTEM_DEFAULT_FONT_FILE "/opt/share/fonts/truetype/freefont/FreeSerifBold.ttf"
+ # define SYSTEM_DEFAULT_FAMILY "Serif Bold"
+-# define SYSTEM_DEFAULT_MONOSPACE_FONT_FILE "/usr/share/fonts/truetype/freefont/FreeMono.ttf"
++# define SYSTEM_DEFAULT_MONOSPACE_FONT_FILE "/opt/share/fonts/truetype/freefont/FreeMono.ttf"
+ # define SYSTEM_DEFAULT_MONOSPACE_FAMILY "Monospace"
+ #endif
+ 
+--- a/src/modules/textdomain.c
++++ b/src/modules/textdomain.c
+@@ -39,7 +39,7 @@ int vlc_bindtextdomain (const char *doma
+         return -1;
+ 
+ # if !defined (__APPLE__) && !defined (_WIN32) && !defined(__OS2__)
+-    const char *fmt = "%s/../locale";
++    const char *fmt = "/opt/share/locale";
+ # else
+     const char *fmt = "%s"DIR_SEP"locale";
+ # endif
+--- a/modules/visualization/projectm.cpp
++++ b/modules/visualization/projectm.cpp
+@@ -82,9 +82,9 @@ static void Close        ( vlc_object_t
+ # define FONT_PATH_MENU "C:\\WINDOWS\\Fonts\\arial.ttf"
+ # define PRESET_PATH    NULL
+ #else
+-# define FONT_PATH      "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf"
+-# define FONT_PATH_MENU "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSansMono.ttf"
+-# define PRESET_PATH    "/usr/share/projectM/presets"
++# define FONT_PATH      "/opt/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf"
++# define FONT_PATH_MENU "/opt/share/fonts/truetype/ttf-dejavu/DejaVuSansMono.ttf"
++# define PRESET_PATH    "/opt/share/projectM/presets"
+ #endif
+ 
+ #ifdef DEFAULT_FONT_FILE
+@@ -104,7 +104,7 @@ vlc_module_begin ()
+     set_category( CAT_AUDIO )
+     set_subcategory( SUBCAT_AUDIO_VISUAL )
+ #ifndef HAVE_PROJECTM2
+-    add_loadfile( "projectm-config", "/usr/share/projectM/config.inp",
++    add_loadfile( "projectm-config", "/opt/share/projectM/config.inp",
+                   CONFIG_TEXT, CONFIG_LONGTEXT, true )
+ #else
+     add_directory( "projectm-preset-path", PRESET_PATH,
+--- a/src/linux/dirs.c
++++ b/src/linux/dirs.c
+@@ -112,16 +112,16 @@ char *config_GetDataDir (void)
+ 
+     /* There are no clean ways to do this, are there?
+      * Due to multilibs, we cannot simply append ../share/. */
+-    char *p = strstr (libdir, "/lib/");
++    char *p = strstr (libdir, "/opt/lib/");
+     if (p != NULL)
+     {
+         char *p2;
+         /* Deal with nested "lib" directories. Grmbl. */
+-        while ((p2 = strstr (p + 4, "/lib/")) != NULL)
++        while ((p2 = strstr (p + 4, "/opt/lib/")) != NULL)
+             p = p2;
+         *p = '\0';
+ 
+-        if (unlikely(asprintf (&datadir, "%s/share/"PACKAGE, libdir) == -1))
++        if (unlikely(asprintf (&datadir, "/opt/share/"PACKAGE, libdir) == -1))
+             datadir = NULL;
+     }
+     free (libdir);

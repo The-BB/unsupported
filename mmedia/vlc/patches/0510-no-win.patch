@@ -1,0 +1,13 @@
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -216,7 +216,7 @@ update-po:
+ ###############################################################################
+ # OS Packaging rules
+ ###############################################################################
+-include extras/package/macosx/package.mak
+-include extras/package/win32/package.mak
+-include extras/package/win32/msi.mak
++#include extras/package/macosx/package.mak
++#include extras/package/win32/package.mak
++#include extras/package/win32/msi.mak
+ 
