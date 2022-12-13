@@ -1,37 +1,27 @@
 # unsupported
-Packages not supported by the Entware team.
+не пользы дела для, токмо забавы ради ;) Packages not supported by the Entware team.
 
-1. Read [Compile packages from sources](https://github.com/Entware/Entware/wiki/Compile-packages-from-sources)
+0. Читаем и выполняем [Compile packages from sources](https://github.com/Entware/Entware/wiki/Compile-packages-from-sources). 
 
-2. To use these packages, add the following line to the feeds.conf in the Entware buildroot, e.g.:
-
+1. Добавляем фид в конфиг:
 ```
 echo 'src-git-full unsupported https://github.com/The-BB/unsupported.git' >> feeds.conf
 ```
-
-To install all its package definitions, run:
-
+2. Обновляем фид:
 ```
 ./scripts/feeds update unsupported
-
+```
+3. Подготавливаем к работе (создаём копии и патчим):
+```
+sh ./feeds/unsupported/backup-recover.sh backup
+```
+4. Добавляем пакеты из фида:
+```
 ./scripts/feeds install -a -p unsupported
 ```
+5. Собираем пакеты...
 
-The unsupported packages should now appear in menuconfig.
-
----
-не пользы дела для, токмо забавы ради ;)
-
-3. Для сборки некоторых пакетов, требуется внести изменения в Makefile пакетов, от которых они зависят, напр.,
-для php7-pecl-smbclient требуется dev-секция в пакете "samba4":
+6. Перед обновлением фидов восстанавливаем:
 ```
-define Build/InstallDev
-	$(INSTALL_DIR) $(1)/opt/usr/include/samba-4.0
-	$(CP) $(PKG_INSTALL_DIR)/opt/include/samba-4.0/*.h \
-		$(1)/opt/usr/include/samba-4.0/
-
-	$(INSTALL_DIR) $(1)/opt/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libsmbclient.so* \
-		$(1)/opt/usr/lib/
-endef
+sh ./feeds/unsupported/backup-recover.sh recovery
 ```
