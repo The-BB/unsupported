@@ -1,0 +1,321 @@
+From 92f1e54f8f92965f33694d97105667e40b14cc36 Mon Sep 17 00:00:00 2001
+From: The-BB <tun.chen.bo@gmail.com>
+Date: Mon, 12 Dec 2022 20:27:11 +0300
+Subject: [PATCH] livemedia: add shared libs
+
+---
+ livemedia/Makefile                            | 41 +++++++++-
+ livemedia/patches/110-entware.patch           | 51 ++++++++++++
+ .../patches/120-add-pkgconfig-file.patch      | 59 +++++++++++++
+ .../patches/130-expose_server_string.patch    | 82 +++++++++++++++++++
+ 4 files changed, 230 insertions(+), 3 deletions(-)
+ create mode 100644 livemedia/patches/110-entware.patch
+ create mode 100644 livemedia/patches/120-add-pkgconfig-file.patch
+ create mode 100644 livemedia/patches/130-expose_server_string.patch
+
+diff --git a/livemedia/Makefile b/livemedia/Makefile
+index cfac8b1..2f4123f 100644
+--- a/livemedia/Makefile
++++ b/livemedia/Makefile
+@@ -32,43 +32,66 @@ define Package/livemedia/Default
+   DEPENDS:=+libstdcpp
+ endef
+ 
++define Package/liblive555
++$(call Package/livemedia/Default)
++  SECTION:=libs
++  CATEGORY:=Libraries
++  TITLE+= (libs)
++endef
++
+ define Package/live555mediaserver
+ $(call Package/livemedia/Default)
+   TITLE+= (live555MediaServer)
++  DEPENDS:=+liblive555
+ endef
+ 
+ define Package/live555proxyserver
+ $(call Package/livemedia/Default)
+   TITLE+= (live555ProxyServer)
++  DEPENDS:=+liblive555
+ endef
+ 
+ define Package/openrtsp
+ $(call Package/livemedia/Default)
+   TITLE+= (openRTSP)
++  DEPENDS:=+liblive555
+ endef
+ 
+ define Package/playsip
+ $(call Package/livemedia/Default)
+   TITLE+= (playSIP)
++  DEPENDS:=+liblive555
+ endef
+ 
+ define Package/vobstreamer
+ $(call Package/livemedia/Default)
+   TITLE+= (vobStreamer)
++  DEPENDS:=+liblive555
+ endef
+ 
+ TARGET_CFLAGS += -DNO_OPENSSL=1
+ 
++define Build/Prepare
++	$(PKG_UNPACK)
++	chmod -R u+w $(PKG_BUILD_DIR)
++	$(Build/Patch)
++endef
++
+ define Build/Configure
+-	$(FIND) $(PKG_BUILD_DIR) -name Makefile.* -exec \
++	$(FIND) $(PKG_BUILD_DIR) -name "Makefile.*" -exec \
+ 		$(SED) 's|PREFIX =.*$$$$|PREFIX = /opt|g' {} \;
+ 	( cd $(PKG_BUILD_DIR); \
+ 		$(SED) 's|@CROSS_COMPILE@|$(TARGET_CROSS)|g;  \
+-			s|@CFLAGS@|$(TARGET_CFLAGS)|g' config.OpenWrt; \
+-		./genMakefiles OpenWrt; \
++			s|@CFLAGS@|$(TARGET_CFLAGS)|g' config.Entware; \
++		./genMakefiles Entware; \
+ 	)
+ endef
+ 
++define Package/liblive555/install
++	$(INSTALL_DIR) $(1)/opt/lib
++	$(CP) $(PKG_INSTALL_DIR)/opt/lib/lib*.so.* $(1)/opt/lib
++endef
++
+ define Package/live555mediaserver/install
+ 	$(INSTALL_DIR) $(1)/opt/bin
+ 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/live555MediaServer $(1)/opt/bin
+@@ -94,6 +117,18 @@ define Package/vobstreamer/install
+ 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/vobStreamer $(1)/opt/bin
+ endef
+ 
++define Build/InstallDev
++	$(INSTALL_DIR) $(1)/opt/include
++	$(CP) $(PKG_INSTALL_DIR)/opt/include/* $(1)/opt/include
++
++	$(INSTALL_DIR) $(1)/opt/lib
++	$(CP) $(PKG_INSTALL_DIR)/opt/lib/lib*.so* $(1)/opt/lib
++
++	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
++	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/live555.pc $(1)/opt/lib/pkgconfig
++endef
++
++$(eval $(call BuildPackage,liblive555))
+ $(eval $(call BuildPackage,live555mediaserver))
+ $(eval $(call BuildPackage,live555proxyserver))
+ $(eval $(call BuildPackage,openrtsp))
+diff --git a/livemedia/patches/110-entware.patch b/livemedia/patches/110-entware.patch
+new file mode 100644
+index 0000000..63db2d6
+--- /dev/null
++++ b/livemedia/patches/110-entware.patch
+@@ -0,0 +1,51 @@
++--- /dev/null
+++++ b/config.Entware
++@@ -0,0 +1,48 @@
+++# 'CURRENT':'REVISION':'AGE' are updated - whenever a library changes - as follows:
+++# The library code changes, but without any changes to the API (i.e., interfaces) => increment REVISION
+++# At least one interface changes, or is removed => CURRENT += 1; REVISION = 0; AGE = 0
+++# One or more interfaces were added, but no existing interfaces were changed or removed => CURRENT += 1; REVISION = 0; AGE += 1
+++
+++libliveMedia_VERSION_CURRENT=109
+++libliveMedia_VERSION_REVISION=3
+++libliveMedia_VERSION_AGE=2
+++libliveMedia_LIB_SUFFIX=so.$(shell expr $(libliveMedia_VERSION_CURRENT) - $(libliveMedia_VERSION_AGE)).$(libliveMedia_VERSION_AGE).$(libliveMedia_VERSION_REVISION)
+++
+++libBasicUsageEnvironment_VERSION_CURRENT=1
+++libBasicUsageEnvironment_VERSION_REVISION=1
+++libBasicUsageEnvironment_VERSION_AGE=0
+++libBasicUsageEnvironment_LIB_SUFFIX=so.$(shell expr $(libBasicUsageEnvironment_VERSION_CURRENT) - $(libBasicUsageEnvironment_VERSION_AGE)).$(libBasicUsageEnvironment_VERSION_AGE).$(libBasicUsageEnvironment_VERSION_REVISION)
+++
+++libUsageEnvironment_VERSION_CURRENT=4
+++libUsageEnvironment_VERSION_REVISION=0
+++libUsageEnvironment_VERSION_AGE=1
+++libUsageEnvironment_LIB_SUFFIX=so.$(shell expr $(libUsageEnvironment_VERSION_CURRENT) - $(libUsageEnvironment_VERSION_AGE)).$(libUsageEnvironment_VERSION_AGE).$(libUsageEnvironment_VERSION_REVISION)
+++
+++libgroupsock_VERSION_CURRENT=31
+++libgroupsock_VERSION_REVISION=10
+++libgroupsock_VERSION_AGE=1
+++libgroupsock_LIB_SUFFIX=so.$(shell expr $(libgroupsock_VERSION_CURRENT) - $(libgroupsock_VERSION_AGE)).$(libgroupsock_VERSION_AGE).$(libgroupsock_VERSION_REVISION)
+++#####
+++
+++CROSS_COMPILE =		@CROSS_COMPILE@
+++COMPILE_OPTS =		$(INCLUDES) -I. @CFLAGS@ -DSOCKLEN_T=socklen_t -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64 -DLOCALE_NOT_USED -fPIC
+++C =			c
+++C_COMPILER =		$(CROSS_COMPILE)gcc
+++CFLAGS +=		$(COMPILE_OPTS)
+++C_FLAGS =		$(CFLAGS)
+++CPP =			cpp
+++CPLUSPLUS_COMPILER =	$(CROSS_COMPILE)g++
+++CPLUSPLUS_FLAGS =	$(COMPILE_OPTS) -Wall -DBSD=1
+++CPLUSPLUS_FLAGS +=	$(CPPFLAGS) -fexceptions
+++OBJ =			o
+++LINK =			$(CROSS_COMPILE)g++ -o
+++LINK_OPTS =		-L. $(LDFLAGS)
+++CONSOLE_LINK_OPTS =	$(LINK_OPTS)
+++LIBRARY_LINK =		$(CROSS_COMPILE)gcc -o 
+++SHORT_LIB_SUFFIX =	so.$(shell expr $($(NAME)_VERSION_CURRENT) - $($(NAME)_VERSION_AGE))
+++LIB_SUFFIX =		$(SHORT_LIB_SUFFIX).$($(NAME)_VERSION_AGE).$($(NAME)_VERSION_REVISION)
+++LIBRARY_LINK_OPTS =	-shared -Wl,-soname,$(NAME).$(SHORT_LIB_SUFFIX) $(LDFLAGS)
+++LIBS_FOR_CONSOLE_APPLICATION =	$(CXXLIBS)
+++LIBS_FOR_GUI_APPLICATION =	$(LIBS_FOR_CONSOLE_APPLICATION)
+++EXE =
+++INSTALL2 =			install_shared_libraries
+diff --git a/livemedia/patches/120-add-pkgconfig-file.patch b/livemedia/patches/120-add-pkgconfig-file.patch
+new file mode 100644
+index 0000000..973ad48
+--- /dev/null
++++ b/livemedia/patches/120-add-pkgconfig-file.patch
+@@ -0,0 +1,59 @@
++From: Benjamin Drung <bdrung@debian.org>
++Date: Sat, 16 Sep 2017 11:22:03 +0200
++Subject: Add a pkg-config file for the shared libraries
++
++This patch was downloaded from Debian
++https://sources.debian.org/src/liblivemedia/2018.08.05-1/debian/patches/0002-Add-a-pkg-config-file-for-the-shared-libraries.patch/
++
++The local/ part of PREXIX and LIBDIR was removed to fit into buildroot.
++
++A similar version of this patch is part of the vlc source repo:
++http://git.videolan.org/?p=vlc.git;a=blob;f=contrib/src/live555/add-pkgconfig-file.patch;hb=HEAD
++
++Upstream status: Rejected
++http://lists.live555.com/pipermail/live-devel/2013-January/016374.html
++http://lists.live555.com/pipermail/live-devel/2013-January/016375.html
++
++Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
++---
++ Makefile.head | 3 +++
++ Makefile.tail | 7 ++++++-
++ live555.pc.in | 9 +++++++++
++ 3 files changed, 18 insertions(+), 1 deletion(-)
++ create mode 100644 live555.pc.in
++
++--- a/Makefile.head
+++++ b/Makefile.head
++@@ -1 +1,4 @@
+++PREFIX = /opt
+++LIBDIR = /opt/lib
+++VERSION = $(shell grep LIVEMEDIA_LIBRARY_VERSION_STRING liveMedia/include/liveMedia_version.hh | sed 's/.*"\([^"]*\)".*/\1/')
++ ##### Change the following for your environment:
++--- a/Makefile.tail
+++++ b/Makefile.tail
++@@ -25,7 +25,12 @@ all:
++ 	@echo
++ 	@echo "For more information about this source code (including your obligations under the LGPL), please see our FAQ at http://live555.com/liveMedia/faq.html"
++ 
++-install:
+++install_shared_libraries:
+++	install -d $(DESTDIR)$(LIBDIR)/pkgconfig
+++	sed "s#@PREFIX@#$(PREFIX)#;s#@LIBDIR@#$(LIBDIR)#;s#@VERSION@#$(VERSION)#" live555.pc.in > $(DESTDIR)$(LIBDIR)/pkgconfig/live555.pc
+++	chmod 644 $(DESTDIR)$(LIBDIR)/pkgconfig/live555.pc
+++
+++install: $(INSTALL2)
++ 	cd $(LIVEMEDIA_DIR) ; $(MAKE) install
++ 	cd $(GROUPSOCK_DIR) ; $(MAKE) install
++ 	cd $(USAGE_ENVIRONMENT_DIR) ; $(MAKE) install
++--- /dev/null
+++++ b/live555.pc.in
++@@ -0,0 +1,9 @@
+++prefix=@PREFIX@
+++libdir=${prefix}/lib
+++includedir=${prefix}/include
+++
+++Name: live555
+++Description: multimedia RTSP streaming library
+++Version: @VERSION@
+++Cflags: -I${includedir}/liveMedia -I${includedir}/groupsock -I${includedir}/BasicUsageEnvironment -I${includedir}/UsageEnvironment
+++Libs: -L${libdir} -lliveMedia -lgroupsock -lBasicUsageEnvironment -lUsageEnvironment
+diff --git a/livemedia/patches/130-expose_server_string.patch b/livemedia/patches/130-expose_server_string.patch
+new file mode 100644
+index 0000000..c7099dc
+--- /dev/null
++++ b/livemedia/patches/130-expose_server_string.patch
+@@ -0,0 +1,82 @@
++--- a/liveMedia/include/RTSPClient.hh
+++++ b/liveMedia/include/RTSPClient.hh
++@@ -39,6 +39,8 @@ along with this library; if not, write t
++ #endif
++ #endif
++ 
+++#define VLC_PATCH_RTSPCLIENT_SERVERSTRING
+++
++ class RTSPClient: public Medium {
++ public:
++   static RTSPClient* createNew(UsageEnvironment& env, char const* rtspURL,
++@@ -194,6 +196,7 @@ public:
++   unsigned sessionTimeoutParameter() const { return fSessionTimeoutParameter; }
++ 
++   char const* url() const { return fBaseURL; }
+++  char const* serverString() const { return fserverString; }
++ 
++   static unsigned responseBufferSize;
++ 
++@@ -246,6 +249,7 @@ protected:
++ 
++   void reset();
++   void setBaseURL(char const* url);
+++  void setServerString(char const* str);
++   int grabSocket(); // allows a subclass to reuse our input socket, so that it won't get closed when we're deleted
++   virtual unsigned sendRequest(RequestRecord* request);
++   virtual Boolean setRequestFields(RequestRecord* request,
++@@ -347,6 +351,7 @@ private:
++   unsigned fUserAgentHeaderStrLen;
++   int fInputSocketNum, fOutputSocketNum;
++   char* fBaseURL;
+++  char *fserverString;
++   unsigned char fTCPStreamIdCount; // used for (optional) RTP/TCP
++   char* fLastSessionId;
++   unsigned fSessionTimeoutParameter; // optionally set in response "Session:" headers
++--- a/liveMedia/RTSPClient.cpp
+++++ b/liveMedia/RTSPClient.cpp
++@@ -397,7 +397,7 @@ RTSPClient::RTSPClient(UsageEnvironment&
++     desiredMaxIncomingPacketSize(0), fVerbosityLevel(verbosityLevel), fCSeq(1),
++     fAllowBasicAuthentication(True), fTunnelOverHTTPPortNum(tunnelOverHTTPPortNum),
++     fUserAgentHeaderStr(NULL), fUserAgentHeaderStrLen(0),
++-    fInputSocketNum(-1), fOutputSocketNum(-1), fBaseURL(NULL), fTCPStreamIdCount(0),
+++    fInputSocketNum(-1), fOutputSocketNum(-1), fBaseURL(NULL), fserverString(NULL), fTCPStreamIdCount(0),
++     fLastSessionId(NULL), fSessionTimeoutParameter(0), fRequireStr(NULL),
++     fSessionCookieCounter(0), fHTTPTunnelingConnectionIsPending(False),
++     fTLS(*this), fPOSTSocketTLS(*this) {
++@@ -451,6 +451,7 @@ void RTSPClient::reset() {
++   fRequestsAwaitingResponse.reset();
++ 
++   setBaseURL(NULL);
+++  setServerString(NULL);
++ 
++   fCurrentAuthenticator.reset();
++ 
++@@ -461,6 +462,10 @@ void RTSPClient::setBaseURL(char const*
++   delete[] fBaseURL; fBaseURL = strDup(url);
++ }
++ 
+++void RTSPClient::setServerString(char const* str) {
+++  delete[] fserverString; fserverString = strDup(str);
+++}
+++
++ int RTSPClient::grabSocket() {
++   int inputSocket = fInputSocketNum;
++   RTPInterface::clearServerRequestAlternativeByteHandler(envir(), fInputSocketNum); // in case we were receiving RTP-over-TCP
++@@ -1777,6 +1782,7 @@ void RTSPClient::handleResponseBytes(int
++     char const* rtpInfoParamsStr = NULL;
++     char const* wwwAuthenticateParamsStr = NULL;
++     char const* publicParamsStr = NULL;
+++    char const* serverStr = NULL;
++     char* bodyStart = NULL;
++     unsigned numBodyBytes = 0;
++     responseSuccess = False;
++@@ -1854,6 +1860,8 @@ void RTSPClient::handleResponseBytes(int
++ // (see http://live555.com/liveMedia/faq.html#mailing-list-address for details),
++ 				  )) {
++ // to check whether your proposed modification is appropriate/correct,
+++	} else if (checkForHeader(lineStart, "Server:", 7, serverStr)) {
+++	  setServerString(serverStr);
++ 	} else if (checkForHeader(lineStart, "Range:",
++ // and, if so, whether instead it could be included in
++ 				  6,
+-- 
+2.30.2
+

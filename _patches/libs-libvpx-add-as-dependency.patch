@@ -1,0 +1,51 @@
+From 6b4e12edb33f75a136c4103f9912af6d57cebfdd Mon Sep 17 00:00:00 2001
+From: The-BB <tun.chen.bo@gmail.com>
+Date: Sat, 10 Dec 2022 18:51:01 +0300
+Subject: [PATCH] libs/libvpx: add as dependency
+
+---
+ libs/libvpx/Makefile | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/libs/libvpx/Makefile b/libs/libvpx/Makefile
+index 743ccadc4..8d8f1b075 100644
+--- a/libs/libvpx/Makefile
++++ b/libs/libvpx/Makefile
+@@ -45,7 +45,7 @@ endef
+ CONFIGURE_ARGS = \
+ 	--target=generic-gnu \
+ 	--prefix=$(CONFIGURE_PREFIX) \
+-	--libdir=/usr/lib \
++	--libdir=/opt/lib \
+ 	--enable-static \
+ 	--enable-shared \
+ 	--disable-examples \
+@@ -64,17 +64,17 @@ CONFIGURE_VARS := $(filter-out LD=%,$(CONFIGURE_VARS)) LD="$(TARGET_CC)" \
+ MAKE_FLAGS := $(filter-out LD=%,$(MAKE_FLAGS)) LD="$(TARGET_CC)"
+ 
+ define Build/InstallDev
+-	$(INSTALL_DIR) $(1)/usr/include/vpx/
+-	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/usr/include/vpx/* $(1)/usr/include/vpx/
+-	$(INSTALL_DIR) $(1)/usr/lib/
+-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/*.{so*,a} $(1)/usr/lib/
+-	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig/
+-	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/* $(1)/usr/lib/pkgconfig/
++	$(INSTALL_DIR) $(1)/opt/include/vpx/
++	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/opt/include/vpx/* $(1)/opt/include/vpx/
++	$(INSTALL_DIR) $(1)/opt/lib/
++	$(CP) $(PKG_INSTALL_DIR)/opt/lib/*.{so*,a} $(1)/opt/lib/
++	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig/
++	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/* $(1)/opt/lib/pkgconfig/
+ endef
+ 
+ define Package/libvpx/install
+-	$(INSTALL_DIR) $(1)/usr/lib/
+-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/*.so.* $(1)/usr/lib/
++	$(INSTALL_DIR) $(1)/opt/lib/
++	$(CP) $(PKG_INSTALL_DIR)/opt/lib/*.so.* $(1)/opt/lib/
+ endef
+ 
+ $(eval $(call BuildPackage,libvpx))
+-- 
+2.30.2
+

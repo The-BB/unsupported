@@ -1,0 +1,117 @@
+From 6b07f01d11ac400c61d4bd0aa60d13d90ceeeb4c Mon Sep 17 00:00:00 2001
+From: The-BB <tun.chen.bo@gmail.com>
+Date: Sat, 10 Dec 2022 18:53:14 +0300
+Subject: [PATCH] multimedia/gstreamer1: add as dependency
+
+---
+ multimedia/gstreamer1/Makefile | 60 +++++++++++++++++-----------------
+ 1 file changed, 30 insertions(+), 30 deletions(-)
+
+diff --git a/multimedia/gstreamer1/Makefile b/multimedia/gstreamer1/Makefile
+index 26da641a5..c469806d3 100644
+--- a/multimedia/gstreamer1/Makefile
++++ b/multimedia/gstreamer1/Makefile
+@@ -141,29 +141,29 @@ MESON_ARGS += \
+ 	-Ddoc=disabled
+ 
+ define Build/InstallDev
+-	$(INSTALL_DIR) $(1)/usr/include/gstreamer-$(GST_VERSION)
++	$(INSTALL_DIR) $(1)/opt/include/gstreamer-$(GST_VERSION)
+ 	( cd $(PKG_INSTALL_DIR); $(CP) \
+-		./usr/include/gstreamer-$(GST_VERSION)/* \
+-		$(1)/usr/include/gstreamer-$(GST_VERSION)/ \
++		./opt/include/gstreamer-$(GST_VERSION)/* \
++		$(1)/opt/include/gstreamer-$(GST_VERSION)/ \
+ 	)
+-	$(INSTALL_DIR) $(1)/usr/lib
++	$(INSTALL_DIR) $(1)/opt/lib
+ 	( cd $(PKG_INSTALL_DIR); $(CP) \
+-		./usr/lib/libgst*-$(GST_VERSION).so* \
+-		$(1)/usr/lib/ \
++		./opt/lib/libgst*-$(GST_VERSION).so* \
++		$(1)/opt/lib/ \
+ 	)
+-	$(INSTALL_DIR) $(1)/usr/lib/gstreamer-$(GST_VERSION)
++	$(INSTALL_DIR) $(1)/opt/lib/gstreamer-$(GST_VERSION)
+ 	( cd $(PKG_INSTALL_DIR); $(CP) \
+-		./usr/lib/gstreamer-$(GST_VERSION)/libgst*.so \
+-		$(1)/usr/lib/gstreamer-$(GST_VERSION)/ \
++		./opt/lib/gstreamer-$(GST_VERSION)/libgst*.so \
++		$(1)/opt/lib/gstreamer-$(GST_VERSION)/ \
+ 	)
+-	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
++	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
+ 	( cd $(PKG_INSTALL_DIR); $(CP) \
+-		./usr/lib/pkgconfig/gstreamer*-$(GST_VERSION).pc \
+-		$(1)/usr/lib/pkgconfig/ \
++		./opt/lib/pkgconfig/gstreamer*-$(GST_VERSION).pc \
++		$(1)/opt/lib/pkgconfig/ \
+ 	)
+ 	$(INSTALL_DIR) $(2)/share/aclocal
+ 	( cd $(PKG_INSTALL_DIR); $(CP) \
+-		./usr/share/aclocal/* \
++		./opt/share/aclocal/* \
+ 		$(2)/share/aclocal/ \
+ 	)
+ endef
+@@ -177,29 +177,29 @@ define Package/gstreamer1-libs/install
+ endef
+ 
+ define Package/gstreamer1-utils/install
+-	$(INSTALL_DIR) $(1)/usr/bin
++	$(INSTALL_DIR) $(1)/opt/bin
+ 	( cd $(PKG_INSTALL_DIR); $(CP) \
+-		./usr/bin/gst-launch* \
+-		./usr/bin/gst-inspect* \
+-		./usr/bin/gst-typefind* \
+-		$(1)/usr/bin/ \
++		./opt/bin/gst-launch* \
++		./opt/bin/gst-inspect* \
++		./opt/bin/gst-typefind* \
++		$(1)/opt/bin/ \
+ 	)
+ endef
+ 
+ define Package/libgstreamer1/install
+-	$(INSTALL_DIR) $(1)/usr/lib
++	$(INSTALL_DIR) $(1)/opt/lib
+ 	( cd $(PKG_INSTALL_DIR); $(CP) \
+-		./usr/lib/libgstbase-$(GST_VERSION).so.* \
+-		./usr/lib/libgstreamer-$(GST_VERSION).so.* \
+-		$(1)/usr/lib/ \
++		./opt/lib/libgstbase-$(GST_VERSION).so.* \
++		./opt/lib/libgstreamer-$(GST_VERSION).so.* \
++		$(1)/opt/lib/ \
+ 	)
+-	$(INSTALL_DIR) $(1)/usr/lib/gstreamer-$(GST_VERSION)
++	$(INSTALL_DIR) $(1)/opt/lib/gstreamer-$(GST_VERSION)
+ 	( cd $(PKG_INSTALL_DIR); $(CP) \
+-		./usr/lib/gstreamer-$(GST_VERSION)/libgst*.so \
+-		$(1)/usr/lib/gstreamer-$(GST_VERSION)/ \
++		./opt/lib/gstreamer-$(GST_VERSION)/libgst*.so \
++		$(1)/opt/lib/gstreamer-$(GST_VERSION)/ \
+ 	)
+-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/libexec/gstreamer-$(GST_VERSION)/gst-plugin-scanner \
+-		       $(1)/usr/lib/gstreamer-$(GST_VERSION)
++	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/libexec/gstreamer-$(GST_VERSION)/gst-plugin-scanner \
++		       $(1)/opt/lib/gstreamer-$(GST_VERSION)
+ endef
+ 
+ 
+@@ -223,10 +223,10 @@ define GstBuildLibrary
+   endef
+ 
+   define Package/libgst1$(1)/install
+-	$(INSTALL_DIR) $$(1)/usr/lib
++	$(INSTALL_DIR) $$(1)/opt/lib
+ 	( cd $(PKG_INSTALL_DIR); $(CP) \
+-		./usr/lib/libgst$(1)-$(GST_VERSION).so.* \
+-		$$(1)/usr/lib/ \
++		./opt/lib/libgst$(1)-$(GST_VERSION).so.* \
++		$$(1)/opt/lib/ \
+ 	)
+   endef
+ 
+-- 
+2.30.2
+
