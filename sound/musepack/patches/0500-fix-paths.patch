@@ -1,0 +1,11 @@
+--- a/mpcenc/pipeopen.c
++++ b/mpcenc/pipeopen.c
+@@ -126,7 +126,7 @@ pipeopen ( const char* command, const ch
+ #ifdef _WIN32
+         ".";
+ #else
+-        "/usr/bin:/usr/local/bin:/opt/mpp:.";
++        "/opt/bin:.";
+ #endif
+     char          command_line        [4096];           //  -o - bar.pac
+     char          executable_filename [4096];           // foo.exe
