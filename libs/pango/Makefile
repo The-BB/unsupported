@@ -26,7 +26,7 @@ define Package/libpango
   CATEGORY:=Libraries
   TITLE:=Internationalized text layout and rendering
   URL:=http://www.pango.org/
-  DEPENDS:=+libfribidi +libharfbuzz
+  DEPENDS:=+fontconfig +glib2 +libcairo +libfribidi +libharfbuzz
 endef
 
 define Package/libpango/description
