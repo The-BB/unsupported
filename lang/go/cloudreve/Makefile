@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: WTFPL
 #
-# XXX feeds/packages/net/cloudreve
+# XXX remove feeds/packages/net/cloudreve
 
 include $(TOPDIR)/rules.mk
 
