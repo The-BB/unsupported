@@ -16,6 +16,7 @@ PKG_HASH:=66c433743b7a34b45606c03be689bdce4c52bc1eb306cbef3e15c966b5ff28d7
 PKG_BUILD_DIR:=$(BUILD_DIR)/pecl-php8/$(PECL_NAME)-$(PKG_VERSION)
 
 PKG_LICENSE:=BSD-2-clause
+PKG_LICENSE_FILES:=LICENSE
 
 PKG_BUILD_PARALLEL:=1
 
@@ -26,11 +27,7 @@ include $(TOPDIR)/feeds/packages/lang/php8/pecl.mk
 TARGET_CPPFLAGS += -I$(STAGING_DIR)/opt/usr/include/samba-4.0
 
 CONFIGURE_ARGS += \
-	--with-libsmbclient=$(STAGING_DIR)/opt/usr
-
-CONFIGURE_VARS += \
-	ac_cv_lib_smbclient_smbc_setPort=yes \
-	ac_cv_lib_smbclient_smbc_setOptionUseNTHash=yes
+	--with-libsmbclient=$(STAGING_DIR_ROOT)/opt
 
 $(eval $(call PHP8PECLPackage,$(PECL_NAME),$(PECL_LONGNAME),+samba4-libs,30))
 $(eval $(call BuildPackage,$(PKG_NAME)))
