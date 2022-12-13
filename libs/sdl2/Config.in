@@ -1,0 +1,20 @@
+if PACKAGE_libsdl2
+
+comment "Build Options"
+
+config LIBSDL2_ALSA
+	depends on PACKAGE_libsdl2
+	bool "Support the ALSA audio API"
+	default y
+
+config LIBSDL2_DBUS
+	depends on PACKAGE_libsdl2
+	bool "Enable D-Bus support"
+	default y
+
+config LIBSDL2_UDEV
+	depends on PACKAGE_libsdl2
+	bool "Enable libudev support"
+	default y
+
+endif

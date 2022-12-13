@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=sdl2
-PKG_VERSION:=2.24.1
+PKG_VERSION:=2.26.1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=SDL2-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://www.libsdl.org/release
-PKG_HASH:=bc121588b1105065598ce38078026a414c28ea95e66ed2adab4c44d80b309e1b
+PKG_HASH:=02537cc7ebd74071631038b237ec4bfbb3f4830ba019e569434da33f42373e04
 
 PKG_LICENSE:=Zlib
 PKG_LICENSE_FILES:=LICENSE.txt
@@ -34,6 +34,7 @@ define Package/libsdl2
 	+LIBSDL2_ALSA:alsa-lib \
 	+LIBSDL2_DBUS:libdbus \
 	+LIBSDL2_UDEV:libudev
+  MENU:=1
 endef
 
  define Package/libsdl2/description
@@ -43,21 +44,7 @@ endef
 endef
 
 define Package/libsdl2/config
-config LIBSDL2_ALSA
-	depends on PACKAGE_libsdl2
-	bool "Support the ALSA audio API"
-	default y
-
-config LIBSDL2_DBUS
-	depends on PACKAGE_libsdl2
-	bool "Enable D-Bus support"
-	default y
-
-config LIBSDL2_UDEV
-	depends on PACKAGE_libsdl2
-	bool "Enable libudev support"
-	default y
-
+  source "$(SOURCE)/Config.in"
 endef
 
 CONFIGURE_ARGS += \
