@@ -1,0 +1,25 @@
+if PACKAGE_geoip
+
+comment "Databases:"
+
+config GEOIP_GEOIP
+	depends on PACKAGE_geoip
+	bool "GeoIP         (+ ~584K)"
+	default n
+
+config GEOIP_GEOIPV6
+	depends on PACKAGE_geoip
+	bool "GeoIPv6       (+ ~1.1M)"
+	default n
+
+config GEOIP_GEOLITECITY
+	depends on PACKAGE_geoip
+	bool "GeoLiteCity   (+ ~20M)"
+	default n
+
+config GEOIP_GEOLITECITYV6
+	depends on PACKAGE_geoip
+	bool "GeoLiteCityv6 (+ ~16M)"
+	default n
+
+endif
