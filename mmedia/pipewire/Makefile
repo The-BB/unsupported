@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pipewire
-PKG_VERSION:=0.3.59
+PKG_VERSION:=0.3.62
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/$(PKG_VERSION)
-PKG_HASH:=32a6db3f42f00eb95a07369160a614420443ca4f4e90ac628db8ca508e08538e
+PKG_HASH:=24b218cf3bb1fb279c8c489c14cc9ae483e1da7b4c8215b2ee5a5ee831bae94f
 
 PKG_LICENSE:=GPL-2.0-only LGPL-2.1-or-later MIT
 PKG_LICENSE_FILES:=COPYING LICENSE
