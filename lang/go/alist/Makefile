@@ -89,12 +89,12 @@ GO_VER:=$(shell $(GO_BIN) version | sed 's/go version //;s,/.*,/$(GOARCH),')
 WEB_COMMIT:=$(shell echo $(VERSION) | cut -b -9)
 
 GO_LDFLAGS += \
-	-X '(PKG_GOGET)/v3/internal/conf.BuiltAt=$(BUILD_DATE)' \
-	-X '(PKG_GOGET)/v3/internal/conf.GoVersion=$(GO_VER)' \
-	-X '(PKG_GOGET)/v3/internal/conf.GitAuthor=Entware' \
-	-X '(PKG_GOGET)/v3/internal/conf.GitCommit=$(GIT_COMMIT)' \
-	-X '(PKG_GOGET)/v3/internal/conf.Version=$(PKG_VERSION)' \
-	-X '(PKG_GOGET)/v3/internal/conf.WebVersion=$(WEB_COMMIT)'
+	-X '$(PKG_GOGET)/v3/internal/conf.BuiltAt=$(BUILD_DATE)' \
+	-X '$(PKG_GOGET)/v3/internal/conf.GoVersion=$(GO_VER)' \
+	-X '$(PKG_GOGET)/v3/internal/conf.GitAuthor=Entware' \
+	-X '$(PKG_GOGET)/v3/internal/conf.GitCommit=$(GIT_COMMIT)' \
+	-X '$(PKG_GOGET)/v3/internal/conf.Version=$(PKG_VERSION)' \
+	-X '$(PKG_GOGET)/v3/internal/conf.WebVersion=$(WEB_COMMIT)'
 
 GO_TAGS:=-tags=jsoniter
 
