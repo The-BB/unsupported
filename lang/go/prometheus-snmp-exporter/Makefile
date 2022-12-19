@@ -44,16 +44,17 @@ endef
 
 Package/prometheus-snmp-exporter_nohf/description=$(Package/prometheus-snmp-exporter/description)
 
-GO_BUILD_ARGS:=-a
+GO_BUILD_ARGS += -trimpath -a
 
 REVISION:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -9)
+SOURCE_DATE:=2022-11-22
 
 GO_LDFLAGS += \
 	-X 'github.com/prometheus/common/version.Version=v$(PKG_VERSION)' \
 	-X 'github.com/prometheus/common/version.Revision=$(REVISION)'  \
 	-X 'github.com/prometheus/common/version.Branch="release"' \
 	-X 'github.com/prometheus/common/version.BuildUser=Entware@Entware' \
-	-X 'github.com/prometheus/common/version.BuildDate=$(SOURCE_DATE_EPOCH)'
+	-X 'github.com/prometheus/common/version.BuildDate=$(SOURCE_DATE)'
 
 GO_TAGS:=-tags=netgo
 
