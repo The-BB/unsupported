@@ -49,8 +49,8 @@ endef
 
 Package/hugo_nohf/description=$(Package/hugo/description)
 
+GO_BUILD_ARGS += -trimpath
 GO_TAGS:=-tags=extended
-
 GO_VARS += GO111MODULE=on
 
 define Package/hugo/install
