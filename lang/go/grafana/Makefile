@@ -3,15 +3,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=grafana
-PKG_VERSION:=9.3.1
+PKG_VERSION:=9.3.2
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/grafana/grafana
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=89b365f8b17d5b1852dffa40df2f90994564fe22
+PKG_SOURCE_VERSION:=21c1d14e9165e1a110ef03f04d606fe9d6ceff70
 PKG_SOURCE_URL:=https://$(PKG_GOGET)
-PKG_MIRROR_HASH:=d0e66a41224825dbc739435e5a51c2ce806a07b5a57eca5ee59b7f8070f316b1
+PKG_MIRROR_HASH:=83c7298dee1084988bf324d453a50fb93a603422c109c693d7631a8958e821e1
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE LICENSING.md
@@ -53,13 +53,15 @@ endef
 Package/grafana_nohf/description=$(Package/grafana/description)
 
 GIT_HASH:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -8)
+SOURCE_DATE:=2022-12-16
 
 GO_LDFLAGS += \
 	-X 'main.version=$(PKG_VERSION)' \
 	-X 'main.commit=$(GIT_HASH)' \
-	-X 'main.buildstamp=$(SOURCE_DATE_EPOCH)' \
+	-X 'main.buildstamp=$(SOURCE_DATE)' \
 	-X 'main.buildBranch=main'
 
+GO_BUILD_ARGS += -trimpath
 GO_TARGET:=./pkg/cmd/grafana-cli ./pkg/cmd/grafana-server
 
 define Build/Deps
@@ -101,7 +103,8 @@ define Build/Deps
 		$(GO_BIN) generate ./pkg/plugins/plugindef; \
 		$(GO_BIN) generate ./kinds/gen.go; \
 		$(GO_BIN) generate ./pkg/framework/coremodel; \
-		$(GO_BIN) generate ./public/app/plugins; \
+		$(GO_BIN) generate ./public/app/plugins/gen.go; \
+		$(GO_BIN) generate ./kinds/report.go; \
 	)
 	( cd $(GO_SRC_DIR); \
 		PATH="$(GOROOT)/bin:$$$$PATH" \
@@ -131,6 +134,8 @@ define Package/grafana/install
 
 	$(INSTALL_DIR) $(1)/opt/etc/grafana
 	$(CP) $(GO_SRC_DIR)/conf/sample.ini $(1)/opt/etc/grafana/grafana.ini
+	$(CP) $(GO_SRC_DIR)/conf/ldap.toml $(1)/opt/etc/grafana
+	$(CP) $(GO_SRC_DIR)/conf/provisioning $(1)/opt/etc/grafana
 
 	$(INSTALL_DIR) $(1)/opt/etc/init.d
 	$(INSTALL_BIN) files/S80grafana-server $(1)/opt/etc/init.d

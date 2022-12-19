@@ -20,12 +20,12 @@
  
  # folder that contains provisioning config files that grafana will apply on startup and while running.
 -provisioning = conf/provisioning
-+provisioning = conf/provisioning
++provisioning = /opt/etc/grafana/provisioning
  
  #################################### Server ##############################
  [server]
-@@ -67,7 +67,7 @@ cert_file =
- cert_key =
+@@ -76,7 +76,7 @@ socket_gid = -1
+ socket_mode = 0660
  
  # Unix socket path
 -socket = /tmp/grafana.sock
@@ -33,7 +33,7 @@
  
  # CDN Url
  cdn_url =
-@@ -632,7 +632,7 @@ allow_assign_grafana_admin = false
+@@ -653,7 +653,7 @@ allow_assign_grafana_admin = false
  #################################### Auth LDAP ###########################
  [auth.ldap]
  enabled = false
