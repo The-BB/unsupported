@@ -58,7 +58,7 @@ Package/filebrowser_nohf/conffiles=$(Package/filebrowser/conffiles)
 
 VERSION_HASH:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -9)
 
-GO_BUILD_ARGS += -a
+GO_BUILD_ARGS += -trimpath -a
 
 GO_LDFLAGS += \
 	-X '$(PKG_GOGET)/v2/version.Version=$(PKG_VERSION)' \
