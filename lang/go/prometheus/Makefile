@@ -5,15 +5,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=prometheus
-PKG_VERSION:=2.40.6
+PKG_VERSION:=2.40.7
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/prometheus/prometheus
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=e1506e7be89e4ce346851bf6bd2b024b70fb7cb1
+PKG_SOURCE_VERSION:=ab239ac5d43f6c1068f0d05283a0544576aaecf8
 PKG_SOURCE_URL:=https://$(PKG_GOGET)
-PKG_MIRROR_HASH:=22c224ab1080c2a7d3057612735304550539a0ea8dd648b5a091469a8cd9bec2
+PKG_MIRROR_HASH:=b0b50632e60dc4f6ee889c1c54b9c2db9d845e918d9d33ce6b3d08306949fa60
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -57,16 +57,17 @@ endef
 
 Package/prometheus_nohf/description=$(Package/prometheus/description)
 
-GO_BUILD_ARGS:=-a
+GO_BUILD_ARGS += -trimpath -a
 
 REVISION:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -9)
+SOURCE_DATE:=2022-12-14
 
 GO_LDFLAGS += \
 	-X 'github.com/prometheus/common/version.Version=v$(PKG_VERSION)' \
 	-X 'github.com/prometheus/common/version.Revision=$(REVISION)'  \
 	-X 'github.com/prometheus/common/version.Branch="release"' \
 	-X 'github.com/prometheus/common/version.BuildUser=Entware@Entware' \
-	-X 'github.com/prometheus/common/version.BuildDate=$(SOURCE_DATE_EPOCH)'
+	-X 'github.com/prometheus/common/version.BuildDate=$(SOURCE_DATE)'
 
 GO_TAGS:=-tags=netgo,builtinassets
 
