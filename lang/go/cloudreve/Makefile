@@ -5,15 +5,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cloudreve
-PKG_VERSION:=3.5.3
+PKG_VERSION:=3.6.1
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/cloudreve/Cloudreve
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=0e5683bc3b102a474b03992eb7932ac12643bcd1
+PKG_SOURCE_VERSION:=73d0f2db9b3ba2fcb441cad7174698359b78b9ad
 PKG_SOURCE_URL:=https://$(PKG_GOGET)
-PKG_MIRROR_HASH:=c43ec528df19d239b06456e78aae3d9852da5cca372c157b62f1f74b03f5cc0d
+PKG_MIRROR_HASH:=21aa275e89585f9675deaaf4cf935300a2c48ec7fc7cdd2be9c86cc72fd396b9
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -54,29 +54,14 @@ endef
 
 Package/cloudreve_nohf/description=$(Package/cloudreve/description)
 
-#define Download/frontend
-#  VERSION:=e432a81328c577a22698924f9703a6c684eb66d0
-#  SUBDIR:=assets
-#  FILE:=frontend-$$(VERSION).tar.xz
-#  URL:=https://github.com/cloudreve/frontend.git
-#  MIRROR_HASH:=9364558948a97c0c30ebd41e769b5ccee856249565ef7fbb37e8845a4c28cf3f
-#  PROTO:=git
-#endef
-
-#$(eval $(call Download,frontend))
-
-#define Prepare/frontend
-#	$(eval $(Download/frontend))
-#	xzcat $(DL_DIR)/$(FILE) | tar -C $(GO_SRC_DIR) $(TAR_OPTIONS)
-#endef
-
 define Build/Web
-#	$(Prepare/frontend)
+	$(INSTALL_DIR) $(GO_SRC_DIR)/.git/modules/assets
 
 	( cd $(GO_SRC_DIR)/assets; \
+		CI=false GENERATE_SOURCEMAP=false \
 		yarn install; \
+		CI=false GENERATE_SOURCEMAP=false \
 		yarn run build; \
-		find ./build -name "*.map" -type f -delete; \
 		cd $(GO_SRC_DIR); \
 		zip -r - assets/build >assets.zip; \
 	)
@@ -90,6 +75,7 @@ GO_LDFLAGS += \
 	-X '$(PKG_GOGET)/v3/pkg/conf.BackendVersion=$(PKG_VERSION)' \
 	-X '$(PKG_GOGET)/v3/pkg/conf.LastCommit=$(GIT_COMMIT)'
 
+GO_BUILD_ARGS += -trimpath
 GO_VARS += GO111MODULE=on
 
 define Package/cloudreve/install

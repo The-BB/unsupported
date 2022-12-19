@@ -11,12 +11,12 @@
  
 --- a/src/github.com/cloudreve/Cloudreve/main.go
 +++ b/src/github.com/cloudreve/Cloudreve/main.go
-@@ -27,7 +27,7 @@ var staticZip string
+@@ -31,7 +31,7 @@ var staticZip string
  var staticFS fs.FS
  
  func init() {
--	flag.StringVar(&confPath, "c", util.RelativePath("conf.ini"), "配置文件路径")
-+	flag.StringVar(&confPath, "c", util.RelativePath("/opt/var/lib/cloudreve/conf.ini"), "配置文件路径")
- 	flag.BoolVar(&isEject, "eject", false, "导出内置静态资源")
- 	flag.StringVar(&scriptName, "database-script", "", "运行内置数据库助手脚本")
+-	flag.StringVar(&confPath, "c", util.RelativePath("conf.ini"), "Path to the config file.")
++	flag.StringVar(&confPath, "c", util.RelativePath("/opt/var/lib/cloudreve/conf.ini"), "Path to the config file.")
+ 	flag.BoolVar(&isEject, "eject", false, "Eject all embedded static files.")
+ 	flag.StringVar(&scriptName, "database-script", "", "Name of database util script.")
  	flag.Parse()
