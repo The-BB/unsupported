@@ -96,6 +96,7 @@ GO_LDFLAGS += \
 	-X '$(PKG_GOGET)/v3/internal/conf.Version=$(PKG_VERSION)' \
 	-X '$(PKG_GOGET)/v3/internal/conf.WebVersion=$(WEB_COMMIT)'
 
+GO_BUILD_ARGS += -trimpath
 GO_TAGS:=-tags=jsoniter
 
 define Package/alist/install
