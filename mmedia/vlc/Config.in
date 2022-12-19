@@ -103,7 +103,7 @@ config VLC_LIBMAD
 
 config VLC_MPG123
 		bool "libmpg123 decoder support"
-		default n
+		default y
 
 config VLC_GST1_PLUGINS_BASE
 		bool "GStreamer based decoding support"
@@ -214,6 +214,8 @@ config VLC_X26410b
 
 config VLC_LIBASS
 		bool "Subtitle support using libass"
+		select VLC_FRIBIDI
+		select VLC_HARFBUZZ
 		default n
 
 comment "Video plugins:"
@@ -302,7 +304,7 @@ config VLC_GNUTLS
 
 config VLC_TAGLIB
 		bool "use TagLib"
-		default n
+		default y
 
 #config VLC_LIBSECRET
 #		bool "use libsecret for keystore"

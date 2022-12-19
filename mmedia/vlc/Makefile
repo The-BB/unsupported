@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=vlc
-PKG_VERSION:=3.0.17.4
+PKG_VERSION:=3.0.18
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://get.videolan.org/vlc/$(PKG_VERSION)
-PKG_HASH:=8c5a62d88a4fb45c1b095cf10befef217dfa87aedcec5184b9e7d590b6dd4133
+PKG_HASH:=57094439c365d8aa8b9b41fa3080cc0eef2befe6025bb5cef722accc625aedec
 
 PKG_LICENSE:=GPL-2.0-or-later LGPL-2.1-or-later
 PKG_LICENSE_FILES:=COPYING COPYING.LIB
@@ -104,8 +104,8 @@ $(call Package/vlc/Default)
   DEPENDS+=+VLC_ALSA_LIB:alsa-lib #access audio_output
   DEPENDS+=+VLC_HARFBUZZ:libharfbuzz #text_renderer
   DEPENDS+=+VLC_FAAD:libfaad2 #codec
-  DEPENDS+=+(BUILD_PATENTED&&VLC_FFMPEG_AVFORMAT):libffmpeg #codec video_chroma video_filter
-  DEPENDS+=+(BUILD_PATENTED&&VLC_FFMPEG_POSTPROC):libffmpeg #codec video_chroma video_filter
+  DEPENDS+=+VLC_FFMPEG_AVFORMAT:libffmpeg #codec video_chroma video_filter
+  DEPENDS+=+VLC_FFMPEG_POSTPROC:libffmpeg #codec video_chroma video_filter
   DEPENDS+=+VLC_FLAC:libflac #codec
   DEPENDS+=+VLC_FONTCONFIG:fontconfig #text_renderer
   DEPENDS+=+VLC_FREETYPE:libfreetype #text_renderer
@@ -139,7 +139,7 @@ $(call Package/vlc/Default)
   DEPENDS+=+VLC_OPUS:libopus #codec
   DEPENDS+=+VLC_PULSEAUDIO:pulseaudio-daemon #access audio_output services_discovery
   DEPENDS+=+VLC_SNDIO:libsndio #audio_output
-  DEPENDS+=+VLC_SAMBA4:samba4-libs # XXX need dev
+  DEPENDS+=+VLC_SAMBA4:samba4-libs #access services_discovery
   DEPENDS+=+VLC_SPEEX:libspeex +VLC_SPEEX:libspeexdsp #audio_filter codec
   DEPENDS+=+VLC_TAGLIB:taglib #meta_engine
   DEPENDS+=+VLC_TREMOR:libvorbisidec #codec
@@ -259,6 +259,7 @@ CONFIGURE_ARGS += \
 	--disable-x265 \
 	--disable-xcb \
 	--disable-zvbi \
+	--enable-run-as-root \
 	--without-x
 
 CONFIGURE_ARGS += \
