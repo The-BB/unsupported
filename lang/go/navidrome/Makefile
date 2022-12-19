@@ -66,7 +66,7 @@ Hooks/Compile/Pre += Build/Web
 
 GIT_SHA:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -9)
 
-GO_BUILD_ARGS += -a
+GO_BUILD_ARGS += -trimpath -a
 
 GO_LDFLAGS += \
 	-X '$(PKG_GOGET)/consts.gitSha=$(GIT_SHA)' \
