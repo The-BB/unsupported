@@ -53,6 +53,7 @@ endef
 
 Package/kopia_nohf/conffiles=$(Package/kopia/conffiles)
 
+GO_BUILD_ARGS += -trimpath
 GO_LDFLAGS += \
 	-X '$(PKG_GOGET)/repo.BuildVersion=$(PKG_VERSION)' \
 	-X '$(PKG_GOGET)/repo.BuildInfo=$(PKG_SOURCE_VERSION)' \
