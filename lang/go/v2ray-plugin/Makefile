@@ -3,7 +3,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2ray-plugin
-PKG_VERSION:=v1.3.2
+PKG_VERSION:=1.3.2
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/shadowsocks/v2ray-plugin
@@ -11,7 +11,7 @@ PKG_GOGET:=github.com/shadowsocks/v2ray-plugin
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=ddd7ab46b4aeee0ca8b272efed9d7da3e3a6e52c
 PKG_SOURCE_URL:=https://$(PKG_GOGET)
-PKG_MIRROR_HASH:=9a59914c409bacce97d45204526838f0e799706455f793da34924fa943eac77b
+PKG_MIRROR_HASH:=e90f118dc2603f34dbf01e120b912b3c479ce464106a2b8a22da75bf60ae6f0a
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -44,8 +44,8 @@ endef
 
 Package/v2ray-plugin_nohf/description=$(Package/v2ray-plugin/description)
 
-GO_BUILD_ARGS:=-a
-GO_LDFLAGS += -X 'main.VERSION=$(PKG_VERSION)'
+GO_BUILD_ARGS += -trimpath -a
+GO_LDFLAGS += -X 'main.VERSION=v$(PKG_VERSION)'
 
 define Package/v2ray-plugin/install
 	$(INSTALL_DIR) $(1)/opt/bin
