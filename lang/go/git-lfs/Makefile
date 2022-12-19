@@ -60,6 +60,8 @@ GO_LDFLAGS += \
 	-X '$(PKG_GOGET)/v3/config.Vendor=Entware' \
 	-X '$(PKG_GOGET)/v3/config.GitCommit=$(GIT_LFS_SHA)'
 
+GO_BUILD_ARGS += -trimpath
+
 define Package/git-lfs/install
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/git-lfs $(1)/opt/bin
