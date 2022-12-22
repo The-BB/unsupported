@@ -55,7 +55,7 @@ define Package/prometheus/conffiles
 /opt/etc/prometheus/prometheus.yml
 endef
 
-Package/prometheus_nohf/description=$(Package/prometheus/description)
+Package/prometheus_nohf/conffiles=$(Package/prometheus/conffiles)
 
 GO_BUILD_ARGS += -trimpath -a
 
@@ -103,7 +103,7 @@ define Package/prometheus/install
 	$(INSTALL_DIR) $(1)/opt/var/lib/prometheus
 endef
 
-Package/prometheus_nohf/description=$(Package/prometheus/description)
+Package/prometheus_nohf/install=$(Package/prometheus/install)
 
 $(eval $(call BuildPackage,prometheus))
 $(eval $(call BuildPackage,prometheus_nohf))

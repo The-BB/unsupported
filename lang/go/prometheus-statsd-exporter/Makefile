@@ -50,7 +50,7 @@ define Package/prometheus-statsd-exporter/conffiles
 /opt/etc/prometheus/statsd_mapping.yml
 endef
 
-Package/prometheus-statsd-exporter_nohf/description=$(Package/prometheus-statsd-exporter/description)
+Package/prometheus-statsd-exporter_nohf/conffiles=$(Package/prometheus-statsd-exporter/conffiles)
 
 GO_BUILD_ARGS += -trimpath -a
 
@@ -77,7 +77,7 @@ define Package/prometheus-statsd-exporter/install
 	$(INSTALL_DATA) files/statsd_mapping.yml $(1)/opt/etc/prometheus
 endef
 
-Package/prometheus-statsd-exporter_nohf/description=$(Package/prometheus-statsd-exporter/description)
+Package/prometheus-statsd-exporter_nohf/install=$(Package/prometheus-statsd-exporter/install)
 
 $(eval $(call BuildPackage,prometheus-statsd-exporter))
 $(eval $(call BuildPackage,prometheus-statsd-exporter_nohf))

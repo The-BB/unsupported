@@ -66,7 +66,7 @@ define Package/prometheus-node-exporter/install
 	$(INSTALL_BIN) files/S99node_exporter $(1)/opt/etc/init.d
 endef
 
-Package/prometheus-node-exporter_nohf/description=$(Package/prometheus-node-exporter/description)
+Package/prometheus-node-exporter_nohf/install=$(Package/prometheus-node-exporter/install)
 
 $(eval $(call BuildPackage,prometheus-node-exporter))
 $(eval $(call BuildPackage,prometheus-node-exporter_nohf))

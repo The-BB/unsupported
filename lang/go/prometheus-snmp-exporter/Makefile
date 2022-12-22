@@ -69,7 +69,7 @@ define Package/prometheus-snmp-exporter/install
 	$(INSTALL_DATA) $(GO_SRC_DIR)/snmp.yml $(1)/opt/etc/prometheus/snmp_exporter
 endef
 
-Package/prometheus-snmp-exporter_nohf/description=$(Package/prometheus-snmp-exporter/description)
+Package/prometheus-snmp-exporter_nohf/install=$(Package/prometheus-snmp-exporter/install)
 
 $(eval $(call BuildPackage,prometheus-snmp-exporter))
 $(eval $(call BuildPackage,prometheus-snmp-exporter_nohf))

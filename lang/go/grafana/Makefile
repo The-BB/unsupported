@@ -151,7 +151,7 @@ define Package/grafana/install
 	$(INSTALL_DIR) $(1)/opt/var/log/grafana
 endef
 
-Package/grafana_nohf/description=$(Package/grafana/description)
+Package/grafana_nohf/install=$(Package/grafana/install)
 
 $(eval $(call BuildPackage,grafana))
 $(eval $(call BuildPackage,grafana_nohf))

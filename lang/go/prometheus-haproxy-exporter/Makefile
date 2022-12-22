@@ -66,7 +66,7 @@ define Package/prometheus-haproxy-exporter/install
 	$(INSTALL_BIN) files/S99haproxy_exporter $(1)/opt/etc/init.d
 endef
 
-Package/prometheus-haproxy-exporter_nohf/description=$(Package/prometheus-haproxy-exporter/description)
+Package/prometheus-haproxy-exporter_nohf/install=$(Package/prometheus-haproxy-exporter/install)
 
 $(eval $(call BuildPackage,prometheus-haproxy-exporter))
 $(eval $(call BuildPackage,prometheus-haproxy-exporter_nohf))

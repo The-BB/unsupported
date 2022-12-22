@@ -66,7 +66,7 @@ define Package/prometheus-collectd-exporter/install
 	$(INSTALL_BIN) files/S99collectd_exporter $(1)/opt/etc/init.d
 endef
 
-Package/prometheus-collectd-exporter_nohf/description=$(Package/prometheus-collectd-exporter/description)
+Package/prometheus-collectd-exporter_nohf/install=$(Package/prometheus-collectd-exporter/install)
 
 $(eval $(call BuildPackage,prometheus-collectd-exporter))
 $(eval $(call BuildPackage,prometheus-collectd-exporter_nohf))
