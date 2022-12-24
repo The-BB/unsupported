@@ -1,0 +1,87 @@
+# SPDX-License-Identifier: WTFPL
+
+include $(TOPDIR)/rules.mk
+
+PKG_NAME:=alertmanager
+PKG_VERSION:=0.25.0
+PKG_RELEASE:=1
+
+PKG_GOGET:=github.com/prometheus/alertmanager
+
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_VERSION:=258fab7cdd551f2cf251ed0348f0ad7289aee789
+PKG_SOURCE_URL:=https://$(PKG_GOGET)
+PKG_MIRROR_HASH:=d9ac0fecc65c23ed3334fda1118e239978e0f80ebb8b43f92191608bb2198d22
+
+PKG_LICENSE:=Apache-2.0
+PKG_LICENSE_FILES:=LICENSE
+
+PKG_BUILD_DEPENDS:=node/host
+
+include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/golang.mk
+
+define Package/alertmanager/Default
+  SECTION:=utils
+  CATEGORY:=Utilities
+  TITLE:=Prometheus Alertmanager
+  URL:=http://prometheus.io
+endef
+
+define Package/alertmanager
+  $(call Package/alertmanager/Default)
+  VARIANT:=hf
+endef
+
+define Package/alertmanager_nohf
+  $(call Package/alertmanager/Default)
+  VARIANT:=nohf
+  DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+endef
+
+define Package/alertmanager/description
+  The Alertmanager handles alerts sent by client applications such
+  as the Prometheus server. It takes care of deduplicating, grouping,
+  and routing them to the correct receiver integrations such as email,
+  PagerDuty, OpsGenie, or many other mechanisms thanks to the webhook
+  receiver. It also takes care of silencing and inhibition of alerts.
+endef
+
+Package/alertmanager_nohf/description=$(Package/alertmanager/description)
+
+define Package/alertmanager/conffiles
+/opt/etc/prometheus/alertmanager.yml
+endef
+
+Package/alertmanager_nohf/conffiles=$(Package/alertmanager/conffiles)
+
+GO_BUILD_ARGS += -trimpath -a
+
+REVISION:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -9)
+SOURCE_DATE:=2022-12-22
+
+GO_LDFLAGS += \
+	-X 'github.com/prometheus/common/version.Version=v$(PKG_VERSION)' \
+	-X 'github.com/prometheus/common/version.Revision=$(REVISION)'  \
+	-X 'github.com/prometheus/common/version.Branch="release"' \
+	-X 'github.com/prometheus/common/version.BuildUser=Entware@Entware' \
+	-X 'github.com/prometheus/common/version.BuildDate=$(SOURCE_DATE)'
+
+GO_TAGS:=-tags=netgo
+GO_TARGET:=./cmd/alertmanager ./cmd/amtool
+
+define Package/alertmanager/install
+	$(INSTALL_DIR) $(1)/opt/bin
+	$(INSTALL_BIN) $(GO_INSTALL_DIR)/{alertmanager,amtool} $(1)/opt/bin
+
+	$(INSTALL_DIR) $(1)/opt/etc/init.d
+	$(INSTALL_BIN) files/S90alertmanager $(1)/opt/etc/init.d
+
+	$(INSTALL_DIR) $(1)/opt/etc/prometheus
+	$(CP) $(GO_SRC_DIR)/examples/ha/alertmanager.yml $(1)/opt/etc/prometheus
+endef
+
+Package/alertmanager_nohf/install=$(Package/alertmanager/install)
+
+$(eval $(call BuildPackage,alertmanager))
+$(eval $(call BuildPackage,alertmanager_nohf))
