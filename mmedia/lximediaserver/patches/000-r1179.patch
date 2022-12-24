@@ -1,0 +1,482 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,5 +1,5 @@
+ project(lximedia)
+-cmake_minimum_required(VERSION 2.8)
++cmake_minimum_required(VERSION 2.8...3.13)
+ file(STRINGS "VERSION" VERSION)
+ 
+ if(${CMAKE_SYSTEM_NAME} STREQUAL Linux)
+@@ -77,8 +77,8 @@ add_library(
+     ${PUPNP_THREADUTIL_SRC_LIST}
+     ${PUPNP_UPNP_SRC_LIST})
+ 
+-target_include_directories(
+-    pupnp PRIVATE
++include_directories(
++    PRIVATE
+     ext/pupnp/
+     ext/pupnp/ixml/src/inc
+     ext/pupnp/threadutil/inc
+@@ -139,8 +139,8 @@ endif()
+ 
+ add_executable(lximediaserver ${SRC_LIST} ${SERVER_RESOURCES})
+ 
+-target_include_directories(
+-    lximediaserver PRIVATE
++include_directories(
++    PRIVATE
+     ${CMAKE_SOURCE_DIR}/src)
+ 
+ target_link_libraries(lximediaserver pupnp jpge miniz sha1)
+@@ -167,8 +167,8 @@ if(${CMAKE_BUILD_TYPE} STREQUAL Debug)
+ 
+     add_executable(lximediaserver_test ${TEST_SRC_LIST})
+ 
+-    target_include_directories(
+-        lximediaserver_test PRIVATE
++    include_directories(
++        PRIVATE
+         ${CMAKE_SOURCE_DIR}/src
+         ${CMAKE_SOURCE_DIR}/test)
+ 
+--- a/src/mpeg/ps_filter.cpp
++++ b/src/mpeg/ps_filter.cpp
+@@ -167,7 +167,7 @@ std::list<ps_packet> ps_filter::read_pac
+                 lts->second = ts;
+             }
+             else
+-                lts = last_timestamp.emplace(stream_id, ts).first;
++                lts = last_timestamp.insert(std::make_pair(stream_id, ts)).first;
+ 
+             if (clock_offset == uint64_t(-1))
+                 clock_offset = ts - next_pack_header;
+--- a/src/platform/inifile.cpp
++++ b/src/platform/inifile.cpp
+@@ -19,6 +19,7 @@
+ #include "platform/fstream.h"
+ #include "platform/path.h"
+ #include <cassert>
++#include <stdexcept>
+ 
+ namespace platform {
+ 
+@@ -521,7 +522,7 @@ void inifile::section::write(const std::
+         }
+         else
+         {
+-            i->second.emplace(name, value);
++            i->second.insert(std::make_pair(name, value));
+ 
+             if (inifile.values.size() == 1)
+                 inifile.soft_touch();
+@@ -531,7 +532,7 @@ void inifile::section::write(const std::
+     }
+     else
+     {
+-        inifile.values[section_name].emplace(name, value);
++        inifile.values[section_name].insert(std::make_pair(name, value));
+         inifile.hard_touch();
+     }
+ }
+--- a/src/platform/messageloop.cpp
++++ b/src/platform/messageloop.cpp
+@@ -81,9 +81,8 @@ int messageloop_ref::process_events(cons
+     return messageloop.process_events(duration);
+ }
+ 
+-void timer::single_shot(
+-        class messageloop &messageloop,
+-        std::chrono::nanoseconds interval,
++void timer::single_shot(class messageloop &messageloop,
++        std::chrono::milliseconds interval,
+         const std::function<void()> &timeout)
+ {
+     auto timer = std::make_shared<class timer>(messageloop, nullptr);
+@@ -95,9 +94,8 @@ void timer::single_shot(
+     timer->start(interval, true);
+ }
+ 
+-void timer::single_shot(
+-        class messageloop_ref &messageloop,
+-        std::chrono::nanoseconds interval,
++void timer::single_shot(class messageloop_ref &messageloop,
++        std::chrono::milliseconds interval,
+         const std::function<void()> &timeout)
+ {
+     auto timer = std::make_shared<class timer>(messageloop, nullptr);
+@@ -130,7 +128,7 @@ timer::~timer()
+     messageloop.timer_remove(*this);
+ }
+ 
+-void timer::start(std::chrono::nanoseconds interval, bool once)
++void timer::start(std::chrono::milliseconds interval, bool once)
+ {
+     this->once = once;
+ 
+@@ -244,7 +242,7 @@ void messageloop::stop(int exitcode)
+     message_added.notify_one();
+ }
+ 
+-void messageloop::timer_add(class timer &timer, std::chrono::nanoseconds iv)
++void messageloop::timer_add(class timer &timer, std::chrono::milliseconds iv)
+ {
+     std::lock_guard<std::mutex> _(mutex);
+ 
+@@ -495,7 +493,7 @@ void messageloop::stop(int exitcode)
+     ::PostMessage(HWND(window_handle), WM_CLOSE, 0, 0);
+ }
+ 
+-void messageloop::timer_add(class timer &timer, std::chrono::nanoseconds iv)
++void messageloop::timer_add(class timer &timer, std::chrono::milliseconds iv)
+ {
+     std::lock_guard<std::mutex> _(mutex);
+ 
+@@ -503,7 +501,7 @@ void messageloop::timer_add(class timer
+             UINT(std::max(
+                      int64_t(USER_TIMER_MINIMUM),
+                      std::min(
+-                         duration_cast<std::chrono::milliseconds>(iv).count(),
++                         iv.count(),
+                          int64_t(USER_TIMER_MAXIMUM))));
+ 
+     if (::SetTimer(HWND(window_handle), UINT_PTR(&timer), elapse, NULL) != 0)
+--- a/src/platform/messageloop.h
++++ b/src/platform/messageloop.h
+@@ -50,7 +50,7 @@ private:
+     void post(class messageloop_ref &, std::function<void()> &&);
+     void abort(class messageloop_ref &);
+ 
+-    void timer_add(class timer &, std::chrono::nanoseconds);
++    void timer_add(class timer &, std::chrono::milliseconds);
+     void timer_remove(class timer &);
+ 
+ private:
+@@ -102,10 +102,10 @@ friend class messageloop;
+ public:
+     template<typename rep, typename period>
+     static void single_shot(class messageloop &, std::chrono::duration<rep, period>, const std::function<void()> &);
+-    static void single_shot(class messageloop &, std::chrono::nanoseconds, const std::function<void()> &);
++    static void single_shot(class messageloop &, std::chrono::milliseconds, const std::function<void()> &);
+     template<typename rep, typename period>
+     static void single_shot(class messageloop_ref &, std::chrono::duration<rep, period>, const std::function<void()> &);
+-    static void single_shot(class messageloop_ref &, std::chrono::nanoseconds, const std::function<void()> &);
++    static void single_shot(class messageloop_ref &, std::chrono::milliseconds, const std::function<void()> &);
+ 
+ public:
+     timer(class messageloop &, const std::function<void()> &timeout);
+@@ -114,7 +114,7 @@ public:
+ 
+     template<typename rep, typename period>
+     void start(std::chrono::duration<rep, period>, bool once = false);
+-    void start(std::chrono::nanoseconds, bool once);
++    void start(std::chrono::milliseconds, bool once);
+     void stop();
+ 
+ private:
+@@ -122,7 +122,7 @@ private:
+     const std::function<void()> timeout;
+ 
+ #if defined(__unix__) || defined(__APPLE__)
+-    std::chrono::nanoseconds interval;
++    std::chrono::milliseconds interval;
+     std::chrono::steady_clock::time_point next;
+ #endif
+     bool once;
+@@ -136,7 +136,7 @@ void timer::single_shot(
+ {
+     return single_shot(
+                 messageloop,
+-                std::chrono::duration_cast<std::chrono::nanoseconds>(interval),
++                std::chrono::duration_cast<std::chrono::milliseconds>(interval),
+                 timeout);
+ }
+ 
+@@ -148,14 +148,14 @@ void timer::single_shot(
+ {
+     return single_shot(
+                 messageloop,
+-                std::chrono::duration_cast<std::chrono::nanoseconds>(interval),
++                std::chrono::duration_cast<std::chrono::milliseconds>(interval),
+                 timeout);
+ }
+ 
+ template<typename rep, typename period>
+ void timer::start(std::chrono::duration<rep, period> interval, bool once)
+ {
+-    return start(std::chrono::duration_cast<std::chrono::nanoseconds>(interval), once);
++    return start(std::chrono::duration_cast<std::chrono::milliseconds>(interval), once);
+ }
+ 
+ } // End of namespace
+--- a/src/platform/process.cpp
++++ b/src/platform/process.cpp
+@@ -23,6 +23,7 @@
+ #include <cstring>
+ #include <functional>
+ #include <map>
++#include <stdexcept>
+ #include <thread>
+ 
+ #if defined(__unix__) || defined(__APPLE__)
+--- a/src/pupnp/content_directory.cpp
++++ b/src/pupnp/content_directory.cpp
+@@ -806,7 +806,7 @@ std::string content_directory::to_object
+                 auto j = object_uuid_to_path.find(u);
+                 if (j == object_uuid_to_path.end())
+                 {
+-                    object_uuid_to_path.emplace(u, path);
++                    object_uuid_to_path.insert(std::make_pair(u, path));
+                     uuid = u;
+                     break;
+                 }
+--- a/src/server/files.cpp
++++ b/src/server/files.cpp
+@@ -26,6 +26,7 @@
+ #include "vlc/media_cache.h"
+ #include "vlc/transcode_stream.h"
+ #include "watchlist.h"
++#include <vlc/libvlc_version.h>
+ #include <algorithm>
+ #include <cmath>
+ #include <iomanip>
+@@ -225,8 +226,8 @@ std::vector<pupnp::content_directory::it
+     std::map<std::chrono::system_clock::time_point, watchlist::entry> watched_by_last_seen;
+     for (auto &i : watchlist.watched_items())
+     {
+-        watched_by_mrl.emplace(i.mrl, i);
+-        watched_by_last_seen.emplace(i.last_seen, i);
++        watched_by_mrl.insert(std::make_pair(i.mrl, i));
++        watched_by_last_seen.insert(std::make_pair(i.last_seen, i));
+     }
+ 
+     std::unordered_set<std::string> directories;
+@@ -284,7 +285,7 @@ std::vector<pupnp::content_directory::it
+         }
+ 
+         if (!last_path.empty())
+-            recommended_paths.emplace(last_score, std::move(last_path));
++            recommended_paths.insert(std::make_pair(last_score, std::move(last_path)));
+     }
+ 
+     std::vector<std::string> paths;
+@@ -384,12 +385,14 @@ int files::play_audio_video_item(
+                     << "vcodec=" << protocol.video_codec
+                     << ",vb=" << protocol.video_rate;
+ 
++#if (LIBVLC_VERSION_MAJOR > 2) || ((LIBVLC_VERSION_MAJOR == 2) && (LIBVLC_VERSION_MINOR >= 1))
+             const float frame_rate = (protocol.frame_rate_den > 0)
+                     ? (float(protocol.frame_rate_num) / protocol.frame_rate_den)
+                     : 25.0f;
+ 
+             if (std::abs(frame_rate - item.frame_rate) > 0.01f)
+                 transcode << ",fps=" << std::setprecision(5) << frame_rate;
++#endif
+ 
+             const float aspect = (protocol.height > 0)
+                     ? ((protocol.width * protocol.aspect) / protocol.height)
+@@ -734,14 +737,14 @@ const std::vector<std::string> & files::
+             for (auto &i : settings.root_paths())
+             {
+                 const auto name = root_path_name(i.path) + '/';
+-                files.emplace(dir_prefix + to_lower(name), name);
++                files.insert(std::make_pair(dir_prefix + to_lower(name), name));
+             }
+ 
+             if (settings.share_removable_media())
+                 for (auto &i : platform::list_removable_media())
+                 {
+                     const auto name = root_path_name(i) + '/';
+-                    files.emplace(dir_prefix + to_lower(name), name);
++                    files.insert(std::make_pair(dir_prefix + to_lower(name), name));
+                 }
+         }
+         else if (starts_with(path, basedir))
+@@ -752,7 +755,7 @@ const std::vector<std::string> & files::
+                 auto mrl = platform::mrl_from_path(system_path.path);
+ 
+                 for (auto &track : list_tracks(media_cache.media_info(mrl)))
+-                    files.emplace(file_prefix + to_lower(track.first), track.first);
++                    files.insert(std::make_pair(file_prefix + to_lower(track.first), track.first));
+             }
+             else
+             {
+@@ -767,12 +770,12 @@ const std::vector<std::string> & files::
+                                     2);
+ 
+                         if ((children.size() == 1) && !ends_with(children.front(), "/"))
+-                            files.emplace(file_prefix + to_lower(children.front()), i + children.front());
++                            files.insert(std::make_pair(file_prefix + to_lower(children.front()), i + children.front()));
+                         else if (children.size() > 0)
+-                            files.emplace(dir_prefix + to_lower(i), i);
++                            files.insert(std::make_pair(dir_prefix + to_lower(i), i));
+                     }
+                     else
+-                        files.emplace(file_prefix + to_lower(i), i);
++                        files.insert(std::make_pair(file_prefix + to_lower(i), i));
+                 }
+             }
+         }
+--- a/src/vlc/media_cache.cpp
++++ b/src/vlc/media_cache.cpp
+@@ -24,6 +24,7 @@
+ #include "platform/string.h"
+ #include <sha1/sha1.h>
+ #include <vlc/vlc.h>
++#include <vlc/libvlc_version.h>
+ #include <cstring>
+ #include <mutex>
+ #include <queue>
+@@ -141,26 +142,31 @@ platform::uuid media_cache::uuid(const s
+ 
+ static bool should_read_media_info_from_player(const std::string &path)
+ {
+-    platform::ifstream file(path, std::ios_base::binary);
+-    if (file.is_open())
++    if (compare_version(instance::version(), "2.1") >= 0)
+     {
+-        uint8_t buffer[16];
+-        if (file.read(reinterpret_cast<char *>(buffer), sizeof(buffer)))
++        platform::ifstream file(path, std::ios_base::binary);
++        if (file.is_open())
+         {
+-            // MPEG TS
+-            if (buffer[0] == 0x47)
+-                return true;
+-
+-            // MPEG PS
+-            if ((buffer[0] == 0x00) && (buffer[1] == 0x00) &&
+-                (buffer[2] == 0x01) && (buffer[3] >= 0xB9))
++            uint8_t buffer[16];
++            if (file.read(reinterpret_cast<char *>(buffer), sizeof(buffer)))
+             {
+-                return true;
++                // MPEG TS
++                if (buffer[0] == 0x47)
++                    return true;
++
++                // MPEG PS
++                if ((buffer[0] == 0x00) && (buffer[1] == 0x00) &&
++                    (buffer[2] == 0x01) && (buffer[3] >= 0xB9))
++                {
++                    return true;
++                }
+             }
+         }
++
++        return false;
+     }
+ 
+-    return false;
++    return true;
+ }
+ 
+ static void read_media_info_from_player(
+@@ -262,6 +268,7 @@ static bool read_track_list(
+         class media &media,
+         struct media_cache::media_info &media_info)
+ {
++#if (LIBVLC_VERSION_MAJOR > 2) || ((LIBVLC_VERSION_MAJOR == 2) && (LIBVLC_VERSION_MINOR >= 1))
+     libvlc_media_track_t **track_list = nullptr;
+     const unsigned count = libvlc_media_tracks_get(media, &track_list);
+     if (track_list)
+@@ -323,6 +330,63 @@ static bool read_track_list(
+     }
+ 
+     return track_list && (count > 0);
++#else
++    libvlc_media_track_info_t *tracks = nullptr;
++    const int count = libvlc_media_get_tracks_info(media, &tracks);
++    if (tracks)
++    {
++        for (int i = 0; i < count; i++)
++            if (tracks[i].i_codec != 0x66646E75 /*'undf'*/)
++            {
++                struct media_cache::track track;
++                track.id = tracks[i].i_id;
++
++                track.type = track_type::unknown;
++                switch (tracks[i].i_type)
++                {
++                case libvlc_track_unknown:
++                    track.type = track_type::unknown;
++
++                    media_info.tracks.emplace_back(std::move(track));
++                    break;
++
++                case libvlc_track_audio:
++                    track.type = track_type::audio;
++                    if ((tracks[i].u.audio.i_rate > 0) &&
++                        (tracks[i].u.audio.i_channels > 0))
++                    {
++                        track.audio.sample_rate = tracks[i].u.audio.i_rate;
++                        track.audio.channels = tracks[i].u.audio.i_channels;
++
++                        media_info.tracks.emplace_back(std::move(track));
++                    }
++                    break;
++
++                case libvlc_track_video:
++                    track.type = track_type::video;
++                    if ((tracks[i].u.video.i_width > 0) &&
++                        (tracks[i].u.video.i_height > 0))
++                    {
++                        track.video.width = tracks[i].u.video.i_width;
++                        track.video.height = tracks[i].u.video.i_height;
++                        track.video.frame_rate_num = 0;
++                        track.video.frame_rate_den = 0;
++
++                        media_info.tracks.emplace_back(std::move(track));
++                    }
++                    break;
++
++                case libvlc_track_text:
++                    track.type = track_type::text;
++
++                    media_info.tracks.emplace_back(std::move(track));
++                    break;
++                }
++            }
++    }
++
++    return tracks && (count > 0);
++#endif
+ }
+ 
+ static struct media_cache::media_info media_info_from_media(
+@@ -384,7 +448,10 @@ int media_cache::scan_all_process(platfo
+ {
+     std::vector<std::string> options;
+     options.push_back("--no-sub-autodetect-file");
+-    options.push_back("--avcodec-fast");
++
++    if (compare_version(instance::version(), "2.1") >= 0)
++        options.push_back("--avcodec-fast");
++
+     vlc::instance instance(options);
+ 
+     std::queue<std::string> mrls;
+--- a/src/vlc/subtitles.cpp
++++ b/src/vlc/subtitles.cpp
+@@ -266,7 +266,7 @@ static bool language_of(
+             // Sort the characters by frequency.
+             std::multimap<int, char32_t> freq;
+             for (auto &j : count)
+-                freq.emplace(-j.second, j.first);
++                freq.insert(std::make_pair(-j.second, j.first));
+ 
+             // And determine the language.
+             int n = 0;
+--- a/src/vlc/transcode_stream.cpp
++++ b/src/vlc/transcode_stream.cpp
+@@ -89,7 +89,9 @@ int transcode_stream::transcode_process(
+ {
+     std::vector<std::string> vlc_options;
+     vlc_options.push_back("--no-sub-autodetect-file");
+-    vlc_options.push_back("--avcodec-fast");
++
++    if (compare_version(instance::version(), "2.1") >= 0)
++        vlc_options.push_back("--avcodec-fast");
+ 
+     int font_size = -1;
+     process >> font_size;

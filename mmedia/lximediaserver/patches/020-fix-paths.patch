@@ -1,0 +1,32 @@
+--- a/src/platform/path.cpp
++++ b/src/platform/path.cpp
+@@ -252,7 +252,7 @@ std::vector<std::string> list_removable_
+     struct passwd *pw = getpwuid(getuid());
+     if (pw && pw->pw_dir)
+     {
+-        const std::string media_dir = "/media/" + std::string(pw->pw_name) + '/';
++        const std::string media_dir = "/opt/media/" + std::string(pw->pw_name) + '/';
+ 
+         std::vector<std::string> result;
+         for (auto &i : list_files(media_dir, platform::file_filter::directories))
+--- a/src/server/setup.cpp
++++ b/src/server/setup.cpp
+@@ -109,12 +109,12 @@ int setup::play_item(
+ 
+ static bool shutdown()
+ {
+-    const int exitcode = system("/usr/bin/dbus-send --system --print-reply --dest=\"org.freedesktop.ConsoleKit\" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Stop");
+-    if (exitcode == 0)
+-        return true;
+-
+-    std::clog << "setup: \"/usr/bin/dbus-send\" failed with exit code " << exitcode << '.' << std::endl;
+-    return false;
++//    const int exitcode = system("/usr/bin/dbus-send --system --print-reply --dest=\"org.freedesktop.ConsoleKit\" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Stop");
++//    if (exitcode == 0)
++//        return true;
++//
++//    std::clog << "setup: \"/usr/bin/dbus-send\" failed with exit code " << exitcode << '.' << std::endl;
++//    return false;
+ }
+ #elif defined(__APPLE__)
+ #include <cstdlib>

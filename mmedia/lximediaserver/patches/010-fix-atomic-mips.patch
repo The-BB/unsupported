@@ -1,0 +1,18 @@
+--- a/src/platform/process.cpp
++++ b/src/platform/process.cpp
+@@ -171,6 +171,7 @@ unsigned process::alloc_shared(size_t si
+ {
+     static_assert(sizeof(shm_data) == 4096, "sizeof(shm_data) != 4096");
+ 
++#ifndef __mips__
+     if (size <= sizeof(shm->data))
+     {
+         // Make sure the pointer is 8-byte aligned.
+@@ -182,6 +183,7 @@ unsigned process::alloc_shared(size_t si
+ 
+         __sync_sub_and_fetch(&shm->size, u64_size);
+     }
++#endif /* __mips__ */
+ 
+     return unsigned(-1);
+ }

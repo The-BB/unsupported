@@ -1,0 +1,13 @@
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -168,8 +168,8 @@ int main(int argc, const char *argv[])
+ {
+     if (is_root())
+     {
+-        std::cerr << "Cannot run as root." << std::endl;
+-        return 1;
++        std::clog << "Don't run as root." << std::endl;
++//        return 1;
+     }
+ 
+     setlocale(LC_ALL, "");
