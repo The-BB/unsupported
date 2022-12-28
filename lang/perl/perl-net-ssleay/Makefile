@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=perl-net-ssleay
-PKG_VERSION:=1.90
+PKG_VERSION:=1.92
 PKG_RELEASE:=1
 
 PKG_SOURCE:=Net-SSLeay-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://cpan.metacpan.org/authors/id/C/CH/CHRISN
-PKG_HASH:=f8696cfaca98234679efeedc288a9398fcf77176f1f515dbc589ada7c650dc93
+PKG_HASH:=47c2f2b300f2e7162d71d699f633dd6a35b0625a00cbda8c50ac01144a9396a9
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/perl/Net-SSLeay-$(PKG_VERSION)
 
