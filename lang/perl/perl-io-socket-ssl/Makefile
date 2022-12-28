@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=perl-io-socket-ssl
-PKG_VERSION:=2.073
+PKG_VERSION:=2.078
 PKG_RELEASE:=1
 
 PKG_SOURCE:=IO-Socket-SSL-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://cpan.metacpan.org/authors/id/S/SU/SULLR
-PKG_HASH:=b2c0b34df97cb1aa816221cee2454a1efd89b86ccbda810389a30e0d08cf57c8
+PKG_HASH:=4cf83737a72b0970948b494bc9ddab7f725420a0ca0152d25c7e48ef8fa2b6a1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/perl/IO-Socket-SSL-$(PKG_VERSION)
 
