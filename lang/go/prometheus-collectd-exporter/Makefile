@@ -24,6 +24,7 @@ define Package/prometheus-collectd-exporter/Default
   CATEGORY:=Utilities
   TITLE:=Collectd Exporter
   URL:=https://prometheus.io/
+  DEPENDS:=+collectd
 endef
 
 define Package/prometheus-collectd-exporter
@@ -34,7 +35,7 @@ endef
 define Package/prometheus-collectd-exporter_nohf
   $(call Package/prometheus-collectd-exporter/Default)
   VARIANT:=nohf
-  DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
 endef
 
 define Package/prometheus-collectd-exporter/description
