@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=perl-mozilla-ca
-PKG_VERSION:=20211001
+PKG_VERSION:=20221114
 PKG_RELEASE:=1
 
 PKG_SOURCE:=Mozilla-CA-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://cpan.metacpan.org/authors/id/A/AB/ABH
-PKG_HASH:=122c8900000a9d388aa8e44f911cab6c118fe8497417917a84a8ec183971b449
+PKG_SOURCE_URL:=https://cpan.metacpan.org/authors/id/H/HA/HAARG
+PKG_HASH:=701bea67be670add5a102f9f8c879402b4983096b1cb0e20dd47d52d7a10666b
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/perl/Mozilla-CA-$(PKG_VERSION)
 
