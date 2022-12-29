@@ -22,6 +22,7 @@ include $(INCLUDE_DIR)/golang.mk
 define Package/prometheus-node-exporter/Default
   SECTION:=utils
   CATEGORY:=Utilities
+  SUBMENU:=prometheus tools
   TITLE:=Exporter for machine metrics
   URL:=https://prometheus.io/
 endef

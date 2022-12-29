@@ -24,6 +24,7 @@ include $(INCLUDE_DIR)/golang.mk
 define Package/prometheus-statsd-exporter/Default
   SECTION:=utils
   CATEGORY:=Utilities
+  SUBMENU:=prometheus tools
   TITLE:=StatsD to Prometheus metrics exporter
   URL:=https://prometheus.io/
 endef

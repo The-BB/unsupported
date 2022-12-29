@@ -24,6 +24,7 @@ include $(INCLUDE_DIR)/golang.mk
 define Package/alertmanager/Default
   SECTION:=utils
   CATEGORY:=Utilities
+  SUBMENU:=prometheus tools
   TITLE:=Prometheus Alertmanager
   URL:=http://prometheus.io
 endef

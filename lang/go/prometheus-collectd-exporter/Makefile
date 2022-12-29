@@ -22,6 +22,7 @@ include $(INCLUDE_DIR)/golang.mk
 define Package/prometheus-collectd-exporter/Default
   SECTION:=utils
   CATEGORY:=Utilities
+  SUBMENU:=prometheus tools
   TITLE:=Collectd Exporter
   URL:=https://prometheus.io/
   DEPENDS:=+collectd

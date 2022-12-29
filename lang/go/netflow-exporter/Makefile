@@ -24,6 +24,7 @@ include $(INCLUDE_DIR)/golang.mk
 define Package/netflow-exporter/Default
   SECTION:=utils
   CATEGORY:=Utilities
+  SUBMENU:=prometheus tools
   TITLE:=Prometheus netflow Exporter
   URL:=https://github.com/AlfredArouna/netflow_exporter
 endef

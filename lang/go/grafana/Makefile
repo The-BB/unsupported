@@ -28,6 +28,7 @@ include $(INCLUDE_DIR)/golang.mk
 define Package/grafana/Default
   SECTION:=utils
   CATEGORY:=Utilities
+  SUBMENU:=prometheus tools
   TITLE:=platform for monitoring and observability
   URL:=https://grafana.com
 endef

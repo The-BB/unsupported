@@ -26,6 +26,7 @@ include $(INCLUDE_DIR)/golang.mk
 define Package/promlens/Default
   SECTION:=utils
   CATEGORY:=Utilities
+  SUBMENU:=prometheus tools
   TITLE:=The query builder, analyzer, and explainer for PromQL
   URL:=http://prometheus.io
   DEPENDS:=@!(mips||mipsel)

@@ -22,6 +22,7 @@ include $(INCLUDE_DIR)/golang.mk
 define Package/goflow/Default
   SECTION:=utils
   CATEGORY:=Utilities
+  SUBMENU:=prometheus tools
   TITLE:=a NetFlow/IPFIX/sFlow collector
   URL:=https://github.com/cloudflare/goflow
   CONFLICTS:=netflow-exporter

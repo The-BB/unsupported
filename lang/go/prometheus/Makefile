@@ -26,6 +26,7 @@ include $(INCLUDE_DIR)/golang.mk
 define Package/prometheus/Default
   SECTION:=utils
   CATEGORY:=Utilities
+  SUBMENU:=prometheus tools
   TITLE:=Monitoring system and time series database
   URL:=http://prometheus.io
 endef

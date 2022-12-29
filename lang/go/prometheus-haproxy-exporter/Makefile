@@ -22,6 +22,7 @@ include $(INCLUDE_DIR)/golang.mk
 define Package/prometheus-haproxy-exporter/Default
   SECTION:=utils
   CATEGORY:=Utilities
+  SUBMENU:=prometheus tools
   TITLE:=HAProxy Exporter for Prometheus
   URL:=https://prometheus.io/
   DEPENDS:=+haproxy
