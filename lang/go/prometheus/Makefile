@@ -93,7 +93,7 @@ define Package/prometheus/install
 	$(INSTALL_DATA) \
 		$(GO_SRC_DIR)/documentation/examples/prometheus.yml \
 			$(1)/opt/etc/prometheus
-	$(INSTALL_DATA) $(GO_SRC_DIR)/console* $(1)/opt/etc/prometheus
+	$(CP) $(GO_SRC_DIR)/console{s,_libraries} $(1)/opt/etc/prometheus
 
 	$(INSTALL_DIR) $(1)/opt/etc/init.d
 	$(INSTALL_BIN) files/S70prometheus $(1)/opt/etc/init.d
