@@ -17,14 +17,14 @@
  }
  
  func init() {
--	rootCmd.PersistentFlags().StringVar(&flags.DataDir, "data", "data", "config file")
-+	rootCmd.PersistentFlags().StringVar(&flags.DataDir, "data", "/opt/var/lib/alist/data", "config file")
- 	rootCmd.PersistentFlags().BoolVar(&flags.Debug, "debug", false, "start with debug mode")
- 	rootCmd.PersistentFlags().BoolVar(&flags.NoPrefix, "no-prefix", false, "disable env prefix")
- 	rootCmd.PersistentFlags().BoolVar(&flags.Dev, "dev", false, "start with dev mode")
+-	RootCmd.PersistentFlags().StringVar(&flags.DataDir, "data", "data", "config file")
++	RootCmd.PersistentFlags().StringVar(&flags.DataDir, "data", "/opt/var/lib/alist/data", "config file")
+ 	RootCmd.PersistentFlags().BoolVar(&flags.Debug, "debug", false, "start with debug mode")
+ 	RootCmd.PersistentFlags().BoolVar(&flags.NoPrefix, "no-prefix", false, "disable env prefix")
+ 	RootCmd.PersistentFlags().BoolVar(&flags.Dev, "dev", false, "start with dev mode")
 --- a/src/github.com/alist-org/alist/internal/conf/config.go
 +++ b/src/github.com/alist-org/alist/internal/conf/config.go
-@@ -50,10 +50,10 @@ type Config struct {
+@@ -51,10 +51,10 @@ type Config struct {
  }
  
  func DefaultConfig() *Config {
