@@ -20,11 +20,12 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/golang.mk
 
 define Package/outline-ss-server/Default
-  SECTION:=net
-  CATEGORY:=Network
-  SUBMENU:=Web Servers/Proxies
+  SECTION:=utils
+  CATEGORY:=Utilities
+  SUBMENU:=prometheus tools
   TITLE:=Outline Shadowsocks server
   URL:=https://getoutline.org/
+  DEPENDS:=+go-shadowsocks2 +prometheus
 endef
 
 define Package/outline-ss-server
@@ -35,7 +36,7 @@ endef
 define Package/outline-ss-server_nohf
   $(call Package/outline-ss-server/Default)
   VARIANT:=nohf
-  DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
 endef
 
 define Package/outline-ss-server/description

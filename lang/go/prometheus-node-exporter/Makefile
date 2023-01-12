@@ -25,6 +25,7 @@ define Package/prometheus-node-exporter/Default
   SUBMENU:=prometheus tools
   TITLE:=Exporter for machine metrics
   URL:=https://prometheus.io/
+  DEPENDS:=+prometheus
 endef
 
 define Package/prometheus-node-exporter
@@ -35,7 +36,7 @@ endef
 define Package/prometheus-node-exporter_nohf
   $(call Package/prometheus-node-exporter/Default)
   VARIANT:=nohf
-  DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
 endef
 
 define Package/prometheus-node-exporter/description

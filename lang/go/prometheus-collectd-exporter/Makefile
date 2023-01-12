@@ -25,7 +25,7 @@ define Package/prometheus-collectd-exporter/Default
   SUBMENU:=prometheus tools
   TITLE:=Collectd Exporter
   URL:=https://prometheus.io/
-  DEPENDS:=+collectd
+  DEPENDS:=+collectd +prometheus
 endef
 
 define Package/prometheus-collectd-exporter
