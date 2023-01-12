@@ -1,0 +1,27 @@
+--- a/src/github.com/XTLS/Xray-core/infra/conf/xray_test.go
++++ b/src/github.com/XTLS/Xray-core/infra/conf/xray_test.go
+@@ -48,9 +48,9 @@ func TestXrayConfig(t *testing.T) {
+ 					"settings": {}
+ 				},
+ 				"log": {
+-					"access": "/var/log/xray/access.log",
++					"access": "/opt/var/log/xray/access.log",
+ 					"loglevel": "error",
+-					"error": "/var/log/xray/error.log"
++					"error": "/opt/var/log/xray/error.log"
+ 				},
+ 				"inbound": {
+ 					"streamSettings": {
+@@ -140,10 +140,10 @@ func TestXrayConfig(t *testing.T) {
+ 				App: []*serial.TypedMessage{
+ 					serial.ToTypedMessage(&log.Config{
+ 						ErrorLogType:  log.LogType_File,
+-						ErrorLogPath:  "/var/log/xray/error.log",
++						ErrorLogPath:  "/opt/var/log/xray/error.log",
+ 						ErrorLogLevel: clog.Severity_Error,
+ 						AccessLogType: log.LogType_File,
+-						AccessLogPath: "/var/log/xray/access.log",
++						AccessLogPath: "/opt/var/log/xray/access.log",
+ 					}),
+ 					serial.ToTypedMessage(&dispatcher.Config{}),
+ 					serial.ToTypedMessage(&proxyman.InboundConfig{}),
