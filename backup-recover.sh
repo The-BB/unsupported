@@ -27,6 +27,8 @@ GO_PKG="\
 $PACKAGES_FEED/net/cloudreve
 $PACKAGES_FEED/net/dnsproxy
 $PACKAGES_FEED/net/git-lfs
+$PACKAGES_FEED/net/v2raya
+$PACKAGES_FEED/net/xray-core
 $PACKAGES_FEED/utils/prometheus
 $PACKAGES_FEED/utils/prometheus-statsd-exporter
 "
