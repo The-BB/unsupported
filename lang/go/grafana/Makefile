@@ -3,15 +3,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=grafana
-PKG_VERSION:=9.3.2
+PKG_VERSION:=9.3.6
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/grafana/grafana
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=21c1d14e9165e1a110ef03f04d606fe9d6ceff70
+PKG_SOURCE_VERSION:=978237e7cbe35c06d4be0e9c40670c64af2029eb
 PKG_SOURCE_URL:=https://$(PKG_GOGET)
-PKG_MIRROR_HASH:=83c7298dee1084988bf324d453a50fb93a603422c109c693d7631a8958e821e1
+PKG_MIRROR_HASH:=d8cdd74f2b9643b7f8a59559452dbe242f778b7afb4328bd133574b054ec6723
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE LICENSING.md
@@ -54,7 +54,7 @@ endef
 Package/grafana_nohf/description=$(Package/grafana/description)
 
 GIT_HASH:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -8)
-SOURCE_DATE:=2022-12-16
+SOURCE_DATE:=2023-01-26
 
 GO_LDFLAGS += \
 	-X 'main.version=$(PKG_VERSION)' \
@@ -104,8 +104,7 @@ define Build/Deps
 		$(GO_BIN) generate ./pkg/plugins/plugindef; \
 		$(GO_BIN) generate ./kinds/gen.go; \
 		$(GO_BIN) generate ./pkg/framework/coremodel; \
-		$(GO_BIN) generate ./public/app/plugins/gen.go; \
-		$(GO_BIN) generate ./kinds/report.go; \
+		$(GO_BIN) generate ./public/app/plugins; \
 	)
 	( cd $(GO_SRC_DIR); \
 		PATH="$(GOROOT)/bin:$$$$PATH" \
@@ -147,6 +146,9 @@ define Package/grafana/install
 	$(INSTALL_DIR) $(1)/opt/share/grafana/plugins-bundled/internal/input-datasource
 	$(CP) $(GO_SRC_DIR)/plugins-bundled/internal/input-datasource/dist/* \
 		$(1)/opt/share/grafana/plugins-bundled/internal/input-datasource
+
+	# XXX remove *.map
+	$(FIND) $(1)/opt/share/grafana -type f -a -iname "*.map" -delete
 
 	$(INSTALL_DIR) $(1)/opt/var/lib/grafana/plugins
 	$(INSTALL_DIR) $(1)/opt/var/log/grafana
