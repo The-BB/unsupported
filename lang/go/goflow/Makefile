@@ -25,7 +25,6 @@ define Package/goflow/Default
   SUBMENU:=prometheus tools
   TITLE:=a NetFlow/IPFIX/sFlow collector
   URL:=https://github.com/cloudflare/goflow
-  DEPENDS:=+prometheus
   CONFLICTS:=netflow-exporter
 endef
 
@@ -39,7 +38,7 @@ define Package/cnetflow_nohf
   $(call Package/goflow/Default)
   TITLE+=(IPFIX/NetFlow v9)
   VARIANT:=nohf
-  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
 endef
 
 define Package/cnetflow/description
@@ -60,7 +59,7 @@ define Package/cnflegacy_nohf
   $(call Package/goflow/Default)
   TITLE+=(NetFlow v5)
   VARIANT:=nohf
-  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
 endef
 
 define Package/cnflegacy/description
@@ -81,7 +80,7 @@ define Package/csflow_nohf
   $(call Package/goflow/Default)
   TITLE+=(sFlow v5)
   VARIANT:=nohf
-  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
 endef
 
 define Package/csflow/description
@@ -102,7 +101,7 @@ define Package/goflow_nohf
   $(call Package/goflow/Default)
   TITLE+=(full)
   VARIANT:=nohf
-  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
 endef
 
 define Package/goflow/description

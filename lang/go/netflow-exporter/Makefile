@@ -27,7 +27,6 @@ define Package/netflow-exporter/Default
   SUBMENU:=prometheus tools
   TITLE:=Prometheus netflow Exporter
   URL:=https://github.com/AlfredArouna/netflow_exporter
-  DEPENDS:=+prometheus
 endef
 
 define Package/netflow-exporter
@@ -38,7 +37,7 @@ endef
 define Package/netflow-exporter_nohf
   $(call Package/netflow-exporter/Default)
   VARIANT:=nohf
-  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
 endef
 
 define Package/netflow-exporter/description

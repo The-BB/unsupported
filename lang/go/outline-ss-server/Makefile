@@ -25,7 +25,7 @@ define Package/outline-ss-server/Default
   SUBMENU:=prometheus tools
   TITLE:=Outline Shadowsocks server
   URL:=https://getoutline.org/
-  DEPENDS:=+go-shadowsocks2 +prometheus
+  DEPENDS:=+go-shadowsocks2
 endef
 
 define Package/outline-ss-server

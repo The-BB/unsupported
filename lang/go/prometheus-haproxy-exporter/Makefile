@@ -25,7 +25,7 @@ define Package/prometheus-haproxy-exporter/Default
   SUBMENU:=prometheus tools
   TITLE:=HAProxy Exporter for Prometheus
   URL:=https://prometheus.io/
-  DEPENDS:=+haproxy +prometheus
+  DEPENDS:=+haproxy
 endef
 
 define Package/prometheus-haproxy-exporter

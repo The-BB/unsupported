@@ -27,7 +27,6 @@ define Package/prometheus-statsd-exporter/Default
   SUBMENU:=prometheus tools
   TITLE:=StatsD to Prometheus metrics exporter
   URL:=https://prometheus.io/
-  DEPENDS:=+prometheus
 endef
 
 define Package/prometheus-statsd-exporter
@@ -38,7 +37,7 @@ endef
 define Package/prometheus-statsd-exporter_nohf
   $(call Package/prometheus-statsd-exporter/Default)
   VARIANT:=nohf
-  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
 endef
 
 define Package/prometheus-statsd-exporter/description

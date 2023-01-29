@@ -25,7 +25,6 @@ define Package/prometheus-snmp-exporter/Default
   SUBMENU:=prometheus tools
   TITLE:=SNMP Exporter for Prometheus
   URL:=https://prometheus.io/
-  DEPENDS:=+prometheus
 endef
 
 define Package/prometheus-snmp-exporter
@@ -36,7 +35,7 @@ endef
 define Package/prometheus-snmp-exporter_nohf
   $(call Package/prometheus-snmp-exporter/Default)
   VARIANT:=nohf
-  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
 endef
 
 define Package/prometheus-snmp-exporter/description
