@@ -3,15 +3,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hugo
-PKG_VERSION:=0.109.0
+PKG_VERSION:=0.110.0
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/gohugoio/hugo
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=47b12b83e636224e5e601813ff3e6790c191e371
+PKG_SOURCE_VERSION:=e32a493b7826d02763c3b79623952e625402b168
 PKG_SOURCE_URL:=https://$(PKG_GOGET)
-PKG_MIRROR_HASH:=7f4c53e4472abae2a198b8b50e1765bc6e6501b99cfc389057cc69edb25ef889
+PKG_MIRROR_HASH:=0a59f43b69da327b7ef669b2c86f45ade402fec85a2bfe5dc8d7a850f38ed5fd
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -51,7 +51,6 @@ Package/hugo_nohf/description=$(Package/hugo/description)
 
 GO_BUILD_ARGS += -trimpath
 GO_TAGS:=-tags=extended
-GO_VARS += GO111MODULE=on
 
 define Package/hugo/install
 	$(INSTALL_DIR) $(1)/opt/bin
