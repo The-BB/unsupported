@@ -5,15 +5,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=prometheus
-PKG_VERSION:=2.41.0
+PKG_VERSION:=2.42.0
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/prometheus/prometheus
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=c0d8a56c69014279464c0e15d8bfb0e153af0dab
+PKG_SOURCE_VERSION:=225c61122d88b01d1f0eaaee0e05b6f3e0567ac0
 PKG_SOURCE_URL:=https://$(PKG_GOGET)
-PKG_MIRROR_HASH:=660a2adbf56854deea714b50e2e4099a3c1f6b8057fb34ba11e6fec409eba838
+PKG_MIRROR_HASH:=76aa437cb70bcc6565b9c871d935555c732df16657ecbfa18bd018bfc91cc763
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -61,7 +61,7 @@ Package/prometheus_nohf/conffiles=$(Package/prometheus/conffiles)
 GO_BUILD_ARGS += -trimpath -a
 
 REVISION:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -9)
-SOURCE_DATE:=2022-12-20
+SOURCE_DATE:=2023-01-31
 
 GO_LDFLAGS += \
 	-X 'github.com/prometheus/common/version.Version=v$(PKG_VERSION)' \
@@ -77,10 +77,10 @@ GO_TARGET:=./cmd/...
 GO_VARS += GO111MODULE=on
 
 define Build/CompilePre
+	( cd $(GO_SRC_DIR)/web/ui; npm install; CI="" npm run build; )
 	( cd $(GO_SRC_DIR)/web/ui; \
-		npm install; CI="" npm run build; npm run build:module; )
+		$(FIND) ./static -type f -a -name "*.map" -delete; )
 	( cd $(GO_SRC_DIR); $(SHELL) scripts/compress_assets.sh; )
-	( cd $(GO_SRC_DIR); $(SHELL) scripts/package_assets.sh; )
 	( cd $(GO_SRC_DIR); $(GO_BIN) generate -tags plugins ./plugins; )
 endef
 
