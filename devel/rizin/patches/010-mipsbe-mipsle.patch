@@ -1,6 +1,6 @@
 --- a/librz/core/golang.c
 +++ b/librz/core/golang.c
-@@ -1125,7 +1125,8 @@ static bool decode_lui_set_addr(RzCore *
+@@ -1129,7 +1129,8 @@ static bool decode_lui_set_addr(RzCore *
  	return true;
  }
  
@@ -10,7 +10,7 @@
  go_asm_pattern_define(mipsbe, 32, addiu, "\x24\x00\x00\x00", "\xff\x00\x00\x00", false);
  go_asm_pattern_define(mipsle, 32, addiu, "\x00\x00\x00\x24", "\x00\x00\x00\xff", false);
  go_asm_pattern_define(mipsbe, 32, lui, "\x3c\x00\x00\x00", "\xff\x00\x00\x00", true);
-@@ -1138,7 +1139,7 @@ static GoSignature go_mipsle32_lui_addiu
+@@ -1142,7 +1143,7 @@ static GoSignature go_mipsle32_lui_addiu
  	// addiu v0, v0, low_string_offset
  	{ &go_asm_pattern_name(mipsle, 32, addiu), &decode_val_add_addr },
  	// sw    v0, 0x08(at)
@@ -19,7 +19,7 @@
  	// addiu v0, zero, string_size
  	{ &go_asm_pattern_name(mipsle, 32, addiu), &decode_val_set_size },
  };
-@@ -1147,7 +1148,7 @@ static GoSignature go_mipsle32_addiu_sw_
+@@ -1151,7 +1152,7 @@ static GoSignature go_mipsle32_addiu_sw_
  	// addiu v0, zero, string_size
  	{ &go_asm_pattern_name(mipsle, 32, addiu), &decode_val_set_size },
  	// sw    v0, 0x08(at)
@@ -28,7 +28,7 @@
  	// lui   v0, high_string_offset
  	{ &go_asm_pattern_name(mipsle, 32, lui), &decode_lui_set_addr },
  	// addiu v0, v0, low_string_offset
-@@ -1169,7 +1170,7 @@ static GoSignature go_mipsle32_table_sig
+@@ -1173,7 +1174,7 @@ static GoSignature go_mipsle32_table_sig
  	// addiu v0, v0, low_string_offset
  	{ &go_asm_pattern_name(mipsle, 32, addiu), &decode_val_add_addr },
  	// sw    v0, 0x08(at)
@@ -37,7 +37,7 @@
  };
  
  // ---- BE ----
-@@ -1179,7 +1180,7 @@ static GoSignature go_mipsbe32_lui_addiu
+@@ -1183,7 +1184,7 @@ static GoSignature go_mipsbe32_lui_addiu
  	// addiu v0, v0, low_string_offset
  	{ &go_asm_pattern_name(mipsbe, 32, addiu), &decode_val_add_addr },
  	// sw    v0, 0x08(at)
@@ -46,7 +46,7 @@
  	// addiu v0, zero, string_size
  	{ &go_asm_pattern_name(mipsbe, 32, addiu), &decode_val_set_size },
  };
-@@ -1188,7 +1189,7 @@ static GoSignature go_mipsbe32_addiu_sw_
+@@ -1192,7 +1193,7 @@ static GoSignature go_mipsbe32_addiu_sw_
  	// addiu v0, zero, string_size
  	{ &go_asm_pattern_name(mipsbe, 32, addiu), &decode_val_set_size },
  	// sw    v0, 0x08(at)
@@ -55,7 +55,7 @@
  	// lui   v0, high_string_offset
  	{ &go_asm_pattern_name(mipsbe, 32, lui), &decode_lui_set_addr },
  	// addiu v0, v0, low_string_offset
-@@ -1210,7 +1211,7 @@ static GoSignature go_mipsbe32_table_sig
+@@ -1214,7 +1215,7 @@ static GoSignature go_mipsbe32_table_sig
  	// addiu v0, v0, low_string_offset
  	{ &go_asm_pattern_name(mipsbe, 32, addiu), &decode_val_add_addr },
  	// sw    v0, 0x08(at)
@@ -64,7 +64,7 @@
  };
  
  static ut32 golang_recover_string_mips32(GoStrRecover *ctx) {
-@@ -1240,7 +1241,8 @@ static ut32 golang_recover_string_mips32
+@@ -1244,7 +1245,8 @@ static ut32 golang_recover_string_mips32
  	return 4;
  }
  
@@ -74,7 +74,7 @@
  go_asm_pattern_define(mipsbe, 64, daddu, "\x00\x00\x00\x2d", "\x00\x00\x00\xff", false);
  go_asm_pattern_define(mipsle, 64, daddu, "\x2d\x00\x00\x00", "\xff\x00\x00\x00", false);
  go_asm_pattern_define(mipsbe, 64, daddiu, "\x64\x00\x00\x00", "\xfc\x00\x00\x00", false);
-@@ -1259,7 +1261,7 @@ static GoSignature go_mipsle64_lui_daddu
+@@ -1263,7 +1265,7 @@ static GoSignature go_mipsle64_lui_daddu
  	// daddiu v0, v0, low_string_offset
  	{ &go_asm_pattern_name(mipsle, 64, daddiu), &decode_val_add_addr },
  	// sd    v0, 8(at)
@@ -83,7 +83,7 @@
  	// daddiu v0, zero, string_size
  	{ &go_asm_pattern_name(mipsle, 64, move), &decode_val_set_size },
  };
-@@ -1268,7 +1270,7 @@ static GoSignature go_mipsle64_daddiu_sd
+@@ -1272,7 +1274,7 @@ static GoSignature go_mipsle64_daddiu_sd
  	// daddiu v0, zero, string_size
  	{ &go_asm_pattern_name(mipsle, 64, move), &decode_val_set_size },
  	// sd    v0, 8(at)
@@ -92,7 +92,7 @@
  	// lui   v0, high_string_offset
  	{ &go_asm_pattern_name(mipsle, 64, lui), &decode_lui_set_addr },
  	// daddu v0, v0, gp
-@@ -1296,7 +1298,7 @@ static GoSignature go_mipsle64_table_sig
+@@ -1300,7 +1302,7 @@ static GoSignature go_mipsle64_table_sig
  	// daddiu v0, v0, low_string_offset
  	{ &go_asm_pattern_name(mipsle, 64, daddiu), &decode_val_add_addr },
  	// sd    v0, 8(at)
@@ -101,7 +101,7 @@
  };
  
  // ---- BE ----
-@@ -1308,7 +1310,7 @@ static GoSignature go_mipsbe64_lui_daddu
+@@ -1312,7 +1314,7 @@ static GoSignature go_mipsbe64_lui_daddu
  	// daddiu v0, v0, low_string_offset
  	{ &go_asm_pattern_name(mipsbe, 64, daddiu), &decode_val_add_addr },
  	// sd    v0, 8(at)
@@ -110,7 +110,7 @@
  	// daddiu v0, zero, string_size
  	{ &go_asm_pattern_name(mipsbe, 64, move), &decode_val_set_size },
  };
-@@ -1317,7 +1319,7 @@ static GoSignature go_mipsbe64_daddiu_sd
+@@ -1321,7 +1323,7 @@ static GoSignature go_mipsbe64_daddiu_sd
  	// daddiu v0, zero, string_size
  	{ &go_asm_pattern_name(mipsbe, 64, move), &decode_val_set_size },
  	// sd    v0, 8(at)
@@ -119,7 +119,7 @@
  	// lui   v0, high_string_offset
  	{ &go_asm_pattern_name(mipsbe, 64, lui), &decode_lui_set_addr },
  	// daddu v0, v0, gp
-@@ -1345,7 +1347,7 @@ static GoSignature go_mipsbe64_table_sig
+@@ -1349,7 +1351,7 @@ static GoSignature go_mipsbe64_table_sig
  	// daddiu v0, v0, low_string_offset
  	{ &go_asm_pattern_name(mipsbe, 64, daddiu), &decode_val_add_addr },
  	// sd    v0, 8(at)

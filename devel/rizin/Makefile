@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rizin
-PKG_VERSION:=0.4.1
+PKG_VERSION:=0.5.1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/rizinorg/rizin/tar.gz/refs/tags/v$(PKG_VERSION)?
-PKG_HASH:=9ff1837bf9c22d19044d2ed999cff53a230c2689bdc2ee2f0d59366dc3bfd14a
+PKG_HASH:=e823d7ce9ffdb81e00fe8d9faeb70b63aa8211f6695c6b524abdb6fc03df1a08
 
 PKG_LICENSE:=GPL-3.0-or-later LGPL-3.0-or-later
 PKG_LICENSE_FILES:=COPYING COPYING.LESSER
@@ -21,7 +21,7 @@ define Package/rizin
   CATEGORY:=Development
   TITLE:=UNIX-like reverse engineering framework
   URL:=https://rizin.re/
-  DEPENDS:=+liblz4 +libmagic +libopenssl +libuv +libzip +zlib
+  DEPENDS:=+liblz4 +libmagic +libopenssl +libzip +zlib
 endef
 
 define Package/rizin/description
@@ -31,13 +31,12 @@ endef
 
 MESON_ARGS += \
 	-Denable_tests=false \
+	-Denable_rz_test=false \
 	-Dinstall_sigdb=true \
 	-Dportable=true \
-	-Duse_sys_libuv=enabled \
 	-Duse_sys_libzip=enabled \
 	-Duse_sys_lz4=enabled \
 	-Duse_sys_magic=auto \
-	-Duse_sys_openssl=enabled \
 	-Duse_sys_zlib=enabled
 
 #define Build/InstallDev
