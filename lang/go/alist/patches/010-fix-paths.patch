@@ -24,7 +24,7 @@
  	RootCmd.PersistentFlags().BoolVar(&flags.Dev, "dev", false, "start with dev mode")
 --- a/src/github.com/alist-org/alist/internal/conf/config.go
 +++ b/src/github.com/alist-org/alist/internal/conf/config.go
-@@ -51,10 +51,10 @@ type Config struct {
+@@ -52,10 +52,10 @@ type Config struct {
  }
  
  func DefaultConfig() *Config {
