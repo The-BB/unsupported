@@ -2,13 +2,13 @@
 +++ b/src/github.com/cloudreve/Cloudreve/pkg/conf/defaults.go
 @@ -12,7 +12,7 @@ var RedisConfig = &redis{
  var DatabaseConfig = &database{
- 	Type:    "UNSET",
- 	Charset: "utf8",
--	DBFile:  "cloudreve.db",
-+	DBFile:  "/opt/var/lib/cloudreve/cloudreve.db",
- 	Port:    3306,
+ 	Type:       "UNSET",
+ 	Charset:    "utf8",
+-	DBFile:     "cloudreve.db",
++	DBFile:     "/opt/var/lib/cloudreve/cloudreve.db",
+ 	Port:       3306,
+ 	UnixSocket: false,
  }
- 
 --- a/src/github.com/cloudreve/Cloudreve/main.go
 +++ b/src/github.com/cloudreve/Cloudreve/main.go
 @@ -31,7 +31,7 @@ var staticZip string
