@@ -1,4 +1,6 @@
 # SPDX-License-Identifier: WTFPL
+#
+# This repository has been archived by the owner on Mar 8, 2023.
 
 include $(TOPDIR)/rules.mk
 
