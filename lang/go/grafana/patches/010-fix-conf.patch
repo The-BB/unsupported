@@ -33,7 +33,7 @@
  
  # CDN Url
  cdn_url =
-@@ -653,7 +653,7 @@ allow_assign_grafana_admin = false
+@@ -696,7 +696,7 @@ skip_org_role_sync = false
  #################################### Auth LDAP ###########################
  [auth.ldap]
  enabled = false
