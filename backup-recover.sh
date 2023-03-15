@@ -10,7 +10,6 @@ PATCH_DIR="./feeds/unsupported/_patches"
 PATCH_OLDPORTS="$PATCH_DIR/livemedia-add-shared-libs.patch"
 PATCH_PACKAGES="\
 $PATCH_DIR/libs-libmpeg2-add-as-dependency.patch
-$PATCH_DIR/libs-libupnpp-add-as-dependency.patch
 $PATCH_DIR/libs-libvpx-add-as-dependency.patch
 $PATCH_DIR/libs-libxml2-fix-args.patch
 $PATCH_DIR/multimedia-ffmpeg-disable-sndio.patch
@@ -18,7 +17,6 @@ $PATCH_DIR/multimedia-gst1-libav-add-as-dependency.patch
 $PATCH_DIR/multimedia-gst1-plugins-base-add-as-dependency.patch
 $PATCH_DIR/multimedia-gstreamer1-add-as-dependency.patch
 $PATCH_DIR/net-samba4-add-as-dependency.patch
-$PATCH_DIR/sound-upmpdcli-add-pkg.patch
 "
 STAMP_OLDPORTS="$PATCH_DIR/.oldports-patched"
 STAMP_PACKAGES="$PATCH_DIR/.packages-patched"

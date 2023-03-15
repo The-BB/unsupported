@@ -1,6 +1,6 @@
-From 8a0c3ce7df300fa655d0beaa2017be693ccd77d2 Mon Sep 17 00:00:00 2001
+From cd39152926d5c810a739c576f4550eda0782bb83 Mon Sep 17 00:00:00 2001
 From: The-BB <tun.chen.bo@gmail.com>
-Date: Fri, 16 Dec 2022 17:26:45 +0300
+Date: Thu, 2 Mar 2023 10:56:01 +0300
 Subject: [PATCH] libs/libxml2: fix args
 
 ---
@@ -8,40 +8,42 @@ Subject: [PATCH] libs/libxml2: fix args
  1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/libs/libxml2/Makefile b/libs/libxml2/Makefile
-index bf99c3c71..44c186085 100644
+index 3d0d74059..677e3ef12 100644
 --- a/libs/libxml2/Makefile
 +++ b/libs/libxml2/Makefile
 @@ -4,12 +4,13 @@
  # This is free software, licensed under the GNU General Public License v2.
  # See /LICENSE for more information.
  #
-+# XXX Entware specific: --with-catalog --with-legacy
++# XXX Entware specific: -DLIBXML2_WITH_CATALOG=ON -DLIBXML2_WITH_LEGACY=ON
  
  include $(TOPDIR)/rules.mk
  
  PKG_NAME:=libxml2
  PKG_VERSION:=2.10.3
--PKG_RELEASE:=1a
-+PKG_RELEASE:=1b
+-PKG_RELEASE:=2
++PKG_RELEASE:=2a
  
  PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
  PKG_SOURCE_URL:=@GNOME/libxml2/$(basename $(PKG_VERSION))
-@@ -74,13 +75,13 @@ CONFIGURE_ARGS += \
- 	--enable-shared \
- 	--enable-static \
- 	--with-c14n \
--	--without-catalog \
-+	--with-catalog \
- 	--with-debug \
- 	--with-html \
- 	--without-ftp \
- 	--without-http \
- 	--without-iso8859x \
--	--without-legacy \
-+	--with-legacy \
- 	--with-output \
- 	--without-pattern \
- 	--without-push \
+@@ -106,7 +107,7 @@ CMAKE_HOST_OPTIONS += \
+ CMAKE_OPTIONS += \
+ 	-DBUILD_SHARED_LIBS=ON \
+ 	-DLIBXML2_WITH_C14N=ON \
+-	-DLIBXML2_WITH_CATALOG=OFF \
++	-DLIBXML2_WITH_CATALOG=ON \
+ 	-DLIBXML2_WITH_DEBUG=ON \
+ 	-DLIBXML2_WITH_FTP=OFF \
+ 	-DLIBXML2_WITH_HTML=ON \
+@@ -114,7 +115,7 @@ CMAKE_OPTIONS += \
+ 	-DLIBXML2_WITH_ICONV=ON \
+ 	-DLIBXML2_WITH_ICU=OFF \
+ 	-DLIBXML2_WITH_ISO8859X=OFF \
+-	-DLIBXML2_WITH_LEGACY=OFF \
++	-DLIBXML2_WITH_LEGACY=ON \
+ 	-DLIBXML2_WITH_LZMA=OFF \
+ 	-DLIBXML2_WITH_MEM_DEBUG=OFF \
+ 	-DLIBXML2_WITH_MODULES=OFF \
 -- 
 2.30.2
 
