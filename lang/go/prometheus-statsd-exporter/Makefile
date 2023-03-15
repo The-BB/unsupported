@@ -5,15 +5,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=prometheus-statsd-exporter
-PKG_VERSION:=0.23.0
+PKG_VERSION:=0.23.1
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/prometheus/statsd_exporter
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=9c6e2455218b2c7f55944e5d4da65a9757aa8c24
+PKG_SOURCE_VERSION:=14d18d8e70979f80b426a4ca78ca438da4652e78
 PKG_SOURCE_URL:=https://$(PKG_GOGET)
-PKG_MIRROR_HASH:=7acca9a2f79393b66c5b0effec5398dfbb8baf3fe4af0d7a246a1f86116e01d6
+PKG_MIRROR_HASH:=add342fbda96ac41a64f915435489d76712520cf370ee37ca15e1ecbeadcc752
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -56,7 +56,7 @@ Package/prometheus-statsd-exporter_nohf/conffiles=$(Package/prometheus-statsd-ex
 GO_BUILD_ARGS += -trimpath -a
 
 REVISION:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -9)
-SOURCE_DATE:=2022-12-07
+SOURCE_DATE:=2023-03-08
 
 GO_LDFLAGS += \
 	-X 'github.com/prometheus/common/version.Version=$(PKG_VERSION)' \
