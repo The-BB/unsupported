@@ -34,8 +34,6 @@ endef
 
 define Package/perl-mozilla-ca/install
 	$(call perlmod/Install,$(1),Mozilla auto/Mozilla)
-	# Entware specific: fix exec path to scripts
-	$(SED) 's,#!.*perl,#!/opt/bin/perl,' $(1)$(PERL_SITELIB)/Mozilla/*.pl
 endef
 
 $(eval $(call BuildPackage,perl-mozilla-ca))
