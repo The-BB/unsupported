@@ -1,0 +1,117 @@
+From 770834f2f784ae0360b8dafd508090fc1f9c99bb Mon Sep 17 00:00:00 2001
+From: The-BB <tun.chen.bo@gmail.com>
+Date: Mon, 20 Mar 2023 11:20:45 +0300
+Subject: [PATCH] utils/openzwave: adapted
+
+---
+ utils/openzwave/Makefile                      | 34 +++++++++---------
+ .../patches/500-fix-exec-prefix.patch         | 36 +++++++++++++++++++
+ 2 files changed, 53 insertions(+), 17 deletions(-)
+ create mode 100644 utils/openzwave/patches/500-fix-exec-prefix.patch
+
+diff --git a/utils/openzwave/Makefile b/utils/openzwave/Makefile
+index 26075f9cc..98bfd54e3 100644
+--- a/utils/openzwave/Makefile
++++ b/utils/openzwave/Makefile
+@@ -60,9 +60,9 @@ MAKE_FLAGS += \
+ 	UNAME="Linux" \
+ 	USE_HID="no" \
+ 	ar_option="q" \
+-	instlibdir=/usr/lib \
+-	pkgconfigdir=/usr/lib/pkgconfig \
+-	sysconfdir=/etc/openzwave
++	instlibdir=/opt/lib \
++	pkgconfigdir=/opt/lib/pkgconfig \
++	sysconfdir=/opt/etc/openzwave
+ 
+ define Build/Prepare
+ 	$(call Build/Prepare/Default)
+@@ -70,29 +70,29 @@ define Build/Prepare
+ endef
+ 
+ define Package/libopenzwave/install
+-	$(INSTALL_DIR) $(1)/usr/lib
+-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libopenzwave.so* $(1)/usr/lib/
++	$(INSTALL_DIR) $(1)/opt/lib
++	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libopenzwave.so* $(1)/opt/lib/
+ endef
+ 
+ define Package/openzwave/install
+-	$(INSTALL_DIR) $(1)/usr/bin
+-	$(CP) $(PKG_INSTALL_DIR)/usr/bin/MinOZW $(1)/usr/bin/
++	$(INSTALL_DIR) $(1)/opt/bin
++	$(CP) $(PKG_INSTALL_DIR)/opt/bin/MinOZW $(1)/opt/bin/
+ endef
+ 
+ define Package/openzwave-config/install
+-	$(INSTALL_DIR) $(1)/etc/
+-	$(CP) $(PKG_INSTALL_DIR)/etc/openzwave $(1)/etc/
++	$(INSTALL_DIR) $(1)/opt/etc/
++	$(CP) $(PKG_INSTALL_DIR)/opt/etc/openzwave $(1)/opt/etc/
+ endef
+ 
+ define Build/InstallDev
+-	$(INSTALL_DIR) $(1)/usr/include
+-	$(CP) $(PKG_INSTALL_DIR)/usr/include/openzwave $(1)/usr/include/
+-	$(INSTALL_DIR) $(1)/usr/lib
+-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libopenzwave.* $(1)/usr/lib/
+-	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
+-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/libopenzwave.pc $(1)/usr/lib/pkgconfig/
+-	$(SED) 's,/usr/include,$$$${prefix}/include,g' $(1)/usr/lib/pkgconfig/libopenzwave.pc
+-	$(SED) 's,/usr/lib,$$$${exec_prefix}/lib,g' $(1)/usr/lib/pkgconfig/libopenzwave.pc
++	$(INSTALL_DIR) $(1)/opt/include
++	$(CP) $(PKG_INSTALL_DIR)/opt/include/openzwave $(1)/opt/include/
++	$(INSTALL_DIR) $(1)/opt/lib
++	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libopenzwave.* $(1)/opt/lib/
++	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
++	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/libopenzwave.pc $(1)/opt/lib/pkgconfig/
++	$(SED) 's,/opt/include,$$$${prefix}/include,g' $(1)/opt/lib/pkgconfig/libopenzwave.pc
++	$(SED) 's,/opt/lib,$$$${exec_prefix}/lib,g' $(1)/opt/lib/pkgconfig/libopenzwave.pc
+ endef
+ 
+ $(eval $(call BuildPackage,libopenzwave))
+diff --git a/utils/openzwave/patches/500-fix-exec-prefix.patch b/utils/openzwave/patches/500-fix-exec-prefix.patch
+new file mode 100644
+index 000000000..9d79f0829
+--- /dev/null
++++ b/utils/openzwave/patches/500-fix-exec-prefix.patch
+@@ -0,0 +1,36 @@
++--- a/cpp/build/Makefile
+++++ b/cpp/build/Makefile
++@@ -213,12 +213,12 @@ $(top_builddir)/libopenzwave.pc: $(top_s
++ 	@echo "Making libopenzwave pkg-config file"
++ 	@$(SED) \
++ 		-e 's|[@]prefix@|$(PREFIX)|g' \
++-		-e 's|[@]exec_prefix@|$(PREFIX)/bin|g' \
+++		-e 's|[@]exec_prefix@|$(PREFIX)|g' \
++ 		-e 's|[@]libdir@|$(instlibdir)|g' \
++-		-e 's|[@]includedir@|$(includedir)/|g' \
++-                -e 's|[@]sysconfdir@|$(sysconfdir)/|g' \
++-                -e 's|[@]gitversion@|$(GITVERSION)|g' \
++-                -e 's|[@]docdir@|$(docdir)/|g' \
+++		-e 's|[@]includedir@|$(includedir)|g' \
+++		-e 's|[@]sysconfdir@|$(sysconfdir)|g' \
+++		-e 's|[@]gitversion@|$(GITVERSION)|g' \
+++		-e 's|[@]docdir@|$(docdir)|g' \
++ 		-e 's|[@]VERSION@|$(VERSION)|g' \
++ 		-e 's|[@]LIBS@|$(LIBS)|g' \
++ 		< "$<" > "$@"
++--- a/cpp/src/Options.cpp
+++++ b/cpp/src/Options.cpp
++@@ -72,10 +72,10 @@ Options* Options::Create(string const& _
++ 				Log::Write(LogLevel_Error, "Cannot find a path to the configuration files at %s, Using config/ instead...", configPath.c_str());
++ 				configPath = "config/";
++ 			}
++-			else if (Internal::Platform::FileOps::FolderExists("/etc/openzwave/"))
+++			else if (Internal::Platform::FileOps::FolderExists("/opt/etc/openzwave/"))
++ 			{
++-				Log::Write(LogLevel_Error, "Cannot find a path to the configuration files at %s, Using /etc/openzwave/ instead...", configPath.c_str());
++-				configPath = "/etc/openzwave/";
+++				Log::Write(LogLevel_Error, "Cannot find a path to the configuration files at %s, Using /opt/etc/openzwave/ instead...", configPath.c_str());
+++				configPath = "/opt/etc/openzwave/";
++ #ifdef SYSCONFDIR
++ 			}
++ 			else if ( Internal::Platform::FileOps::FolderExists(SYSCONFDIR ) )
+-- 
+2.30.2
+

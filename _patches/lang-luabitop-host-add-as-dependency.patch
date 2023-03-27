@@ -1,0 +1,59 @@
+From 52ec4d7a81922c4d3d39abe0242dbb20bbf14b5d Mon Sep 17 00:00:00 2001
+From: The-BB <tun.chen.bo@gmail.com>
+Date: Mon, 20 Mar 2023 11:14:18 +0300
+Subject: [PATCH] lang/luabitop: host add as dependency
+
+---
+ lang/luabitop/Makefile | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/lang/luabitop/Makefile b/lang/luabitop/Makefile
+index c82dbb873..8402766d6 100644
+--- a/lang/luabitop/Makefile
++++ b/lang/luabitop/Makefile
+@@ -17,9 +17,11 @@ PKG_MAINTAINER:=Maxim Storchak <m.storchak@gmail.com>
+ PKG_SOURCE:=$(_BASENAME)-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=http://bitop.luajit.org/download/
+ PKG_HASH:=1207c9293dcd52eb9dca6538d1b87352bd510f4e760938f5048433f7f272ce99
++HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(_BASENAME)-$(PKG_VERSION)
+ PKG_BUILD_DIR:=$(BUILD_DIR)/$(_BASENAME)-$(PKG_VERSION)
+ PKG_LICENSE:=MIT
+ 
++include $(INCLUDE_DIR)/host-build.mk
+ include $(INCLUDE_DIR)/package.mk
+ 
+ define Package/luabitop
+@@ -35,6 +37,15 @@ define Package/luabitop/description
+ Lua BitOp is a C extension module for Lua 5.1/5.2 which adds bitwise operations on numbers.
+ endef
+ 
++HOST_CFLAGS += $(FPIC) -DLUA_USE_LINUX -DLUA_NUMBER_DOUBLE
++
++Host/Configure:=:
++
++define Host/Install
++	$(INSTALL_DIR) $(STAGING_DIR_HOSTPKG)/lib/lua/5.1
++	$(INSTALL_BIN) $(HOST_BUILD_DIR)/bit.so $(STAGING_DIR_HOSTPKG)/lib/lua/5.1
++endef
++
+ define Build/Configure
+ endef
+ 
+@@ -42,7 +53,7 @@ endef
+ TARGET_CFLAGS += $(FPIC) -DLUA_USE_LINUX -DLUA_NUMBER_DOUBLE
+ 
+ define Build/Compile
+-	$(TARGET_CC) $(TARGET_CFLAGS) $(TARGET_CPPFLAGS) $(TARGET_CPPFLAGS) -std=gnu99 $(FPIC) -DLUA_USE_LINUX -shared -o $(PKG_BUILD_DIR)/bit.so $(PKG_BUILD_DIR)/bit.c
++	$(TARGET_CC) $(TARGET_CFLAGS) $(TARGET_CPPFLAGS) -std=gnu99 $(FPIC) -DLUA_USE_LINUX -shared -o $(PKG_BUILD_DIR)/bit.so $(PKG_BUILD_DIR)/bit.c
+ endef
+ 
+ define Package/luabitop/install
+@@ -50,4 +61,5 @@ define Package/luabitop/install
+ 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bit.so $(1)/opt/lib/lua
+ endef
+ 
++$(eval $(call HostBuild))
+ $(eval $(call BuildPackage,luabitop))
+-- 
+2.30.2
+

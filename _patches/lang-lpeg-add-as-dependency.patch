@@ -1,0 +1,50 @@
+From 30afc45f3c9cac35d5a4ff6e200660833b3c5f4e Mon Sep 17 00:00:00 2001
+From: The-BB <tun.chen.bo@gmail.com>
+Date: Mon, 20 Mar 2023 11:07:11 +0300
+Subject: [PATCH] lang/lpeg: add as dependency
+
+---
+ lang/lpeg/Makefile | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/lang/lpeg/Makefile b/lang/lpeg/Makefile
+index 896b70b5f..5586410e6 100644
+--- a/lang/lpeg/Makefile
++++ b/lang/lpeg/Makefile
+@@ -18,6 +18,7 @@ PKG_SOURCE_URL:=http://www.inf.puc-rio.br/~roberto/lpeg/
+ PKG_HASH:=48d66576051b6c78388faad09b70493093264588fcd0f258ddaab1cdd4a15ffe
+ 
+ include $(INCLUDE_DIR)/package.mk
++include $(INCLUDE_DIR)/host-build.mk
+ 
+ define Package/lpeg
+   SUBMENU:=Lua
+@@ -32,6 +33,13 @@ define Package/lpeg/description
+ 	LPeg is a new pattern-matching library for Lua, based on Parsing Expression Grammars (PEGs)
+ endef
+ 
++Host/Configure:=:
++
++define Host/Install
++	$(INSTALL_DIR) $(STAGING_DIR_HOSTPKG)/lib/lua/5.1
++	$(INSTALL_BIN) $(HOST_BUILD_DIR)/lpeg.so $(STAGING_DIR_HOSTPKG)/lib/lua/5.1
++endef
++
+ define Build/Configure
+ endef
+ 
+@@ -40,8 +48,9 @@ MAKE_FLAGS += \
+ 	COPT="$(TARGET_CFLAGS) $(TARGET_CPPFLAGS) -O2"
+ 
+ define Package/lpeg/install
+-	$(INSTALL_DIR) $(1)/usr/lib/lua
+-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lpeg.so $(1)/usr/lib/lua
++	$(INSTALL_DIR) $(1)/opt/lib/lua
++	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lpeg.so $(1)/opt/lib/lua
+ endef
+ 
++$(eval $(call HostBuild))
+ $(eval $(call BuildPackage,lpeg))
+-- 
+2.30.2
+
