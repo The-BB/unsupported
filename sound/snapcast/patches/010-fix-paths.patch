@@ -11,7 +11,7 @@
  		</array>
 --- a/client/snapclient.cpp
 +++ b/client/snapclient.cpp
-@@ -308,7 +308,7 @@ int main(int argc, char** argv)
+@@ -312,7 +312,7 @@ int main(int argc, char** argv)
          std::unique_ptr<Daemon> daemon;
          if (daemonOption->is_set())
          {
@@ -22,15 +22,15 @@
              string user;
 --- a/common/utils.hpp
 +++ b/common/utils.hpp
-@@ -144,7 +144,7 @@ static std::string getOS()
+@@ -149,7 +149,7 @@ static std::string getOS()
  #ifndef WINDOWS
      if (os.empty())
      {
 -        os = strutils::trim_copy(execGetOutput("grep /etc/os-release /etc/openwrt_release -e PRETTY_NAME -e DISTRIB_DESCRIPTION"));
 +        os = strutils::trim_copy(execGetOutput("grep /opt/etc/entware_release -e release"));
-         if (os.find("=") != std::string::npos)
+         if (os.find('=') != std::string::npos)
          {
-             os = strutils::trim_copy(os.substr(os.find("=") + 1));
+             os = strutils::trim_copy(os.substr(os.find('=') + 1));
 --- a/server/etc/snapserver.conf
 +++ b/server/etc/snapserver.conf
 @@ -30,7 +30,7 @@
@@ -62,14 +62,14 @@
  # used to serve cached cover art
 @@ -133,7 +133,7 @@ doc_root = /usr/share/snapserver/snapweb
  # tcp client: tcp://<server IP, e.g. 127.0.0.1>:<port>?name=<name>&mode=client
- # alsa: alsa://?name=<name>&device=<alsa device>[&send_silence=false][&idle_threshold=100][&silence_threshold_percent=0.0]
+ # alsa: alsa:///?name=<name>&device=<alsa device>[&send_silence=false][&idle_threshold=100][&silence_threshold_percent=0.0]
  # meta: meta:///<name of source#1>/<name of source#2>/.../<name of source#N>?name=<name>
 -source = pipe:///tmp/snapfifo?name=default
 +source = pipe:///opt/tmp/snapfifo?name=default
  #source = tcp://127.0.0.1?name=mopidy_tcp
  
  # Default sample format: <sample rate>:<bits per sample>:<channels>
-@@ -165,7 +165,7 @@ source = pipe:///tmp/snapfifo?name=defau
+@@ -175,7 +175,7 @@ source = pipe:///tmp/snapfifo?name=defau
  
  # log sink [null,system,stdout,stderr,file:<filename>]
  # when left empty: if running as daemon "system" else "stdout"
@@ -91,7 +91,7 @@
  		</array>
 --- a/server/streamreader/stream_control.cpp
 +++ b/server/streamreader/stream_control.cpp
-@@ -142,7 +142,7 @@ ScriptStreamControl::ScriptStreamControl
+@@ -139,7 +139,7 @@ ScriptStreamControl::ScriptStreamControl
      namespace fs = utils::file;
      if (!fs::exists(script_))
      {
@@ -113,7 +113,7 @@
  
 --- a/server/control_session_http.cpp
 +++ b/server/control_session_http.cpp
-@@ -43,11 +43,11 @@ static constexpr const char* UNCONFIGURE
+@@ -50,11 +50,11 @@ static constexpr const char* UNCONFIGURE
      "    This webserver is a websocket endpoint for control clients (ws://<i>host</i>:1780/jsonrpc) and streaming clients"
      "    (ws://<i>host</i>:1780/stream), but it can also host simple web pages. To serve a web page, you must configure the"
      "    document root in the snapserver configuration file <b>snapserver.conf</b>, usually located in"
@@ -127,7 +127,7 @@
      "    To activate it, please configure the <b>doc_root</b> as follows, and restart Snapserver to activate the changes:"
      "  </p>"
      "  <pre>"
-@@ -58,7 +58,7 @@ static constexpr const char* UNCONFIGURE
+@@ -65,7 +65,7 @@ static constexpr const char* UNCONFIGURE
      "...\n"
      "\n"
      "# serve a website from the doc_root location\n"
@@ -136,7 +136,7 @@
      "\n"
      "#\n"
      "################################################</pre>"
-@@ -267,7 +267,7 @@ void ControlSessionHttp::handle_request(
+@@ -281,7 +281,7 @@ void ControlSessionHttp::handle_request(
  
      if (settings_.doc_root.empty())
      {
@@ -160,7 +160,7 @@
      };
 --- a/server/snapserver.cpp
 +++ b/server/snapserver.cpp
-@@ -57,8 +57,8 @@ int main(int argc, char* argv[])
+@@ -61,8 +61,8 @@ int main(int argc, char* argv[])
      try
      {
          ServerSettings settings;
@@ -171,7 +171,7 @@
  
          OptionParser op("Allowed options");
          auto helpSwitch = op.add<Switch>("h", "help", "Produce help message, use -hh to show options from config file");
-@@ -252,7 +252,7 @@ int main(int argc, char* argv[])
+@@ -260,7 +260,7 @@ int main(int argc, char* argv[])
                  throw std::invalid_argument("user must not be empty");
  
              if (settings.server.data_dir.empty())
@@ -182,7 +182,7 @@
              daemon = std::make_unique<Daemon>(settings.server.user, settings.server.group, settings.server.pid_file);
 --- a/test/test_main.cpp
 +++ b/test/test_main.cpp
-@@ -41,9 +41,9 @@ TEST_CASE("Uri")
+@@ -48,9 +48,9 @@ TEST_CASE("Uri")
  {
      AixLog::Log::init<AixLog::SinkCout>(AixLog::Severity::debug);
      using namespace streamreader;

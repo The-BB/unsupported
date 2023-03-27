@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=snapcast
-PKG_VERSION:=0.26.0
+PKG_VERSION:=0.27.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/badaix/snapcast/tar.gz/refs/tags/v$(PKG_VERSION)?
-PKG_HASH:=166353267a5c461a3a0e7cbd05d78c4bfdaebeda078801df3b76820b54f27683
+PKG_HASH:=c662c6eafbaa42a4797a4ed6ba4a7602332abf99f6ba6ea88ff8ae59978a86ba
 
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE
@@ -33,7 +33,7 @@ define Package/snapcast/Default
   CATEGORY:=Sound
   TITLE:=Multiroom client-server audio player
   URL:=https://github.com/badaix/snapcast
-  DEPENDS:=+alsa-lib +libsoxr +libstdcpp
+  DEPENDS:=+alsa-lib +libatomic +libsoxr +libstdcpp
   DEPENDS+= \
 	+SNAPCAST_AVAHI:libavahi-client \
 	+SNAPCAST_FLAC:libflac \
