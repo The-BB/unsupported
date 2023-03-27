@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libass
-PKG_VERSION:=0.16.0
+PKG_VERSION:=0.17.1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/libass/libass/tar.gz/refs/tags/$(PKG_VERSION)?
-PKG_HASH:=246091cf034b097dbe362c72170e6996f8d2c19ffe664ce6768ec44eb9ca5c1c
+PKG_HASH:=5ba42655d7e8c5e87bba3ffc8a2b1bc19c29904240126bb0d4b924f39429219f
 
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
