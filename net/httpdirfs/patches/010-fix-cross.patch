@@ -1,0 +1,19 @@
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,6 @@
+ VERSION = 1.2.5
+ 
+ CFLAGS += -g -O2  -Wall -Wextra -Wshadow \
+-	-fanalyzer -Wno-analyzer-file-leak \
+ 	-rdynamic -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -DVERSION=\"$(VERSION)\"\
+ 	`pkg-config --cflags-only-I gumbo libcurl fuse uuid expat`
+ LDFLAGS += `pkg-config --libs-only-L gumbo libcurl fuse uuid expat`
+@@ -23,7 +22,7 @@ ifeq ($(OS),FreeBSD)
+   LIBS    +=  -lexecinfo
+ endif
+ 
+-prefix ?= /usr/local
++prefix ?= /opt
+ 
+ all: httpdirfs
+ 
