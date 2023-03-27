@@ -2,7 +2,7 @@
 
 --- a/src/pipewire/mem.c
 +++ b/src/pipewire/mem.c
-@@ -41,9 +41,14 @@
+@@ -22,9 +22,14 @@
  #include <pipewire/map.h>
  #include <pipewire/mem.h>
  
@@ -17,7 +17,7 @@
  #if !defined(__FreeBSD__) && !defined(__MidnightBSD__) && !defined(HAVE_MEMFD_CREATE)
  /*
   * No glibc wrappers exist for memfd_create(2), so provide our own.
-@@ -60,6 +65,7 @@ static inline int memfd_create(const cha
+@@ -41,6 +46,7 @@ static inline int memfd_create(const cha
  
  #define HAVE_MEMFD_CREATE 1
  #endif
@@ -25,3 +25,16 @@
  
  #if defined(__FreeBSD__) || defined(__MidnightBSD__)
  #define MAP_LOCKED 0
+--- a/spa/plugins/alsa/compress-offload-api.c
++++ b/spa/plugins/alsa/compress-offload-api.c
+@@ -11,6 +11,10 @@
+ 
+ #include "compress-offload-api.h"
+ 
++/* SND_AUDIOCODEC_MAX since Linux 3.7.0 */
++#ifndef SND_AUDIOCODEC_MAX
++#define SND_AUDIOCODEC_MAX SND_AUDIOCODEC_G729
++#endif
+ 
+ struct compress_offload_api_context {
+ 	int fd;

@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pipewire
-PKG_VERSION:=0.3.62
+PKG_VERSION:=0.3.67
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/$(PKG_VERSION)
-PKG_HASH:=24b218cf3bb1fb279c8c489c14cc9ae483e1da7b4c8215b2ee5a5ee831bae94f
+PKG_HASH:=43dfad8ee64c90613fdc67db0d7706e4ae747ee5e4aed03c34d3869f3926e081
 
 PKG_LICENSE:=GPL-2.0-only LGPL-2.1-or-later MIT
 PKG_LICENSE_FILES:=COPYING LICENSE
@@ -54,6 +54,7 @@ define Package/pipewire
 	+PIPEWIRE_DBUS:libdbus \
 	+PIPEWIRE_FFMPEG:libffmpeg \
 	+PIPEWIRE_LIBSNDFILE:libsndfile \
+	+PIPEWIRE_PULSEAUDIO:glib2 \
 	+PIPEWIRE_PULSEAUDIO:pulseaudio-daemon \
 	+PIPEWIRE_RAOP:libopenssl \
 	+(PIPEWIRE_UDEV||PIPEWIRE_ALSA_LIB):libudev

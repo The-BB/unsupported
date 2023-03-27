@@ -1,6 +1,6 @@
 --- a/src/modules/module-protocol-native/local-socket.c
 +++ b/src/modules/module-protocol-native/local-socket.c
-@@ -41,7 +41,7 @@
+@@ -21,7 +21,7 @@
  
  #include <pipewire/pipewire.h>
  
