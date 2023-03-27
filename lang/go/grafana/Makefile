@@ -3,15 +3,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=grafana
-PKG_VERSION:=9.4.3
+PKG_VERSION:=9.4.7
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/grafana/grafana
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=cf0a1355955cc2d1d2365efc47d3f91a0ddc4158
+PKG_SOURCE_VERSION:=4add91f03d3bf455b4eb8160c86c50030cbb823c
 PKG_SOURCE_URL:=https://$(PKG_GOGET)
-PKG_MIRROR_HASH:=abe2c0c9bb41eb2b7a1dbd9452d5b6917a9514994db40e7ce61dd8d7740d5fa1
+PKG_MIRROR_HASH:=8f04db860641d7d38873877a0551325f8c3de77d2c15b638e51b5f4df595fefe
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE LICENSING.md
@@ -54,7 +54,7 @@ endef
 Package/grafana_nohf/description=$(Package/grafana/description)
 
 GIT_HASH:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -8)
-SOURCE_DATE:=2023-03-02
+SOURCE_DATE:=2023-03-22
 
 GO_LDFLAGS += \
 	-X 'main.version=$(PKG_VERSION)' \
