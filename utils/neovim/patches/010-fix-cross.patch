@@ -1,0 +1,105 @@
+--- a/cmake.config/CMakeLists.txt
++++ b/cmake.config/CMakeLists.txt
+@@ -142,20 +142,20 @@ configure_file (
+ find_program(WHOAMI_PROG whoami)
+ find_program(HOSTNAME_PROG hostname)
+ 
+-if (DEFINED ENV{USERNAME})
+-  set(USERNAME $ENV{USERNAME})
+-elseif (NOT DEFINED USERNAME AND EXISTS ${WHOAMI_PROG})
+-  execute_process(COMMAND ${WHOAMI_PROG}
+-    OUTPUT_STRIP_TRAILING_WHITESPACE
+-    OUTPUT_VARIABLE USERNAME)
+-endif()
+-if (DEFINED ENV{HOSTNAME})
+-  set(HOSTNAME $ENV{HOSTNAME})
+-elseif (EXISTS ${HOSTNAME_PROG})
+-  execute_process(COMMAND ${HOSTNAME_PROG}
+-    OUTPUT_STRIP_TRAILING_WHITESPACE
+-    OUTPUT_VARIABLE HOSTNAME)
+-endif()
++#if (DEFINED ENV{USERNAME})
++  set(USERNAME "Entware")
++#elseif (NOT DEFINED USERNAME AND EXISTS ${WHOAMI_PROG})
++#  execute_process(COMMAND ${WHOAMI_PROG}
++#    OUTPUT_STRIP_TRAILING_WHITESPACE
++#    OUTPUT_VARIABLE USERNAME)
++#endif()
++#if (DEFINED ENV{HOSTNAME})
++  set(HOSTNAME "Entware")
++#elseif (EXISTS ${HOSTNAME_PROG})
++#  execute_process(COMMAND ${HOSTNAME_PROG}
++#    OUTPUT_STRIP_TRAILING_WHITESPACE
++#    OUTPUT_VARIABLE HOSTNAME)
++#endif()
+ 
+ configure_file (
+   "${PROJECT_SOURCE_DIR}/cmake.config/pathdef.c.in"
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -620,7 +620,7 @@ add_glob_targets(
+   TARGET lintlua-luacheck
+   COMMAND ${LUACHECK_PRG}
+   FLAGS -q
+-  GLOB_DIRS runtime/ scripts/ src/ test/
++  GLOB_DIRS runtime/ scripts/ src/
+   GLOB_PAT *.lua
+   TOUCH_STRATEGY SINGLE
+   )
+@@ -655,7 +655,6 @@ add_glob_targets(
+   )
+ 
+ add_custom_target(lintcommit
+-  COMMAND ${PROJECT_BINARY_DIR}/bin/nvim -u NONE -es -c [[lua require('scripts.lintcommit').main({trace=false})]]
+   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+   VERBATIM)
+ add_dependencies(lintcommit nvim)
+@@ -688,7 +687,7 @@ add_subdirectory(src/nvim)
+ get_directory_property(NVIM_VERSION_CFLAGS DIRECTORY src/nvim DEFINITION NVIM_VERSION_CFLAGS)
+ add_subdirectory(test/includes)
+ add_subdirectory(cmake.config)
+-add_subdirectory(test/functional/fixtures)  # compile test programs
++#add_subdirectory(test/functional/fixtures)  # compile test programs
+ add_subdirectory(runtime)
+ get_directory_property(GENERATED_HELP_TAGS DIRECTORY runtime DEFINITION GENERATED_HELP_TAGS)
+ if(WIN32)
+--- a/runtime/CMakeLists.txt
++++ b/runtime/CMakeLists.txt
+@@ -32,8 +32,7 @@ foreach(PACKAGE ${PACKAGES})
+     add_custom_command(OUTPUT "${GENERATED_PACKAGE_DIR}/${PACKNAME}/doc/tags"
+       COMMAND ${CMAKE_COMMAND} -E copy_directory
+         ${PACKAGE} ${GENERATED_PACKAGE_DIR}/${PACKNAME}
+-      COMMAND "${PROJECT_BINARY_DIR}/bin/nvim"
+-        -u NONE -i NONE -e --headless -c "helptags doc" -c quit
++      COMMAND touch "${GENERATED_PACKAGE_DIR}/${PACKNAME}/doc/tags"
+       DEPENDS
+         nvim
+         nvim_runtime_deps
+@@ -66,8 +65,6 @@ add_custom_command(OUTPUT ${GENERATED_HE
+   COMMAND ${CMAKE_COMMAND} -E remove doc/*
+   COMMAND ${CMAKE_COMMAND} -E copy_directory
+     ${PROJECT_SOURCE_DIR}/runtime/doc doc
+-  COMMAND "${PROJECT_BINARY_DIR}/bin/nvim"
+-    -u NONE -i NONE -e --headless -c "helptags ++t doc" -c quit
+   DEPENDS
+     nvim
+     nvim_runtime_deps
+@@ -77,8 +74,6 @@ add_custom_command(OUTPUT ${GENERATED_HE
+ 
+ # TODO: This doesn't work. wait for "nvim -l" to land?
+ add_custom_target(doc_html
+-  COMMAND "${PROJECT_BINARY_DIR}/bin/nvim"
+-    -V1 -es --clean -c "lua require('scripts.gen_help_html').gen('./build/runtime/doc', './build/doc_html', nil, 'todo_commit_id')" -c "0cq"
+   DEPENDS
+     ${GENERATED_HELP_TAGS}
+   WORKING_DIRECTORY "${GENERATED_RUNTIME_DIR}/doc"
+--- a/src/nvim/CMakeLists.txt
++++ b/src/nvim/CMakeLists.txt
+@@ -791,7 +791,5 @@ add_custom_target(generated-sources DEPE
+   ${NVIM_GENERATED_SOURCES}
+ )
+ 
+-add_subdirectory(po)
+-
+ include(GetCompileFlags)
+ get_compile_flags(NVIM_VERSION_CFLAGS)
