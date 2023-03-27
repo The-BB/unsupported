@@ -5,15 +5,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=prometheus
-PKG_VERSION:=2.42.0
+PKG_VERSION:=2.43.0
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/prometheus/prometheus
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=225c61122d88b01d1f0eaaee0e05b6f3e0567ac0
+PKG_SOURCE_VERSION:=edfc3bcd025dd6fe296c167a14a216cab1e552ee
 PKG_SOURCE_URL:=https://$(PKG_GOGET)
-PKG_MIRROR_HASH:=76aa437cb70bcc6565b9c871d935555c732df16657ecbfa18bd018bfc91cc763
+PKG_MIRROR_HASH:=1f1cee7c0ca9a2831f672ce3e97146f89085e18c5762d413ce9125c41b419c56
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -61,7 +61,7 @@ Package/prometheus_nohf/conffiles=$(Package/prometheus/conffiles)
 GO_BUILD_ARGS += -trimpath -a
 
 REVISION:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -9)
-SOURCE_DATE:=2023-01-31
+SOURCE_DATE:=2023-03-21
 
 GO_LDFLAGS += \
 	-X 'github.com/prometheus/common/version.Version=v$(PKG_VERSION)' \
