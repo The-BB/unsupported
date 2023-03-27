@@ -11,7 +11,7 @@
  	}
 --- a/src/github.com/v2rayA/v2rayA/service/conf/environmentConfig.go
 +++ b/src/github.com/v2rayA/v2rayA/service/conf/environmentConfig.go
-@@ -64,7 +64,7 @@ func initFunc() {
+@@ -65,7 +65,7 @@ func initFunc() {
  				params.Config = "$HOME/.config/v2raya"
  			}
  		} else {
@@ -22,7 +22,7 @@
  	// replace all dots of the filename with underlines
 --- a/src/github.com/v2rayA/v2rayA/service/core/v2ray/asset/asset.go
 +++ b/src/github.com/v2rayA/v2rayA/service/core/v2ray/asset/asset.go
-@@ -63,8 +63,8 @@ func GetV2rayLocationAsset(filename stri
+@@ -64,8 +64,8 @@ func GetV2rayLocationAsset(filename stri
  		if runtime.GOOS != "windows" {
  			searchPaths = append(
  				searchPaths,
