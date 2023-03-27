@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mpv
-PKG_VERSION:=0.35.0
+PKG_VERSION:=0.35.1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/mpv-player/mpv/tar.gz/refs/tags/v$(PKG_VERSION)?
-PKG_HASH:=dc411c899a64548250c142bf1fa1aa7528f1b4398a24c86b816093999049ec00
+PKG_HASH:=41df981b7b84e33a2ef4478aaf81d6f4f5c8b9cd2c0d337ac142fc20b387d1a9
 
 PKG_LICENSE:=GPL-2.1-or-later LGPL-2.1-or-later
 PKG_LICENSE_FILES:=LICENSE.GPL LICENSE.LGPL
@@ -49,10 +49,14 @@ endef
 
 MESON_ARGS += \
 	-Dgl=disabled \
+	-Dlibarchive=disabled \
 	-Dlibmpv=true \
 	-Dlua=enabled \
+	-Dmanpage-build=disabled \
+	-Dpipewire=disabled \
 	-Dpulse=enabled \
-	-Dmanpage-build=disabled
+	-Dsndio=disabled
+
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include/mpv
