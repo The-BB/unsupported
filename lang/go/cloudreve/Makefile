@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: WTFPL
 #
+# XXX mips*: modernc.org/libc/**: build constraints exclude all Go files in ***
 # XXX remove feeds/packages/net/cloudreve
 
 include $(TOPDIR)/rules.mk
@@ -33,7 +34,7 @@ define Package/cloudreve/Default
   SUBMENU:=
   TITLE:=A project helps you build your own cloud in minutes
   URL:=https://cloudreve.org
-  DEPENDS:=+ca-bundle
+  DEPENDS:=@!(mips||mipsel) +ca-bundle
 endef
 
 define Package/cloudreve
