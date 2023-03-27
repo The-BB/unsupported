@@ -1,0 +1,54 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -16,7 +16,6 @@ project(DPITunnel-cli)
+ add_subdirectory(RawSocket)
+ add_subdirectory(cpp-httplib)
+ add_subdirectory(dnslib)
+-add_subdirectory(libnl)
+ 
+ # Add an executable
+ add_executable(DPITunnel-cli-exec
+@@ -46,7 +45,6 @@ target_include_directories(DPITunnel-cli
+         ${PROJECT_SOURCE_DIR}/RawSocket/include
+         ${PROJECT_SOURCE_DIR}/cpp-httplib/include
+         ${PROJECT_SOURCE_DIR}/dnslib/include
+-        ${PROJECT_SOURCE_DIR}/libnl/include
+         )
+ 
+ set(THREADS_PREFER_PTHREAD_FLAG ON)
+@@ -61,7 +59,9 @@ target_link_libraries(DPITunnel-cli-exec
+         RawSocket
+         cpp-httplib
+         dnslib
+-        libnl
++        nl
++        nl-genl-3
++        nl-route-3
+         Threads::Threads
+         OpenSSL::SSL
+         OpenSSL::Crypto
+@@ -70,3 +70,5 @@ target_link_libraries(DPITunnel-cli-exec
+ if (STATIC_BINARY)
+     target_link_libraries(DPITunnel-cli-exec ${CMAKE_DL_LIBS})
+ endif ()
++
++install(TARGETS DPITunnel-cli-exec DESTINATION "/opt/bin")
+--- a/netiface.cpp
++++ b/netiface.cpp
+@@ -14,7 +14,6 @@
+ #include <linux/netlink.h>
+ #include <linux/rtnetlink.h>
+ #include <linux/nl80211.h>
+-#include <linux/wireless.h>
+ #include <poll.h>
+ #include <sys/ioctl.h>
+ #include <arpa/inet.h>
+@@ -225,6 +224,8 @@ std::string get_current_wifi_name_ioctl(
+         return "";
+     }
+ 
++#include <linux/wireless.h> /* fix: error: redefinition */
++
+     std::string essid(IW_ESSID_MAX_SIZE, '\x00');
+     struct iwreq wreq;
+     strncpy(wreq.ifr_ifrn.ifrn_name, iface_name.c_str(), IFNAMSIZ);

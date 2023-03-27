@@ -1,0 +1,12 @@
+#!/bin/sh
+
+[ -f "/opt/etc/dpitunnel-cli.conf" ] && . /opt/etc/dpitunnel-cli.conf
+
+ENABLED=yes
+PROCS=DPITunnel-cli
+ARGS="--daemon --pid /opt/var/run/dpitunnel-cli.pid $OPTS"
+PREARGS=""
+DESC=$PROCS
+PATH=/opt/sbin:/opt/bin:/opt/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+. /opt/etc/init.d/rc.func
