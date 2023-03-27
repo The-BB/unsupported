@@ -1,0 +1,11 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -253,7 +253,7 @@ if (LLVM_INCLUDE_TESTS)
+   add_subdirectory(test)
+ endif()
+ 
+-add_subdirectory(docs)
++#add_subdirectory(docs)
+ add_subdirectory(COFF)
+ add_subdirectory(ELF)
+ add_subdirectory(MachO)
