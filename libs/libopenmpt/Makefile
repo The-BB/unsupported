@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libopenmpt
-PKG_VERSION:=0.6.6
+PKG_VERSION:=0.6.9
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)+release.autotools.tar.gz
 PKG_SOURCE_URL:=https://lib.openmpt.org/files/libopenmpt/src/
-PKG_HASH:=6ddb9e26a430620944891796fefb1bbb38bd9148f6cfc558810c0d3f269876c7
+PKG_HASH:=479e975abb7dc0fa9cad41bdd31f255d78d43e0726546208058d3c3fcf7b6e5a
 
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE
