@@ -1,6 +1,6 @@
 --- a/src/pyload/core/config/default.cfg
 +++ b/src/pyload/core/config/default.cfg
-@@ -2,19 +2,19 @@ version: 2
+@@ -2,20 +2,20 @@ version: 2
  
  general - "General":
      en; language : "Language" = en
@@ -11,6 +11,7 @@
      debug;trace;stack debug_level : "Debug level" = trace
      int min_free_space : "Minimum free space in MiB" = 1024
      bool folder_per_package : "Create folder for each package" = True
+     bool ssl_verify : "Verify SSL certificates" = True
  permission - "Permissions":
      bool change_user : "Change user of running process" = False
 -    str user : "Username for ownership" = user
@@ -24,7 +25,7 @@
      bool change_dl : "Change ownership of downloads" = False
  download - "Download":
      int chunks : "Maximum connections for one download" = 3
-@@ -38,7 +38,7 @@ webui - "Web Interface":
+@@ -39,7 +39,7 @@ webui - "Web Interface":
      file ssl_certfile : "SSL Certificate" = ssl.crt
      file ssl_keyfile : "SSL Key" = ssl.key
      file ssl_certchain : "CA's intermediate certificate bundle (optional)" =
@@ -33,7 +34,7 @@
      int port : "Port" = 8000
      Default;modern;pyplex theme : "Theme" = modern
      bool autologin : "Skip login if single user" = False
-@@ -56,11 +56,11 @@ log - "Log":
+@@ -57,11 +57,11 @@ log - "Log":
      bool console_color : "Colorize console" = False
      bool syslog : "Sent log to syslog" = False
      local;remote syslog_location : "Syslog location" = local

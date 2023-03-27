@@ -1,6 +1,6 @@
 --- a/setup.cfg
 +++ b/setup.cfg
-@@ -53,16 +53,16 @@ package_dir =
+@@ -54,16 +54,16 @@ package_dir =
  install_requires = 
  	Cheroot~=8.4
  	Flask~=2.0
@@ -18,6 +18,6 @@
  	Js2Py~=0.7
 -	pycurl~=7.43
 +	pycurl>=7.43
+ 	certifi
  	semver~=2.10
  	setuptools>=38.3
- python_requires = >=3.6
