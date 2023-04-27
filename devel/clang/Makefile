@@ -18,15 +18,13 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE.TXT
 
-HOST_BUILD_PARALLEL:=1
-
 HOST_BUILD_DEPENDS:=libxml2/host llvm/host
 PKG_BUILD_DEPENDS:=llvm zlib clang/host
 
 HOST_PATCH_DIR:=./patches-host
 
-include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/host-build.mk
+include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
 HOST_UNPACK:=xzcat "$(DL_DIR)/$(PKG_SOURCE)" | $(HOST_TAR) -C "$(HOST_BUILD_DIR)" -x --strip-components=1
@@ -143,40 +141,38 @@ CLANG_OPTS_TARGET:= \
 
 CMAKE_OPTIONS += $(CLANG_OPTS_TARGET)
 
-define Host/Install
-	$(call Host/Uninstall)
+define Host/Uninstall
+	rm -f $(STAGING_DIR_HOSTPKG)/bin/{analyze-build,c-index-test,diagtool}
+	rm -f $(STAGING_DIR_HOSTPKG)/bin/{git-clang-format,hmaptool,intercept-build}
+	rm -f $(STAGING_DIR_HOSTPKG)/bin/clang*
+	rm -f $(STAGING_DIR_HOSTPKG)/bin/scan-{build*,view}
+	rm -fr $(STAGING_DIR_HOSTPKG)/include/clang*
+	rm -fr $(STAGING_DIR_HOSTPKG)/lib/{clang,libear,libscanbuild}
+	rm -f $(STAGING_DIR_HOSTPKG)/lib/libclang*.{a,so*}
+	rm -f $(STAGING_DIR_HOSTPKG)/libexec/{*analyze*,intercept-*}
+	rm -fr $(STAGING_DIR_HOSTPKG)/lib/cmake/clang
+	rm -fr $(STAGING_DIR_HOSTPKG)/share/{clang,scan-{build,view}}
+endef
 
-	$(call Host/Install/Default)
+define Build/Clean
+	rm -f $(STAGING_DIR)/host/bin/clang-tblgen
+	rm -f $(STAGING_DIR)/opt/bin/clang-tblgen
+endef
 
+define PrepPostFix
 	$(INSTALL_DIR) $(STAGING_DIR)/opt/bin $(STAGING_DIR)/host/bin
 	$(INSTALL_BIN) $(HOST_BUILD_DIR)/build/bin/clang-tblgen $(STAGING_DIR)/opt/bin
 	$(LN) ../../opt/bin/clang-tblgen $(STAGING_DIR)/host/bin
 endef
 
-
-HOST_LIST_INSTALLED:=$(HOST_BUILD_DIR)/build/install_manifest.txt
-
-define Host/Uninstall
-	if [ -f "$(HOST_LIST_INSTALLED)" ]; then \
-		xargs rm < $(HOST_LIST_INSTALLED) || true; \
-	fi
-	rm -r $(STAGING_DIR_HOSTPKG)/bin/clang* || true
-	rm -rf $(STAGING_DIR_HOSTPKG)/include/clang* || true
-	rm -rf $(STAGING_DIR_HOSTPKG)/lib/{clang,libear,libscanbuild} || true
-	rm -rf $(STAGING_DIR_HOSTPKG)/lib/cmake/clang || true
-	rm -rf $(STAGING_DIR_HOSTPKG)/share/{clang,scan-{build,view}} || true
-	rm -r $(STAGING_DIR)/opt/bin/clang-tblgen || true
-	rm -r $(STAGING_DIR)/host/bin/clang-tblgen || true
-endef
+Hooks/Prepare/Post += PrepPostFix
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include
 	$(CP) $(PKG_INSTALL_DIR)/opt/include/clang{,-c} $(1)/opt/include
-
 	$(INSTALL_DIR) $(1)/opt/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/c{lang,make} $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libclang*.so* $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/clang $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/cmake $(1)/opt/lib
 endef
 
 define Package/libclang/install
@@ -199,7 +195,6 @@ define Package/clang-analyzer/install
 	$(SED) 's,^#!.*perl,#!/opt/bin/perl,' $(1)/opt/bin/scan-build
 	$(SED) 's,^#!.*python,#!/opt/bin/python,' \
 		$(1)/opt/bin/{analyze-build,intercept-build,scan-build-py,scan-view}
-
 	$(INSTALL_DIR) $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libear $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libscanbuild $(1)/opt/lib
@@ -216,10 +211,8 @@ define Package/clang-analyzer/install
 	$(SED) 's,^#!.*python,#!/opt/bin/python,' \
 			$(1)/opt/libexec/analyze-c{++,c} \
 			$(1)/opt/libexec/intercept-c{++,c}
-
-	$(INSTALL_DIR) $(1)/opt/share/scan-{build,view}
-	$(CP) $(PKG_INSTALL_DIR)/opt/share/scan-build/* $(1)/opt/share/scan-build
-	$(CP) $(PKG_INSTALL_DIR)/opt/share/scan-view/* $(1)/opt/share/scan-view
+	$(INSTALL_DIR) $(1)/opt/share
+	$(CP) $(PKG_INSTALL_DIR)/opt/share/scan-{build,view} $(1)/opt/share
 	# XXX Entware specific: fix exec path in scripts
 	$(SED) 's,^#!.*python,#!/opt/bin/python,' $(1)/opt/share/scan-view/*.py
 endef
@@ -227,14 +220,9 @@ endef
 define Package/clang-dev/install
 	$(INSTALL_DIR) $(1)/opt/include
 	$(CP) $(PKG_INSTALL_DIR)/opt/include/clang{,-c} $(1)/opt/include
-
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/clang $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/cmake $(1)/opt/lib
-
-	# FIXME wants static
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/c{lang,make} $(1)/opt/lib
 	$(CP) $(PKG_BUILD_DIR)/build/lib/libclang*.a $(1)/opt/lib
-
 	$(INSTALL_DIR) $(1)/opt/share
 	$(CP) $(PKG_INSTALL_DIR)/opt/share/clang $(1)/opt/share
 	# XXX Entware specific: fix exec path in scripts
