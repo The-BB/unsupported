@@ -16,8 +16,6 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE.TXT
 
-HOST_BUILD_PARALLEL:=1
-
 HOST_BUILD_DEPENDS:=python3/host
 PKG_BUILD_DEPENDS:=llvm/host
 
@@ -188,11 +186,26 @@ LLVM_OPTS_TARGET += \
 
 CMAKE_OPTIONS += $(LLVM_OPTS_TARGET)
 
-define Host/Install
-	$(call Host/Uninstall)
+define Host/Uninstall
+	rm -f $(STAGING_DIR_HOSTPKG)/bin/{FileCheck,UnicodeNameMappingGenerator}
+	rm -f $(STAGING_DIR_HOSTPKG)/bin/{bugpoint,count,dsymutil}
+	rm -f $(STAGING_DIR_HOSTPKG)/bin/ll{c,i,vm-}*
+	rm -f $(STAGING_DIR_HOSTPKG)/bin/{not,obj2yaml,opt,sancov,sanstats}
+	rm -f $(STAGING_DIR_HOSTPKG)/bin/{split-file,verify-uselistorder}
+	rm -f $(STAGING_DIR_HOSTPKG)/bin/yaml{-bench,2obj}
+	rm -fr $(STAGING_DIR_HOSTPKG)/include/llvm*
+	rm -f $(STAGING_DIR_HOSTPKG)/lib/libLLVM*.{a,so}
+	rm -f $(STAGING_DIR_HOSTPKG)/lib/lib{LTO,Remarks}.so*
+	rm -fr $(STAGING_DIR_HOSTPKG)/lib/cmake/llvm
+	rm -fr $(STAGING_DIR_HOSTPKG)/share/opt-viewer
+endef
 
-	$(call Host/Install/Default)
+define Build/Clean
+	rm -f $(STAGING_DIR)/host/bin/llvm-*
+	rm -f $(STAGING_DIR)/opt/bin/llvm-*
+endef
 
+define PrepPostFix
 	$(INSTALL_DIR) $(STAGING_DIR)/opt/bin $(STAGING_DIR)/host/bin
 	$(INSTALL_BIN) $(HOST_BUILD_DIR)/build/bin/llvm-config $(STAGING_DIR)/opt/bin
 	$(LN) ../../opt/bin/llvm-config $(STAGING_DIR)/host/bin
@@ -200,33 +213,17 @@ define Host/Install
 	$(LN) ../../opt/bin/llvm-tblgen $(STAGING_DIR)/host/bin
 endef
 
-HOST_LIST_INSTALLED:=$(HOST_BUILD_DIR)/build/install_manifest.txt
-
-define Host/Uninstall
-	if [ -f "$(HOST_LIST_INSTALLED)" ]; then \
-		xargs rm < $(HOST_LIST_INSTALLED) || true; \
-	fi
-	rm -r $(STAGING_DIR_HOSTPKG)/bin/llvm-* || true
-	rm -rf $(STAGING_DIR_HOSTPKG)/include/llvm* || true
-	rm -r $(STAGING_DIR_HOSTPKG)/lib/libLLVM*.so || true
-	rm -rf $(STAGING_DIR_HOSTPKG)/lib/cmake/llvm || true
-	rm -rf $(STAGING_DIR_HOSTPKG)/share/opt-viewer || true
-	rm -r $(STAGING_DIR)/opt/bin/llvm-* || true
-	rm -r $(STAGING_DIR)/host/bin/llvm-* || true
-endef
+Hooks/Prepare/Post += PrepPostFix
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include
 	$(CP) $(PKG_INSTALL_DIR)/opt/include/llvm{,-c} $(1)/opt/include
-
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/lib{LLVM,LTO}*.so* $(1)/opt/lib
-	# XXX for build clang-tblgen
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libLLVM*.a $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/cmake $(1)/opt/lib
-	# FIXME
 	$(SED) 's,if(NOT EXISTS,if(NOT DEFINED CMAKE_CROSSCOMPILING AND NOT EXISTS,' \
 		$(1)/opt/lib/cmake/llvm/LLVMExports.cmake
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libLLVM*.{a,so*} $(1)/opt/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/lib{LTO,Remarks}.so* $(1)/opt/lib
 endef
 
 define Package/libllvm/install
@@ -310,7 +307,6 @@ define Package/llvm/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/sanstats $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/split-file $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/verify-uselistorder $(1)/opt/bin
-
 	$(INSTALL_DIR) $(1)/opt/share
 	$(CP) $(PKG_INSTALL_DIR)/opt/share/opt-viewer $(1)/opt/share
 	# XXX Entware specific: fix exec path in scripts
@@ -320,12 +316,9 @@ endef
 define Package/llvm-dev/install
 	$(INSTALL_DIR) $(1)/opt/include
 	$(CP) $(PKG_INSTALL_DIR)/opt/include/llvm{,-c} $(1)/opt/include
-
 	$(INSTALL_DIR) $(1)/opt/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/cmake $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/*.a $(1)/opt/lib
-
-	$(INSTALL_DIR) $(1)/opt/lib/cmake
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/cmake/llvm $(1)/opt/lib/cmake
 endef
 
 define Package/libllvm/postinst
