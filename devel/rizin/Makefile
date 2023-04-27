@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rizin
-PKG_VERSION:=0.5.1
-PKG_RELEASE:=2
+PKG_VERSION:=0.5.2
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/rizinorg/rizin/tar.gz/refs/tags/v$(PKG_VERSION)?
-PKG_HASH:=e823d7ce9ffdb81e00fe8d9faeb70b63aa8211f6695c6b524abdb6fc03df1a08
+PKG_HASH:=dbb5747a7b9a38309f7de420e573e87847d1f37bd6e9d6e7827c6cca7676e1ce
 
 PKG_LICENSE:=GPL-3.0-or-later LGPL-3.0-or-later
 PKG_LICENSE_FILES:=COPYING COPYING.LESSER
