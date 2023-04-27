@@ -1,0 +1,17 @@
+if PACKAGE_libcairo
+
+comment "Build Options"
+
+	config CAIRO_FONTCONFIG
+		bool "Fontconfig font backend for cairo graphics library"
+
+	config CAIRO_FREETYPE
+		bool "Freetype font backend for cairo graphics library"
+
+	config CAIRO_GLIB2
+		bool "cairo-gobject for cairo graphics library"
+
+	config CAIRO_PNG
+		bool "PNG/SVG surface backend for cairo graphics library"
+
+endif
