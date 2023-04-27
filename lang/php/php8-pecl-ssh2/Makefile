@@ -5,13 +5,13 @@ include $(TOPDIR)/rules.mk
 PECL_NAME:=ssh2
 PECL_LONGNAME:=Bindings for the libssh2 library
 
-PKG_VERSION:=1.3.1
+PKG_VERSION:=1.4
 PKG_RELEASE:=1
 
 PKG_NAME:=php8-pecl-$(PECL_NAME)
 PKG_SOURCE:=$(PECL_NAME)-$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=https://pecl.php.net/get/
-PKG_HASH:=9093a1f8d24dc65836027b0e239c50de8d5eaebf8396bc3331fdd38c5d69afd9
+PKG_HASH:=988b52e0315bb5ed725050cb02de89b541034b7be6b94623dcb2baa33f811d87
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/pecl-php8/$(PECL_NAME)-$(PKG_VERSION)
 
