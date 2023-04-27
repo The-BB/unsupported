@@ -35,7 +35,7 @@ define Package/pax-utils/config
 	config PAX_UTILS_LIBCAP
 		bool
 		prompt "build with capabilities"
-		default n
+		default y
 		help
 		    Enable listing capabilities in pspax output (requires libcap)
   endif
@@ -46,7 +46,7 @@ MESON_ARGS += \
 	-Dlddtree_implementation=sh \
 	-Dtests=false \
 	-Duse_fuzzing=false \
-	-Duse_libcap=$(if $(CONFIG_PAX_UTILS_LIBCAP),enabled,disabled) \
+	-Duse_libcap=$(if $(CONFIG_PAX_UTILS_LIBCAP),en,dis)abled \
 	-Duse_seccomp=false
 
 define Package/pax-utils/install
