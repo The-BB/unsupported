@@ -151,14 +151,11 @@ define Package/pipewire/install
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pipewire-* $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/spa-* $(1)/opt/lib
 
-  ifeq ($(CONFIG_PIPEWIRE_ALSA_LIB),y)
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/{alsa-lib,udev} $(1)/opt/lib
-  endif
-
 	$(INSTALL_DIR) $(1)/opt/share
 	$(CP) $(PKG_INSTALL_DIR)/opt/share/pipewire $(1)/opt/share
 
   ifeq ($(CONFIG_PIPEWIRE_ALSA_LIB),y)
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/{alsa-lib,udev} $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/share/alsa{,-card-profile} $(1)/opt/share
   endif
 endef
