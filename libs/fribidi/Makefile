@@ -4,7 +4,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=fribidi
 PKG_VERSION:=1.0.12
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/fribidi/fribidi/tar.gz/refs/tags/v$(PKG_VERSION)?
@@ -28,11 +28,12 @@ define Package/libfribidi/description
 endef
 
 MESON_ARGS += \
+	-Db_lto=true \
+	-Dbin=false \
 	-Ddeprecated=false \
 	-Ddocs=false \
-	-Dbin=false \
-	-Dtests=false \
-	-Dfuzzer_ldflags=''
+	-Dfuzzer_ldflags='' \
+	-Dtests=false
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include/fribidi
