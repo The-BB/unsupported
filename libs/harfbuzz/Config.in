@@ -4,18 +4,15 @@ comment "Build Options"
 
 	config HARFBUZZ_CAIRO
 		bool "Use Cairo graphics library"
-		default n
 
 	config HARFBUZZ_FREETYPE
 		bool "Enable freetype interop helpers"
-		default y
+		select HARFBUZZ_GLIB2
 
 	config HARFBUZZ_GLIB2
 		bool "Enable GLib unicode functions"
-		default n
 
 	config HARFBUZZ_ICU
 		bool "Enable ICU library unicode functions"
-		default n
 
 endif

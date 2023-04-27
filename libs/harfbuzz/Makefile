@@ -4,7 +4,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=harfbuzz
 PKG_VERSION:=5.1.0
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/harfbuzz/harfbuzz/tar.gz/refs/tags/$(PKG_VERSION)?
@@ -47,44 +47,55 @@ define Package/libharfbuzz/config
   source "$(SOURCE)/Config.in"
 endef
 
+TARGET_CXXFLAGS += -DHB_MINI
+
 MESON_ARGS += \
-	-Dbenchmark=disabled \
+	-Db_lto=true \
 	-Dcairo=$(if $(CONFIG_HARFBUZZ_CAIRO),en,dis)abled \
-	-Dcoretext=disabled \
-	-Ddirectwrite=disabled \
 	-Ddocs=disabled \
-	-Dexperimental_api=false \
 	-Dfreetype=$(if $(CONFIG_HARFBUZZ_FREETYPE),en,dis)abled \
 	-Dfuzzer_ldflags="" \
-	-Dgdi=disabled \
 	-Dglib=$(if $(CONFIG_HARFBUZZ_GLIB2),en,dis)abled \
-	-Dgobject=disabled \
-	-Dgraphite=disabled \
+	-Dgobject=$(if $(CONFIG_HARFBUZZ_GLIB2),en,dis)abled \
 	-Dicu=$(if $(CONFIG_HARFBUZZ_ICU),en,dis)abled \
-	-Dicu_builtin=false \
 	-Dintrospection=disabled \
 	-Dtests=disabled
 
 define Build/InstallDev
-	$(INSTALL_DIR) $(1)/opt/include/harfbuzz
-	$(CP) $(PKG_INSTALL_DIR)/opt/include/harfbuzz/*.h \
-		$(1)/opt/include/harfbuzz
+	$(INSTALL_DIR) $(1)/opt/include
+	$(CP) $(PKG_INSTALL_DIR)/opt/include/harfbuzz $(1)/opt/include
 
-	$(INSTALL_DIR) $(1)/opt/lib
+	$(INSTALL_DIR) $(1)/opt/lib/cmake/harfbuzz
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/cmake/harfbuzz/harfbuzz-config.cmake \
+		$(1)/opt/lib/cmake/harfbuzz
+
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz{,-subset}.so* $(1)/opt/lib
 
 	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/harfbuzz{,-subset}.pc \
 		$(1)/opt/lib/pkgconfig
 
-	$(INSTALL_DIR) $(1)/opt/lib/cmake/harfbuzz
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/cmake/harfbuzz/harfbuzz-config.cmake \
-		$(1)/opt/lib/cmake/harfbuzz
+  ifeq ($(CONFIG_HARFBUZZ_GLIB2),y)
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz-gobject.so* $(1)/opt/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/harfbuzz-gobject.pc \
+		$(1)/opt/lib/pkgconfig
+  endif
+  ifeq ($(CONFIG_HARFBUZZ_ICU),y)
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz-icu.so* $(1)/opt/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/harfbuzz-icu.pc \
+		$(1)/opt/lib/pkgconfig
+  endif
 endef
 
 define Package/libharfbuzz/install
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz.so* $(1)/opt/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz{,-subset}.so* $(1)/opt/lib
+  ifeq ($(CONFIG_HARFBUZZ_GLIB2),y)
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz-gobject.so* $(1)/opt/lib
+  endif
+  ifeq ($(CONFIG_HARFBUZZ_ICU),y)
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz-icu.so* $(1)/opt/lib
+  endif
 endef
 
 $(eval $(call BuildPackage,libharfbuzz))
