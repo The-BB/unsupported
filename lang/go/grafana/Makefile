@@ -3,15 +3,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=grafana
-PKG_VERSION:=9.4.7
+PKG_VERSION:=9.5.1
 PKG_RELEASE:=1
 
 PKG_GOGET:=github.com/grafana/grafana
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=4add91f03d3bf455b4eb8160c86c50030cbb823c
+PKG_SOURCE_VERSION:=bc353e4b2db36b0cf37457b1c693f7f731116615
 PKG_SOURCE_URL:=https://$(PKG_GOGET)
-PKG_MIRROR_HASH:=8f04db860641d7d38873877a0551325f8c3de77d2c15b638e51b5f4df595fefe
+PKG_MIRROR_HASH:=395155d6835c4b10f3d2188b27314e3605eb455a66e25d22cab4de23ff909fc3
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE LICENSING.md
@@ -54,7 +54,7 @@ endef
 Package/grafana_nohf/description=$(Package/grafana/description)
 
 GIT_HASH:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -8)
-SOURCE_DATE:=2023-03-22
+SOURCE_DATE:=2023-04-26
 
 GO_LDFLAGS += \
 	-X 'main.version=$(PKG_VERSION)' \
@@ -88,8 +88,8 @@ define Build/Deps
 	)
 	# generate go files
 	( cd $(GO_SRC_DIR); \
-		PATH="$(GOROOT)/bin:$$PATH" \
-		$(GO_SRC_DIR)/wire-host gen -tags "oss" ./pkg/server ./pkg/cmd/grafana-cli/runner; \
+		PATH="$(GOROOT)/bin:$(PATH)" \
+		$(GO_SRC_DIR)/wire-host gen -tags "oss" ./pkg/server; \
 	)
 endef
 
