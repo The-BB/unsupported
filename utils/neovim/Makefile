@@ -3,17 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=neovim
-PKG_VERSION:=0.8.3
+PKG_VERSION:=0.9.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/neovim/neovim/tar.gz/refs/tags/v$(PKG_VERSION)?
-PKG_HASH:=adf45ff160e1d89f519b6114732eba03485ae469beb27919b0f7a4f6b44233c1
-
-#PKG_SOURCE_PROTO:=git
-#PKG_SOURCE_VERSION:=21257d8580780a5e28f06562cea4f8889e6b0932
-#PKG_SOURCE_URL:=https://github.com/neovim/neovim
-#PKG_MIRROR_HASH:=e9e3a2a930f4e54cbe0c7bf004a932b486f807a7b751888419193610af94f86c
+PKG_HASH:=39d79107c54d2f3babcad2cd157c399241c04f6e75e98c18e8afaf2bb5e82937
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE.txt
@@ -40,6 +35,7 @@ endef
 
 CMAKE_BINARY_SUBDIR:=build
 
+TARGET_CFLAGS += -pthread
 TARGET_LDFLAGS += -lncursesw
 
 # XXX fake tag
