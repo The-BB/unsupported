@@ -4,7 +4,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mpv
 PKG_VERSION:=0.35.1
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/mpv-player/mpv/tar.gz/refs/tags/v$(PKG_VERSION)?
@@ -48,6 +48,7 @@ define Package/mpv/conffiles
 endef
 
 MESON_ARGS += \
+	-Db_lto=true \
 	-Dgl=disabled \
 	-Dlibarchive=disabled \
 	-Dlibmpv=true \
