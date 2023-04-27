@@ -17,6 +17,9 @@ PKG_LICENSE_FILES:=COPYING
 
 PKG_BUILD_DEPENDS:=glib2/host
 
+PKG_CONFIG_DEPENDS:=\
+	CONFIG_PANGO_CAIRO
+
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 include $(INCLUDE_DIR)/meson.mk
@@ -26,7 +29,10 @@ define Package/libpango
   CATEGORY:=Libraries
   TITLE:=Internationalized text layout and rendering
   URL:=http://www.pango.org/
-  DEPENDS:=+fontconfig +glib2 +libcairo +libfribidi +libharfbuzz
+  DEPENDS:= \
+	+fontconfig +glib2 +libfreetype +libfribidi +libharfbuzz \
+	+PANGO_CAIRO:libcairo
+  MENU:=1
 endef
 
 define Package/libpango/description
@@ -34,7 +40,13 @@ define Package/libpango/description
   on internationalization.
 endef
 
+define Package/libpango/config
+  source "$(SOURCE)/Config.in"
+endef
+
 MESON_ARGS += \
+	-Db_lto=true \
+	-Dcairo=$(if $(CONFIG_PANGO_CAIRO),en,dis)abled \
 	-Dintrospection=disabled \
 	-Dlibthai=disabled \
 	-Dxft=disabled
@@ -50,17 +62,25 @@ define Build/InstallDev
 		 $(1)/opt/include/pango-1.0/pango/
 
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libpango*.so* \
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libpango{,ft2}-1.0.so* \
 		$(1)/opt/lib/
 
 	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/pango*.pc \
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/pango{,fc,ft2,ot}.pc \
 		$(1)/opt/lib/pkgconfig/
+  ifeq ($(CONFIG_PANGO_CAIRO),y)
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libpangocairo-1.0.so* $(1)/opt/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/pangocairo.pc \
+		 $(1)/opt/lib/pkgconfig
+  endif
 endef
 
 define Package/libpango/install
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libpango*.so* $(1)/opt/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libpango{,ft2}-1.0.so* $(1)/opt/lib/
+  ifeq ($(CONFIG_PANGO_CAIRO),y)
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libpangocairo-1.0.so* $(1)/opt/lib
+  endif
 endef
 
 $(eval $(call BuildPackage,libpango))

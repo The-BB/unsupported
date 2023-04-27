@@ -1,0 +1,11 @@
+if PACKAGE_libpango
+
+comment "Build Options"
+
+	config PANGO_CAIRO
+		bool "Build with cairo support"
+		select CAIRO_FONTCONFIG
+		select CAIRO_FREETYPE
+		select CAIRO_PNG
+
+endif
