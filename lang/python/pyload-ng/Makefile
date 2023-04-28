@@ -3,11 +3,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pyload-ng
-PKG_VERSION:=0.5.0b3.dev53
+PKG_VERSION:=0.5.0b3.dev60
 PKG_RELEASE:=1
 
 PYPI_NAME:=pyload-ng
-PKG_HASH:=6054a2c94ad4448505b9d907640a635d3daaba8b999c4071825eb3e61be1d99f
+PKG_HASH:=d3c3e685bf69e871809d314cadb39f27aa8f429a026b1a5b45f5a535c5c01503
 
 PKG_LICENSE:=AGPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE.md
@@ -59,9 +59,9 @@ define Package/pyload-ng
 	+python3-pyopenssl \
 	+python3-send2trash \
 	+python3-slixmpp
+  EXTRA_DEPENDS:=coreutils-nohup
 # rust-lang pkg
-  EXTRA_DEPENDS:=python3-cryptography
-  EXTRA_DEPENDS+=coreutils-nohup
+  EXTRA_DEPENDS+=python3-cryptography
 endef
 
 define Package/pyload-ng/description
