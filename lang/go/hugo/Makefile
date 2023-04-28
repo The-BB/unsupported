@@ -20,6 +20,7 @@ PKG_CGO_ENABLED:=1
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
+include ../goenv.mk
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/golang.mk
 

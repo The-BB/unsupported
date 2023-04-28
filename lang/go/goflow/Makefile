@@ -16,6 +16,7 @@ PKG_MIRROR_HASH:=35660f2611012f7fde78d6160cf51645b9cf8aac3f10731ea92d49f1ae8db64
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE.txt
 
+include ../goenv.mk
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/golang.mk
 

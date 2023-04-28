@@ -16,6 +16,7 @@ PKG_MIRROR_HASH:=966d8b3f0c8573dfd9cfc574dbd111e723211d363ed4042c8d8c29ce29f0a97
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
 
+include ../goenv.mk
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/golang.mk
 

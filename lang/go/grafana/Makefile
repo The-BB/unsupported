@@ -22,6 +22,7 @@ PKG_USE_MIPS16:=0
 
 PKG_BUILD_DEPENDS:=node-yarn/host
 
+include ../goenv.mk
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/golang.mk
 

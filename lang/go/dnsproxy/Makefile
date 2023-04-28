@@ -18,6 +18,7 @@ PKG_MIRROR_HASH:=6d431005f87086495f9e68e10f889dc423decd167b719338db0af7317c39719
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
 
+include ../goenv.mk
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/golang.mk
 
