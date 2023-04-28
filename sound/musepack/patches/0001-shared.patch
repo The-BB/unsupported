@@ -1,24 +1,97 @@
 Fixup installation of shared mpcdec library.
 Based on gentoo patch.
-
-Signed-off-by: Gustavo Zacarias <gustavo@zacarias.com.ar>
 ---
-
-diff -Nura musepack_src_r475.orig/libmpcdec/CMakeLists.txt musepack_src_r475/libmpcdec/CMakeLists.txt
---- musepack_src_r475.orig/libmpcdec/CMakeLists.txt	2010-08-21 12:55:01.000000000 -0300
-+++ musepack_src_r475/libmpcdec/CMakeLists.txt	2011-08-17 15:53:06.126873408 -0300
-@@ -1,7 +1,12 @@
+--- a/libmpcdec/CMakeLists.txt
++++ b/libmpcdec/CMakeLists.txt
+@@ -1,7 +1,15 @@
  include_directories(${libmpc_SOURCE_DIR}/include)
- if(SHARED)
+-if(SHARED)
 -  add_library(mpcdec SHARED huffman mpc_decoder mpc_reader streaminfo mpc_bits_reader mpc_demux requant synth_filter ${libmpc_SOURCE_DIR}/common/crc32)
-+  add_library(mpcdec_shared SHARED huffman mpc_decoder mpc_reader streaminfo mpc_bits_reader mpc_demux requant synth_filter ${libmpc_SOURCE_DIR}/common/crc32)
-+  set_target_properties(mpcdec_shared PROPERTIES OUTPUT_NAME mpcdec CLEAN_DIRECT_OUTPUT 1 VERSION 7.0.1 SOVERSION 7)
+-else(SHARED)
+-  add_library(mpcdec_static STATIC huffman mpc_decoder mpc_reader streaminfo mpc_bits_reader mpc_demux requant synth_filter ${libmpc_SOURCE_DIR}/common/crc32)
+-endif(SHARED)
+ 
++add_library(mpcdec_shared SHARED huffman mpc_decoder mpc_reader streaminfo mpc_bits_reader mpc_demux requant synth_filter ${libmpc_SOURCE_DIR}/common/crc32)
++set_target_properties(mpcdec_shared PROPERTIES OUTPUT_NAME mpcdec CLEAN_DIRECT_OUTPUT 1 VERSION 7.0.1 SOVERSION 7)
++if(NOT MSVC)
 +  target_link_libraries(mpcdec_shared m)
-+  install(TARGETS mpcdec_shared LIBRARY DESTINATION "lib${LIB_SUFFIX}" ARCHIVE DESTINATION "lib${LIB_SUFFIX}")
++endif(NOT MSVC)
++
++add_library(mpcdec_shared STATIC huffman mpc_decoder mpc_reader streaminfo mpc_bits_reader mpc_demux requant synth_filter ${libmpc_SOURCE_DIR}/common/crc32)
++
++if(NOT MSVC)
++  target_link_libraries(mpcdec_shared m)
++endif(NOT MSVC)
++
++install(TARGETS mpcdec_shared LIBRARY DESTINATION "lib${LIB_SUFFIX}" ARCHIVE DESTINATION "lib${LIB_SUFFIX}")
+--- a/mpc2sv8/CMakeLists.txt
++++ b/mpc2sv8/CMakeLists.txt
+@@ -15,7 +15,7 @@ add_executable(mpc2sv8 mpc2sv8.c)
+ if(SHARED)
+   target_link_libraries(mpc2sv8 mpcdec)
  else(SHARED)
-   add_library(mpcdec_static STATIC huffman mpc_decoder mpc_reader streaminfo mpc_bits_reader mpc_demux requant synth_filter ${libmpc_SOURCE_DIR}/common/crc32)
-+  set_target_properties(mpcdec_static PROPERTIES OUTPUT_NAME mpcdec CLEAN_DIRECT_OUTPUT 1)
-+  target_link_libraries(mpcdec_static m)
-+  install(TARGETS mpcdec_static LIBRARY DESTINATION "lib${LIB_SUFFIX}" ARCHIVE DESTINATION "lib${LIB_SUFFIX}")
+-  target_link_libraries(mpc2sv8 mpcdec_static)
++  target_link_libraries(mpc2sv8 mpcdec_shared)
  endif(SHARED)
+ 
+ target_link_libraries(mpc2sv8 mpcenc_static)
+--- a/mpcchap/CMakeLists.txt
++++ b/mpcchap/CMakeLists.txt
+@@ -17,7 +17,7 @@ add_executable(mpcchap mpcchap.c diction
+ if(SHARED)
+   target_link_libraries(mpcchap mpcdec)
+ else(SHARED)
+-  target_link_libraries(mpcchap mpcdec_static)
++  target_link_libraries(mpcchap mpcdec_shared)
+ endif(SHARED)
+ 
+ target_link_libraries(mpcchap mpcenc_static)
+--- a/mpccut/CMakeLists.txt
++++ b/mpccut/CMakeLists.txt
+@@ -15,7 +15,7 @@ add_executable(mpccut mpccut.c)
+ if(SHARED)
+   target_link_libraries(mpccut mpcdec)
+ else(SHARED)
+-  target_link_libraries(mpccut mpcdec_static)
++  target_link_libraries(mpccut mpcdec_shared)
+ endif(SHARED)
+ 
+ target_link_libraries(mpccut mpcenc_static)
+--- a/mpcdec/CMakeLists.txt
++++ b/mpcdec/CMakeLists.txt
+@@ -19,9 +19,9 @@ endif(NOT MSVC)
+ target_link_libraries(mpcdec_cmd wavformat_static)
+ 
+ if(SHARED)
+-  target_link_libraries(mpcdec_cmd mpcdec)
++  target_link_libraries(mpcdec_cmd mpcdec_shared)
+ else(SHARED)
+-  target_link_libraries(mpcdec_cmd mpcdec_static)
++  target_link_libraries(mpcdec_cmd mpcdec_shared)
+ endif(SHARED)
+ 
+ SET_TARGET_PROPERTIES(mpcdec_cmd PROPERTIES OUTPUT_NAME "mpcdec")
+--- a/mpcgain/CMakeLists.txt
++++ b/mpcgain/CMakeLists.txt
+@@ -22,7 +22,7 @@ target_link_libraries(mpcgain ${REPLAY_G
+ if(SHARED)
+   target_link_libraries(mpcgain mpcdec)
+ else(SHARED)
+-  target_link_libraries(mpcgain mpcdec_static)
++  target_link_libraries(mpcgain mpcdec_shared)
+ endif(SHARED)
+ 
+ if(NOT MSVC)
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -15,10 +15,6 @@ endif(WIN32)
+ 
+ add_definitions(-DFAST_MATH -DCVD_FASTLOG)
+ 
+-if(NOT MSVC)
+-  set(CMAKE_C_FLAGS "-O3 -Wall -fomit-frame-pointer -pipe")
+-endif(NOT MSVC)
 -
+ add_subdirectory(libmpcdec)
+ add_subdirectory(libmpcpsy)
+ add_subdirectory(libmpcenc)

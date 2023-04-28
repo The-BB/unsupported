@@ -12,10 +12,9 @@ Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 [Thomas: better commit log.]
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-diff -uNr musepack_src_r475.org/mpcenc/mpcenc.h musepack_src_r475/mpcenc/mpcenc.h
---- musepack_src_r475.org/mpcenc/mpcenc.h	2009-02-23 19:15:46.000000000 +0100
-+++ musepack_src_r475/mpcenc/mpcenc.h	2016-01-30 09:29:08.000000000 +0100
-@@ -50,7 +51,7 @@
+--- a/mpcenc/mpcenc.h
++++ b/mpcenc/mpcenc.h
+@@ -50,7 +50,7 @@
  # include <unistd.h>
  #endif
  

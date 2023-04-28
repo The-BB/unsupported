@@ -12,10 +12,9 @@ Fixes:
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 
-diff -Naur musepack_src_r475.orig/libmpcdec/requant.h musepack_src_r475/libmpcdec/requant.h
---- musepack_src_r475.orig/libmpcdec/requant.h	2020-09-10 08:31:50.696105246 +0200
-+++ musepack_src_r475/libmpcdec/requant.h	2020-09-10 08:32:52.944106476 +0200
-@@ -47,9 +47,9 @@
+--- a/libmpcdec/requant.h
++++ b/libmpcdec/requant.h
+@@ -47,9 +47,9 @@ extern "C" {
  
  
  /* C O N S T A N T S */

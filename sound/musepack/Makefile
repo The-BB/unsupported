@@ -13,7 +13,11 @@ PKG_HASH:=a4b1742f997f83e1056142d556a8c20845ba764b70365ff9ccf2e3f81c427b2b
 PKG_LICENSE:=BSD-3-Clause LGPL-2.1-or-later
 PKG_LICENSE_FILES:=libmpcdec/COPYING
 
-PKG_BUILD_DEPENDS:=libcuefile libreplaygain
+PKG_BUILD_DEPENDS:=libcuefile
+
+# XXX force disable
+PKG_USE_NINJA:=0
+PKG_BUILD_PARALLEL:=0
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk

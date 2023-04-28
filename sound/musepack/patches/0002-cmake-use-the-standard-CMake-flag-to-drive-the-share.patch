@@ -12,8 +12,6 @@ Signed-off-by: Samuel Martin <s.martin49@gmail.com>
  CMakeLists.txt | 15 ++++++++++-----
  1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index b13f78c..db75510 100755
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -7,11 +7,16 @@ project(libmpc C)
@@ -38,6 +36,3 @@ index b13f78c..db75510 100755
  
  add_definitions(-DFAST_MATH -DCVD_FASTLOG)
  
--- 
-2.1.0
-
