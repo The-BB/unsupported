@@ -8,14 +8,10 @@ OLDPORTS_FEED="./feeds/oldports"
 PACKAGES_FEED="./feeds/packages"
 PATCH_DIR="./feeds/unsupported/_patches"
 PATCH_OLDPORTS="$PATCH_DIR/livemedia-add-shared-libs.patch"
+PATCH_PACKAGE="$PATCH_DIR/package-libs-libxml2-fix-args.patch"
 PATCH_PACKAGES="\
-$PATCH_DIR/lang-lpeg-add-as-dependency.patch
-$PATCH_DIR/lang-luabitop-host-add-as-dependency.patch
-$PATCH_DIR/lang-luv-add-as-dependency.patch
 $PATCH_DIR/libs-libmpeg2-add-as-dependency.patch
 $PATCH_DIR/libs-libvpx-add-as-dependency.patch
-$PATCH_DIR/libs-libxml2-fix-args.patch
-$PATCH_DIR/libs-msgpack-c-add-as-dependency.patch
 $PATCH_DIR/multimedia-ffmpeg-disable-sndio.patch
 $PATCH_DIR/multimedia-gst1-libav-add-as-dependency.patch
 $PATCH_DIR/multimedia-gst1-plugins-base-add-as-dependency.patch
@@ -26,20 +22,23 @@ $PATCH_DIR/utils-domoticz-adapted.patch
 $PATCH_DIR/utils-openzwave-adapted.patch
 "
 STAMP_OLDPORTS="$PATCH_DIR/.oldports-patched"
+STAMP_PACKAGE="$PATCH_DIR/.package-patched"
 STAMP_PACKAGES="$PATCH_DIR/.packages-patched"
 
 GO_PKG="\
 $PACKAGES_FEED/net/cloudreve
 $PACKAGES_FEED/net/dnsproxy
-$PACKAGES_FEED/net/git-lfs
 $PACKAGES_FEED/net/v2raya
 $PACKAGES_FEED/net/xray-core
-$PACKAGES_FEED/utils/prometheus
-$PACKAGES_FEED/utils/prometheus-statsd-exporter
 "
 
 backup()
 {
+# base
+if [ ! -f $STAMP_PACKAGE ]; then
+  patch -p1 -b -d ./ < $PATCH_PACKAGE
+  touch $STAMP_PACKAGE
+fi
 # oldports feed
 if [ ! -f $STAMP_OLDPORTS ]; then
   patch -p1 -b -d $OLDPORTS_FEED < $PATCH_OLDPORTS
@@ -61,6 +60,8 @@ fi
 
 check()
 {
+# base
+patch -p1 --dry-run -d ./ < $PATCH_PACKAGE
 # oldports feed
 patch -p1 --dry-run -d $OLDPORTS_FEED < $PATCH_OLDPORTS
 # packages feed
@@ -69,6 +70,12 @@ for PATCH in $PATCH_PACKAGES; do patch -p1 --dry-run -d $PACKAGES_FEED < "$PATCH
 
 recovery()
 {
+# base
+if [ -f $STAMP_PACKAGE ]; then
+  patch -p1 -R -d ./ < $PATCH_PACKAGE
+  rm $STAMP_PACKAGE
+  find ./package/libs/libxml2 -type f -name "*.orig" -delete
+fi
 # oldports feed
 if [ -f $STAMP_OLDPORTS ]; then
   patch -p1 -R -d $OLDPORTS_FEED < $PATCH_OLDPORTS
@@ -86,7 +93,7 @@ if [ -f $STAMP_PACKAGES ]; then
       fi
   done
   FEED=$PACKAGES_FEED
-  find $FEED/lang $FEED/libs $FEED/multimedia $FEED/net $FEED/sound $FEED/utils -type f -name "*.orig" -delete
+  find $FEED/libs $FEED/multimedia $FEED/net $FEED/utils -type f -name "*.orig" -delete
 fi
 }
 

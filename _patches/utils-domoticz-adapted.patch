@@ -1,25 +1,25 @@
-From 34f4e77eb2abaf9825aa9ee86c28ce95daaa6ba8 Mon Sep 17 00:00:00 2001
+From 4990512271ef589c6a08898f7ffdb3cec21d4610 Mon Sep 17 00:00:00 2001
 From: The-BB <tun.chen.bo@gmail.com>
-Date: Mon, 20 Mar 2023 11:20:03 +0300
+Date: Thu, 8 Jun 2023 00:44:26 +0300
 Subject: [PATCH] utils/domoticz: adapted
 
 ---
- utils/domoticz/Makefile                    |  57 +++++----
+ utils/domoticz/Makefile                    |  56 ++++----
  utils/domoticz/files/S99domoticz           |  10 ++
  utils/domoticz/files/domoticz.conf         | 105 +++++++++++++++
  utils/domoticz/patches/999-fix-paths.patch | 135 ++++++++++++++++++++
  utils/domoticz/patches/999-fix-www.patch   | 142 +++++++++++++++++++++
- 5 files changed, 426 insertions(+), 23 deletions(-)
+ 5 files changed, 426 insertions(+), 22 deletions(-)
  create mode 100644 utils/domoticz/files/S99domoticz
  create mode 100644 utils/domoticz/files/domoticz.conf
  create mode 100644 utils/domoticz/patches/999-fix-paths.patch
  create mode 100644 utils/domoticz/patches/999-fix-www.patch
 
 diff --git a/utils/domoticz/Makefile b/utils/domoticz/Makefile
-index 8fde8c25a..8292d5209 100644
+index 7d1f5ce39..0103cdbfd 100644
 --- a/utils/domoticz/Makefile
 +++ b/utils/domoticz/Makefile
-@@ -24,6 +24,7 @@ PKG_USE_MIPS16:=0
+@@ -24,6 +24,7 @@ PKG_BUILD_FLAGS:=no-mips16 lto
  
  include $(INCLUDE_DIR)/package.mk
  include $(INCLUDE_DIR)/cmake.mk
@@ -36,18 +36,17 @@ index 8fde8c25a..8292d5209 100644
  	-DGIT_SUBMODULE=no \
  	-DCMAKE_BUILD_TYPE=Release \
  	-DUSE_BUILTIN_MQTT=no \
-@@ -73,8 +74,8 @@ CMAKE_OPTIONS += \
+@@ -73,7 +74,8 @@ CMAKE_OPTIONS += \
  	-DUSE_PYTHON=yes \
  	-DWITH_LIBUSB=no
  
--TARGET_CFLAGS += -flto
--TARGET_CXXFLAGS += -DWITH_GPIO -flto
-+TARGET_CFLAGS += -flto -pthread
-+TARGET_CXXFLAGS += -DWITH_GPIO -flto -pthread
+-TARGET_CXXFLAGS += -DWITH_GPIO
++TARGET_CFLAGS += -pthread
++TARGET_CXXFLAGS += -DWITH_GPIO -pthread
  
  define Build/Prepare
  	$(call Build/Prepare/Default)
-@@ -96,33 +97,43 @@ define Build/Prepare
+@@ -95,33 +97,43 @@ define Build/Prepare
  		domoticz.conf
  	# Remove *.md
  	cd $(PKG_BUILD_DIR) && $(FIND) -name '*.md' -delete
