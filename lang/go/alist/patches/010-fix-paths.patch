@@ -1,5 +1,5 @@
---- a/src/github.com/alist-org/alist/cmd/flags/config.go
-+++ b/src/github.com/alist-org/alist/cmd/flags/config.go
+--- a/cmd/flags/config.go
++++ b/cmd/flags/config.go
 @@ -2,6 +2,10 @@ package flags
  
  var (
@@ -11,8 +11,8 @@
  	Debug       bool
  	NoPrefix    bool
  	Dev         bool
---- a/src/github.com/alist-org/alist/cmd/root.go
-+++ b/src/github.com/alist-org/alist/cmd/root.go
+--- a/cmd/root.go
++++ b/cmd/root.go
 @@ -24,7 +24,7 @@ func Execute() {
  }
  
@@ -22,8 +22,8 @@
  	RootCmd.PersistentFlags().BoolVar(&flags.Debug, "debug", false, "start with debug mode")
  	RootCmd.PersistentFlags().BoolVar(&flags.NoPrefix, "no-prefix", false, "disable env prefix")
  	RootCmd.PersistentFlags().BoolVar(&flags.Dev, "dev", false, "start with dev mode")
---- a/src/github.com/alist-org/alist/internal/conf/config.go
-+++ b/src/github.com/alist-org/alist/internal/conf/config.go
+--- a/internal/conf/config.go
++++ b/internal/conf/config.go
 @@ -52,10 +52,10 @@ type Config struct {
  }
  
