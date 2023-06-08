@@ -5,15 +5,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dnsproxy
-PKG_VERSION:=0.49.1
+PKG_VERSION:=0.50.0
 PKG_RELEASE:=1
-
-PKG_GOGET:=github.com/AdguardTeam/dnsproxy
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=1e3a23f10ad57cf17f8225849a22f8c2ea05b452
-PKG_SOURCE_URL:=https://$(PKG_GOGET)
-PKG_MIRROR_HASH:=6d431005f87086495f9e68e10f889dc423decd167b719338db0af7317c397199
+PKG_SOURCE_URL:=https://github.com/AdguardTeam/dnsproxy
+PKG_MIRROR_HASH:=1a8f15d39121aa952669281ce156f722ddb5a1c2cdffb857ed52952b34e4df2a
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -57,19 +55,16 @@ endef
 
 Package/dnsproxy_nohf/conffiles=$(Package/dnsproxy/conffiles)
 
-GO_BUILD_ARGS += -trimpath
 GO_LDFLAGS += -X 'main.VersionString=$(PKG_VERSION)'
 GO_VARS += GO111MODULE=on
 
 define Package/dnsproxy/install
 	$(INSTALL_DIR) $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/dnsproxy $(1)/opt/bin
-
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/dnsproxy $(1)/opt/bin
 	$(INSTALL_DIR) $(1)/opt/etc
-	$(CP) $(GO_SRC_DIR)/config.yaml.dist $(1)/opt/etc/dnsproxy.yaml
-
+	$(CP) $(PKG_BUILD_DIR)/config.yaml.dist $(1)/opt/etc/dnsproxy.yaml
 	$(INSTALL_DIR) $(1)/opt/etc/init.d
-	$(INSTALL_BIN) files/S90dnsproxy $(1)/opt/etc/init.d
+	$(INSTALL_BIN) ./files/S90dnsproxy $(1)/opt/etc/init.d
 endef
 
 Package/dnsproxy_nohf/install=$(Package/dnsproxy/install)
