@@ -8,11 +8,9 @@ PKG_NAME:=Xray-core
 PKG_VERSION:=1.7.5
 PKG_RELEASE:=1
 
-PKG_GOGET:=github.com/XTLS/Xray-core
-
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=15999e5c2aa92abe063cea03803d06b29e37e25b
-PKG_SOURCE_URL:=https://$(PKG_GOGET)
+PKG_SOURCE_URL:=https://github.com/XTLS/Xray-core
 PKG_MIRROR_HASH:=455204e9308c867179499dc9c5e78efe307ae723aa585593b6b05a44b7ef1fb7
 
 PKG_LICENSE:=MPL-2.0
@@ -50,14 +48,14 @@ endef
 Package/xray-core_nohf/description=$(Package/xray-core/description)
 
 GO_LDFLAGS += \
-	-X '$(PKG_GOGET)/core.build=Entware' \
-	-X '$(PKG_GOGET)/core.version=v$(PKG_VERSION)'
+	-X '$(XIMPORTPATH)/core.build=Entware' \
+	-X '$(XIMPORTPATH)/core.version=v$(PKG_VERSION)'
 
 GO_TARGET:=./main
 
 define Package/xray-core/install
 	$(INSTALL_DIR) $(1)/opt/bin
-	$(INSTALL_BIN) $(GO_INSTALL_DIR)/main $(1)/opt/bin/xray
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/main $(1)/opt/bin/xray
 endef
 
 Package/xray-core_nohf/install=$(Package/xray-core/install)

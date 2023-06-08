@@ -1,5 +1,5 @@
---- a/src/github.com/XTLS/Xray-core/infra/conf/xray_test.go
-+++ b/src/github.com/XTLS/Xray-core/infra/conf/xray_test.go
+--- a/infra/conf/xray_test.go
++++ b/infra/conf/xray_test.go
 @@ -48,9 +48,9 @@ func TestXrayConfig(t *testing.T) {
  					"settings": {}
  				},
