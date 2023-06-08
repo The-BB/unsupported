@@ -1,5 +1,5 @@
---- a/src/github.com/filebrowser/filebrowser/cmd/root.go
-+++ b/src/github.com/filebrowser/filebrowser/cmd/root.go
+--- a/cmd/root.go
++++ b/cmd/root.go
 @@ -92,7 +92,7 @@ If you don't set "config", it will look
  
  - ./
