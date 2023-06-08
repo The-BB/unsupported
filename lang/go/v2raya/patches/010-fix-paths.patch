@@ -1,5 +1,5 @@
---- a/src/github.com/v2rayA/v2rayA/service/common/tools.go
-+++ b/src/github.com/v2rayA/v2rayA/service/common/tools.go
+--- a/service/common/tools.go
++++ b/service/common/tools.go
 @@ -177,7 +177,7 @@ func FillEmpty(toFill interface{}, defau
  // IsOpenWrt return true only if the operating system SHOULD be openwrt
  func IsOpenWrt() bool {
@@ -9,8 +9,8 @@
  			return true
  		}
  	}
---- a/src/github.com/v2rayA/v2rayA/service/conf/environmentConfig.go
-+++ b/src/github.com/v2rayA/v2rayA/service/conf/environmentConfig.go
+--- a/service/conf/environmentConfig.go
++++ b/service/conf/environmentConfig.go
 @@ -65,7 +65,7 @@ func initFunc() {
  				params.Config = "$HOME/.config/v2raya"
  			}
@@ -20,8 +20,8 @@
  		}
  	}
  	// replace all dots of the filename with underlines
---- a/src/github.com/v2rayA/v2rayA/service/core/v2ray/asset/asset.go
-+++ b/src/github.com/v2rayA/v2rayA/service/core/v2ray/asset/asset.go
+--- a/service/core/v2ray/asset/asset.go
++++ b/service/core/v2ray/asset/asset.go
 @@ -64,8 +64,8 @@ func GetV2rayLocationAsset(filename stri
  		if runtime.GOOS != "windows" {
  			searchPaths = append(

@@ -8,11 +8,9 @@ PKG_NAME:=v2rayA
 PKG_VERSION:=2.0.5
 PKG_RELEASE:=1
 
-PKG_GOGET:=github.com/v2rayA/v2rayA
-
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=36d4ad948d2d7ebb5690ab42f9ffeb21a016d785
-PKG_SOURCE_URL:=https://$(PKG_GOGET)
+PKG_SOURCE_URL:=https://github.com/v2rayA/v2rayA
 PKG_MIRROR_HASH:=3eeab02aec2326057d7a6cc59ab23adf154fde4c0a8b9cd92948c746606b6426
 
 PKG_LICENSE:=AGPL-3.0-only
@@ -50,12 +48,12 @@ endef
 Package/v2raya_nohf/description=$(Package/v2raya/description)
 
 GO_LDFLAGS += \
-	-X '$(PKG_GOGET)/conf.Version=v$(PKG_VERSION)'
+	-X '$(XIMPORTPATH)/conf.Version=v$(PKG_VERSION)'
 
 GO_SRC_SUBDIR:=service
 
 define Build/Web
-	( cd $(GO_SRC_DIR)/gui; \
+	( cd $(PKG_BUILD_DIR)/gui; \
 		yarn install; \
 		OUTPUT_DIR=../service/server/router/web yarn build; \
 		for file in $$$$(find ../service/server/router/web | grep -v png | grep -v index.html | grep -v .gz); do \
@@ -68,7 +66,7 @@ Hooks/Compile/Pre += Build/Web
 
 define Package/v2raya/install
 	$(INSTALL_DIR) $(1)/opt/bin
-	$(INSTALL_BIN) $(GO_INSTALL_DIR)/v2rayA $(1)/opt/bin/v2raya
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/v2rayA $(1)/opt/bin/v2raya
 endef
 
 Package/v2raya_nohf/install=$(Package/v2raya/install)
