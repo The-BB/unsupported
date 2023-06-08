@@ -3,22 +3,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hugo
-PKG_VERSION:=0.111.3
+PKG_VERSION:=0.113.0
 PKG_RELEASE:=1
 
-PKG_GOGET:=github.com/gohugoio/hugo
-
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=5d4eb5154e1fed125ca8e9b5a0315c4180dab192
-PKG_SOURCE_URL:=https://$(PKG_GOGET)
-PKG_MIRROR_HASH:=77d7b28946d79e55432867770dccfc4e425a608db9b3a47efbbc637b08ceb9da
+PKG_SOURCE_VERSION:=085c1b3d614e23d218ebf9daad909deaa2390c9a
+PKG_SOURCE_URL:=https://github.com/gohugoio/hugo
+PKG_MIRROR_HASH:=02d1f8dfa2598e4160edd5e1329201ac0f8c949c0da9b2d7b8e23b9845e73332
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
 
 PKG_CGO_ENABLED:=1
-PKG_BUILD_PARALLEL:=1
-PKG_USE_MIPS16:=0
 
 include ../goenv.mk
 include $(INCLUDE_DIR)/package.mk
@@ -50,12 +46,11 @@ endef
 
 Package/hugo_nohf/description=$(Package/hugo/description)
 
-GO_BUILD_ARGS += -trimpath
 GO_TAGS:=-tags=extended
 
 define Package/hugo/install
 	$(INSTALL_DIR) $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/hugo $(1)/opt/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/hugo $(1)/opt/bin
 endef
 
 Package/hugo_nohf/install=$(Package/hugo/install)
