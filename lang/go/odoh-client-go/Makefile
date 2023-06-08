@@ -6,11 +6,9 @@ PKG_NAME:=odoh-client-go
 PKG_VERSION:=0.0.1
 PKG_RELEASE:=1
 
-PKG_GOGET:=github.com/cloudflare/odoh-client-go
-
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=8d45d054d3e85da96d5764c0634475deb5e88c4c
-PKG_SOURCE_URL:=https://$(PKG_GOGET)
+PKG_SOURCE_URL:=https://github.com/cloudflare/odoh-client-go
 PKG_MIRROR_HASH:=4eee0f2792a607bf17db7513701e9aa0898f556942fcb8bcc4a58d9821570ca8
 
 PKG_LICENSE:=MIT
@@ -45,19 +43,17 @@ endef
 
 Package/odoh-client-go_nohf/description=$(Package/odoh-client-go/description)
 
-COMMIT_ID:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -9)
-
 GO_BUILD_ARGS += -a
 
 GO_LDFLAGS += \
 	-X 'main.Version=$(PKG_VERSION)' \
-	-X 'main.CommitId=$(COMMIT_ID)'
+	-X 'main.CommitId=$(COMMIT_SHORT)'
 
 GO_TARGET:=./cmd/...
 
 define Package/odoh-client-go/install
 	$(INSTALL_DIR) $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/cmd $(1)/opt/bin/odoh-client
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/cmd $(1)/opt/bin/odoh-client
 endef
 
 Package/odoh-client-go_nohf/install=$(Package/odoh-client-go/install)
