@@ -6,19 +6,15 @@ PKG_NAME:=navidrome
 PKG_VERSION:=0.49.3
 PKG_RELEASE:=1
 
-PKG_GOGET:=github.com/navidrome/navidrome
-
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=8b93962faddff839e4137ab371776b2c8b2e6cd4
-PKG_SOURCE_URL:=https://$(PKG_GOGET)
+PKG_SOURCE_URL:=https://github.com/navidrome/navidrome
 PKG_MIRROR_HASH:=4388ca79faf86fe833bdeac25611cf4b5476a54b905df93ef5371ba59ef69ada
 
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE
 
 PKG_CGO_ENABLED:=1
-PKG_BUILD_PARALLEL:=1
-PKG_USE_MIPS16:=0
 
 PKG_BUILD_DEPENDS:=node/host
 
@@ -60,31 +56,26 @@ endef
 Package/navidrome_nohf/conffiles=$(Package/navidrome/conffiles)
 
 define Build/Web
-	( cd $(GO_SRC_DIR)/ui; npm ci; npm run build; )
+	( cd $(PKG_BUILD_DIR)/ui; npm ci; npm run build; )
 endef
 
 Hooks/Compile/Pre += Build/Web
 
-GIT_SHA:=$(shell echo $(PKG_SOURCE_VERSION) | cut -b -9)
-
-GO_BUILD_ARGS += -trimpath -a
+GO_BUILD_ARGS += -a
 
 GO_LDFLAGS += \
-	-X '$(PKG_GOGET)/consts.gitSha=$(GIT_SHA)' \
-	-X '$(PKG_GOGET)/consts.gitTag=v$(PKG_VERSION)'
+	-X '$(XIMPORTPATH)/consts.gitSha=$(COMMIT_SHORT)' \
+	-X '$(XIMPORTPATH)/consts.gitTag=v$(PKG_VERSION)'
 
 GO_TAGS:=-tags=netgo
 
 define Package/navidrome/install
 	$(INSTALL_DIR) $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/navidrome $(1)/opt/bin
-
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/navidrome $(1)/opt/bin
 	$(INSTALL_DIR) $(1)/opt/etc
-	$(INSTALL_DATA) files/navidrome.toml $(1)/opt/etc
-
+	$(INSTALL_DATA) ./files/navidrome.toml $(1)/opt/etc
 	$(INSTALL_DIR) $(1)/opt/etc/init.d
-	$(INSTALL_BIN) files/S91navidrome $(1)/opt/etc/init.d
-
+	$(INSTALL_BIN) ./files/S91navidrome $(1)/opt/etc/init.d
 	$(INSTALL_DIR) $(1)/opt/data/music
 endef
 

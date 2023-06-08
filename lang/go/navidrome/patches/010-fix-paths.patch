@@ -1,5 +1,5 @@
---- a/src/github.com/navidrome/navidrome/cmd/root.go
-+++ b/src/github.com/navidrome/navidrome/cmd/root.go
+--- a/cmd/root.go
++++ b/cmd/root.go
 @@ -148,7 +148,7 @@ func init() {
  		conf.InitConfig(cfgFile)
  	})
@@ -9,8 +9,8 @@
  	rootCmd.PersistentFlags().BoolVarP(&noBanner, "nobanner", "n", false, `don't show banner`)
  	rootCmd.PersistentFlags().String("musicfolder", viper.GetString("musicfolder"), "folder where your music is stored")
  	rootCmd.PersistentFlags().String("datafolder", viper.GetString("datafolder"), "folder to store application data (DB, cache...), needs write access")
---- a/src/github.com/navidrome/navidrome/conf/configuration.go
-+++ b/src/github.com/navidrome/navidrome/conf/configuration.go
+--- a/conf/configuration.go
++++ b/conf/configuration.go
 @@ -218,8 +218,8 @@ func AddHook(hook func()) {
  }
  
