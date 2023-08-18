@@ -64,7 +64,10 @@ GO_LDFLAGS += \
 GO_VARS += GOGC=off GO111MODULE=on
 
 define Build/Web
-	( cd $(PKG_BUILD_DIR)/frontend; npm ci; npm run build; )
+	( cd $(PKG_BUILD_DIR)/frontend; \
+		npm ci; \
+		NODE_OPTIONS=--openssl-legacy-provider npm run build; \
+	)
 endef
 
 Hooks/Compile/Pre += Build/Web
