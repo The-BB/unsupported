@@ -1,20 +1,24 @@
 --- a/cmd/root.go
 +++ b/cmd/root.go
-@@ -92,7 +92,7 @@ If you don't set "config", it will look
+@@ -90,9 +90,9 @@ environment variables or configuration f
+ If you don't set "config", it will look for a configuration file called
+ .filebrowser.{json, toml, yaml, yml} in the following directories:
  
++- /opt/etc/filebrowser/
  - ./
  - $HOME/
 -- /etc/filebrowser/
-+- /opt/etc/filebrowser/
  
  The precedence of the configuration values are as follows:
  
-@@ -395,7 +395,7 @@ func initConfig() {
+@@ -398,9 +398,9 @@ func initConfig() {
+ 	if cfgFile == "" {
+ 		home, err := homedir.Dir()
  		checkErr(err)
++		v.AddConfigPath("/opt/etc/filebrowser/")
  		v.AddConfigPath(".")
  		v.AddConfigPath(home)
 -		v.AddConfigPath("/etc/filebrowser/")
-+		v.AddConfigPath("/opt/etc/filebrowser/")
  		v.SetConfigName(".filebrowser")
  	} else {
  		v.SetConfigFile(cfgFile)
