@@ -5,13 +5,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2rayA
-PKG_VERSION:=2.1.3
+PKG_VERSION:=2.2.0
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=1396636edd7e81146bbc9032a8e14fb7d5f107e4
+PKG_SOURCE_VERSION:=5b8f19e7a2d54afea25a8b6d1c685e16deb7729b
 PKG_SOURCE_URL:=https://github.com/v2rayA/v2rayA
-PKG_MIRROR_HASH:=982c3457fadb9aa2e7f08cbe69df6d53187b8b82c13075d95353d1147f6dbb36
+PKG_MIRROR_HASH:=6de116a06c389dc12bfa48a76859ddbee5d9dea658bdaa221b9ec3c57289c8a6
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -26,7 +26,7 @@ define Package/v2raya/Default
   SUBMENU:=Web Servers/Proxies
   TITLE:=A Linux web GUI client of Project V
   URL:=https://v2raya.org
-  DEPENDS:=+ca-bundle +iptables +v2ray
+  DEPENDS:=+ca-bundle +iptables
 endef
 
 define Package/v2raya
@@ -56,9 +56,11 @@ define Build/Web
 	( cd $(PKG_BUILD_DIR)/gui; \
 		yarn install; \
 		OUTPUT_DIR=../service/server/router/web yarn build; \
-		for file in $$$$(find ../service/server/router/web | grep -v png | grep -v index.html | grep -v .gz); do \
-			if [ ! -d $$$$file ];then gzip -9 $$$$file; fi; \
-		done; \
+		$(FIND) ../service/server/router/web \
+			\! -name \*.png -a \
+			\! -name \*.gz -a \
+			\! -name index.html -a \
+			! -type d -exec gzip -9 {} +; \
 	)
 endef
 
@@ -67,6 +69,9 @@ Hooks/Compile/Pre += Build/Web
 define Package/v2raya/install
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/v2rayA $(1)/opt/bin/v2raya
+	$(INSTALL_DIR) $(1)/opt/etc/init.d
+	$(INSTALL_BIN) ./files/S24v2raya $(1)/opt/etc/init.d
+	$(INSTALL_DIR) $(1)/opt/etc/v2raya
 endef
 
 Package/v2raya_nohf/install=$(Package/v2raya/install)
