@@ -1,0 +1,10 @@
+// Config file of Xray. This file follows standard JSON format, with comments support.
+// Uncomment entries below to satisfy your needs. Also read our manual for more detail at
+// https://xtls.github.io/en/config/
+{
+  "log": {
+    "access": "/opt/var/log/xray/access.log",
+    "error": "/opt/var/log/xray/error.log",
+    "loglevel": "debug"
+  }
+}

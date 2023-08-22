@@ -47,15 +47,26 @@ endef
 
 Package/xray-core_nohf/description=$(Package/xray-core/description)
 
-GO_LDFLAGS += \
-	-X '$(XIMPORTPATH)/core.build=Entware' \
-	-X '$(XIMPORTPATH)/core.version=v$(PKG_VERSION)'
+define Package/xray-core/conffiles
+/opt/etc/xray/config.json
+endef
+
+Package/xray-core_nohf/conffiles=$(Package/xray-core/conffiles)
+
+GO_LDFLAGS += -buildid=
+
+GO_BUILD_ARGS += -a
 
 GO_TARGET:=./main
 
 define Package/xray-core/install
-	$(INSTALL_DIR) $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/main $(1)/opt/bin/xray
+	$(INSTALL_DIR) $(1)/opt/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/main $(1)/opt/sbin/xray
+	$(INSTALL_DIR) $(1)/opt/etc/init.d
+	$(INSTALL_BIN) ./files/S24xray $(1)/opt/etc/init.d
+	$(INSTALL_DIR) $(1)/opt/etc/xray
+	$(INSTALL_CONF) ./files/config.json.example $(1)/opt/etc/xray/config.json
+	$(INSTALL_DIR) $(1)/opt/var/log/xray
 endef
 
 Package/xray-core_nohf/install=$(Package/xray-core/install)
