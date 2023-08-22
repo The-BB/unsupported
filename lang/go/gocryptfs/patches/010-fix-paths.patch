@@ -1,0 +1,33 @@
+--- a/main.go
++++ b/main.go
+@@ -133,7 +133,7 @@ func main() {
+ 	// mount(1) unsets PATH. Since exec.Command does not handle this case, we set
+ 	// PATH to a default value if it's empty or unset.
+ 	if os.Getenv("PATH") == "" {
+-		os.Setenv("PATH", "/usr/sbin:/usr/bin:/sbin:/bin")
++		os.Setenv("PATH", "/opt/usr/sbin:/opt/usr/bin:/opt/sbin:/opt/bin:/usr/sbin:/usr/bin:/sbin:/bin")
+ 	}
+ 	// Show microseconds in go-fuse debug output (-fusedebug)
+ 	log.SetFlags(log.Lmicroseconds)
+--- a/mount.go
++++ b/mount.go
+@@ -492,7 +492,7 @@ func initGoFuse(rootNode fs.InodeEmbedde
+ func haveFusermount2() bool {
+ 	path, err := exec.LookPath("fusermount")
+ 	if err != nil {
+-		path = "/bin/fusermount"
++		path = "/opt/bin/fusermount"
+ 	}
+ 	cmd := exec.Command(path, "-V")
+ 	var out bytes.Buffer
+--- a/tests/cli/cli_test.go
++++ b/tests/cli/cli_test.go
+@@ -543,7 +543,7 @@ func TestNoexec(t *testing.T) {
+ 	test_helpers.MountOrFatal(t, dir, mnt, "-extpass=echo test", "-noexec")
+ 	defer test_helpers.UnmountPanic(mnt)
+ 	sh := mnt + "/x.sh"
+-	content := `#!/bin/bash
++	content := `#!/bin/sh
+ echo hello
+ `
+ 	err := ioutil.WriteFile(sh, []byte(content), 0755)
