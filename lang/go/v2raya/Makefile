@@ -5,13 +5,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2rayA
-PKG_VERSION:=2.2.0
+PKG_VERSION:=2.2.1
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=5b8f19e7a2d54afea25a8b6d1c685e16deb7729b
+PKG_SOURCE_VERSION:=b121a5f8441ee73a1e64cfc3cdfe7c5c28e57cc7
 PKG_SOURCE_URL:=https://github.com/v2rayA/v2rayA
-PKG_MIRROR_HASH:=6de116a06c389dc12bfa48a76859ddbee5d9dea658bdaa221b9ec3c57289c8a6
+PKG_MIRROR_HASH:=af49fd1cec1dec2395ec12a7f352347b1dc1a8f61c3bdd0c8f0c03e7ab9fcf7e
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -41,8 +41,8 @@ define Package/v2raya_nohf
 endef
 
 define Package/v2raya/description
-  v2rayA is a V2Ray Linux client supporting global transparent proxy,
-  compatible with SS, SSR, Trojan(trojan-go), PingTunnel protocols.
+  A web GUI client of Project V which supports VMess,
+  VLESS, SS, SSR, Trojan, Tuic and Juicity protocols.
 endef
 
 Package/v2raya_nohf/description=$(Package/v2raya/description)

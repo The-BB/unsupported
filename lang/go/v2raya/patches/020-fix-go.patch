@@ -7,4 +7,4 @@
 +go 1.21
  
  require (
- 	github.com/adrg/xdg v0.4.0
+ 	github.com/daeuniverse/outbound v0.0.0-20230819151251-3ce60883d337
