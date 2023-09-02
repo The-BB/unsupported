@@ -1,5 +1,4 @@
-// Config file of Xray. This file follows standard JSON format, with comments support.
-// Uncomment entries below to satisfy your needs. Also read our manual for more detail at
+// Config file of Xray. Also read our manual for more detail at
 // https://xtls.github.io/en/config/
 {
   "log": {
