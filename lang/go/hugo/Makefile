@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hugo
-PKG_VERSION:=0.117.0
+PKG_VERSION:=0.118.2
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=b2f0696cad918fb61420a6aff173eb36662b406e
+PKG_SOURCE_VERSION:=da7983ac4b94d97d776d7c2405040de97e95c03d
 PKG_SOURCE_URL:=https://github.com/gohugoio/hugo
-PKG_MIRROR_HASH:=fab0de0ddd8bee497dd194759df203400372ddd42b05fb82f775daea84af24d5
+PKG_MIRROR_HASH:=781605288896b1cc8d79c21a14330fd3ed28837bf771383d4fbd30aa39319fe6
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -45,6 +45,9 @@ define Package/hugo/description
 endef
 
 Package/hugo_nohf/description=$(Package/hugo/description)
+
+GO_LDFLAGS += \
+	-X '$(XIMPORTPATH)/common/hugo.vendorInfo=Entware'
 
 GO_TAGS:=-tags=extended
 
