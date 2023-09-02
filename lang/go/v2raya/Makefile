@@ -5,13 +5,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2rayA
-PKG_VERSION:=2.2.1
+PKG_VERSION:=2.2.2
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=b121a5f8441ee73a1e64cfc3cdfe7c5c28e57cc7
+PKG_SOURCE_VERSION:=7d3dfd183361f250085ad5b1dc9ffb837594b72c
 PKG_SOURCE_URL:=https://github.com/v2rayA/v2rayA
-PKG_MIRROR_HASH:=af49fd1cec1dec2395ec12a7f352347b1dc1a8f61c3bdd0c8f0c03e7ab9fcf7e
+PKG_MIRROR_HASH:=ff860d7ae312e7c5fd93ca19647ac89f1598cd0fd3eca1e57f85db95e5d5e848
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -72,6 +72,7 @@ define Package/v2raya/install
 	$(INSTALL_DIR) $(1)/opt/etc/init.d
 	$(INSTALL_BIN) ./files/S24v2raya $(1)/opt/etc/init.d
 	$(INSTALL_DIR) $(1)/opt/etc/v2raya
+	$(INSTALL_DIR) $(1)/opt/share/v2ray
 endef
 
 Package/v2raya_nohf/install=$(Package/v2raya/install)
