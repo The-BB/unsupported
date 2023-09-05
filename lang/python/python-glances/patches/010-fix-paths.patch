@@ -1,0 +1,113 @@
+--- a/glances/amps/glances_default.py
++++ b/glances/amps/glances_default.py
+@@ -19,7 +19,7 @@ Configuration file example
+ 
+ [amp_foo]
+ enable=true
+-regex=\/usr\/bin\/foo
++regex=\/opt\/bin\/foo
+ refresh=10
+ one_line=false
+ command=foo status
+--- a/glances/amps/glances_nginx.py
++++ b/glances/amps/glances_nginx.py
+@@ -38,7 +38,7 @@ Configuration file example
+ [amp_nginx]
+ # Nginx status page should be enable (https://easyengine.io/tutorials/nginx/status-page/)
+ enable=true
+-regex=\/usr\/sbin\/nginx
++regex=\/opt\/sbin\/nginx
+ refresh=60
+ one_line=false
+ status_url=http://localhost/nginx_status
+--- a/glances/config.py
++++ b/glances/config.py
+@@ -32,7 +32,7 @@ def user_config_dir():
+     elif MACOS:
+         path = os.path.expanduser('~/Library/Application Support')
+     else:
+-        path = os.environ.get('XDG_CONFIG_HOME') or os.path.expanduser('~/.config')
++        path = os.path.dirname('/opt/etc') or os.environ.get('XDG_CONFIG_HOME') or os.path.expanduser('~/.config')
+     if path is None:
+         path = ''
+     else:
+@@ -53,7 +53,7 @@ def user_cache_dir():
+     elif MACOS:
+         path = os.path.expanduser('~/Library/Caches/glances')
+     else:
+-        path = os.path.join(os.environ.get('XDG_CACHE_HOME') or os.path.expanduser('~/.cache'), 'glances')
++        path = os.path.join(os.path.dirname('/opt/var/cache') or os.environ.get('XDG_CACHE_HOME') or os.path.expanduser('~/.cache'), 'glances')
+ 
+     return path
+ 
+@@ -61,12 +61,12 @@ def user_cache_dir():
+ def system_config_dir():
+     r"""Return the system-wide config dir (full path).
+ 
+-    - Linux, SunOS: /etc/glances
++    - Linux, SunOS: /opt/etc/glances
+     - *BSD, macOS: /usr/local/etc/glances
+     - Windows: %APPDATA%\glances
+     """
+     if LINUX or SUNOS:
+-        path = '/etc'
++        path = '/opt/etc'
+     elif BSD or MACOS:
+         path = '/usr/local/etc'
+     else:
+@@ -82,11 +82,11 @@ def system_config_dir():
+ def default_config_dir():
+     r"""Return the system-wide config dir (full path).
+ 
+-    - Linux, SunOS, *BSD, macOS: /usr/share/doc (as defined in the setup.py files)
++    - Linux, SunOS, *BSD, macOS: /opt/share/doc (as defined in the setup.py files)
+     - Windows: %APPDATA%\glances
+     """
+     if LINUX or SUNOS or BSD or MACOS:
+-        path = '/usr/share/doc'
++        path = '/opt/share/doc'
+     else:
+         path = os.environ.get('APPDATA')
+     if path is None:
+@@ -126,7 +126,7 @@ class Config(object):
+         The list is built taking into account of the OS, priority and location.
+ 
+         * custom path: /path/to/glances
+-        * Linux, SunOS: ~/.config/glances, /etc/glances
++        * Linux, SunOS: /opt/etc/glances
+         * *BSD: ~/.config/glances, /usr/local/etc/glances
+         * macOS: ~/Library/Application Support/glances, /usr/local/etc/glances
+         * Windows: %APPDATA%\glances
+--- a/glances/outputs/glances_curses.py
++++ b/glances/outputs/glances_curses.py
+@@ -686,7 +686,7 @@ class _GlancesCurses(object):
+                 'Process filter pattern: \n\n'
+                 + 'Examples:\n'
+                 + '- .*python.*\n'
+-                + '- /usr/lib.*\n'
++                + '- /opt/lib.*\n'
+                 + '- name:.*nautilus.*\n'
+                 + '- cmdline:.*glances.*\n'
+                 + '- username:nicolargo\n'
+--- a/glances/plugins/glances_smart.py
++++ b/glances/plugins/glances_smart.py
+@@ -12,7 +12,7 @@ Hard disk SMART attributes plugin.
+ Depends on pySMART and smartmontools
+ Must execute as root
+ "usermod -a -G disk USERNAME" is not sufficient unfortunately
+-SmartCTL (/usr/sbin/smartctl) must be in system path for python2.
++SmartCTL (/opt/sbin/smartctl) must be in system path for python2.
+ 
+ Regular PySMART is a python2 library.
+ We are using the pySMART.smartx updated library to support both python 2 and 3.
+--- a/glances/plugins/glances_system.py
++++ b/glances/plugins/glances_system.py
+@@ -56,7 +56,7 @@ def _linux_os_release():
+     ashtray = {}
+     keys = ['NAME', 'VERSION_ID']
+     try:
+-        with open(os.path.join('/etc', 'os-release')) as f:
++        with open(os.path.join('/opt/etc', 'os-release')) as f:
+             for line in f:
+                 for key in keys:
+                     if line.startswith(key):
