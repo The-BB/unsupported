@@ -1,0 +1,100 @@
+--- a/config/config.go
++++ b/config/config.go
+@@ -49,7 +49,7 @@ func IsDebug() bool {
+ func GetBinFolderPath() string {
+ 	binFolderPath := os.Getenv("XUI_BIN_FOLDER")
+ 	if binFolderPath == "" {
+-		binFolderPath = "bin"
++		binFolderPath = "/opt/sbin"
+ 	}
+ 	return binFolderPath
+ }
+@@ -57,11 +57,19 @@ func GetBinFolderPath() string {
+ func GetDBFolderPath() string {
+ 	dbFolderPath := os.Getenv("XUI_DB_FOLDER")
+ 	if dbFolderPath == "" {
+-		dbFolderPath = "/etc/x-ui"
++		dbFolderPath = "/opt/etc/x-ui"
+ 	}
+ 	return dbFolderPath
+ }
+ 
++func GetGeoDBFolderPath() string {
++	geodbFolderPath := os.Getenv("XUI_GEODB_FOLDER")
++	if geodbFolderPath == "" {
++		geodbFolderPath = "/opt/share/xray"
++	}
++	return geodbFolderPath
++}
++
+ func GetDBPath() string {
+ 	return fmt.Sprintf("%s/%s.db", GetDBFolderPath(), GetName())
+ }
+@@ -69,7 +77,7 @@ func GetDBPath() string {
+ func GetLogFolder() string {
+ 	logFolderPath := os.Getenv("XUI_LOG_FOLDER")
+ 	if logFolderPath == "" {
+-		logFolderPath = "/var/log"
++		logFolderPath = "/opt/var/log/xui"
+ 	}
+ 	return logFolderPath
+ }
+--- a/web/service/config.json
++++ b/web/service/config.json
+@@ -1,8 +1,8 @@
+ {
+   "log": {
+     "loglevel": "warning",
+-    "access": "./access.log",
+-    "error": "./error.log"
++    "access": "/opt/var/log/xui/access.log",
++    "error": "/opt/var/log/xui/error.log"
+   },
+   "api": {
+     "tag": "api",
+--- a/web/service/server.go
++++ b/web/service/server.go
+@@ -164,7 +164,7 @@ func (s *ServerService) GetStatus(lastSt
+ 		status.Swap.Total = swapInfo.Total
+ 	}
+ 
+-	distInfo, err := disk.Usage("/")
++	distInfo, err := disk.Usage("/opt")
+ 	if err != nil {
+ 		logger.Warning("get dist usage failed:", err)
+ 	} else {
+--- a/xray/process.go
++++ b/xray/process.go
+@@ -23,7 +23,7 @@ import (
+ )
+ 
+ func GetBinaryName() string {
+-	return fmt.Sprintf("xray-%s-%s", runtime.GOOS, runtime.GOARCH)
++	return fmt.Sprintf("xray")
+ }
+ 
+ func GetBinaryPath() string {
+@@ -31,19 +31,19 @@ func GetBinaryPath() string {
+ }
+ 
+ func GetConfigPath() string {
+-	return config.GetBinFolderPath() + "/config.json"
++	return config.GetDBFolderPath() + "/config.json"
+ }
+ 
+ func GetGeositePath() string {
+-	return config.GetBinFolderPath() + "/geosite.dat"
++	return config.GetGeoDBFolderPath() + "/geosite.dat"
+ }
+ 
+ func GetGeoipPath() string {
+-	return config.GetBinFolderPath() + "/geoip.dat"
++	return config.GetGeoDBFolderPath() + "/geoip.dat"
+ }
+ 
+ func GetIranPath() string {
+-	return config.GetBinFolderPath() + "/iran.dat"
++	return config.GetGeoDBFolderPath() + "/iran.dat"
+ }
+ 
+ func GetIPLimitLogPath() string {
