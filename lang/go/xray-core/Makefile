@@ -66,10 +66,29 @@ define Package/xray-core/install
 	$(INSTALL_BIN) ./files/S24xray $(1)/opt/etc/init.d
 	$(INSTALL_DIR) $(1)/opt/etc/xray
 	$(INSTALL_CONF) ./files/config.json.example $(1)/opt/etc/xray/config.json
+	$(INSTALL_DIR) $(1)/opt/share/xray
 	$(INSTALL_DIR) $(1)/opt/var/log/xray
 endef
 
 Package/xray-core_nohf/install=$(Package/xray-core/install)
+
+define Package/xray-core/postinst
+#!/bin/sh
+
+ansi_blue="\033[1;34m"
+ansi_white="\033[1;37m"
+ansi_std="\033[0;0m"
+
+URL="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download"
+
+printf "$$ansi_blue %s $$ansi_white %s $$ansi_std\n" "Info:" "download/install geodat manually:"
+printf "\t %s \n" "wget -O /opt/share/xray/geoip.dat $$URL/geoip.dat"
+printf "\t %s \n" "wget -O /opt/share/xray/geosite.dat $$URL/geosite.dat"
+printf "\t$$ansi_white%s$$ansi_std\n" "or"
+printf "\t %s \n" "opkg install v2ray-geoip v2ray-geosite"
+endef
+
+Package/xray-core_nohf/postinst=$(Package/xray-core/postinst)
 
 $(eval $(call BuildPackage,xray-core))
 $(eval $(call BuildPackage,xray-core_nohf))
