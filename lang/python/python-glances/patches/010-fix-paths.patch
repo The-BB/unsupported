@@ -78,6 +78,30 @@
          * *BSD: ~/.config/glances, /usr/local/etc/glances
          * macOS: ~/Library/Application Support/glances, /usr/local/etc/glances
          * Windows: %APPDATA%\glances
+--- a/glances/logger.py
++++ b/glances/logger.py
+@@ -34,8 +34,8 @@ if (
+     safe_makedirs(os.path.join(os.environ['XDG_CACHE_HOME'], 'glances'))
+     LOG_FILENAME = os.path.join(os.environ['XDG_CACHE_HOME'], 'glances', 'glances.log')
+ elif os.path.isdir(_XDG_CACHE_HOME) and os.access(_XDG_CACHE_HOME, os.W_OK):
+-    safe_makedirs(os.path.join(_XDG_CACHE_HOME, 'glances'))
+-    LOG_FILENAME = os.path.join(_XDG_CACHE_HOME, 'glances', 'glances.log')
++    safe_makedirs('/opt/var/log')
++    LOG_FILENAME = '/opt/var/log/glances.log'
+ else:
+     LOG_FILENAME = os.path.join(tempfile.gettempdir(), 'glances-{}.log'.format(getpass.getuser()))
+ 
+--- a/glances/outdated.py
++++ b/glances/outdated.py
+@@ -44,7 +44,7 @@ class Outdated(object):
+         """Init the Outdated class"""
+         self.args = args
+         self.config = config
+-        self.cache_dir = user_cache_dir()
++        self.cache_dir = '/opt/var/cache/glances'
+         self.cache_file = os.path.join(self.cache_dir, 'glances-version.db')
+ 
+         # Set default value...
 --- a/glances/outputs/glances_curses.py
 +++ b/glances/outputs/glances_curses.py
 @@ -686,7 +686,7 @@ class _GlancesCurses(object):
