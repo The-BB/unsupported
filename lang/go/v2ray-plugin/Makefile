@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2ray-plugin
-PKG_VERSION:=1.3.2
+PKG_VERSION:=5.7.0
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=ddd7ab46b4aeee0ca8b272efed9d7da3e3a6e52c
-PKG_SOURCE_URL:=https://github.com/shadowsocks/v2ray-plugin
-PKG_MIRROR_HASH:=e90f118dc2603f34dbf01e120b912b3c479ce464106a2b8a22da75bf60ae6f0a
+PKG_SOURCE_VERSION:=ae6ce313002c3f55a074dd3e0b6581afb3f8d715
+PKG_SOURCE_URL:=https://github.com/teddysun/v2ray-plugin
+PKG_MIRROR_HASH:=36af5b5c2839955155cdcb5a77c213670230fa5351a885f7aca9b7e40794dfe9
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -23,7 +23,7 @@ define Package/v2ray-plugin/Default
   CATEGORY:=Network
   SUBMENU:=Web Servers/Proxies
   TITLE:=A SIP003 plugin based on v2ray
-  URL:=https://github.com/shadowsocks/v2ray-plugin
+  URL:=https://github.com/teddysun/v2ray-plugin
 endef
 
 define Package/v2ray-plugin
@@ -43,7 +43,6 @@ endef
 
 Package/v2ray-plugin_nohf/description=$(Package/v2ray-plugin/description)
 
-GO_BUILD_ARGS += -a
 GO_LDFLAGS += -X 'main.VERSION=v$(PKG_VERSION)'
 
 define Package/v2ray-plugin/install
