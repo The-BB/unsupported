@@ -2,7 +2,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python-flask-themes2
+PKG_NAME:=flask-themes2
 PKG_VERSION:=1.0.0
 PKG_RELEASE:=1
 
@@ -22,8 +22,7 @@ define Package/python3-flask-themes2
   SUBMENU:=Python
   TITLE:=Easily theme your Flask app
   URL:=https://github.com/sysr-q/flask-themes2
-  DEPENDS:= \
-	+python3-flask
+  DEPENDS:=+python3-flask
 endef
 
 define Package/python3-flask-themes2/description
