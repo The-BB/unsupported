@@ -2,7 +2,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python-webencodings
+PKG_NAME:=webencodings
 PKG_VERSION:=0.5.1
 PKG_RELEASE:=1
 
@@ -22,8 +22,7 @@ define Package/python3-webencodings
   SUBMENU:=Python
   TITLE:=Character encoding for the web
   URL:=https://github.com/gsnedders/python-webencodings
-  DEPENDS:= \
-	+python3-urllib
+  DEPENDS:=+python3-urllib
 endef
 
 define Package/python3-webencodings/description
