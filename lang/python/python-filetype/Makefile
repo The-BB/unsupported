@@ -2,12 +2,12 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python3-filetype
-PKG_VERSION:=1.0.7
+PKG_NAME:=filetype
+PKG_VERSION:=1.2.0
 PKG_RELEASE:=1
 
 PYPI_NAME:=filetype
-PKG_HASH:=da393ece8d98b47edf2dd5a85a2c8733e44b769e32c71af4cd96ed8d38d96aa7
+PKG_HASH:=66b56cd6474bf41d8c54660347d37afcc3f7d1970648de365c102ef77548aadb
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -22,8 +22,7 @@ define Package/python3-filetype
   SUBMENU:=Python
   TITLE:=Infer file type and MIME type of any file/buffer
   URL:=https://github.com/h2non/filetype.py
-  DEPENDS:= \
-	+python3-light
+  DEPENDS:=+python3-light
 endef
 
 define Package/python3-filetype/description
