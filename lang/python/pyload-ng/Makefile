@@ -72,6 +72,9 @@ define Package/pyload-ng/description
   The free and open-source Download Manager written in pure Python.
 endef
 
+# XXX dev72
+PYTHON3_PKG_SETUP_VARS += PYLOAD_BUILD=72
+
 # FIXME plugins don`t work if they compiled into bytecode
 define Package/pyload-ng/install
 	$(INSTALL_DIR) $(1)/opt/bin
