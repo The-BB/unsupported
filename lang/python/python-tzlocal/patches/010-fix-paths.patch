@@ -1,0 +1,47 @@
+--- a/tzlocal/unix.py
++++ b/tzlocal/unix.py
+@@ -17,7 +17,7 @@ _cache_tz_name = None
+ 
+ log = logging.getLogger("tzlocal")
+ 
+-def _get_localzone_name(_root="/"):
++def _get_localzone_name(_root="/opt/"):
+     """Tries to find the local timezone configuration.
+ 
+     This method finds the timezone name, if it can, or it returns None.
+@@ -140,7 +140,7 @@ def _get_localzone_name(_root="/"):
+         if len(found_configs) > 1:
+             # Uh-oh, multiple configs. See if they match:
+             unique_tzs = set()
+-            zoneinfopath = os.path.join(_root, "usr", "share", "zoneinfo")
++            zoneinfopath = os.path.join(_root, "share", "zoneinfo")
+             directory_depth = len(zoneinfopath.split(os.path.sep))
+ 
+             for tzname in found_configs.values():
+@@ -161,7 +161,7 @@ def _get_localzone_name(_root="/"):
+         return list(found_configs.values())[0]
+ 
+ 
+-def _get_localzone(_root="/"):
++def _get_localzone(_root="/opt/"):
+     """Creates a timezone object from the timezone name.
+ 
+     If there is no timezone config, it will try to create a file from the
+@@ -180,7 +180,7 @@ def _get_localzone(_root="/"):
+     if tzname is None:
+         # No explicit setting existed. Use localtime
+         log.debug("No explicit setting existed. Use localtime")
+-        for filename in ("etc/localtime", "usr/local/etc/localtime"):
++        for filename in ("etc/localtime"):
+             tzpath = os.path.join(_root, filename)
+ 
+             if not os.path.exists(tzpath):
+@@ -194,7 +194,7 @@ def _get_localzone(_root="/"):
+     else:
+         tz = zoneinfo.ZoneInfo(tzname)
+ 
+-    if _root == "/":
++    if _root == "/opt/":
+         # We are using a file in etc to name the timezone.
+         # Verify that the timezone specified there is actually used:
+         utils.assert_tz_offset(tz, error=False)

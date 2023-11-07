@@ -2,15 +2,17 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python3-tzlocal
-PKG_VERSION:=3.0
+PKG_NAME:=tzlocal
+PKG_VERSION:=5.0.1
 PKG_RELEASE:=1
 
 PYPI_NAME:=tzlocal
-PKG_HASH:=f4e6e36db50499e0d92f79b67361041f048e2609d166e93456b50746dc4aef12
+PKG_HASH:=46eb99ad4bdb71f3f72b7d24f4267753e240944ecfc16f25d2719ba89827a803
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
+
+PKG_BUILD_DEPENDS:=python-wheel/host
 
 include $(TOPDIR)/feeds/packages/lang/python/pypi.mk
 include $(INCLUDE_DIR)/package.mk
@@ -24,7 +26,6 @@ define Package/python3-tzlocal
   URL:=https://github.com/regebro/tzlocal
   DEPENDS:= \
 	+python3-logging \
-	+python3-tzdata \
 	+python3-urllib \
 	+python3-xml
 endef
