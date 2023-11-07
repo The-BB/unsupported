@@ -2,7 +2,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python-genshi
+PKG_NAME:=genshi
 PKG_VERSION:=0.7.7
 PKG_RELEASE:=1
 
