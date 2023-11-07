@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pyload-ng
-PKG_VERSION:=0.5.0b3.dev72
+PKG_VERSION:=0.5.0b3.dev74
 PKG_RELEASE:=1
 
 PYPI_NAME:=pyload_ng
 PYPI_SOURCE_NAME:=pyload-ng
-PKG_HASH:=a5c6c9736dc5ca587f26859199b6660bcc54cd4aa1d9e8fa813f81db0f031c54
+PKG_HASH:=55904c9e4a4932f3f923ce336f31a223c3014224db9e923a69c8327a1e099115
 
 PKG_LICENSE:=AGPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE.md
@@ -72,8 +72,8 @@ define Package/pyload-ng/description
   The free and open-source Download Manager written in pure Python.
 endef
 
-# XXX dev72
-PYTHON3_PKG_SETUP_VARS += PYLOAD_BUILD=72
+# XXX dev74
+PYTHON3_PKG_SETUP_VARS += PYLOAD_BUILD=74
 
 # FIXME plugins don`t work if they compiled into bytecode
 define Package/pyload-ng/install
