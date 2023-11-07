@@ -11,7 +11,7 @@
  }
 --- a/main.go
 +++ b/main.go
-@@ -31,7 +31,7 @@ var staticZip string
+@@ -33,7 +33,7 @@ var staticZip string
  var staticFS fs.FS
  
  func init() {
