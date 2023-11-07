@@ -20,7 +20,7 @@ define Package/python3-colorlog
   SECTION:=lang
   CATEGORY:=Languages
   SUBMENU:=Python
-  TITLE:=A colored formatter for the python logging module
+  TITLE:=Log formatting with colors
   URL:=https://github.com/borntyping/python-colorlog
   DEPENDS:=+python3-logging
 endef
