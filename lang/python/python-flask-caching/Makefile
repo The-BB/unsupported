@@ -2,12 +2,12 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python3-flask-caching
-PKG_VERSION:=1.10.1
+PKG_NAME:=flask-caching
+PKG_VERSION:=2.0.2
 PKG_RELEASE:=1
 
 PYPI_NAME:=Flask-Caching
-PKG_HASH:=cf19b722fcebc2ba03e4ae7c55b532ed53f0cbf683ce36fafe5e881789a01c00
+PKG_HASH:=24b60c552d59a9605cc1b6a42c56cdb39a82a28dab4532bbedb9222ae54ecb4e
 
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE
@@ -23,6 +23,7 @@ define Package/python3-flask-caching
   TITLE:=Adds easy cache support to Flask
   URL:=https://github.com/sh4nks/flask-caching
   DEPENDS:= \
+	+python3-cachelib \
 	+python3-flask \
 	+python3-logging
 endef
