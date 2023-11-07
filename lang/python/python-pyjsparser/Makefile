@@ -2,7 +2,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python3-pyjsparser
+PKG_NAME:=pyjsparser
 PKG_VERSION:=2.7.1
 PKG_RELEASE:=1
 
@@ -22,8 +22,7 @@ define Package/python3-pyjsparser
   SUBMENU:=Python
   TITLE:=Fast JavaScript parser for Python
   URL:=https://github.com/PiotrDabkowski/pyjsparser
-  DEPENDS:= \
-	+python3-codecs
+  DEPENDS:=+python3-codecs
 endef
 
 define Package/python3-pyjsparser/description
