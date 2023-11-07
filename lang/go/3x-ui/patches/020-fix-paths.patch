@@ -41,13 +41,11 @@
  }
 --- a/web/service/config.json
 +++ b/web/service/config.json
-@@ -1,8 +1,8 @@
+@@ -1,7 +1,7 @@
  {
    "log": {
      "loglevel": "warning",
--    "access": "./access.log",
 -    "error": "./error.log"
-+    "access": "/opt/var/log/xui/access.log",
 +    "error": "/opt/var/log/xui/error.log"
    },
    "api": {
@@ -74,7 +72,7 @@
  }
  
  func GetBinaryPath() string {
-@@ -31,19 +31,19 @@ func GetBinaryPath() string {
+@@ -31,15 +31,15 @@ func GetBinaryPath() string {
  }
  
  func GetConfigPath() string {
@@ -90,11 +88,6 @@
  func GetGeoipPath() string {
 -	return config.GetBinFolderPath() + "/geoip.dat"
 +	return config.GetGeoDBFolderPath() + "/geoip.dat"
- }
- 
- func GetIranPath() string {
--	return config.GetBinFolderPath() + "/iran.dat"
-+	return config.GetGeoDBFolderPath() + "/iran.dat"
  }
  
  func GetIPLimitLogPath() string {

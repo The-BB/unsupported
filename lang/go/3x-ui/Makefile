@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=3x-ui
-PKG_VERSION:=1.7.8
+PKG_VERSION:=1.7.9
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=045c549937bda65e3fc422d1232af0dc12735c9d
+PKG_SOURCE_VERSION:=6e6424a0852ddc8cb92bb744c63859a2093fbe54
 PKG_SOURCE_URL:=https://github.com/MHSanaei/3x-ui
-PKG_MIRROR_HASH:=b351c3c4ba0f2d3e98cb4549d52fcbad94860ac983097c1ff6ff344608c1e545
+PKG_MIRROR_HASH:=ed52a2d4a9e97f3c47f94455ae2fb5fc66b1113fa215db4a5e820b46af026ca9
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -62,7 +62,7 @@ define Package/3x-ui/postinst
 
 ansi_red="\033[1;31m"
 ansi_white="\033[1;37m"
-ansi_std="\033[0;0m"
+ansi_std="\033[0m"
 
 if ! xray version > /dev/null 2>&1; then
   printf "\n$$ansi_red %s $$ansi_white %s $$ansi_std\n" "ERROR:" "xray not found!"
