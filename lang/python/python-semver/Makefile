@@ -2,7 +2,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python-semver
+PKG_NAME:=semver
 PKG_VERSION:=2.10.2
 PKG_RELEASE:=1
 
@@ -22,8 +22,7 @@ define Package/python3-semver
   SUBMENU:=Python
   TITLE:=Python helper for Semantic Versioning
   URL:=https://semver.org/
-  DEPENDS:= \
-	+python3-pydoc
+  DEPENDS:=+python3-pydoc
 endef
 
 define Package/python3-semver/description
