@@ -3,14 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=alist
-PKG_VERSION:=3.26.0
+PKG_VERSION:=3.28.0
 PKG_RELEASE:=1
-SOURCE_DATE:=2023-08-21
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=8c3337b88bb7048eb4ab94b7d0be76b779e38709
+PKG_SOURCE_DATE:=2023-09-22
+PKG_SOURCE_VERSION:=a64dd4885ece1709e5287e07dbb4d6832fd1d3b1
 PKG_SOURCE_URL:=https://github.com/alist-org/alist
-PKG_MIRROR_HASH:=b87073269bcb7f4ab2ca2047d4bd4e05673867127a19553fffc16818ed140668
+PKG_MIRROR_HASH:=08e6126977aea1b6f21ce66c341c56511f41fee93479dfcb8ddfdc00593220fb
 
 PKG_LICENSE:=AGPL-3.0
 PKG_LICENSE_FILES:=LICENSE
@@ -49,11 +49,11 @@ endef
 Package/alist_nohf/description=$(Package/alist/description)
 
 define Download/alist-web
-  VERSION:=06148660c80341af0f48dead0c57b039b21c1c8a
+  VERSION:=5f72ca8bcc8bdb0c1f83913ae3b9f22e0a67531f
   SUBDIR:=alist-web
   FILE:=alist-web-$$(VERSION).tar.xz
   URL:=https://github.com/alist-org/alist-web.git
-  MIRROR_HASH:=f1b5b6592b4c967830ec100928c6ccdd92c048bd3105fae31e59f5dd97fe9cf4
+  MIRROR_HASH:=16675f912b6dfe51a68e4a37ae291c59d6a5a294ea5a99178da30473ebfd6e3a
   PROTO:=git
 endef
 
@@ -85,7 +85,7 @@ GO_VER:=$(shell $(GO_BIN) version | sed 's/go version //;s,/.*,/$(GOARCH),')
 WEB_COMMIT:=$(shell echo $(VERSION) | cut -b -9)
 
 GO_LDFLAGS += \
-	-X '$(XIMPORTPATH)/v3/internal/conf.BuiltAt=$(SOURCE_DATE)' \
+	-X '$(XIMPORTPATH)/v3/internal/conf.BuiltAt=$(PKG_SOURCE_DATE)' \
 	-X '$(XIMPORTPATH)/v3/internal/conf.GoVersion=$(GO_VER)' \
 	-X '$(XIMPORTPATH)/v3/internal/conf.GitAuthor=Entware' \
 	-X '$(XIMPORTPATH)/v3/internal/conf.GitCommit=$(COMMIT_SHORT)' \
