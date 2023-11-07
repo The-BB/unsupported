@@ -2,7 +2,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python-bitmath
+PKG_NAME:=bitmath
 PKG_VERSION:=1.3.3.1
 PKG_RELEASE:=1
 
@@ -22,8 +22,7 @@ define Package/python3-bitmath
   SUBMENU:=Python
   TITLE:=module for representing and manipulating file sizes
   URL:=https://github.com/tbielawa/bitmath
-  DEPENDS:= \
-	+python3-light
+  DEPENDS:=+python3-light
 endef
 
 define Package/python3-bitmath/description
