@@ -2,12 +2,12 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python3-js2py
-PKG_VERSION:=0.71
+PKG_NAME:=js2py
+PKG_VERSION:=0.74
 PKG_RELEASE:=1
 
 PYPI_NAME:=Js2Py
-PKG_HASH:=a41b1009dd1498ae7d436bfa5ac952a08ca92a4bb9e31dca6e8bb966b49f7fce
+PKG_HASH:=39f3a6aa8469180efba3c8677271df27c31332fd1b471df1af2af58b87b8972f
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE.md
@@ -23,6 +23,7 @@ define Package/python3-js2py
   TITLE:=Pure Python JavaScript Translator/Interpreter
   URL:=https://github.com/h2non/filetype.py
   DEPENDS:= \
+	+python3-codecs \
 	+python3-pyjsparser \
 	+python3-six \
 	+python3-tzlocal
