@@ -2,15 +2,17 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python3-soupsieve
-PKG_VERSION:=2.0.1
+PKG_NAME:=soupsieve
+PKG_VERSION:=2.4.1
 PKG_RELEASE:=1
 
 PYPI_NAME:=soupsieve
-PKG_HASH:=a59dc181727e95d25f781f0eb4fd1825ff45590ec8ff49eadfd7f1a537cc0232
+PKG_HASH:=89d12b2d5dfcd2c9e8c22326da9d9aa9cb3dfab0a83a024f05704076ee8d35ea
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE.md
+
+PKG_BUILD_DEPENDS:=python-hatchling/host
 
 include $(TOPDIR)/feeds/packages/lang/python/pypi.mk
 include $(INCLUDE_DIR)/package.mk
@@ -22,8 +24,7 @@ define Package/python3-soupsieve
   SUBMENU:=Python
   TITLE:=A modern CSS selector implementation for Beautiful Soup
   URL:=https://github.com/facelessuser/soupsieve
-  DEPENDS:= \
-	+python3-codecs
+  DEPENDS:=+python3-codecs
 endef
 
 define Package/python3-soupsieve/description
