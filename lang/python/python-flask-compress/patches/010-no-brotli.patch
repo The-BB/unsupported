@@ -9,7 +9,7 @@
  from flask import request, after_this_request, current_app
  
  
-@@ -229,9 +229,9 @@ class Compress(object):
+@@ -231,9 +231,9 @@ class Compress(object):
          elif algorithm == 'deflate':
              return zlib.compress(response.get_data(),
                                   app.config['COMPRESS_DEFLATE_LEVEL'])
@@ -35,5 +35,5 @@
 -        'brotli'
 +        'flask'
      ],
-     classifiers=[
-         'Environment :: Web Environment',
+     setup_requires=[
+         'setuptools_scm',

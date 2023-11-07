@@ -2,15 +2,17 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python-flask-compress
-PKG_VERSION:=1.10.1
+PKG_NAME:=flask-compress
+PKG_VERSION:=1.13
 PKG_RELEASE:=1
 
 PYPI_NAME:=Flask-Compress
-PKG_HASH:=28352387efbbe772cfb307570019f81957a13ff718d994a9125fa705efb73680
+PKG_HASH:=ee96f18bf9b00f2deb4e3406ca4a05093aa80e2ef0578525a3b4d32ecdff129d
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE.txt
+
+PKG_BUILD_DEPENDS:=python-setuptools-scm/host python-wheel/host
 
 include $(TOPDIR)/feeds/packages/lang/python/pypi.mk
 include $(INCLUDE_DIR)/package.mk
@@ -22,8 +24,7 @@ define Package/python3-flask-compress
   SUBMENU:=Python
   TITLE:=Compress responses in your Flask app
   URL:=https://github.com/colour-science/flask-compress
-  DEPENDS:= \
-	+python3-flask
+  DEPENDS:=+python3-flask
 endef
 
 define Package/python3-flask-compress/description
