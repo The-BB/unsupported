@@ -1,0 +1,31 @@
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -7,7 +7,6 @@ requires = [
+ 
+     # Plugins
+     "setuptools_scm[toml]>=3.5",
+-    "setuptools_scm_git_archive>=1.1",
+ ]
+ build-backend = "setuptools.build_meta"
+ 
+--- a/requirements/dist-build-constraints.in
++++ b/requirements/dist-build-constraints.in
+@@ -6,7 +6,6 @@ setuptools >= 34.4
+ 
+ # Plugins
+ setuptools_scm[toml] >= 3.5
+-setuptools_scm_git_archive >= 1.1
+ 
+ # Dynamic (coming from setuptools' PEP 517 build backend)
+ wheel
+--- a/setup.cfg
++++ b/setup.cfg
+@@ -55,7 +55,7 @@ packages = find:
+ include_package_data = True
+ setup_requires = 
+ 	setuptools_scm>=1.15.0
+-	setuptools_scm_git_archive>=1.0
++
+ install_requires = 
+ 	importlib_metadata; python_version < '3.8'
+ 	more_itertools >= 2.6

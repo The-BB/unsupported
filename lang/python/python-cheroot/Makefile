@@ -2,17 +2,17 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python-cheroot
-PKG_VERSION:=8.4.8
+PKG_NAME:=cheroot
+PKG_VERSION:=10.0.0
 PKG_RELEASE:=1
 
 PYPI_NAME:=cheroot
-PKG_HASH:=1089c28a9c320d19fdf9a4b0ed6ace23a0948db1c171a36ac985f3741bc62865
+PKG_HASH:=59c4a1877fef9969b3c3c080caaaf377e2780919437853fc0d32a9df40b311f0
 
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE.md
 
-HOST_PYTHON3_PACKAGE_BUILD_DEPENDS:=setuptools-scm
+PKG_BUILD_DEPENDS:=python-setuptools-scm/host
 
 include $(TOPDIR)/feeds/packages/lang/python/pypi.mk
 include $(INCLUDE_DIR)/package.mk
@@ -32,8 +32,7 @@ define Package/python3-cheroot
 	+python3-urllib
   DEPENDS+= \
 	+python3-jaraco-functools \
-	+python3-more-itertools \
-	+python3-six
+	+python3-more-itertools
 endef
 
 define Package/python3-cheroot/description
