@@ -2,15 +2,17 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python3-jaraco-functools
-PKG_VERSION:=3.0.1
+PKG_NAME:=jaraco-functools
+PKG_VERSION:=3.8.1
 PKG_RELEASE:=1
 
 PYPI_NAME:=jaraco.functools
-PKG_HASH:=9fedc4be3117512ca3e03e1b2ffa7a6a6ffa589bfb7d02bfb324e55d493b94f4
+PKG_HASH:=e96a0d4ea455005a4092ce89a69ea0f7fb7e22807ad3b1008f9bf70c48d1cf2e
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
+
+PKG_BUILD_DEPENDS:=python-setuptools-scm/host
 
 include $(TOPDIR)/feeds/packages/lang/python/pypi.mk
 include $(INCLUDE_DIR)/package.mk
@@ -22,8 +24,7 @@ define Package/python3-jaraco-functools
   SUBMENU:=Python
   TITLE:=Functools like those found in stdlib
   URL:=https://github.com/jaraco/jaraco.functools
-  DEPENDS:= \
-	+python3-more-itertools
+  DEPENDS:=+python3-more-itertools
 endef
 
 define Package/python3-jaraco-functools/description
