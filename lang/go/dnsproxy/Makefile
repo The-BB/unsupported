@@ -5,13 +5,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dnsproxy
-PKG_VERSION:=0.54.0
+PKG_VERSION:=0.56.3
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=ac2b1f998741220257077ec7bff8c353d51fcdf8
+PKG_SOURCE_DATE:=2023-10-23
+PKG_SOURCE_VERSION:=39f15ce27a0ad226a083fe0f3102366d85e561c4
 PKG_SOURCE_URL:=https://github.com/AdguardTeam/dnsproxy
-PKG_MIRROR_HASH:=4e5ce6a23d222222b2b3adb83938379e17197437042f1f3aa2da6998fce0495a
+PKG_MIRROR_HASH:=c7240e300472cc6a1897f60c9794f2a69cf08b569eef99681abb2150ab23219c
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -55,7 +56,12 @@ endef
 
 Package/dnsproxy_nohf/conffiles=$(Package/dnsproxy/conffiles)
 
-GO_LDFLAGS += -X 'main.VersionString=$(PKG_VERSION)'
+GO_LDFLAGS += \
+	-X '$(XIMPORTPATH)/internal/version.branch=master' \
+	-X '$(XIMPORTPATH)/internal/version.committime=$(PKG_SOURCE_DATE)' \
+	-X '$(XIMPORTPATH)/internal/version.revision=$(COMMIT_SHORT)' \
+	-X '$(XIMPORTPATH)/internal/version.version=$(PKG_VERSION)'
+
 GO_VARS += GO111MODULE=on
 
 define Package/dnsproxy/install
