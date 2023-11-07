@@ -3,14 +3,17 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pyload-ng
-PKG_VERSION:=0.5.0b3.dev60
+PKG_VERSION:=0.5.0b3.dev72
 PKG_RELEASE:=1
 
-PYPI_NAME:=pyload-ng
-PKG_HASH:=d3c3e685bf69e871809d314cadb39f27aa8f429a026b1a5b45f5a535c5c01503
+PYPI_NAME:=pyload_ng
+PYPI_SOURCE_NAME:=pyload-ng
+PKG_HASH:=a5c6c9736dc5ca587f26859199b6660bcc54cd4aa1d9e8fa813f81db0f031c54
 
 PKG_LICENSE:=AGPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE.md
+
+PKG_BUILD_DEPENDS:=python-wheel/host
 
 include $(TOPDIR)/feeds/packages/lang/python/pypi.mk
 include $(INCLUDE_DIR)/package.mk
@@ -32,6 +35,7 @@ define Package/pyload-ng
 	+python3-openssl \
 	+python3-sqlite3 \
 	+python3-urllib \
+	+python3-uuid \
 	+python3-xml
 ## install
   DEPENDS+= \
@@ -44,7 +48,7 @@ define Package/pyload-ng
 	+python3-flask-babel \
 	+python3-flask-caching \
 	+python3-flask-compress \
-	+python3-flask-session \
+	+python3-flask-session2 \
 	+python3-flask-themes2 \
 	+python3-js2py \
 	+python3-semver \
@@ -59,7 +63,7 @@ define Package/pyload-ng
 	+python3-pyopenssl \
 	+python3-send2trash \
 	+python3-slixmpp
-  EXTRA_DEPENDS:=coreutils-nohup
+  EXTRA_DEPENDS:=coreutils-nohup,
 # rust-lang pkg
   EXTRA_DEPENDS+=python3-cryptography
 endef
