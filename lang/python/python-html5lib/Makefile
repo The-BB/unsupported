@@ -2,7 +2,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python-html5lib
+PKG_NAME:=html5lib
 PKG_VERSION:=1.1
 PKG_RELEASE:=1
 
