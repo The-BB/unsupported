@@ -2,15 +2,17 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=python-beautifulsoup4
-PKG_VERSION:=4.9.1
+PKG_NAME:=beautifulsoup4
+PKG_VERSION:=4.12.2
 PKG_RELEASE:=1
 
 PYPI_NAME:=beautifulsoup4
-PKG_HASH:=73cc4d115b96f79c7d77c1c7f7a0a8d4c57860d1041df407dd1aae7f07a77fd7
+PKG_HASH:=492bbc69dca35d12daac71c4db1bfff0c876c00ef4a2ffacce226d4638eb72da
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING.txt LICENSE
+
+PKG_BUILD_DEPENDS:=python-hatchling/host
 
 include $(TOPDIR)/feeds/packages/lang/python/pypi.mk
 include $(INCLUDE_DIR)/package.mk
