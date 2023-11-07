@@ -4,7 +4,8 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=stunserver
 PKG_VERSION:=1.2.16
-PKG_RELEASE:=1
+# deps openssl 3.x
+PKG_RELEASE:=2
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=cfadf9c3836d5ae63a682913de24ba085df924f3
