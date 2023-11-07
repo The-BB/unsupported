@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=filebrowser
-PKG_VERSION:=2.24.2
+PKG_VERSION:=2.26.0
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=184b7c14f277e5363c0e1b6d9721fc5ab87dd079
+PKG_SOURCE_VERSION:=a4cb813ddf30682e67141cae482e6107355c90f2
 PKG_SOURCE_URL:=https://github.com/filebrowser/filebrowser
-PKG_MIRROR_HASH:=3859bbffd6012e41f5da765bf6b62fdfb31b2508d36fa3cb3f021a6bdb9813f3
+PKG_MIRROR_HASH:=f329b643e79b0af94c4f089db8a398eb16f63dfb8660a628071f3c1ddcc5c7df
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -54,8 +54,6 @@ define Package/filebrowser/conffiles
 endef
 
 Package/filebrowser_nohf/conffiles=$(Package/filebrowser/conffiles)
-
-GO_BUILD_ARGS += -a
 
 GO_LDFLAGS += \
 	-X '$(XIMPORTPATH)/v2/version.Version=$(PKG_VERSION)' \
