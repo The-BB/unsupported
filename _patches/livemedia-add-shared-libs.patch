@@ -58,7 +58,7 @@ index cfac8b1..2f4123f 100644
 +  DEPENDS:=+liblive555
  endef
  
- TARGET_CFLAGS += -DNO_OPENSSL=1
+ TARGET_CFLAGS += -DNO_OPENSSL=1 -DNO_STD_LIB
  
 +define Build/Prepare
 +	$(PKG_UNPACK)
