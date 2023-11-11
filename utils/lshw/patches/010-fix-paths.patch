@@ -1,0 +1,77 @@
+--- a/src/core/config.h
++++ b/src/core/config.h
+@@ -18,7 +18,7 @@
+ #endif
+ 
+ #ifndef PREFIX
+-#define PREFIX "/usr"
++#define PREFIX "/opt"
+ #endif
+ 
+ #ifndef SBINDIR
+--- a/src/core/fb.cc
++++ b/src/core/fb.cc
+@@ -194,7 +194,7 @@ static int open_dev(dev_t dev)
+ {
+   static const char *paths[] =
+   {
+-    "/var/run", "/dev", "/tmp", NULL
++    "/opt/var/run", "/opt/tmp", "/var/run", "/dev", "/tmp", NULL
+   };
+   char const **p;
+   char fn[64];
+--- a/src/core/osutils.cc
++++ b/src/core/osutils.cc
+@@ -612,7 +612,7 @@ int open_dev(dev_t dev, int dev_type, co
+ {
+   static const char *paths[] =
+   {
+-    "/usr/tmp", "/var/tmp", "/var/run", "/dev", "/tmp", NULL
++    "/opt/tmp", "/opt/var/run", "/usr/tmp", "/var/tmp", "/var/run", "/dev", "/tmp", NULL
+   };
+   char const **p;
+   char fn[64];
+@@ -802,7 +802,9 @@ string operating_system()
+   struct utsname u;
+   string os = "";
+ 
+-  if(loadfile("/etc/lsb-release", osinfo) && (osinfo.size() > 0))
++  if(loadfile("/opt/etc/entware_release", osinfo) && (osinfo.size() > 0))
++    os = osinfo[0];
++  else if(loadfile("/etc/lsb-release", osinfo) && (osinfo.size() > 0))
+     os = osinfo[0];
+   else if(loadfile("/etc/lsb_release", osinfo) && (osinfo.size() > 0))
+     os = osinfo[0];
+--- a/src/core/pcmcia-legacy.cc
++++ b/src/core/pcmcia-legacy.cc
+@@ -16,7 +16,7 @@ __ID("@(#) $Id$");
+  * David A. Hinds <dahinds@users.sourceforge.net>.
+  */
+ 
+-#define VARLIBPCMCIASTAB  "/var/lib/pcmcia/stab"
++#define VARLIBPCMCIASTAB  "/opt/var/lib/pcmcia/stab:/var/lib/pcmcia/stab"
+ 
+ #ifdef __arm__
+ typedef u_int ioaddr_t;
+--- a/src/core/sysfs.cc
++++ b/src/core/sysfs.cc
+@@ -42,7 +42,7 @@ struct sysfs_t
+       char *tmpdir = NULL;
+ 
+       strncpy(buffer,
+-        "/var/tmp/sys-XXXXXX",
++        "/opt/tmp/sys-XXXXXX",
+         sizeof(buffer));
+       tmpdir = mkdtemp(buffer);
+ 
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -6,7 +6,7 @@ SQLITE?=0
+ ZLIB?=0
+ 
+ DESTDIR?=/
+-PREFIX?=/usr
++PREFIX?=/opt
+ SBINDIR=$(PREFIX)/sbin
+ MANDIR=$(PREFIX)/share/man
+ DATADIR=$(PREFIX)/share
