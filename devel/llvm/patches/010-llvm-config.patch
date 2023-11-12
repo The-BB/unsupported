@@ -1,6 +1,6 @@
 --- a/tools/llvm-config/llvm-config.cpp
 +++ b/tools/llvm-config/llvm-config.cpp
-@@ -309,6 +309,10 @@ int main(int argc, char **argv) {
+@@ -306,6 +306,10 @@ int main(int argc, char **argv) {
    CurrentExecPrefix =
        sys::path::parent_path(sys::path::parent_path(CurrentPath)).str();
  

@@ -3,15 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=llvm
-PKG_VERSION:=15.0.7
+PKG_VERSION:=17.0.4
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).src.tar.xz
 PKG_SOURCE_URL:=https://github.com/llvm/llvm-project/releases/download/llvmorg-$(PKG_VERSION)
-PKG_HASH:=4ad8b2cc8003c86d0078d15d987d84e3a739f24aae9033865c027abae93ee7a4
-
-HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_HASH:=4f5907fb547947d10df35230a0fc73cf2f81aa12e09fc8de96c023425412c9f6
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE.TXT
@@ -30,8 +27,8 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 include $(INCLUDE_DIR)/nls.mk
 
-HOST_UNPACK:=xzcat "$(DL_DIR)/$(PKG_SOURCE)" | $(HOST_TAR) -C "$(HOST_BUILD_DIR)" -x --strip-components=1
-PKG_UNPACK:=xzcat "$(DL_DIR)/$(PKG_SOURCE)" | $(HOST_TAR) -C "$(PKG_BUILD_DIR)" -x --strip-components=1
+HOST_UNPACK += --strip-components=1 -C $(HOST_BUILD_DIR)
+PKG_UNPACK += --strip-components=1 -C $(PKG_BUILD_DIR)
 
 define Package/llvm/Default
   SECTION:=devel
@@ -205,7 +202,7 @@ define Build/Clean
 	rm -f $(STAGING_DIR)/opt/bin/llvm-*
 endef
 
-define PrepPostFix
+define PrepTarget
 	$(INSTALL_DIR) $(STAGING_DIR)/opt/bin $(STAGING_DIR)/host/bin
 	$(INSTALL_BIN) $(HOST_BUILD_DIR)/build/bin/llvm-config $(STAGING_DIR)/opt/bin
 	$(LN) ../../opt/bin/llvm-config $(STAGING_DIR)/host/bin
@@ -213,7 +210,7 @@ define PrepPostFix
 	$(LN) ../../opt/bin/llvm-tblgen $(STAGING_DIR)/host/bin
 endef
 
-Hooks/Prepare/Post += PrepPostFix
+Hooks/Configure/Pre += PrepTarget
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include
@@ -233,80 +230,7 @@ endef
 
 define Package/llvm/install
 	$(INSTALL_DIR) $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/bugpoint $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/dsymutil $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llc $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/lli $(1)/opt/bin
-	$(LN) llvm-symbolizer $(1)/opt/bin/llvm-addr2line
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-ar $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-as $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-bcanalyzer $(1)/opt/bin
-	$(LN) llvm-objdump $(1)/opt/bin/llvm-bitcode-strip
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-c-test $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-cat $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-cfi-verify $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-config $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-cov $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-cvtres $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-cxxdump $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-cxxfilt $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-cxxmap $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-debuginfod{,-find} $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-diff $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-dis $(1)/opt/bin
-	$(LN) llvm-ar $(1)/opt/bin/llvm-dlltool
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-dwarfdump $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-dwarfutil $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-dwp $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-exegesis $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-extract $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-gsymutil $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-ifs $(1)/opt/bin
-	$(LN) llvm-objdump $(1)/opt/bin/llvm-install-name-tool
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-jitlink $(1)/opt/bin
-	$(LN) llvm-ar $(1)/opt/bin/llvm-lib
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-libtool-darwin $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-link $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-lipo $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-lto $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-lto2 $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-mc $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-mca $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-ml $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-modextract $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-mt $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-nm $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-objcopy $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-objdump $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-opt-report $(1)/opt/bin
-	$(LN) llvm-objdump $(1)/opt/bin/llvm-otool
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-pdbutil $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-profdata $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-profgen $(1)/opt/bin
-	$(LN) llvm-ar $(1)/opt/bin/llvm-ranlib
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-rc $(1)/opt/bin
-	$(LN) llvm-readobj $(1)/opt/bin/llvm-readelf
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-readobj $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-reduce $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-remark-size-diff $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-rtdyld $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-sim $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-size $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-split $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-stress $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-strings $(1)/opt/bin
-	$(LN) llvm-objcopy $(1)/opt/bin/llvm-strip
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-symbolizer $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-tapi-diff $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-tli-checker $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-undname $(1)/opt/bin
-	$(LN) llvm-rc $(1)/opt/bin/llvm-windres
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/llvm-xray $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/opt $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/sancov $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/sanstats $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/split-file $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/verify-uselistorder $(1)/opt/bin
+	$(CP) $(PKG_INSTALL_DIR)/opt/bin/* $(1)/opt/bin
 	$(INSTALL_DIR) $(1)/opt/share
 	$(CP) $(PKG_INSTALL_DIR)/opt/share/opt-viewer $(1)/opt/share
 	# XXX Entware specific: fix exec path in scripts

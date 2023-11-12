@@ -1,5 +1,31 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -2,7 +2,7 @@
+ 
+ cmake_minimum_required(VERSION 3.20.0)
+ 
+-set(LLVM_COMMON_CMAKE_UTILS ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
++set(LLVM_COMMON_CMAKE_UTILS ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+ include(${LLVM_COMMON_CMAKE_UTILS}/Modules/CMakePolicy.cmake
+   NO_POLICY_SCOPE)
+ 
 --- /dev/null
-+++ b/cmake/modules/EnableLanguageNolink.cmake
++++ b/cmake/Modules/CMakePolicy.cmake
+@@ -0,0 +1,12 @@
++# CMake policy settings shared between LLVM projects
++
++# CMP0114: ExternalProject step targets fully adopt their steps.
++# New in CMake 3.19: https://cmake.org/cmake/help/latest/policy/CMP0114.html
++if(POLICY CMP0114)
++  cmake_policy(SET CMP0114 OLD)
++endif()
++# CMP0116: Ninja generators transform `DEPFILE`s from `add_custom_command()`
++# New in CMake 3.20. https://cmake.org/cmake/help/latest/policy/CMP0116.html
++if(POLICY CMP0116)
++  cmake_policy(SET CMP0116 OLD)
++endif()
+--- /dev/null
++++ b/cmake/Modules/EnableLanguageNolink.cmake
 @@ -0,0 +1,11 @@
 +macro(llvm_enable_language_nolink)
 +  # Set CMAKE_TRY_COMPILE_TARGET_TYPE to STATIC_LIBRARY to disable linking
@@ -13,7 +39,7 @@
 +  unset(__SAVED_TRY_COMPILE_TARGET_TYPE)
 +endmacro()
 --- /dev/null
-+++ b/cmake/modules/ExtendPath.cmake
++++ b/cmake/Modules/ExtendPath.cmake
 @@ -0,0 +1,19 @@
 +# Extend the path in `base_path` with the path in `current_segment`, returning
 +# the result in `joined_path`. If `current_segment` is an absolute path then
@@ -35,8 +61,166 @@
 +  set(${joined_path} "${temp_path}" PARENT_SCOPE)
 +endfunction()
 --- /dev/null
-+++ b/cmake/modules/FindPrefixFromConfig.cmake
-@@ -0,0 +1,41 @@
++++ b/cmake/Modules/FindGRPC.cmake
+@@ -0,0 +1,155 @@
++option(ENABLE_GRPC_REFLECTION "Link to gRPC Reflection library" OFF)
++
++# FIXME(kirillbobyrev): Check if gRPC and Protobuf headers can be included at
++# configure time.
++find_package(Threads REQUIRED)
++if (GRPC_INSTALL_PATH)
++  # This setup requires gRPC to be built from sources using CMake and installed
++  # to ${GRPC_INSTALL_PATH} via -DCMAKE_INSTALL_PREFIX=${GRPC_INSTALL_PATH}.
++  # Libraries will be linked according to gRPC build policy which generates
++  # static libraries when BUILD_SHARED_LIBS is Off and dynamic libraries when
++  # it's On (NOTE: This is a variable passed to gRPC CMake build invocation,
++  # LLVM's BUILD_SHARED_LIBS has no effect).
++  set(protobuf_MODULE_COMPATIBLE TRUE)
++  find_package(Protobuf CONFIG REQUIRED HINTS ${GRPC_INSTALL_PATH})
++  message(STATUS "Using protobuf ${Protobuf_VERSION}")
++  find_package(gRPC CONFIG REQUIRED HINTS ${GRPC_INSTALL_PATH})
++  message(STATUS "Using gRPC ${gRPC_VERSION}")
++
++  include_directories(${Protobuf_INCLUDE_DIRS})
++
++  # gRPC CMake CONFIG gives the libraries slightly odd names, make them match
++  # the conventional system-installed names.
++  set_target_properties(protobuf::libprotobuf PROPERTIES IMPORTED_GLOBAL TRUE)
++  add_library(protobuf ALIAS protobuf::libprotobuf)
++  set_target_properties(gRPC::grpc++ PROPERTIES IMPORTED_GLOBAL TRUE)
++  add_library(grpc++ ALIAS gRPC::grpc++)
++  if (ENABLE_GRPC_REFLECTION)
++    set_target_properties(gRPC::grpc++_reflection PROPERTIES IMPORTED_GLOBAL TRUE)
++    add_library(grpc++_reflection ALIAS gRPC::grpc++_reflection)
++  endif()
++
++  set(GRPC_CPP_PLUGIN $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
++  set(PROTOC ${Protobuf_PROTOC_EXECUTABLE})
++else()
++  # This setup requires system-installed gRPC and Protobuf.
++  # We always link dynamically in this mode. While the static libraries are
++  # usually installed, the CMake files telling us *which* static libraries to
++  # link are not.
++  if (NOT BUILD_SHARED_LIBS)
++    message(NOTICE "gRPC and Protobuf will be linked dynamically. If you want static linking, build gRPC from sources with -DBUILD_SHARED_LIBS=Off.")
++  endif()
++  find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin)
++  find_program(PROTOC protoc)
++  if (NOT GRPC_CPP_PLUGIN OR NOT PROTOC)
++    message(FATAL_ERROR "gRPC C++ Plugin and Protoc must be on $PATH for gRPC-enabled build.")
++  endif()
++  # On macOS the libraries are typically installed via Homebrew and are not on
++  # the system path.
++  set(GRPC_OPTS "")
++  set(PROTOBUF_OPTS "")
++  set(GRPC_INCLUDE_PATHS "")
++  if (${APPLE})
++    find_program(HOMEBREW brew)
++    # If Homebrew is not found, the user might have installed libraries
++    # manually. Fall back to the system path.
++    if (HOMEBREW)
++      execute_process(COMMAND ${HOMEBREW} --prefix grpc
++        OUTPUT_VARIABLE GRPC_HOMEBREW_PATH
++        RESULT_VARIABLE GRPC_HOMEBREW_RETURN_CODE
++        OUTPUT_STRIP_TRAILING_WHITESPACE)
++      execute_process(COMMAND ${HOMEBREW} --prefix protobuf
++        OUTPUT_VARIABLE PROTOBUF_HOMEBREW_PATH
++        RESULT_VARIABLE PROTOBUF_HOMEBREW_RETURN_CODE
++        OUTPUT_STRIP_TRAILING_WHITESPACE)
++      execute_process(COMMAND ${HOMEBREW} --prefix abseil
++        OUTPUT_VARIABLE ABSL_HOMEBREW_PATH
++        RESULT_VARIABLE ABSL_HOMEBREW_RETURN_CODE
++        OUTPUT_STRIP_TRAILING_WHITESPACE)
++      # If either library is not installed via Homebrew, fall back to the
++      # system path.
++      if (GRPC_HOMEBREW_RETURN_CODE EQUAL "0")
++        list(APPEND GRPC_INCLUDE_PATHS ${GRPC_HOMEBREW_PATH}/include)
++        list(APPEND GRPC_OPTS PATHS ${GRPC_HOMEBREW_PATH}/lib NO_DEFAULT_PATH)
++      endif()
++      if (PROTOBUF_HOMEBREW_RETURN_CODE EQUAL "0")
++        list(APPEND GRPC_INCLUDE_PATHS ${PROTOBUF_HOMEBREW_PATH}/include)
++        list(APPEND PROTOBUF_OPTS PATHS ${PROTOBUF_HOMEBREW_PATH}/lib NO_DEFAULT_PATH)
++      endif()
++      if (ABSL_HOMEBREW_RETURN_CODE EQUAL "0")
++        list(APPEND GRPC_INCLUDE_PATHS ${ABSL_HOMEBREW_PATH}/include)
++      endif()
++    endif()
++  endif()
++  if(NOT TARGET grpc++)
++    find_library(GRPC_LIBRARY grpc++ ${GRPC_OPTS} REQUIRED)
++    add_library(grpc++ UNKNOWN IMPORTED GLOBAL)
++    message(STATUS "Using grpc++: " ${GRPC_LIBRARY})
++    set_target_properties(grpc++ PROPERTIES IMPORTED_LOCATION ${GRPC_LIBRARY})
++    target_include_directories(grpc++ INTERFACE ${GRPC_INCLUDE_PATHS})
++    if (ENABLE_GRPC_REFLECTION)
++      find_library(GRPC_REFLECTION_LIBRARY grpc++_reflection ${GRPC_OPTS} REQUIRED)
++      add_library(grpc++_reflection UNKNOWN IMPORTED GLOBAL)
++      set_target_properties(grpc++_reflection PROPERTIES IMPORTED_LOCATION ${GRPC_REFLECTION_LIBRARY})
++    endif()
++    find_library(PROTOBUF_LIBRARY protobuf ${PROTOBUF_OPTS} REQUIRED)
++    message(STATUS "Using protobuf: " ${PROTOBUF_LIBRARY})
++    add_library(protobuf UNKNOWN IMPORTED GLOBAL)
++    set_target_properties(protobuf PROPERTIES IMPORTED_LOCATION ${PROTOBUF_LIBRARY})
++  endif()
++endif()
++
++if (ENABLE_GRPC_REFLECTION)
++  set(REFLECTION_LIBRARY grpc++_reflection)
++endif()
++
++# Proto headers are generated in ${CMAKE_CURRENT_BINARY_DIR}.
++# Libraries that use these headers should adjust the include path.
++# If the "GRPC" argument is given, services are also generated.
++# The DEPENDS list should name *.proto source files that are imported.
++# They may be relative to the source dir or absolute (for generated protos).
++function(generate_proto_sources GeneratedSource ProtoFile)
++  cmake_parse_arguments(PARSE_ARGV 2 PROTO "GRPC" "" "DEPENDS")
++  get_filename_component(ProtoSourceAbsolutePath "${CMAKE_CURRENT_SOURCE_DIR}/${ProtoFile}" ABSOLUTE)
++  get_filename_component(ProtoSourcePath ${ProtoSourceAbsolutePath} PATH)
++  get_filename_component(Basename ${ProtoSourceAbsolutePath} NAME_WLE)
++
++  set(GeneratedProtoSource "${CMAKE_CURRENT_BINARY_DIR}/${Basename}.pb.cc")
++  set(GeneratedProtoHeader "${CMAKE_CURRENT_BINARY_DIR}/${Basename}.pb.h")
++  set(Flags
++    --cpp_out="${CMAKE_CURRENT_BINARY_DIR}"
++    --proto_path="${ProtoSourcePath}")
++  if (PROTO_GRPC)
++    list(APPEND Flags
++      --grpc_out="${CMAKE_CURRENT_BINARY_DIR}"
++      --plugin=protoc-gen-grpc="${GRPC_CPP_PLUGIN}")
++    list(APPEND GeneratedProtoSource "${CMAKE_CURRENT_BINARY_DIR}/${Basename}.grpc.pb.cc")
++    list(APPEND GeneratedProtoHeader "${CMAKE_CURRENT_BINARY_DIR}/${Basename}.grpc.pb.h")
++  endif()
++  add_custom_command(
++        OUTPUT ${GeneratedProtoSource} ${GeneratedProtoHeader}
++        COMMAND ${PROTOC}
++        ARGS ${Flags} "${ProtoSourceAbsolutePath}"
++        DEPENDS "${ProtoSourceAbsolutePath}")
++
++  set(${GeneratedSource} ${GeneratedProtoSource} PARENT_SCOPE)
++
++  # Ensure dependency headers are generated before dependent protos are built.
++  # DEPENDS arg is a list of "Foo.proto". While they're logically relative to
++  # the source dir, the generated headers we need are in the binary dir.
++  foreach(ImportedProto IN LISTS PROTO_DEPENDS)
++    # Foo.proto -> Foo.pb.h
++    STRING(REGEX REPLACE "\\.proto$" ".pb.h" ImportedHeader "${ImportedProto}")
++    # Foo.pb.h -> ${CMAKE_CURRENT_BINARY_DIR}/Foo.pb.h
++    get_filename_component(ImportedHeader "${ImportedHeader}"
++      ABSOLUTE
++      BASE_DIR "${CMAKE_CURRENT_BINARY_DIR}")
++    # Compilation of each generated source depends on ${BINARY}/Foo.pb.h.
++    foreach(Generated IN LISTS GeneratedProtoSource)
++      # FIXME: CMake docs suggest OBJECT_DEPENDS isn't needed, but I can't get
++      #        the recommended add_dependencies() approach to work.
++      set_source_files_properties("${Generated}"
++        PROPERTIES OBJECT_DEPENDS "${ImportedHeader}")
++    endforeach(Generated)
++  endforeach(ImportedProto)
++endfunction()
+--- /dev/null
++++ b/cmake/Modules/FindPrefixFromConfig.cmake
+@@ -0,0 +1,53 @@
 +# Find the prefix from the `*Config.cmake` file being generated.
 +#
 +# When generating an installed `*Config.cmake` file, we often want to be able
@@ -65,21 +249,65 @@
 +#   Path from the prefix to the config file, a relative path which we wish to
 +#   go up and out from to find the prefix directory.
 +function(find_prefix_from_config out_var prefix_var path_to_leave)
-+  set(config_code
-+    "# Compute the installation prefix from this LLVMConfig.cmake file location."
-+    "get_filename_component(${prefix_var} \"\${CMAKE_CURRENT_LIST_FILE}\" PATH)")
-+  # Construct the proper number of get_filename_component(... PATH)
-+  # calls to compute the installation prefix.
-+  string(REGEX REPLACE "/" ";" _count "${path_to_leave}")
-+  foreach(p ${_count})
-+    list(APPEND config_code
-+      "get_filename_component(${prefix_var} \"\${${prefix_var}}\" PATH)")
-+  endforeach(p)
++  if(IS_ABSOLUTE "${path_to_leave}")
++    # Because the path is absolute, we don't care about `path_to_leave`
++    # because we can just "jump" to the absolute path rather than work
++    # our way there relatively.
++    set(config_code
++      "# Installation prefix is fixed absolute path"
++      "set(${prefix_var} \"${CMAKE_INSTALL_PREFIX}\")")
++  else()
++    # `path_to_leave` is relative. Relative to what? The install prefix.
++    # We therefore go up enough parent directories to get back to the
++    # install prefix, and avoid hard-coding any absolute paths.
++    set(config_code
++      "# Compute the installation prefix from this LLVMConfig.cmake file location."
++      "get_filename_component(${prefix_var} \"\${CMAKE_CURRENT_LIST_FILE}\" PATH)")
++    # Construct the proper number of get_filename_component(... PATH)
++    # calls to compute the installation prefix.
++    string(REGEX REPLACE "/" ";" _count "${path_to_leave}")
++    foreach(p ${_count})
++      list(APPEND config_code
++        "get_filename_component(${prefix_var} \"\${${prefix_var}}\" PATH)")
++    endforeach(p)
++  endif()
 +  string(REPLACE ";" "\n" config_code "${config_code}")
 +  set("${out_var}" "${config_code}" PARENT_SCOPE)
 +endfunction()
 --- /dev/null
-+++ b/cmake/modules/GNUInstallPackageDir.cmake
++++ b/cmake/Modules/GetClangResourceDir.cmake
+@@ -0,0 +1,29 @@
++# get clang resource directory
++#
++# usage:
++#  get_clang_resource_dir(out_var [PREFIX prefix] [SUBDIR subdirectory])
++#
++# user can use `PREFIX` to prepend some path to it or use `SUBDIR` to
++# get subdirectory under clang resource dir
++
++function(get_clang_resource_dir out_var)
++  cmake_parse_arguments(ARG "" "PREFIX;SUBDIR" "" ${ARGN})
++
++  if(DEFINED CLANG_RESOURCE_DIR AND NOT CLANG_RESOURCE_DIR STREQUAL "")
++    set(ret_dir bin/${CLANG_RESOURCE_DIR})
++  else()
++    if (NOT CLANG_VERSION_MAJOR)
++      string(REGEX MATCH "^[0-9]+" CLANG_VERSION_MAJOR ${PACKAGE_VERSION})
++    endif()
++    set(ret_dir lib${LLVM_LIBDIR_SUFFIX}/clang/${CLANG_VERSION_MAJOR})
++  endif()
++
++  if(ARG_PREFIX)
++    set(ret_dir ${ARG_PREFIX}/${ret_dir})
++  endif()
++  if(ARG_SUBDIR)
++    set(ret_dir ${ret_dir}/${ARG_SUBDIR})
++  endif()
++
++  set(${out_var} ${ret_dir} PARENT_SCOPE)
++endfunction()
+--- /dev/null
++++ b/cmake/Modules/GNUInstallPackageDir.cmake
 @@ -0,0 +1,33 @@
 +# Mimick `GNUInstallDirs` for one more install directory, the one where
 +# project's installed cmake subdirs go.
@@ -115,9 +343,9 @@
 +_GNUInstallPackageDir_cache_path(CMAKE_INSTALL_PACKAGEDIR "lib${LLVM_LIBDIR_SUFFIX}/cmake"
 +  "Directories containing installed CMake modules (lib/cmake)")
 --- /dev/null
-+++ b/cmake/modules/HandleCompilerRT.cmake
-@@ -0,0 +1,101 @@
-+# Check if compile-rt library file path exists.
++++ b/cmake/Modules/HandleCompilerRT.cmake
+@@ -0,0 +1,123 @@
++# Check if the compiler-rt library file path exists.
 +# If found, cache the path in:
 +#    COMPILER_RT_LIBRARY-<name>-<target>
 +# If err_flag is true OR path not found, emit a message and set:
@@ -139,8 +367,26 @@
 +    if(NOT name MATCHES "builtins.*")
 +      set(component_name "${name}_")
 +    endif()
-+    # TODO: Support ios, tvos and watchos as well.
-+    set(component_name "${component_name}osx")
++    if (CMAKE_OSX_SYSROOT MATCHES ".+MacOSX.+")
++      set(component_name "${component_name}osx")
++
++    elseif (CMAKE_OSX_SYSROOT MATCHES ".+iPhoneOS.+")
++      set(component_name "${component_name}ios")
++    elseif (CMAKE_OSX_SYSROOT MATCHES ".+iPhoneSimulator.+")
++      set(component_name "${component_name}iossim")
++
++      elseif (CMAKE_OSX_SYSROOT MATCHES ".+AppleTVOS.+")
++      set(component_name "${component_name}tvos")
++    elseif (CMAKE_OSX_SYSROOT MATCHES ".+AppleTVSimulator.+")
++      set(component_name "${component_name}tvossim")
++
++    elseif (CMAKE_OSX_SYSROOT MATCHES ".+WatchOS.+")
++      set(component_name "${component_name}watchos")
++    elseif (CMAKE_OSX_SYSROOT MATCHES ".+WatchSimulator.+")
++      set(component_name "${component_name}watchossim")
++    else()
++      message(WARNING "Unknown Apple SDK ${CMAKE_OSX_SYSROOT}, we don't know which compiler-rt library suffix to use.")
++    endif()
 +  else()
 +    set(component_name "${name}")
 +  endif()
@@ -173,8 +419,12 @@
 +    get_property(cxx_flags CACHE CMAKE_CXX_FLAGS PROPERTY VALUE)
 +    string(REPLACE " " ";" cxx_flags "${cxx_flags}")
 +    list(APPEND clang_command ${cxx_flags})
++    set(cmd_prefix "")
++    if(MSVC AND ${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
++      set(cmd_prefix "/clang:")
++    endif()
 +    execute_process(
-+      COMMAND ${clang_command} "--rtlib=compiler-rt" "-print-libgcc-file-name"
++      COMMAND ${clang_command} "${cmd_prefix}--rtlib=compiler-rt" "${cmd_prefix}-print-libgcc-file-name"
 +      RESULT_VARIABLE had_error
 +      OUTPUT_VARIABLE library_file
 +    )
@@ -191,7 +441,7 @@
 +      set(dirname "${resource_dir}/lib/darwin")
 +    endif()
 +    get_filename_component(basename ${library_file} NAME)
-+    if(basename MATCHES "libclang_rt\.([a-z0-9_\-]+)\.a")
++    if(basename MATCHES ".*clang_rt\.([a-z0-9_\-]+)\.(a|lib)")
 +      set(from_name ${CMAKE_MATCH_1})
 +      get_component_name(${CMAKE_MATCH_1} to_name)
 +      string(REPLACE "${from_name}" "${to_name}" basename "${basename}")
@@ -209,7 +459,7 @@
 +    # path and then checking if the resultant path exists. The result of
 +    # this check is also cached by cache_compiler_rt_library.
 +    set(library_file "${COMPILER_RT_LIBRARY_builtins_${target}}")
-+    if(library_file MATCHES ".*libclang_rt\.([a-z0-9_\-]+)\.a")
++    if(library_file MATCHES ".*clang_rt\.([a-z0-9_\-]+)\.(a|lib)")
 +      set(from_name ${CMAKE_MATCH_0})
 +      get_component_name(${name} to_name)
 +      string(REPLACE "${from_name}" "${to_name}" library_file "${library_file}")
@@ -219,7 +469,7 @@
 +  set(${variable} "${COMPILER_RT_LIBRARY_${name}_${target}}" PARENT_SCOPE)
 +endfunction()
 --- /dev/null
-+++ b/cmake/modules/HandleOutOfTreeLLVM.cmake
++++ b/cmake/Modules/HandleOutOfTreeLLVM.cmake
 @@ -0,0 +1,80 @@
 +if (NOT DEFINED LLVM_PATH)
 +  set(LLVM_PATH ${CMAKE_CURRENT_LIST_DIR}/../../llvm CACHE PATH "" FORCE)
@@ -302,7 +552,7 @@
 +  set(LLVM_HAVE_LINK_VERSION_SCRIPT 0)
 +endif()
 --- /dev/null
-+++ b/cmake/modules/LLVMCheckCompilerLinkerFlag.cmake
++++ b/cmake/Modules/LLVMCheckCompilerLinkerFlag.cmake
 @@ -0,0 +1,35 @@
 +include(CMakePushCheckState)
 +
@@ -340,7 +590,7 @@
 +  cmake_pop_check_state()
 +endfunction()
 --- /dev/null
-+++ b/cmake/modules/SetPlatformToolchainTools.cmake
++++ b/cmake/Modules/SetPlatformToolchainTools.cmake
 @@ -0,0 +1,9 @@
 +get_property(languages GLOBAL PROPERTY ENABLED_LANGUAGES)
 +
@@ -351,3 +601,31 @@
 +    set(CMAKE_${lang}_ARCHIVE_FINISH "<CMAKE_RANLIB> -X32_64 <TARGET>")
 +  endforeach()
 +endif()
+--- /dev/null
++++ b/cmake/Modules/SortSubset.cmake
+@@ -0,0 +1,25 @@
++# Sort a subset of a list according to the ordering in the full list.
++#
++# Given a list and a subset of that list, this function sorts the subset
++# according to the order in the full list, and returns that in the given
++# output variable.
++#
++# full_list:
++#   The list containing the desired order of elements in the sub-list.
++#
++# sub_list:
++#   A subset of the elements in `full_list`. Those elements will be sorted
++#   according to the order in `full_list`.
++#
++# out_var:
++#   A variable to store the resulting sorted sub-list in.
++function(sort_subset full_list sub_list out_var)
++  set(result "${full_list}")
++  foreach(project IN LISTS full_list)
++    if (NOT project IN_LIST sub_list)
++      list(REMOVE_ITEM result ${project})
++    endif()
++  endforeach()
++
++  set(${out_var} "${result}" PARENT_SCOPE)
++endfunction()
