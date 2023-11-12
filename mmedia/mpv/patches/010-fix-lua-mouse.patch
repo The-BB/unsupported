@@ -9,7 +9,7 @@
  end
  
  function scale_value(x0, x1, y0, y1, val)
-@@ -2899,5 +2899,5 @@ mp.add_key_binding(nil, "visibility", fu
+@@ -2940,5 +2940,5 @@ mp.add_key_binding(nil, "visibility", fu
  
  mp.register_script_message("osc-idlescreen", idlescreen_visibility)
  
