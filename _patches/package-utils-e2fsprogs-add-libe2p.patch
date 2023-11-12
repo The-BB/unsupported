@@ -1,0 +1,80 @@
+From 92bc68276b6bfbe96c06c99f71736e2e5ce4bc09 Mon Sep 17 00:00:00 2001
+From: The-BB <tun.chen.bo@gmail.com>
+Date: Sun, 12 Nov 2023 10:22:49 +0300
+Subject: [PATCH] package/utils/e2fsprogs: add libe2p
+
+---
+ package/utils/e2fsprogs/Makefile | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/package/utils/e2fsprogs/Makefile b/package/utils/e2fsprogs/Makefile
+index a2594b6c..d414e53f 100644
+--- a/package/utils/e2fsprogs/Makefile
++++ b/package/utils/e2fsprogs/Makefile
+@@ -4,7 +4,7 @@
+ # This is free software, licensed under the GNU General Public License v2.
+ # See /LICENSE for more information.
+ #
+-# Entware specific: keep CONFIG_USE_GLIBC
++# Entware specific: keep CONFIG_USE_GLIBC; add libe2p (ext4magic)
+ 
+ include $(TOPDIR)/rules.mk
+ 
+@@ -84,6 +84,19 @@ define Package/libcomerr/description
+   bundled with e2fsprogs.
+ endef
+ 
++# XXX for ext4magic
++define Package/libe2p
++  SECTION:=libs
++  CATEGORY:=Libraries
++  TITLE:=used by dumpe2fs, chattr, and lsattr
++  URL:=http://e2fsprogs.sourceforge.net/
++  DEPENDS:=+libuuid
++endef
++
++define Package/libe2p/description
++  This package contains libe2p, the library of the e2fsprogs package.
++endef
++
+ define Package/tune2fs
+ $(call Package/e2fsprogs)
+   TITLE:=Ext2 Filesystem tune utility
+@@ -207,6 +220,13 @@ define Build/InstallDev
+ 		$(PKG_BUILD_DIR)/lib/ss/ss.h \
+ 		$(PKG_BUILD_DIR)/lib/ss/ss_err.h \
+ 		$(1)/opt/include/ss/
++	# XXX for ext4magic
++	$(INSTALL_DIR) $(1)/opt/include/e2p
++	$(CP) $(PKG_INSTALL_DIR)/opt/include/e2p/e2p.h $(1)/opt/include/e2p
++	$(INSTALL_DIR) $(1)/opt/lib
++	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libe2p.{so,a}* $(1)/opt/lib
++	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
++	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/e2p.pc $(1)/opt/lib/pkgconfig
+ endef
+ 
+ define Host/Compile
+@@ -251,6 +271,12 @@ define Package/libcomerr/install
+ 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libcom_err.so.* $(1)/opt/lib/
+ endef
+ 
++# XXX for ext4magic
++define Package/libe2p/install
++	$(INSTALL_DIR) $(1)/opt/lib
++	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libe2p.so.* $(1)/opt/lib/
++endef
++
+ define Package/libss/install
+ 	$(INSTALL_DIR) $(1)/opt/lib
+ 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libss.so.* $(1)/opt/lib/
+@@ -319,6 +345,7 @@ define Package/lsattr/install
+ endef
+ 
+ $(eval $(call BuildPackage,libcomerr))
++$(eval $(call BuildPackage,libe2p))
+ $(eval $(call BuildPackage,libss))
+ $(eval $(call BuildPackage,libext2fs))
+ $(eval $(call BuildPackage,e2fsprogs))
+-- 
+2.30.2
+

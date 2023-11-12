@@ -8,7 +8,10 @@ OLDPORTS_FEED="./feeds/oldports"
 PACKAGES_FEED="./feeds/packages"
 PATCH_DIR="./feeds/unsupported/_patches"
 PATCH_OLDPORTS="$PATCH_DIR/livemedia-add-shared-libs.patch"
-PATCH_PACKAGE="$PATCH_DIR/package-libs-libxml2-fix-args.patch"
+PATCH_PACKAGE="\
+$PATCH_DIR/package-libs-libxml2-fix-args.patch
+$PATCH_DIR/package-utils-e2fsprogs-add-libe2p.patch
+"
 PATCH_PACKAGES="\
 $PATCH_DIR/libs-libmpeg2-add-as-dependency.patch
 $PATCH_DIR/libs-libvpx-add-as-dependency.patch
@@ -36,7 +39,7 @@ backup()
 {
 # base
 if [ ! -f $STAMP_PACKAGE ]; then
-  patch -p1 -b -d ./ < $PATCH_PACKAGE
+  for PATCH in $PATCH_PACKAGE; do patch -p1 -b -d . < "$PATCH"; done
   touch $STAMP_PACKAGE
 fi
 # oldports feed
@@ -61,7 +64,7 @@ fi
 check()
 {
 # base
-patch -p1 --dry-run -d ./ < $PATCH_PACKAGE
+for PATCH in $PATCH_PACKAGE; do patch -p1 --dry-run -d . < "$PATCH"; done
 # oldports feed
 patch -p1 --dry-run -d $OLDPORTS_FEED < $PATCH_OLDPORTS
 # packages feed
@@ -72,9 +75,9 @@ recovery()
 {
 # base
 if [ -f $STAMP_PACKAGE ]; then
-  patch -p1 -R -d ./ < $PATCH_PACKAGE
+  for PATCH in $PATCH_PACKAGE; do patch -p1 -R -d . < "$PATCH"; done
   rm $STAMP_PACKAGE
-  find ./package/libs/libxml2 -type f -name "*.orig" -delete
+  find ./package/libs/libxml2 ./package/utils/e2fsprogs -type f -name "*.orig" -delete
 fi
 # oldports feed
 if [ -f $STAMP_OLDPORTS ]; then
