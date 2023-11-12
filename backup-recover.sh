@@ -15,6 +15,7 @@ $PATCH_DIR/package-utils-e2fsprogs-add-libe2p.patch
 PATCH_PACKAGES="\
 $PATCH_DIR/libs-libmpeg2-add-as-dependency.patch
 $PATCH_DIR/libs-libvpx-add-as-dependency.patch
+$PATCH_DIR/libs-nss-add-patch.patch
 $PATCH_DIR/multimedia-ffmpeg-disable-sndio.patch
 $PATCH_DIR/multimedia-gst1-libav-add-as-dependency.patch
 $PATCH_DIR/multimedia-gst1-plugins-base-add-as-dependency.patch
@@ -31,6 +32,7 @@ STAMP_PACKAGES="$PATCH_DIR/.packages-patched"
 GO_PKG="\
 $PACKAGES_FEED/net/cloudreve
 $PACKAGES_FEED/net/dnsproxy
+$PACKAGES_FEED/net/trojan-go
 $PACKAGES_FEED/net/v2raya
 $PACKAGES_FEED/net/xray-core
 "

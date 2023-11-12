@@ -1,0 +1,41 @@
+From 682d3a3d5f4bc87420e0f5f04f6934ef2d6bd3ea Mon Sep 17 00:00:00 2001
+From: The-BB <tun.chen.bo@gmail.com>
+Date: Sun, 12 Nov 2023 12:35:44 +0300
+Subject: [PATCH] libs/nss: add patch
+
+---
+ libs/nss/patches/510-fix-paths.patch | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 libs/nss/patches/510-fix-paths.patch
+
+diff --git a/libs/nss/patches/510-fix-paths.patch b/libs/nss/patches/510-fix-paths.patch
+new file mode 100644
+index 000000000..952813cf6
+--- /dev/null
++++ b/libs/nss/patches/510-fix-paths.patch
+@@ -0,0 +1,22 @@
++--- a/nss/lib/freebl/unix_rand.c
+++++ b/nss/lib/freebl/unix_rand.c
++@@ -617,6 +617,8 @@ RNG_SystemInfoForRNG(void)
++     extern char **environ;
++ #endif
++     static const char *const files[] = {
+++        "/opt/etc/passwd",
+++        "/opt/tmp",
++         "/etc/passwd",
++         "/etc/utmp",
++         "/tmp",
++--- a/nss/lib/sysinit/nsssysinit.c
+++++ b/nss/lib/sysinit/nsssysinit.c
++@@ -128,7 +128,7 @@ getUserDB(void)
++     return nssdir;
++ }
++ 
++-#define NSS_DEFAULT_SYSTEM "/etc/pki/nssdb"
+++#define NSS_DEFAULT_SYSTEM "/opt/etc/pki/nssdb"
++ static char *
++ getSystemDB(void)
++ {
+-- 
+2.30.2
+
