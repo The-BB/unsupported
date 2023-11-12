@@ -1,8 +1,8 @@
 --- a/src/modules/module-protocol-native/local-socket.c
 +++ b/src/modules/module-protocol-native/local-socket.c
-@@ -21,7 +21,7 @@
- 
+@@ -23,7 +23,7 @@
  #include <pipewire/pipewire.h>
+ #include <spa/utils/json.h>
  
 -#define DEFAULT_SYSTEM_RUNTIME_DIR "/run/pipewire"
 +#define DEFAULT_SYSTEM_RUNTIME_DIR "/opt/var/run/pipewire"

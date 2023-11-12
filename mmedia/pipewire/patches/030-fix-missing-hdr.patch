@@ -1,0 +1,47 @@
+.../include/sound/asound.h:110:2: error: unknown type name 'size_t'
+  size_t length;   /* W: size of image in bytes */
+  ^~~~~~
+.../include/sound/asound.h:386:18: error: field 'trigger_tstamp' has incomplete type
+  struct timespec trigger_tstamp; /* time when stream was started/stopped/paused */
+                  ^~~~~~~~~~~~~~
+.../include/sound/asound.h:387:18: error: field 'tstamp' has incomplete type
+  struct timespec tstamp;  /* reference timestamp */
+                  ^~~~~~
+.../include/sound/asound.h:402:18: error: field 'tstamp' has incomplete type
+  struct timespec tstamp;  /* Timestamp */
+                  ^~~~~~
+.../include/sound/asound.h:513:2: error: unknown type name 'size_t'
+  size_t buffer_size;  /* queue size in bytes */
+  ^~~~~~
+.../include/sound/asound.h:514:2: error: unknown type name 'size_t'
+  size_t avail_min;  /* minimum avail bytes for wakeup */
+  ^~~~~~
+.../include/sound/asound.h:521:18: error: field 'tstamp' has incomplete type
+  struct timespec tstamp;  /* Timestamp */
+                  ^~~~~~
+.../include/sound/asound.h:522:2: error: unknown type name 'size_t'
+  size_t avail;   /* available bytes */
+  ^~~~~~
+.../include/sound/asound.h:523:2: error: unknown type name 'size_t'
+  size_t xruns;   /* count of overruns since last status (in bytes) */
+  ^~~~~~
+.../include/sound/asound.h:633:18: error: field 'tstamp' has incomplete type
+  struct timespec tstamp;  /* Timestamp - last update */
+                  ^~~~~~
+.../include/sound/asound.h:683:18: error: field 'tstamp' has incomplete type
+  struct timespec tstamp;
+                  ^~~~~~
+.../include/sound/asound.h:824:18: error: field 'tstamp' has incomplete type
+  struct timespec tstamp;
+                  ^~~~~~
+.../include/sound/asound.h:825:36: error: invalid application of 'sizeof' to incomplete type 'struct timespec'
+
+--- a/spa/plugins/alsa/compress-offload-api-util.c
++++ b/spa/plugins/alsa/compress-offload-api-util.c
+@@ -1,5 +1,6 @@
+ #include <errno.h>
+ #include <inttypes.h>
++#include <sys/types.h>
+ #include "compress-offload-api.h"
+ #include "compress-offload-api-util.h"
+ 

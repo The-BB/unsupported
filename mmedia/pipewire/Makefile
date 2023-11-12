@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pipewire
-PKG_VERSION:=0.3.67
+PKG_VERSION:=0.3.84
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/$(PKG_VERSION)
-PKG_HASH:=43dfad8ee64c90613fdc67db0d7706e4ae747ee5e4aed03c34d3869f3926e081
+PKG_HASH:=0b32bff5039b5072b7ffe8c8a3ae2542510036a8cc5941570662b14a7ef96734
 
 PKG_LICENSE:=GPL-2.0-only LGPL-2.1-or-later MIT
 PKG_LICENSE_FILES:=COPYING LICENSE
@@ -95,6 +95,7 @@ MESON_ARGS += \
 	-Dpipewire-jack=disabled \
 	-Dpipewire-v4l2=disabled \
 	-Dsdl2=disabled \
+	-Dselinux=disabled \
 	-Dsession-managers=[] \
 	-Dspa-plugins=enabled \
 	-Dsupport=enabled \
@@ -129,10 +130,8 @@ MESON_ARGS += \
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include
 	$(CP) $(PKG_INSTALL_DIR)/opt/include/{pipewire,spa}-* $(1)/opt/include
-
 	$(INSTALL_DIR) $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libpipewire*.so* $(1)/opt/lib
-
 	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/lib{pipewire,spa}-*.pc \
 		$(1)/opt/lib/pkgconfig
@@ -146,14 +145,11 @@ endef
 define Package/pipewire/install
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(CP) $(PKG_INSTALL_DIR)/opt/bin/* $(1)/opt/bin
-
 	$(INSTALL_DIR) $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pipewire-* $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/spa-* $(1)/opt/lib
-
 	$(INSTALL_DIR) $(1)/opt/share
 	$(CP) $(PKG_INSTALL_DIR)/opt/share/pipewire $(1)/opt/share
-
   ifeq ($(CONFIG_PIPEWIRE_ALSA_LIB),y)
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/{alsa-lib,udev} $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/share/alsa{,-card-profile} $(1)/opt/share
