@@ -14,7 +14,7 @@ Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 
 --- a/configure.ac
 +++ b/configure.ac
-@@ -2076,7 +2076,7 @@ PKG_ENABLE_MODULES_VLC([VNC], [vnc], [li
+@@ -2068,7 +2068,7 @@ PKG_ENABLE_MODULES_VLC([VNC], [vnc], [li
  
  dnl  RDP/Remote Desktop access module
  dnl

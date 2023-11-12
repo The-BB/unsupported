@@ -17,7 +17,7 @@ Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3214,14 +3214,17 @@ AS_IF([test "${enable_wayland}" = "yes"]
+@@ -3187,14 +3187,17 @@ AS_IF([test "${enable_wayland}" = "yes"]
        AC_MSG_ERROR([$(${PKG_CONFIG} --print-errors 'wayland-protocols >= 1.4')])
      ])
  

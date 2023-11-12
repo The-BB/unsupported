@@ -3,19 +3,20 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=vlc
-PKG_VERSION:=3.0.18
+PKG_VERSION:=3.0.20
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
-PKG_SOURCE_URL:=https://get.videolan.org/vlc/$(PKG_VERSION)
-PKG_HASH:=57094439c365d8aa8b9b41fa3080cc0eef2befe6025bb5cef722accc625aedec
+PKG_SOURCE_URL:= \
+	https://get.videolan.org/vlc/$(PKG_VERSION) \
+	https://mirrors.netix.net/vlc/vlc/$(PKG_VERSION)
+PKG_HASH:=adc7285b4d2721cddf40eb5270cada2aaa10a334cb546fd55a06353447ba29b5
 
 PKG_LICENSE:=GPL-2.0-or-later LGPL-2.1-or-later
 PKG_LICENSE_FILES:=COPYING COPYING.LIB
 PKG_CPE_ID:=cpe:/a:videolan:vlc_media_player
 
 PKG_FIXUP:=autoreconf
-
 PKG_INSTALL:=1
 
 PKG_CONFIG_DEPENDS:= \
@@ -333,13 +334,11 @@ CONFIGURE_VARS += \
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include
-	$(CP) $(PKG_INSTALL_DIR)/opt/include/vlc $(1)/opt/include/
-
+	$(CP) $(PKG_INSTALL_DIR)/opt/include/vlc $(1)/opt/include
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libvlc{,core}.so* $(1)/opt/lib/
-
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libvlc{,core}.so* $(1)/opt/lib
 	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/libvlc.pc $(1)/opt/lib/pkgconfig/
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/libvlc.pc $(1)/opt/lib/pkgconfig
 endef
 
 define Package/libvlc/install
@@ -349,7 +348,6 @@ endef
 
 define Package/libvlc-plugins/install
 	$(INSTALL_DIR) $(1)/opt/lib/vlc
-
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/lib/vlc/vlc-cache-gen $(1)/opt/lib/vlc
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/vlc/plugins $(1)/opt/lib/vlc
   ifeq ($(CONFIG_VLC_PULSEAUDIO),y)
@@ -357,7 +355,6 @@ define Package/libvlc-plugins/install
   endif
   ifeq ($(CONFIG_VLC_LUA),y)
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/vlc/lua $(1)/opt/lib/vlc
-
 	$(INSTALL_DIR) $(1)/opt/share/vlc
 	$(CP) $(PKG_INSTALL_DIR)/opt/share/vlc/lua $(1)/opt/share/vlc
   endif
@@ -378,7 +375,6 @@ define Package/libvlc-plugins/postinst
 #!/bin/sh
 
 echo -e "\n\tGenerating the LibVLC plugins cache...\n"
-
 /opt/lib/vlc/vlc-cache-gen /opt/lib/vlc/plugins
 endef
 

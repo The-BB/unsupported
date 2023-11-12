@@ -14,7 +14,7 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 
 --- a/configure.ac
 +++ b/configure.ac
-@@ -2781,14 +2781,7 @@ PKG_ENABLE_MODULES_VLC([VORBIS], [], [og
+@@ -2754,14 +2754,7 @@ PKG_ENABLE_MODULES_VLC([VORBIS], [], [og
  dnl
  dnl  Tremor plugin
  dnl
@@ -32,7 +32,7 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
  dnl  Speex plugins
 --- a/modules/codec/Makefile.am
 +++ b/modules/codec/Makefile.am
-@@ -321,7 +321,7 @@ codec_LTLIBRARIES += $(LTLIBdaala)
+@@ -324,7 +324,7 @@ codec_LTLIBRARIES += $(LTLIBdaala)
  libtremor_plugin_la_SOURCES = codec/vorbis.c
  libtremor_plugin_la_CPPFLAGS = $(AM_CPPFLAGS) -DMODULE_NAME_IS_tremor
  libtremor_plugin_la_LDFLAGS = $(AM_LDFLAGS) -rpath '$(codecdir)'
