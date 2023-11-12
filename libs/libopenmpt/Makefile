@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libopenmpt
-PKG_VERSION:=0.6.9
+PKG_VERSION:=0.6.12
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)+release.autotools.tar.gz
 PKG_SOURCE_URL:=https://lib.openmpt.org/files/libopenmpt/src/
-PKG_HASH:=479e975abb7dc0fa9cad41bdd31f255d78d43e0726546208058d3c3fcf7b6e5a
+PKG_HASH:=a93a34f244ac915df4e70c510ca7ea7cb1ff4473f58a78cf1e17b95cf045ce35
 
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE
@@ -30,7 +30,7 @@ PKG_CONFIG_DEPENDS:= \
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 
-PKG_UNPACK:=$(HOST_TAR) -C "$(PKG_BUILD_DIR)" --strip-components=1 -xzf "$(DL_DIR)/$(PKG_SOURCE)"
+PKG_UNPACK += --strip-components=1 -C $(PKG_BUILD_DIR)
 
 define Package/libopenmpt
   SECTION:=libs
@@ -108,10 +108,8 @@ endif
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include
 	$(CP) $(PKG_INSTALL_DIR)/opt/include/libopenmpt $(1)/opt/include
-
 	$(INSTALL_DIR) $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libopenmpt.{a,so*} $(1)/opt/lib
-
 	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/libopenmpt.pc \
 		$(1)/opt/lib/pkgconfig
@@ -119,7 +117,7 @@ endef
 
 define Package/libopenmpt/install
 	$(INSTALL_DIR) $(1)/opt/lib
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libopenmpt.so.* $(1)/opt/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libopenmpt.so* $(1)/opt/lib
 endef
 
 ifeq ($(CONFIG_LIBOPENMPT_OPENMPT123),y)
