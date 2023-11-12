@@ -1,6 +1,6 @@
 --- a/lib/Driver/ToolChains/Linux.cpp
 +++ b/lib/Driver/ToolChains/Linux.cpp
-@@ -97,7 +97,7 @@ std::string Linux::getMultiarchTriple(co
+@@ -129,7 +129,7 @@ std::string Linux::getMultiarchTriple(co
    case llvm::Triple::mips64: {
      std::string MT = std::string(IsMipsR6 ? "mipsisa64r6" : "mips64") +
                       "-linux-" + (IsMipsN32Abi ? "gnuabin32" : "gnuabi64");
@@ -9,7 +9,7 @@
        return MT;
      if (D.getVFS().exists(concat(SysRoot, "/lib/mips64-linux-gnu")))
        return "mips64-linux-gnu";
-@@ -276,8 +276,8 @@ Linux::Linux(const Driver &D, const llvm
+@@ -301,8 +301,8 @@ Linux::Linux(const Driver &D, const llvm
    }
    Generic_GCC::AddMultilibPaths(D, SysRoot, OSLibDir, MultiarchTriple, Paths);
  
@@ -20,7 +20,7 @@
  
    if (IsAndroid) {
      // Android sysroots contain a library directory for each supported OS
-@@ -290,7 +290,7 @@ Linux::Linux(const Driver &D, const llvm
+@@ -315,7 +315,7 @@ Linux::Linux(const Driver &D, const llvm
          Paths);
    }
  
@@ -29,9 +29,9 @@
    // 64-bit OpenEmbedded sysroots may not have a /usr/lib dir. So they cannot
    // find /usr/lib64 as it is referenced as /usr/lib/../lib64. So we handle
    // this here.
-@@ -314,8 +314,8 @@ Linux::Linux(const Driver &D, const llvm
-       D.getVFS().exists(D.Dir + "/../lib/libc++.so"))
-     addPathIfExists(D, D.Dir + "/../lib", Paths);
+@@ -332,8 +332,8 @@ Linux::Linux(const Driver &D, const llvm
+ 
+   Generic_GCC::AddMultiarchPaths(D, SysRoot, OSLibDir, Paths);
  
 -  addPathIfExists(D, concat(SysRoot, "/lib"), Paths);
 -  addPathIfExists(D, concat(SysRoot, "/usr/lib"), Paths);
@@ -40,7 +40,7 @@
  }
  
  ToolChain::RuntimeLibType Linux::GetDefaultRuntimeLibType() const {
-@@ -443,7 +443,7 @@ std::string Linux::getDynamicLinker(cons
+@@ -469,7 +469,7 @@ std::string Linux::getDynamicLinker(cons
          Triple.getSubArch() == llvm::Triple::PPCSubArch_spe)
        ArchName = "powerpc-sf";
  
@@ -49,7 +49,7 @@
    }
  
    std::string LibDir;
-@@ -562,8 +562,8 @@ std::string Linux::getDynamicLinker(cons
+@@ -604,8 +604,8 @@ std::string Linux::getDynamicLinker(cons
    if (Distro == Distro::Exherbo &&
        (Triple.getVendor() == llvm::Triple::UnknownVendor ||
         Triple.getVendor() == llvm::Triple::PC))
@@ -60,7 +60,7 @@
  }
  
  void Linux::AddClangSystemIncludeArgs(const ArgList &DriverArgs,
-@@ -588,7 +588,7 @@ void Linux::AddClangSystemIncludeArgs(co
+@@ -630,7 +630,7 @@ void Linux::AddClangSystemIncludeArgs(co
      return;
  
    // LOCAL_INCLUDE_DIR
@@ -69,7 +69,7 @@
    // TOOL_INCLUDE_DIR
    AddMultilibIncludeArgs(DriverArgs, CC1Args);
  
-@@ -609,10 +609,10 @@ void Linux::AddClangSystemIncludeArgs(co
+@@ -651,10 +651,10 @@ void Linux::AddClangSystemIncludeArgs(co
    // /usr/include.
    std::string MultiarchIncludeDir = getMultiarchTriple(D, getTriple(), SysRoot);
    if (!MultiarchIncludeDir.empty() &&
@@ -82,7 +82,7 @@
  
    if (getTriple().getOS() == llvm::Triple::RTEMS)
      return;
-@@ -620,9 +620,9 @@ void Linux::AddClangSystemIncludeArgs(co
+@@ -662,9 +662,9 @@ void Linux::AddClangSystemIncludeArgs(co
    // Add an include of '/include' directly. This isn't provided by default by
    // system GCCs, but is often used with cross-compiling GCCs, and harmless to
    // add even when Clang is acting as-if it were a system compiler.
@@ -96,16 +96,16 @@
      addSystemInclude(DriverArgs, CC1Args, ResourceDirInclude);
 --- a/lib/Lex/InitHeaderSearch.cpp
 +++ b/lib/Lex/InitHeaderSearch.cpp
-@@ -56,7 +56,7 @@ class InitHeaderSearch {
+@@ -57,7 +57,7 @@ class InitHeaderSearch {
  public:
    InitHeaderSearch(HeaderSearch &HS, bool verbose, StringRef sysroot)
        : Headers(HS), Verbose(verbose), IncludeSysroot(std::string(sysroot)),
 -        HasSysroot(!(sysroot.empty() || sysroot == "/")) {}
 +        HasSysroot(!(sysroot.empty() || sysroot == "/opt/")) {}
  
-   /// AddPath - Add the specified path to the specified group list, prefixing
-   /// the sysroot if used.
-@@ -148,8 +148,8 @@ bool InitHeaderSearch::AddUnmappedPath(c
+   /// Add the specified path to the specified group list, prefixing the sysroot
+   /// if used.
+@@ -147,8 +147,8 @@ bool InitHeaderSearch::AddUnmappedPath(c
    StringRef MappedPathStr = Path.toStringRef(MappedPathStorage);
  
    // If use system headers while cross-compiling, emit the warning.
@@ -116,7 +116,7 @@
      Headers.getDiags().Report(diag::warn_poison_system_directories)
          << MappedPathStr;
    }
-@@ -470,7 +470,7 @@ void InitHeaderSearch::AddDefaultInclude
+@@ -441,7 +441,7 @@ void InitHeaderSearch::AddDefaultInclude
    if (Lang.CPlusPlus && !Lang.AsmPreprocessor &&
        HSOpts.UseStandardCXXIncludes && HSOpts.UseStandardSystemIncludes) {
      if (HSOpts.UseLibcxx) {

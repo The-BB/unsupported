@@ -3,17 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=clang
-PKG_VERSION:=15.0.7
+PKG_VERSION:=17.0.4
 PKG_RELEASE:=1
 
 CLANG_MAJOR_VERSION:=$(word 1,$(subst ., ,$(PKG_VERSION)))
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).src.tar.xz
 PKG_SOURCE_URL:=https://github.com/llvm/llvm-project/releases/download/llvmorg-$(PKG_VERSION)
-PKG_HASH:=a6b673ef15377fb46062d164e8ddc4d05c348ff8968f015f7f4af03f51000067
-
-HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_HASH:=56c99515be2f245848dacc60fe85fe9de66cdc438ea0a1b82640e68384d0e432
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE.TXT
@@ -27,8 +24,8 @@ include $(INCLUDE_DIR)/host-build.mk
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
-HOST_UNPACK:=xzcat "$(DL_DIR)/$(PKG_SOURCE)" | $(HOST_TAR) -C "$(HOST_BUILD_DIR)" -x --strip-components=1
-PKG_UNPACK:=xzcat "$(DL_DIR)/$(PKG_SOURCE)" | $(HOST_TAR) -C "$(PKG_BUILD_DIR)" -x --strip-components=1
+HOST_UNPACK += --strip-components=1 -C $(HOST_BUILD_DIR)
+PKG_UNPACK += --strip-components=1 -C $(PKG_BUILD_DIR)
 
 define Package/clang/Default
   SECTION:=devel
@@ -117,6 +114,7 @@ CLANG_OPTS_COMMON:= \
 	-DCLANG_INCLUDE_DOCS=OFF \
 	-DCLANG_INCLUDE_TESTS=OFF \
 	-DLLVM_DYLIB_COMPONENTS=all \
+	-DLLVM_INCLUDE_TESTS=OFF \
 	-DLLVM_LINK_LLVM_DYLIB=ON \
 	-DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=ON
 
@@ -159,13 +157,13 @@ define Build/Clean
 	rm -f $(STAGING_DIR)/opt/bin/clang-tblgen
 endef
 
-define PrepPostFix
+define PrepTarget
 	$(INSTALL_DIR) $(STAGING_DIR)/opt/bin $(STAGING_DIR)/host/bin
 	$(INSTALL_BIN) $(HOST_BUILD_DIR)/build/bin/clang-tblgen $(STAGING_DIR)/opt/bin
 	$(LN) ../../opt/bin/clang-tblgen $(STAGING_DIR)/host/bin
 endef
 
-Hooks/Prepare/Post += PrepPostFix
+Hooks/Configure/Pre += PrepTarget
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include
@@ -198,19 +196,15 @@ define Package/clang-analyzer/install
 	$(INSTALL_DIR) $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libear $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libscanbuild $(1)/opt/lib
-
 	$(INSTALL_DIR) $(1)/opt/libexec
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/libexec/analyze-c{++,c} \
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/libexec/{analyze,intercept}-c{++,c} \
 		$(1)/opt/libexec
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/libexec/c{++,cc}-analyzer \
-		$(1)/opt/libexec
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/libexec/intercept-c{++,c} \
 		$(1)/opt/libexec
 	# XXX Entware specific: fix exec path in scripts
 	$(SED) 's,^#!.*perl,#!/opt/bin/perl,' $(1)/opt/libexec/c{++,cc}-analyzer
 	$(SED) 's,^#!.*python,#!/opt/bin/python,' \
-			$(1)/opt/libexec/analyze-c{++,c} \
-			$(1)/opt/libexec/intercept-c{++,c}
+			$(1)/opt/libexec/{analyze,intercept}-c{++,c}
 	$(INSTALL_DIR) $(1)/opt/share
 	$(CP) $(PKG_INSTALL_DIR)/opt/share/scan-{build,view} $(1)/opt/share
 	# XXX Entware specific: fix exec path in scripts
@@ -234,9 +228,9 @@ define Package/clang-tools/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/clang-$(CLANG_MAJOR_VERSION) \
 		$(1)/opt/bin
 	$(LN) clang-$(CLANG_MAJOR_VERSION) $(1)/opt/bin/clang
-	for bins in clang++ clang-cl clang-cpp; do \
-		$(LN) clang $(1)/opt/bin/$$$$bins; \
-	done
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/clang++ $(1)/opt/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/clang-cl $(1)/opt/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/clang-cpp $(1)/opt/bin
 endef
 
 define Package/clang-tools-extra/install
@@ -246,10 +240,8 @@ define Package/clang-tools-extra/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/clang-extdef-mapping $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/clang-format $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/clang-linker-wrapper $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/clang-nvlink-wrapper $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/clang-offload-bundler $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/clang-offload-packager $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/clang-offload-wrapper $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/clang-refactor $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/clang-rename $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/clang-repl $(1)/opt/bin

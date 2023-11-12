@@ -1,6 +1,6 @@
 --- a/tools/libclang/CMakeLists.txt
 +++ b/tools/libclang/CMakeLists.txt
-@@ -74,14 +74,7 @@ if (CLANG_ENABLE_ARCMT)
+@@ -75,14 +75,7 @@ if (CLANG_ENABLE_ARCMT)
    list(APPEND LIBS clangARCMigrate)
  endif ()
  
