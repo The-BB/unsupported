@@ -1,0 +1,25 @@
+--- a/example/client.json
++++ b/example/client.json
+@@ -28,7 +28,7 @@
+             "geosite:geolocation-!cn"
+         ],
+         "default_policy": "proxy",
+-        "geoip": "/usr/share/trojan-go/geoip.dat",
+-        "geosite": "/usr/share/trojan-go/geosite.dat"
++        "geoip": "/opt/share/trojan-go/geoip.dat",
++        "geosite": "/opt/share/trojan-go/geosite.dat"
+     }
+ }
+--- a/example/server.json
++++ b/example/server.json
+@@ -17,7 +17,7 @@
+         "block": [
+             "geoip:private"
+         ],
+-        "geoip": "/usr/share/trojan-go/geoip.dat",
+-        "geosite": "/usr/share/trojan-go/geosite.dat"
++        "geoip": "/opt/share/trojan-go/geoip.dat",
++        "geosite": "/opt/share/trojan-go/geosite.dat"
+     }
+ }
+\ No newline at end of file
