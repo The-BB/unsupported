@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=sdl2
-PKG_VERSION:=2.26.4
+PKG_VERSION:=2.28.5
 PKG_RELEASE:=1
 
-PKG_SOURCE:=SDL2-$(PKG_VERSION).tar.gz
+PKG_SOURCE:=$(shell echo $(PKG_NAME) | tr '[:lower:]' '[:upper:]')-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://www.libsdl.org/release
-PKG_HASH:=1a0f686498fb768ad9f3f80b39037a7d006eac093aad39cb4ebcc832a8887231
+PKG_HASH:=332cb37d0be20cb9541739c61f79bae5a477427d79ae85e352089afdaf6666e4
 
 PKG_LICENSE:=Zlib
 PKG_LICENSE_FILES:=LICENSE.txt
@@ -22,15 +22,15 @@ PKG_CONFIG_DEPENDS:= \
 
 include $(INCLUDE_DIR)/package.mk
 
-PKG_UNPACK:=$(HOST_TAR) -C "$(PKG_BUILD_DIR)" --strip-components=1 -xzf "$(DL_DIR)/$(PKG_SOURCE)"
+PKG_UNPACK += --strip-components=1 -C $(PKG_BUILD_DIR)
 
 define Package/libsdl2
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=Simple DirectMedia Layer
   URL:=http://www.libsdl.org
-  DEPENDS:=@AUDIO_SUPPORT
-  DEPENDS+= \
+  DEPENDS:= \
+	@AUDIO_SUPPORT \
 	+LIBSDL2_ALSA:alsa-lib \
 	+LIBSDL2_DBUS:libdbus \
 	+LIBSDL2_UDEV:libudev
@@ -98,16 +98,12 @@ define Build/InstallDev
 	$(SED) 's,^\(prefix\|exec_prefix\)=.*,\1=$(STAGING_DIR)/opt,g' \
 		$(1)/opt/bin/sdl2-config
 	$(LN) ../../opt/bin/sdl2-config $(2)/bin/sdl2-config
-
 	$(INSTALL_DIR) $(1)/opt/include
 	$(CP) $(PKG_INSTALL_DIR)/opt/include/SDL2 $(1)/opt/include
-
 	$(INSTALL_DIR) $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libSDL2*.{a,so*} $(1)/opt/lib
-
 	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/sdl2.pc $(1)/opt/lib/pkgconfig
-
 	$(INSTALL_DIR) $(2)/share/aclocal/
 	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/opt/share/aclocal/* $(2)/share/aclocal
 endef
