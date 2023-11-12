@@ -23,8 +23,8 @@ define Package/corosync-qdevice
   CATEGORY:=Network
   TITLE:=The Corosync Cluster Engine Qdevice
   URL:=https://github.com/corosync/corosync-qdevice
-  DEPENDS:=+libcorosync +libnss +nspr
-  EXTRA_DEPENDS:=coreutils-stat, nss-utils, procps-ng-ps, procps-ng-w
+  DEPENDS:=+libcorosync +nspr +nss-utils
+  EXTRA_DEPENDS:=coreutils-stat, procps-ng-ps, procps-ng-w
 endef
 
 define Package/corosync-qdevice/description
