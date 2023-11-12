@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rizin
-PKG_VERSION:=0.5.2
+PKG_VERSION:=0.6.3
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/rizinorg/rizin/tar.gz/refs/tags/v$(PKG_VERSION)?
-PKG_HASH:=dbb5747a7b9a38309f7de420e573e87847d1f37bd6e9d6e7827c6cca7676e1ce
+PKG_HASH:=5f78a5ca71d3029664447f341d48b2ec7767929aa2dc51ac2d3597ab7f3f2a32
 
 PKG_LICENSE:=GPL-3.0-or-later LGPL-3.0-or-later
 PKG_LICENSE_FILES:=COPYING COPYING.LESSER
@@ -51,10 +51,8 @@ MESON_ARGS += \
 define Package/rizin/install
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/* $(1)/opt/bin
-
 	$(INSTALL_DIR) $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/librz_*.so.* $(1)/opt/lib
-
 	$(INSTALL_DIR) $(1)/opt/share/rizin
 	$(CP) $(PKG_INSTALL_DIR)/opt/share/rizin/* $(1)/opt/share/rizin
 endef
