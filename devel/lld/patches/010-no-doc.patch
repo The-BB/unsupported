@@ -1,6 +1,6 @@
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -253,7 +253,7 @@ if (LLVM_INCLUDE_TESTS)
+@@ -196,7 +196,7 @@ if (LLVM_INCLUDE_TESTS)
    add_subdirectory(test)
  endif()
  
