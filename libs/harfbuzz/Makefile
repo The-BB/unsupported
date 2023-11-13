@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=harfbuzz
-PKG_VERSION:=5.1.0
-PKG_RELEASE:=2
+PKG_VERSION:=8.3.0
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/harfbuzz/harfbuzz/tar.gz/refs/tags/$(PKG_VERSION)?
-PKG_HASH:=5352ff2eec538ea9a63a485cf01ad8332a3f63aa79921c5a2e301cef185caea1
+PKG_HASH:=6a093165442348d99f3307480ea87ed83bdabaf642cdd9548cff6b329e93bfac
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
@@ -28,7 +28,7 @@ include $(INCLUDE_DIR)/meson.mk
 define Package/libharfbuzz
   SECTION:=libs
   CATEGORY:=Libraries
-  TITLE:=an OpenType text shaping engine
+  TITLE:=HarfBuzz text shaping library
   URL:=https://www.freedesktop.org/wiki/Software/HarfBuzz/
   DEPENDS:= \
 	$(INTL_DEPENDS) \
@@ -51,30 +51,38 @@ TARGET_CXXFLAGS += -DHB_MINI
 
 MESON_ARGS += \
 	-Db_lto=true \
+	-Dbenchmark=disabled \
 	-Dcairo=$(if $(CONFIG_HARFBUZZ_CAIRO),en,dis)abled \
+	-Dcoretext=disabled \
+	-Ddirectwrite=disabled \
 	-Ddocs=disabled \
+	-Dexperimental_api=false \
 	-Dfreetype=$(if $(CONFIG_HARFBUZZ_FREETYPE),en,dis)abled \
 	-Dfuzzer_ldflags="" \
+	-Dgdi=disabled \
 	-Dglib=$(if $(CONFIG_HARFBUZZ_GLIB2),en,dis)abled \
 	-Dgobject=$(if $(CONFIG_HARFBUZZ_GLIB2),en,dis)abled \
 	-Dicu=$(if $(CONFIG_HARFBUZZ_ICU),en,dis)abled \
+	-Dicu_builtin=false \
 	-Dintrospection=disabled \
-	-Dtests=disabled
+	-Dtests=disabled \
+	-Dutilities=disabled
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include
 	$(CP) $(PKG_INSTALL_DIR)/opt/include/harfbuzz $(1)/opt/include
-
 	$(INSTALL_DIR) $(1)/opt/lib/cmake/harfbuzz
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/cmake/harfbuzz/harfbuzz-config.cmake \
 		$(1)/opt/lib/cmake/harfbuzz
-
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz{,-subset}.so* $(1)/opt/lib
-
 	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/harfbuzz{,-subset}.pc \
 		$(1)/opt/lib/pkgconfig
-
+  ifeq ($(CONFIG_HARFBUZZ_CAIRO),y)
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz-cairo.so* $(1)/opt/lib
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/harfbuzz-cairo.pc \
+		$(1)/opt/lib/pkgconfig
+  endif
   ifeq ($(CONFIG_HARFBUZZ_GLIB2),y)
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz-gobject.so* $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/harfbuzz-gobject.pc \
@@ -90,6 +98,9 @@ endef
 define Package/libharfbuzz/install
 	$(INSTALL_DIR) $(1)/opt/lib
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz{,-subset}.so* $(1)/opt/lib
+  ifeq ($(CONFIG_HARFBUZZ_CAIRO),y)
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz-cairo.so* $(1)/opt/lib
+  endif
   ifeq ($(CONFIG_HARFBUZZ_GLIB2),y)
 	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libharfbuzz-gobject.so* $(1)/opt/lib
   endif
