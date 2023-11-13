@@ -13,6 +13,8 @@ PKG_HASH:=62e81d2f1a827d43152aed12446a604627e8833493a51dca027026eed0ce7128
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
 
+PYTHON3_PKG_FORCE_DISTUTILS_SETUP:=1
+
 include $(TOPDIR)/feeds/packages/lang/python/pypi.mk
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/python/python3-package.mk
