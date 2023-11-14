@@ -36,20 +36,27 @@ endef
 TARGET_CFLAGS += -pthread
 TARGET_LDFLAGS += -latomic -ldl
 
-ifeq ($(CONFIG_ARCH_64BIT),)
-CONFIGURE_ARGS += \
-	--enable-32bit-build
+ifeq ($(CONFIG_aarch64),y)
+TARGET_CFLAGS += -fsigned-char
 endif
 
 CONFIGURE_ARGS += \
 	--disable-tests \
 	--enable-experimental-plugins
 
+ifeq ($(CONFIG_ARCH_64BIT),)
+CONFIGURE_ARGS += \
+	--enable-32bit-build
+endif
+
+CONFIGURE_VARS += \
+	ac_cv_lib_mysqlclient_mysql_info=no
+
 define PreCompile
 	( cd $(PKG_BUILD_DIR)/src/tscore; \
 		HOST_CXX_FOR_BUILD="$(HOSTCXX)" \
 		CPPFLAGS_FOR_BUILD="$(HOST_CPPFLAGS)" \
-		make CompileParseRules; \
+		$(MAKE) CompileParseRules; \
 	)
 endef
 Hooks/Compile/Pre += PreCompile
