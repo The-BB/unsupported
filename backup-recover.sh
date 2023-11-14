@@ -21,7 +21,7 @@ $PATCH_DIR/multimedia-gst1-libav-add-as-dependency.patch
 $PATCH_DIR/multimedia-gst1-plugins-base-add-as-dependency.patch
 $PATCH_DIR/multimedia-gstreamer1-add-as-dependency.patch
 $PATCH_DIR/net-samba4-add-as-dependency.patch
-$PATCH_DIR/utils-collectd-switch-to-rrd-latest.patch
+$PATCH_DIR/utils-collectd-fix-opts.patch
 $PATCH_DIR/utils-domoticz-adapted.patch
 $PATCH_DIR/utils-openzwave-adapted.patch
 "
