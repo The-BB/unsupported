@@ -25,6 +25,7 @@ define Package/python3-slixmpp
   TITLE:=an elegant Python library for XMPP (aka Jabber)
   URL:=https://lab.louiz.org/poezio/slixmpp
   DEPENDS:= \
+	+libidn \
 	+python3-asyncio \
 	+python3-codecs \
 	+python3-distutils \
