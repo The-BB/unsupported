@@ -1,0 +1,37 @@
+--- a/src/tor_relay_scanner/__main__.py
++++ /dev/null
+@@ -1,6 +0,0 @@
+-#!/usr/bin/env python3
+-import sys
+-from tor_relay_scanner import scanner
+-
+-if __name__ == "__main__":
+-    sys.exit(scanner.main())
+--- a/src/tor_relay_scanner/scanner.py
++++ b/src/tor_relay_scanner/scanner.py
+@@ -1,5 +1,3 @@
+-#!/usr/bin/env python3
+-
+ import asyncio
+ import random
+ import sys
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -3,4 +3,5 @@ requires = [
+     "setuptools>=42",
+     "wheel"
+ ]
+-build-backend = "setuptools.build_meta"
+\ No newline at end of file
++
++build-backend = "setuptools.build_meta"
+--- a/setup.cfg
++++ b/setup.cfg
+@@ -25,3 +25,7 @@ install_requires =
+ 
+ [options.packages.find]
+ where = src
++
++[options.entry_points]
++console_scripts = 
++	tor-relay-scanner = tor_relay_scanner.scanner:main
