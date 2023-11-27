@@ -1,5 +1,40 @@
+ Linux 3.14
+# error: 'SYS_sched_getattr' undeclared
+# error: 'SYS_sched_setattr' undeclared
+ Linux 4.18
 # error: 'SYS_memfd_create' undeclared
 
+--- a/src/modules/module-rt.c
++++ b/src/modules/module-rt.c
+@@ -44,6 +44,10 @@
+ #include <sys/resource.h>
+ #include <sys/syscall.h>
+ 
++#ifndef LINUX_VERSION_CODE
++#include <linux/version.h>
++#endif /* sched_getattr/sched_setattr since Linux 3.14 */
++
+ #include "config.h"
+ 
+ #include <spa/utils/result.h>
+@@ -1056,7 +1060,7 @@ static int do_rtkit_setup(struct spa_loo
+ #endif /* HAVE_DBUS */
+ 
+ int set_uclamp(int uclamp_min, int uclamp_max, pid_t pid) {
+-#ifdef __linux__
++#if defined __linux__ && LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)
+ 	int ret;
+ 	struct sched_attr {
+ 		uint32_t size;
+@@ -1092,7 +1096,7 @@ int set_uclamp(int uclamp_min, int uclam
+ 		return -errno;
+ 	}
+ 	return 0;
+-#else
++#else /* sched_getattr/sched_setattr since Linux 3.14 */
+ 	pw_log_warn("Setting UCLAMP values is only supported on Linux");
+ 	return -EOPNOTSUPP;
+ #endif /* __linux__ */
 --- a/src/pipewire/mem.c
 +++ b/src/pipewire/mem.c
 @@ -22,9 +22,14 @@
@@ -8,7 +43,7 @@
  
 +#ifndef LINUX_VERSION_CODE
 +#include <linux/version.h>
-+#endif
++#endif /* memfd_create since Linux 4.18 */
 +
  PW_LOG_TOPIC_EXTERN(log_mem);
  #define PW_LOG_TOPIC_DEFAULT log_mem
@@ -21,7 +56,7 @@
  
  #define HAVE_MEMFD_CREATE 1
  #endif
-+#endif
++#endif /* memfd_create since Linux 4.18 */
  
  #if defined(__FreeBSD__) || defined(__MidnightBSD__) || defined(__GNU__)
  #define MAP_LOCKED 0
@@ -31,7 +66,7 @@
  
  #include "compress-offload-api.h"
  
-+/* SND_AUDIOCODEC_MAX since Linux 3.7.0 */
++/* SND_AUDIOCODEC_MAX since Linux 3.7 */
 +#ifndef SND_AUDIOCODEC_MAX
 +#define SND_AUDIOCODEC_MAX SND_AUDIOCODEC_G729
 +#endif
