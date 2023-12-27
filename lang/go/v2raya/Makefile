@@ -5,16 +5,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2rayA
-PKG_VERSION:=2.2.4.1
+PKG_VERSION:=2.2.4.6
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=dfe0078ee0d339a181ba91642ea0120148c17a48
+PKG_SOURCE_VERSION:=9775d892d8050433bad505d50472eccd7fdb6e2c
 PKG_SOURCE_URL:=https://github.com/v2rayA/v2rayA
-PKG_MIRROR_HASH:=c4ac3ca2100bed5725ab39f53fcc50f9d887fd32c739bfdf37448f90c9f0c1fc
+PKG_MIRROR_HASH:=7b79353458287af5d746addd1811a009880de0b3ca67b1b4cb2d4daa4561be0c
 
 PKG_LICENSE:=AGPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
+
+PKG_BUILD_DEPENDS:=node-yarn/host
 
 include ../goenv.mk
 include $(INCLUDE_DIR)/package.mk
@@ -56,11 +58,6 @@ define Build/Web
 	( cd $(PKG_BUILD_DIR)/gui; \
 		yarn install; \
 		OUTPUT_DIR=../service/server/router/web yarn build; \
-		$(FIND) ../service/server/router/web \
-			\! -name \*.png -a \
-			\! -name \*.gz -a \
-			\! -name index.html -a \
-			! -type d -exec gzip -9 {} +; \
 	)
 endef
 
