@@ -5,9 +5,9 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=wireguard-ui
 PKG_VERSION:=0.5.2
 PKG_RELEASE:=2
-SOURCE_DATE:=2023-06-23
 
 PKG_SOURCE_PROTO:=git
+PKG_SOURCE_DATE:=2023-06-23
 PKG_SOURCE_VERSION:=6bbe230fe8a25844cebe9997a5acf4645033f9b5
 PKG_SOURCE_URL:=https://github.com/ngoduykhanh/wireguard-ui
 PKG_MIRROR_HASH:=ab0f562b0b2c5b590f701ce997149cc2ba679e7cb5160d0c97880616e6026a31
@@ -38,7 +38,7 @@ endef
 define Package/wireguard-ui_nohf
   $(call Package/wireguard-ui/Default)
   VARIANT:=nohf
-  DEPENDS:=@TARGET_armv7_3_2
+  DEPENDS+=@TARGET_armv7_3_2
 endef
 
 define Package/wireguard-ui/description
@@ -51,7 +51,7 @@ GO_BUILD_ARGS += -a
 
 GO_LDFLAGS += \
 	-X 'main.appVersion=v$(PKG_VERSION)' \
-	-X 'main.buildTime=$(SOURCE_DATE)' \
+	-X 'main.buildTime=$(PKG_SOURCE_DATE)' \
 	-X 'main.gitCommit=$(COMMIT_SHORT)' \
 	-X 'main.gitRef=master'
 
