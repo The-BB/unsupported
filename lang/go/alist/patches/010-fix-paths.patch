@@ -13,7 +13,7 @@
  	Dev         bool
 --- a/cmd/root.go
 +++ b/cmd/root.go
-@@ -24,7 +24,7 @@ func Execute() {
+@@ -26,7 +26,7 @@ func Execute() {
  }
  
  func init() {
@@ -24,7 +24,7 @@
  	RootCmd.PersistentFlags().BoolVar(&flags.Dev, "dev", false, "start with dev mode")
 --- a/internal/conf/config.go
 +++ b/internal/conf/config.go
-@@ -56,10 +56,10 @@ type Config struct {
+@@ -77,10 +77,10 @@ type Config struct {
  }
  
  func DefaultConfig() *Config {
