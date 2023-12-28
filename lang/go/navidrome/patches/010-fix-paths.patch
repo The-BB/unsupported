@@ -1,6 +1,6 @@
 --- a/cmd/root.go
 +++ b/cmd/root.go
-@@ -148,7 +148,7 @@ func init() {
+@@ -167,7 +167,7 @@ func init() {
  		conf.InitConfig(cfgFile)
  	})
  
@@ -8,21 +8,22 @@
 +	rootCmd.PersistentFlags().StringVarP(&cfgFile, "configfile", "c", "", `config file (default "/opt/etc/navidrome.toml")`)
  	rootCmd.PersistentFlags().BoolVarP(&noBanner, "nobanner", "n", false, `don't show banner`)
  	rootCmd.PersistentFlags().String("musicfolder", viper.GetString("musicfolder"), "folder where your music is stored")
- 	rootCmd.PersistentFlags().String("datafolder", viper.GetString("datafolder"), "folder to store application data (DB, cache...), needs write access")
+ 	rootCmd.PersistentFlags().String("datafolder", viper.GetString("datafolder"), "folder to store application data (DB), needs write access")
 --- a/conf/configuration.go
 +++ b/conf/configuration.go
-@@ -218,8 +218,8 @@ func AddHook(hook func()) {
+@@ -267,9 +267,9 @@ func AddHook(hook func()) {
  }
  
  func init() {
 -	viper.SetDefault("musicfolder", filepath.Join(".", "music"))
--	viper.SetDefault("datafolder", ".")
 +	viper.SetDefault("musicfolder", filepath.Join("/opt/data", "music"))
+ 	viper.SetDefault("cachefolder", "")
+-	viper.SetDefault("datafolder", ".")
 +	viper.SetDefault("datafolder", "/opt/var/lib/navidrome")
  	viper.SetDefault("loglevel", "info")
  	viper.SetDefault("address", "0.0.0.0")
  	viper.SetDefault("port", 4533)
-@@ -306,7 +306,7 @@ func InitConfig(cfgFile string) {
+@@ -366,7 +366,7 @@ func InitConfig(cfgFile string) {
  		viper.SetConfigFile(cfgFile)
  	} else {
  		// Search config in local directory with name "navidrome" (without extension).
