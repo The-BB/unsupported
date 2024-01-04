@@ -16,10 +16,10 @@ include $(TOPDIR)/feeds/packages/lang/python/pypi.mk
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/python/python3-package.mk
 
-define Package/python3-glances
+define Package/glances
   SECTION:=admin
   CATEGORY:=Administration
-  TITLE:=a curses-based monitoring tool
+  TITLE:=a curses-based monitoring tool (python)
   URL:=https://github.com/nicolargo/glances
   DEPENDS:= \
 	+python3-codecs \
@@ -37,26 +37,22 @@ define Package/python3-glances
 	+python3-ujson
 endef
 
-define Package/python3-glances/description
+define Package/glances/description
   Glances is an open-source system cross-platform monitoring tool.
 endef
 
-define Package/python3-glances/conffiles
+define Package/glances/conffiles
 /opt/etc/glances/glances.conf
 endef
 
-# FIXME plugins don`t work if they compiled into bytecode
-define Package/python3-glances/install
+define Py3Package/glances/install
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/glances $(1)/opt/bin
 	$(INSTALL_DIR) $(1)/opt/etc/glances
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/conf/glances.conf $(1)/opt/etc/glances
-	$(INSTALL_DIR) $(1)$(PYTHON3_PKG_DIR)
-	$(CP) $(PKG_INSTALL_DIR)$(PYTHON3_PKG_DIR)/* $(1)$(PYTHON3_PKG_DIR)/
 	$(INSTALL_DIR) $(1)/opt/var/cache/glances
-	$(call Python3/FixShebang,$(1)/opt/bin/glances)
 endef
 
-#$(eval $(call Py3Package,python3-glances))
-$(eval $(call BuildPackage,python3-glances))
-#$(eval $(call BuildPackage,python3-glances-src))
+$(eval $(call Py3Package,glances))
+$(eval $(call BuildPackage,glances))
+#$(eval $(call BuildPackage,glances-src))

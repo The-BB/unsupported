@@ -1,0 +1,64 @@
+--- a/glances/amps_list.py
++++ b/glances/amps_list.py
+@@ -61,12 +61,12 @@ class AmpsList(object):
+                 # An AMP section exists in the configuration file
+                 # If an AMP script exist in the glances/amps folder, use it
+                 amp_conf_name = s[4:]
+-                amp_script = os.path.join(amps_path, header + s[4:] + ".py")
++                amp_script = os.path.join(amps_path, header + s[4:] + ".pyc")
+                 if not os.path.exists(amp_script):
+                     # If not, use the default script
+-                    amp_script = os.path.join(amps_path, "glances_default.py")
++                    amp_script = os.path.join(amps_path, "glances_default.pyc")
+                 try:
+-                    amp = __import__(os.path.basename(amp_script)[:-3])
++                    amp = __import__(os.path.basename(amp_script)[:-4])
+                 except ImportError as e:
+                     logger.warning("Missing Python Lib ({}), cannot load {} AMP".format(e, amp_conf_name))
+                 except Exception as e:
+--- a/glances/stats.py
++++ b/glances/stats.py
+@@ -97,12 +97,12 @@ class GlancesStats(object):
+         # The key is the plugin name
+         # for example, the file glances_xxx.py
+         # generate self._plugins_list["xxx"] = ...
+-        name = plugin_script[len(self.header) : -3].lower()
++        name = plugin_script[len(self.header) : -4].lower()
+ 
+         # Load the plugin class
+         try:
+             # Import the plugin
+-            plugin = __import__(plugin_script[:-3])
++            plugin = __import__(plugin_script[:-4])
+             # Init and add the plugin to the dictionary
+             self._plugins[name] = plugin.Plugin(args=args, config=config)
+         except Exception as e:
+@@ -127,7 +127,7 @@ class GlancesStats(object):
+         """Load all plugins in the 'plugins' folder."""
+         start_duration = Counter()
+         for item in os.listdir(plugins_path):
+-            if item.startswith(self.header) and item.endswith(".py") and item != (self.header + "plugin.py"):
++            if item.startswith(self.header) and item.endswith(".pyc") and item != (self.header + "plugin.pyc"):
+                 # Load the plugin
+                 start_duration.reset()
+                 self._load_plugin(os.path.basename(item), args=args, config=self.config)
+@@ -144,14 +144,14 @@ class GlancesStats(object):
+         # Build the export module available list
+         args_var = vars(locals()['args'])
+         for item in os.listdir(exports_path):
+-            export_name = os.path.basename(item)[len(header) : -3].lower()
++            export_name = os.path.basename(item)[len(header) : -4].lower()
+             if (
+                 item.startswith(header)
+-                and item.endswith(".py")
+-                and item != (header + "export.py")
+-                and item != (header + "history.py")
++                and item.endswith(".pyc")
++                and item != (header + "export.pyc")
++                and item != (header + "history.pyc")
+             ):
+-                self._exports_all[export_name] = os.path.basename(item)[:-3]
++                self._exports_all[export_name] = os.path.basename(item)[:-4]
+                 # Set the disable_<name> to False by default
+                 setattr(self.args, 'export_' + export_name, getattr(self.args, 'export_' + export_name, False))
+ 
