@@ -1,0 +1,58 @@
+--- a/plugin.cfg
++++ b/plugin.cfg
+@@ -20,7 +20,7 @@
+ # log:log
+ 
+ metadata:metadata
+-geoip:geoip
++#geoip:geoip
+ cancel:cancel
+ tls:tls
+ timeouts:timeouts
+@@ -34,15 +34,15 @@ trace:trace
+ ready:ready
+ health:health
+ pprof:pprof
+-prometheus:metrics
++#prometheus:metrics
+ errors:errors
+ log:log
+-dnstap:dnstap
++#dnstap:dnstap
+ local:local
+ dns64:dns64
+ acl:acl
+ any:any
+-chaos:chaos
++#chaos:chaos
+ loadbalance:loadbalance
+ tsig:tsig
+ cache:cache
+@@ -54,15 +54,15 @@ minimal:minimal
+ template:template
+ transfer:transfer
+ hosts:hosts
+-route53:route53
+-azure:azure
+-clouddns:clouddns
++#route53:route53
++#azure:azure
++#clouddns:clouddns
+ k8s_external:k8s_external
+ kubernetes:kubernetes
+ file:file
+ auto:auto
+ secondary:secondary
+-etcd:etcd
++#etcd:etcd
+ loop:loop
+ forward:forward
+ grpc:grpc
+@@ -71,3 +71,7 @@ whoami:whoami
+ on:github.com/coredns/caddy/onevent
+ sign:sign
+ view:view
++meshname:github.com/zhoreeq/coredns-meshname
++meship:github.com/zhoreeq/coredns-meship
++ens:github.com/wealdtech/coredns-ens
++wgsd:github.com/jwhited/wgsd
