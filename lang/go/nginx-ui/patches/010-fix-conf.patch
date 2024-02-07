@@ -1,0 +1,13 @@
+--- a/app.example.ini	2024-01-14 06:03:30.000000000 +0300
++++ b/app.example.ini	2024-01-16 12:46:35.048053869 +0300
+@@ -10,8 +10,8 @@
+ Demo =
+ 
+ [nginx]
+-AccessLogPath = /var/log/nginx/access.log
+-ErrorLogPath  = /var/log/nginx/error.log
++AccessLogPath = /opt/var/log/nginx/access.log
++ErrorLogPath  = /opt/var/log/nginx/error.log
+ ConfigDir    =
+ PIDPath       =
+ TestConfigCmd =
