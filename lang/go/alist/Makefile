@@ -3,14 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=alist
-PKG_VERSION:=3.29.1
+PKG_VERSION:=3.30.0
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2023-11-25
-PKG_SOURCE_VERSION:=d142fc3449daf0a50d2083102664ce42f592ea27
+PKG_SOURCE_DATE:=2024-01-05
+PKG_SOURCE_VERSION:=e6e2d03ba175edea1c9c2c6bd42259e11ed764a0
 PKG_SOURCE_URL:=https://github.com/alist-org/alist
-PKG_MIRROR_HASH:=06c4fa4e603f84927606f3377f2a8ba94922bc01e8e80f5647762d1313b88aa5
+PKG_MIRROR_HASH:=4c86d2dcf4cd20cf77e5bc6f4ce5d4c754ab1569427cb9370d86ead6d9b31f22
 
 PKG_LICENSE:=AGPL-3.0
 PKG_LICENSE_FILES:=LICENSE
@@ -49,11 +49,11 @@ endef
 Package/alist_nohf/description=$(Package/alist/description)
 
 define Download/alist-web
-  VERSION:=1786327dde8f043a7b36da19f6504e1dacccdb31
+  VERSION:=5c91f1147abb405ae36de6f903f5fb204ce798cc
   SUBDIR:=alist-web
   FILE:=alist-web-$$(VERSION).tar.xz
   URL:=https://github.com/alist-org/alist-web.git
-  MIRROR_HASH:=b2e49fa07e7b191d41908a752130b3125519a885e07ce09ef6d35be717857dbf
+  MIRROR_HASH:=a98cecc5a9d46ea35952c8dbf97eb42006fb4c6e66ff1c99abce8a1b6104f595
   PROTO:=git
 endef
 
