@@ -1,6 +1,6 @@
---- a/app.example.ini	2024-01-14 06:03:30.000000000 +0300
-+++ b/app.example.ini	2024-01-16 12:46:35.048053869 +0300
-@@ -10,8 +10,8 @@
+--- a/app.example.ini
++++ b/app.example.ini
+@@ -10,8 +10,8 @@ CADir =
  Demo =
  
  [nginx]
