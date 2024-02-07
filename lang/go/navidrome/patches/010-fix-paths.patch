@@ -11,7 +11,7 @@
  	rootCmd.PersistentFlags().String("datafolder", viper.GetString("datafolder"), "folder to store application data (DB), needs write access")
 --- a/conf/configuration.go
 +++ b/conf/configuration.go
-@@ -267,9 +267,9 @@ func AddHook(hook func()) {
+@@ -270,9 +270,9 @@ func AddHook(hook func()) {
  }
  
  func init() {
@@ -23,7 +23,7 @@
  	viper.SetDefault("loglevel", "info")
  	viper.SetDefault("address", "0.0.0.0")
  	viper.SetDefault("port", 4533)
-@@ -366,7 +366,7 @@ func InitConfig(cfgFile string) {
+@@ -372,7 +372,7 @@ func InitConfig(cfgFile string) {
  		viper.SetConfigFile(cfgFile)
  	} else {
  		// Search config in local directory with name "navidrome" (without extension).
