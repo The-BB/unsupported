@@ -1,9 +1,0 @@
-// Config file of Xray. Also read our manual for more detail at
-// https://xtls.github.io/en/config/
-{
-  "log": {
-    "access": "/opt/var/log/xray/access.log",
-    "error": "/opt/var/log/xray/error.log",
-    "loglevel": "debug"
-  }
-}
