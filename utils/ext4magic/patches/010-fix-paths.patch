@@ -9,7 +9,7 @@
  		retval = stat (magicfile, &filestat);
  		if (retval){ 
 -			strncpy (magicfile,"/usr/local/share/misc/ext4magic",31); 
-+			strncpy (magicfile,"/opt/usr/share/misc/ext4magic",31); 
++			strncpy (magicfile,"/opt/usr/share/misc/ext4magic",29); 
  			retval = stat (magicfile, &filestat);
  		}
  		if ((! retval) && (S_ISREG(filestat.st_mode) && (! access(magicfile,R_OK)))) {
