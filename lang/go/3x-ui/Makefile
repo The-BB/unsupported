@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=3x-ui
-PKG_VERSION:=2.0.2
+PKG_VERSION:=2.1.3
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=5cd37abbaab1f3d32aca27c1cbdf996d9dda4644
+PKG_SOURCE_VERSION:=c9ba393ce7bd7050b4d2dc8d4e3c019641a5f087
 PKG_SOURCE_URL:=https://github.com/MHSanaei/3x-ui
-PKG_MIRROR_HASH:=85afd5e8dd23c39472e58eed0c936f57b6b377f1c0d680bfccd12aeb43deaab6
+PKG_MIRROR_HASH:=f60c9be966c0e9b1351cd071d6c0a023aa762cbd66040eb26d5b623200bc1781
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -66,7 +66,7 @@ ansi_std="\033[0m"
 
 if ! xray version > /dev/null 2>&1; then
   printf "\n$$ansi_red %s $$ansi_white %s $$ansi_std\n" "ERROR:" "xray not found!"
-  printf "$$ansi_white %s $$ansi_std %s\n\n" "Please install it manually:" "opkg install xray"
+  printf "$$ansi_white %s $$ansi_std %s\n\n" "Please install it manually:" "opkg install xray-core"
 fi
 endef
 

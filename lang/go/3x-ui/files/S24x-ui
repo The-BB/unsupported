@@ -5,7 +5,7 @@ export XRAY_VMESS_AEAD_FORCED="false"
 ENABLED=yes
 PROCS=x-ui
 ARGS="run"
-PREARGS=""
+PREARGS="nohup"
 DESC=$PROCS
 PATH=/opt/sbin:/opt/bin:/opt/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 

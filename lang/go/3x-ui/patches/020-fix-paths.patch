@@ -41,15 +41,14 @@
  }
 --- a/web/service/config.json
 +++ b/web/service/config.json
-@@ -1,7 +1,7 @@
+@@ -1,6 +1,6 @@
  {
    "log": {
-     "loglevel": "warning",
--    "error": "./error.log"
-+    "error": "/opt/var/log/xui/error.log"
+-    "access": "none",
++    "access": "/opt/var/log/xui/access.log",
+     "dnsLog": false,
+     "loglevel": "warning"
    },
-   "api": {
-     "tag": "api",
 --- a/web/service/server.go
 +++ b/web/service/server.go
 @@ -164,7 +164,7 @@ func (s *ServerService) GetStatus(lastSt
