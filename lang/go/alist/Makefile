@@ -17,8 +17,6 @@ PKG_LICENSE_FILES:=LICENSE
 
 PKG_CGO_ENABLED:=1
 
-PKG_BUILD_DEPENDS:=node-pnpm/host
-
 include ../goenv.mk
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/golang.mk
@@ -48,41 +46,8 @@ endef
 
 Package/alist_nohf/description=$(Package/alist/description)
 
-define Download/alist-web
-  VERSION:=5c91f1147abb405ae36de6f903f5fb204ce798cc
-  SUBDIR:=alist-web
-  FILE:=alist-web-$$(VERSION).tar.xz
-  URL:=https://github.com/alist-org/alist-web.git
-  MIRROR_HASH:=a98cecc5a9d46ea35952c8dbf97eb42006fb4c6e66ff1c99abce8a1b6104f595
-  PROTO:=git
-endef
-
-$(eval $(call Download,alist-web))
-
-define Prepare/alist-web
-	$(eval $(Download/alist-web))
-	xzcat $(DL_DIR)/$(FILE) | tar -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)
-endef
-
-define Build/Web
-	$(Prepare/alist-web)
-
-	$(INSTALL_DIR) $(PKG_BUILD_DIR)/alist-web/.git
-
-	( cd $(PKG_BUILD_DIR)/alist-web; \
-		pnpm install; \
-		pnpm i18n:release; \
-		pnpm build; \
-		rm -rf ../public/dist; \
-		mv dist ../public/; \
-	)
-endef
-
-Hooks/Compile/Pre += Build/Web
-
 GIT_TAG:=v$(PKG_VERSION)-$(COMMIT_SHORT)
 GO_VER:=$(shell $(GO_BIN) version | sed 's/go version //;s,/.*,/$(GOARCH),')
-WEB_COMMIT:=$(shell echo $(VERSION) | cut -b -9)
 
 GO_LDFLAGS += \
 	-X '$(XIMPORTPATH)/v3/internal/conf.BuiltAt=$(PKG_SOURCE_DATE)' \
@@ -90,9 +55,23 @@ GO_LDFLAGS += \
 	-X '$(XIMPORTPATH)/v3/internal/conf.GitAuthor=Entware' \
 	-X '$(XIMPORTPATH)/v3/internal/conf.GitCommit=$(COMMIT_SHORT)' \
 	-X '$(XIMPORTPATH)/v3/internal/conf.Version=$(PKG_VERSION)' \
-	-X '$(XIMPORTPATH)/v3/internal/conf.WebVersion=$(WEB_COMMIT)'
+	-X '$(XIMPORTPATH)/v3/internal/conf.WebVersion=$(PKG_VERSION)'
 
 GO_TAGS:=-tags=jsoniter
+
+WEB_FILE:=$(PKG_NAME)-web-$(PKG_VERSION).tar.gz
+define Download/alist-web
+  URL:=https://github.com/alist-org/alist-web/releases/download/$(PKG_VERSION)/
+  URL_FILE:=dist.tar.gz
+  FILE:=$(WEB_FILE)
+  HASH:=04e160efc6e7169103cd424a39de0f1720e769aacc49dc0a2fcc3f1fcc6d0fee
+endef
+$(eval $(call Download,alist-web))
+
+define Build/Web
+	$(HOST_TAR) -xzf $(DL_DIR)/$(WEB_FILE) -C $(PKG_BUILD_DIR)/public 
+endef
+Hooks/Compile/Pre += Build/Web
 
 define Package/alist/install
 	$(INSTALL_DIR) $(1)/opt/bin
