@@ -1,6 +1,6 @@
-From b5fac3fe9adc405941ad41371ddaeb4eaaae53d4 Mon Sep 17 00:00:00 2001
+From 7f78480e36d3a712242a9fc536364526317dfdab Mon Sep 17 00:00:00 2001
 From: The-BB <tun.chen.bo@gmail.com>
-Date: Thu, 8 Jun 2023 00:43:58 +0300
+Date: Fri, 9 Feb 2024 23:52:11 +0300
 Subject: [PATCH] net/samba4: add as dependency
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH] net/samba4: add as dependency
  1 file changed, 12 insertions(+)
 
 diff --git a/net/samba4/Makefile b/net/samba4/Makefile
-index 330eea46c..4b664c060 100644
+index d95b915da..96d4ead9d 100644
 --- a/net/samba4/Makefile
 +++ b/net/samba4/Makefile
 @@ -460,6 +460,18 @@ define Package/samba4-server/conffiles

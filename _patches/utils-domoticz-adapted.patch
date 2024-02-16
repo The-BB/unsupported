@@ -1,25 +1,25 @@
-From 4990512271ef589c6a08898f7ffdb3cec21d4610 Mon Sep 17 00:00:00 2001
+From f275a13a1b8818c01a294139ef61a9039612baea Mon Sep 17 00:00:00 2001
 From: The-BB <tun.chen.bo@gmail.com>
-Date: Thu, 8 Jun 2023 00:44:26 +0300
+Date: Fri, 9 Feb 2024 23:53:18 +0300
 Subject: [PATCH] utils/domoticz: adapted
 
 ---
  utils/domoticz/Makefile                    |  56 ++++----
  utils/domoticz/files/S99domoticz           |  10 ++
  utils/domoticz/files/domoticz.conf         | 105 +++++++++++++++
- utils/domoticz/patches/999-fix-paths.patch | 135 ++++++++++++++++++++
- utils/domoticz/patches/999-fix-www.patch   | 142 +++++++++++++++++++++
- 5 files changed, 426 insertions(+), 22 deletions(-)
+ utils/domoticz/patches/600-fix-paths.patch | 137 ++++++++++++++++++++
+ utils/domoticz/patches/601-fix-www.patch   | 144 +++++++++++++++++++++
+ 5 files changed, 430 insertions(+), 22 deletions(-)
  create mode 100644 utils/domoticz/files/S99domoticz
  create mode 100644 utils/domoticz/files/domoticz.conf
- create mode 100644 utils/domoticz/patches/999-fix-paths.patch
- create mode 100644 utils/domoticz/patches/999-fix-www.patch
+ create mode 100644 utils/domoticz/patches/600-fix-paths.patch
+ create mode 100644 utils/domoticz/patches/601-fix-www.patch
 
 diff --git a/utils/domoticz/Makefile b/utils/domoticz/Makefile
-index 7d1f5ce39..0103cdbfd 100644
+index aa50e7f1b..cb07ceb2d 100644
 --- a/utils/domoticz/Makefile
 +++ b/utils/domoticz/Makefile
-@@ -24,6 +24,7 @@ PKG_BUILD_FLAGS:=no-mips16 lto
+@@ -25,6 +25,7 @@ PKG_BUILD_FLAGS:=no-mips16 lto
  
  include $(INCLUDE_DIR)/package.mk
  include $(INCLUDE_DIR)/cmake.mk
@@ -27,7 +27,7 @@ index 7d1f5ce39..0103cdbfd 100644
  
  define Package/domoticz
    SECTION:=utils
-@@ -57,7 +58,7 @@ endef
+@@ -58,7 +59,7 @@ endef
  
  CMAKE_OPTIONS += \
  	-DBUILD_SHARED_LIBS=yes \
@@ -36,7 +36,7 @@ index 7d1f5ce39..0103cdbfd 100644
  	-DGIT_SUBMODULE=no \
  	-DCMAKE_BUILD_TYPE=Release \
  	-DUSE_BUILTIN_MQTT=no \
-@@ -73,7 +74,8 @@ CMAKE_OPTIONS += \
+@@ -74,7 +75,8 @@ CMAKE_OPTIONS += \
  	-DUSE_PYTHON=yes \
  	-DWITH_LIBUSB=no
  
@@ -46,7 +46,7 @@ index 7d1f5ce39..0103cdbfd 100644
  
  define Build/Prepare
  	$(call Build/Prepare/Default)
-@@ -95,33 +97,43 @@ define Build/Prepare
+@@ -96,33 +98,43 @@ define Build/Prepare
  		domoticz.conf
  	# Remove *.md
  	cd $(PKG_BUILD_DIR) && $(FIND) -name '*.md' -delete
@@ -237,15 +237,15 @@ index 000000000..1a00cdfc6
 +
 +# Launch browser (Windows only, starts a browser at startup)
 +# launch_browser=yes
-diff --git a/utils/domoticz/patches/999-fix-paths.patch b/utils/domoticz/patches/999-fix-paths.patch
+diff --git a/utils/domoticz/patches/600-fix-paths.patch b/utils/domoticz/patches/600-fix-paths.patch
 new file mode 100644
-index 000000000..e7b673eb1
+index 000000000..44883de67
 --- /dev/null
-+++ b/utils/domoticz/patches/999-fix-paths.patch
-@@ -0,0 +1,135 @@
++++ b/utils/domoticz/patches/600-fix-paths.patch
+@@ -0,0 +1,137 @@
 +--- a/hardware/plugins/DelayedLink.h
 ++++ b/hardware/plugins/DelayedLink.h
-+@@ -310,26 +310,26 @@ namespace Plugins {
++@@ -314,26 +314,26 @@ namespace Plugins {
 + 					// look in /usr/lib directories
 + 					if (!shared_lib_)
 + 					{
@@ -278,7 +278,7 @@ index 000000000..e7b673eb1
 + 					// MacOS
 +--- a/main/SQLHelper.cpp
 ++++ b/main/SQLHelper.cpp
-+@@ -8170,7 +8170,7 @@ bool CSQLHelper::RestoreDatabase(const s
++@@ -8352,7 +8352,7 @@ bool CSQLHelper::RestoreDatabase(const s
 + #ifdef WIN32
 + 	std::string outputfile = fpath + "restore.db";
 + #else
@@ -287,7 +287,7 @@ index 000000000..e7b673eb1
 + #endif
 + 	std::ofstream outfile;
 + 	outfile.open(outputfile.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
-+@@ -9192,7 +9192,7 @@ bool CSQLHelper::InsertCustomIconFromZip
++@@ -9367,7 +9367,7 @@ bool CSQLHelper::InsertCustomIconFromZip
 + #ifdef WIN32
 + 	std::string outputfile = "custom_icons.zip";
 + #else
@@ -298,7 +298,7 @@ index 000000000..e7b673eb1
 + 	outfile.open(outputfile.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
 +--- a/main/WebServer.cpp
 ++++ b/main/WebServer.cpp
-+@@ -11172,7 +11172,7 @@ namespace http
++@@ -7176,7 +7176,7 @@ namespace http
 + #ifdef WIN32
 + 			backupInfo["location"] = szUserDataFolder + "backup.db";
 + #else
@@ -310,14 +310,14 @@ index 000000000..e7b673eb1
 +--- a/main/domoticz.cpp
 ++++ b/main/domoticz.cpp
 +@@ -55,7 +55,7 @@ namespace
-+ 		"\t-wwwbind address (for example -wwwbind 0.0.0.0 or -wwwbind 192.168.0.20)\n"
++ 		"\t-vhostname virtualhostname (for example -vhostname internal.mydomain.name or -vhostname localhost)\n"
 + #ifdef WWW_ENABLE_SSL
 + 		"\t-sslwww port (for example -sslwww 443, or -sslwww 0 to disable https)\n"
 +-		"\t-sslcert file_path (for example /opt/domoticz/server_cert.pem)\n"
 ++		"\t-sslcert file_path (for example /opt/etc/domoticz/server_cert.pem)\n"
 + 		"\t-sslkey file_path (if different from certificate file)\n"
 + 		"\t-sslpass passphrase (to access to server private key in certificate)\n"
-+ 		"\t-sslmethod method (supported methods: tlsv1, tlsv1_server, sslv23, sslv23_server, tlsv11, tlsv11_server, tlsv12, tlsv12_server)\n"
++ 		"\t-sslmethod method (supported methods: tls [default], tls_server, tlsv1, tlsv1_server, sslv23, sslv23_server, tlsv11, tlsv11_server, tlsv12, tlsv12_server, tlsv13, tlsv13_server)\n"
 +@@ -68,10 +68,10 @@ namespace
 + 		"\t-userdata file_path (for example D:\\domoticzdata)\n"
 + 		"\t-approot file_path (for example D:\\domoticz)\n"
@@ -332,16 +332,18 @@ index 000000000..e7b673eb1
 ++		"\t-approot file_path (for example /opt/share/domoticz)\n"
 + #endif
 + 		"\t-webroot additional web root, useful with proxy servers (for example domoticz)\n"
-+ 		"\t-startupdelay seconds (default=0)\n"
-+@@ -86,17 +86,17 @@ namespace
-+ #if defined WIN32
++ 		"\t-nocache ask browser not to cache pages\n"
++@@ -87,18 +87,18 @@ namespace
 + 		"\t-log file_path (for example D:\\domoticz.log)\n"
++ 		"\t-weblog file_path (for example D:\\domoticz_access.log)\n"
 + #else
 +-		"\t-log file_path (for example /var/log/domoticz.log)\n"
++-		"\t-weblog file_path (for example /var/log/domoticz_access.log)\n"
 ++		"\t-log file_path (for example /opt/var/log/domoticz.log)\n"
+++		"\t-weblog file_path (for example /opt/var/log/domoticz_access.log)\n"
 + #endif
 + 		"\t-loglevel (combination of: all,normal,status,error,debug)\n"
-+ 		"\t-debuglevel (combination of: all,normal,hardware,received,webserver,eventsystem,python,thread_id,sql)\n"
++ 		"\t-debuglevel (combination of: all,normal,hardware,received,webserver,eventsystem,python,thread_id,sql,auth)\n"
 + 		"\t-notimestamps (do not prepend timestamps to logs; useful with syslog, etc.)\n"
 +-		"\t-php_cgi_path (for example /usr/bin/php-cgi)\n"
 ++		"\t-php_cgi_path (for example /opt/bin/php-cgi)\n"
@@ -355,7 +357,7 @@ index 000000000..e7b673eb1
 + #endif
 + 		""
 + 	};
-+@@ -176,7 +176,7 @@ bool bStartWebBrowser = true;
++@@ -181,7 +181,7 @@ bool bStartWebBrowser = true;
 + bool g_bUseWatchdog = true;
 + 
 + #define DAEMON_NAME "domoticz"
@@ -378,15 +380,15 @@ index 000000000..e7b673eb1
 +\ No newline at end of file
 ++ace.define("ace/snippets/python",["require","exports","module"],function(e,t,n){"use strict";t.snippetText='snippet #!\n	#!/opt/bin/python\nsnippet imp\n	import ${1:module}\nsnippet from\n	from ${1:package} import ${2:module}\n# Module Docstring\nsnippet docs\n	\'\'\'\n	File: ${1:FILENAME:file_name}\n	Author: ${2:author}\n	Description: ${3}\n	\'\'\'\nsnippet wh\n	while ${1:condition}:\n		${2:# TODO: write code...}\n# dowh - does the same as do...while in other languages\nsnippet dowh\n	while True:\n		${1:# TODO: write code...}\n		if ${2:condition}:\n			break\nsnippet with\n	with ${1:expr} as ${2:var}:\n		${3:# TODO: write code...}\n# New Class\nsnippet cl\n	class ${1:ClassName}(${2:object}):\n		"""${3:docstring for $1}"""\n		def __init__(self, ${4:arg}):\n			${5:super($1, self).__init__()}\n			self.$4 = $4\n			${6}\n# New Function\nsnippet def\n	def ${1:fname}(${2:`indent(\'.\') ? \'self\' : \'\'`}):\n		"""${3:docstring for $1}"""\n		${4:# TODO: write code...}\nsnippet deff\n	def ${1:fname}(${2:`indent(\'.\') ? \'self\' : \'\'`}):\n		${3:# TODO: write code...}\n# New Method\nsnippet defs\n	def ${1:mname}(self, ${2:arg}):\n		${3:# TODO: write code...}\n# New Property\nsnippet property\n	def ${1:foo}():\n		doc = "${2:The $1 property.}"\n		def fget(self):\n			${3:return self._$1}\n		def fset(self, value):\n			${4:self._$1 = value}\n# Ifs\nsnippet if\n	if ${1:condition}:\n		${2:# TODO: write code...}\nsnippet el\n	else:\n		${1:# TODO: write code...}\nsnippet ei\n	elif ${1:condition}:\n		${2:# TODO: write code...}\n# For\nsnippet for\n	for ${1:item} in ${2:items}:\n		${3:# TODO: write code...}\n# Encodes\nsnippet cutf8\n	# -*- coding: utf-8 -*-\nsnippet clatin1\n	# -*- coding: latin-1 -*-\nsnippet cascii\n	# -*- coding: ascii -*-\n# Lambda\nsnippet ld\n	${1:var} = lambda ${2:vars} : ${3:action}\nsnippet .\n	self.\nsnippet try Try/Except\n	try:\n		${1:# TODO: write code...}\n	except ${2:Exception}, ${3:e}:\n		${4:raise $3}\nsnippet try Try/Except/Else\n	try:\n		${1:# TODO: write code...}\n	except ${2:Exception}, ${3:e}:\n		${4:raise $3}\n	else:\n		${5:# TODO: write code...}\nsnippet try Try/Except/Finally\n	try:\n		${1:# TODO: write code...}\n	except ${2:Exception}, ${3:e}:\n		${4:raise $3}\n	finally:\n		${5:# TODO: write code...}\nsnippet try Try/Except/Else/Finally\n	try:\n		${1:# TODO: write code...}\n	except ${2:Exception}, ${3:e}:\n		${4:raise $3}\n	else:\n		${5:# TODO: write code...}\n	finally:\n		${6:# TODO: write code...}\n# if __name__ == \'__main__\':\nsnippet ifmain\n	if __name__ == \'__main__\':\n		${1:main()}\n# __magic__\nsnippet _\n	__${1:init}__${2}\n# python debugger (pdb)\nsnippet pdb\n	import pdb; pdb.set_trace()\n# ipython debugger (ipdb)\nsnippet ipdb\n	import ipdb; ipdb.set_trace()\n# ipython debugger (pdbbb)\nsnippet pdbbb\n	import pdbpp; pdbpp.set_trace()\nsnippet pprint\n	import pprint; pprint.pprint(${1})${2}\nsnippet "\n	"""\n	${1:doc}\n	"""\n# test function/method\nsnippet test\n	def test_${1:description}(${2:self}):\n		${3:# TODO: write code...}\n# test case\nsnippet testcase\n	class ${1:ExampleCase}(unittest.TestCase):\n		\n		def test_${2:description}(self):\n			${3:# TODO: write code...}\nsnippet fut\n	from __future__ import ${1}\n#getopt\nsnippet getopt\n	try:\n		# Short option syntax: "hv:"\n		# Long option syntax: "help" or "verbose="\n		opts, args = getopt.getopt(sys.argv[1:], "${1:short_options}", [${2:long_options}])\n	\n	except getopt.GetoptError, err:\n		# Print debug info\n		print str(err)\n		${3:error_action}\n\n	for option, argument in opts:\n		if option in ("-h", "--help"):\n			${4}\n		elif option in ("-v", "--verbose"):\n			verbose = argument\n',t.scope="python"})
 +\ No newline at end of file
-diff --git a/utils/domoticz/patches/999-fix-www.patch b/utils/domoticz/patches/999-fix-www.patch
+diff --git a/utils/domoticz/patches/601-fix-www.patch b/utils/domoticz/patches/601-fix-www.patch
 new file mode 100644
-index 000000000..25d6f8efc
+index 000000000..e91949d4c
 --- /dev/null
-+++ b/utils/domoticz/patches/999-fix-www.patch
-@@ -0,0 +1,142 @@
++++ b/utils/domoticz/patches/601-fix-www.patch
+@@ -0,0 +1,144 @@
 +--- a/main/mainworker.cpp
 ++++ b/main/mainworker.cpp
-+@@ -331,7 +331,7 @@ void MainWorker::StopDomoticzHardware()
++@@ -333,7 +333,7 @@ void MainWorker::StopDomoticzHardware()
 + 
 + void MainWorker::GetAvailableWebThemes()
 + {
@@ -397,12 +399,14 @@ index 000000000..25d6f8efc
 + 
 +--- a/CMakeLists.txt
 ++++ b/CMakeLists.txt
-+@@ -745,7 +745,7 @@ ELSE()
++@@ -782,8 +782,8 @@ ELSE()
 +   message(STATUS "Not found telldus-core (telldus-core.h), not adding tellstick support")
 + ENDIF(TELLDUSCORE_INCLUDE)
 + 
 +-target_link_libraries(domoticz ${Boost_LIBRARIES} ${ZLIB_LIBRARIES} ${MINIZIP_LIBRARIES} ${CURL_LIBRARIES} pthread ${MQTT_LIBRARIES} ${LUA_LIBRARIES} ${CMAKE_DL_LIBS} ${TELLDUS_LIBRARIES})
++-target_link_libraries(domoticztester ${Boost_LIBRARIES} ${ZLIB_LIBRARIES} ${MINIZIP_LIBRARIES} ${CURL_LIBRARIES} pthread ${MQTT_LIBRARIES} ${LUA_LIBRARIES} ${CMAKE_DL_LIBS} ${TELLDUS_LIBRARIES})
 ++target_link_libraries(domoticz ${Boost_LIBRARIES} ${ZLIB_LIBRARIES} ${MINIZIP_LIBRARIES} ${CURL_LIBRARIES} pthread -lpythonVER ${MQTT_LIBRARIES} ${LUA_LIBRARIES} ${CMAKE_DL_LIBS} ${TELLDUS_LIBRARIES})
+++target_link_libraries(domoticztester ${Boost_LIBRARIES} ${ZLIB_LIBRARIES} ${MINIZIP_LIBRARIES} ${CURL_LIBRARIES} pthread -lpythonVER ${MQTT_LIBRARIES} ${LUA_LIBRARIES} ${CMAKE_DL_LIBS} ${TELLDUS_LIBRARIES})
 + 
 + IF(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 +   target_link_libraries(domoticz -lresolv)
@@ -416,7 +420,7 @@ index 000000000..25d6f8efc
 + #define Py_LIMITED_API 0x03040000 
 + #include <Python.h>
 + #include <structmember.h>
-+@@ -122,10 +123,10 @@ namespace Plugins {
++@@ -123,10 +124,10 @@ namespace Plugins {
 + 		DECLARE_PYTHON_SYMBOL(PyObject *, PyObject_Dir, PyObject *);
 + 		DECLARE_PYTHON_SYMBOL(PyObject*, PyModule_Create2, struct PyModuleDef* COMMA int);
 + 		DECLARE_PYTHON_SYMBOL(int, PyModule_AddObject, PyObject* COMMA const char* COMMA PyObject*);
@@ -430,7 +434,7 @@ index 000000000..25d6f8efc
 + 		DECLARE_PYTHON_SYMBOL(void, PyMem_Free, void*);
 + 		DECLARE_PYTHON_SYMBOL(PyObject*, PyBool_FromLong, long);
 + 		DECLARE_PYTHON_SYMBOL(void*, PyCapsule_Import, const char *name COMMA int);
-+@@ -251,10 +252,10 @@ namespace Plugins {
++@@ -255,10 +256,10 @@ namespace Plugins {
 + 					RESOLVE_PYTHON_SYMBOL(PyObject_Dir);
 + 					RESOLVE_PYTHON_SYMBOL(PyModule_Create2);
 + 					RESOLVE_PYTHON_SYMBOL(PyModule_AddObject);
@@ -444,7 +448,7 @@ index 000000000..25d6f8efc
 + 					RESOLVE_PYTHON_SYMBOL(PyMem_Free);
 + 					RESOLVE_PYTHON_SYMBOL(PyBool_FromLong);
 + 					RESOLVE_PYTHON_SYMBOL(PyCapsule_Import);
-+@@ -471,12 +472,12 @@ extern	SharedLibraryProxy* pythonLib;
++@@ -476,12 +477,12 @@ extern	SharedLibraryProxy* pythonLib;
 + #define PyObject_IsInstance		pythonLib->PyObject_IsInstance
 + #define PyObject_IsSubclass		pythonLib->PyObject_IsSubclass
 + #define PyObject_Dir			pythonLib->PyObject_Dir
@@ -462,7 +466,7 @@ index 000000000..25d6f8efc
 + #define PyCapsule_Import		pythonLib->PyCapsule_Import
 +--- a/hardware/plugins/PluginManager.cpp
 ++++ b/hardware/plugins/PluginManager.cpp
-+@@ -33,7 +33,7 @@
++@@ -32,7 +32,7 @@
 + 
 + // Python version constants
 + #define MINIMUM_MAJOR_VERSION 3
@@ -471,7 +475,7 @@ index 000000000..25d6f8efc
 + 
 + #define ATTRIBUTE_VALUE(pElement, Name, Value) \
 + 		{	\
-+@@ -122,6 +122,16 @@ namespace Plugins {
++@@ -121,6 +121,16 @@ namespace Plugins {
 + 				return false;
 + 			}
 + 
@@ -488,7 +492,7 @@ index 000000000..25d6f8efc
 + 			// Set program name, this prevents it being set to 'python'
 + 			Py_SetProgramName(Py_GetProgramFullPath());
 + 
-+@@ -143,16 +153,6 @@ namespace Plugins {
++@@ -142,16 +152,6 @@ namespace Plugins {
 + 				return false;
 + 			}
 + 
@@ -507,7 +511,7 @@ index 000000000..25d6f8efc
 + 		}
 +--- a/hardware/plugins/Plugins.cpp
 ++++ b/hardware/plugins/Plugins.cpp
-+@@ -1956,6 +1956,7 @@ namespace Plugins
++@@ -2063,6 +2063,7 @@ namespace Plugins
 + 			{
 + 				if (PyErr_Occurred())
 + 				{
@@ -515,7 +519,7 @@ index 000000000..25d6f8efc
 + 					PyErr_Clear();
 + 					Log(LOG_NORM, "Python exception set prior to callback '%s'", sHandler.c_str());
 + 				}
-+@@ -1972,7 +1973,9 @@ namespace Plugins
++@@ -2079,7 +2080,9 @@ namespace Plugins
 + 
 + 					if (m_bDebug & PDM_QUEUE)
 + 					{

@@ -1,6 +1,6 @@
-From eba273df805419f82219eb268dc3e59a3b4eb455 Mon Sep 17 00:00:00 2001
+From 84bf98c6a674715889990b95682d579205632166 Mon Sep 17 00:00:00 2001
 From: The-BB <tun.chen.bo@gmail.com>
-Date: Thu, 8 Jun 2023 00:43:00 +0300
+Date: Fri, 9 Feb 2024 23:50:48 +0300
 Subject: [PATCH] multimedia/gst1-plugins-base: add as dependency
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH] multimedia/gst1-plugins-base: add as dependency
  1 file changed, 19 insertions(+), 19 deletions(-)
 
 diff --git a/multimedia/gst1-plugins-base/Makefile b/multimedia/gst1-plugins-base/Makefile
-index 24907d141..71b1cf3c4 100644
+index fdc723e02..8d20c8357 100644
 --- a/multimedia/gst1-plugins-base/Makefile
 +++ b/multimedia/gst1-plugins-base/Makefile
 @@ -168,28 +168,28 @@ MESON_ARGS += \

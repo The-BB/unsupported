@@ -1,6 +1,6 @@
-From d5a7b21b35e2cce307c5f292e377b6267ee09493 Mon Sep 17 00:00:00 2001
+From 0a0f61bb4adb1ed5d6de309b8f2a38d85d8ce3d9 Mon Sep 17 00:00:00 2001
 From: The-BB <tun.chen.bo@gmail.com>
-Date: Tue, 13 Dec 2022 16:19:11 +0300
+Date: Fri, 9 Feb 2024 23:49:26 +0300
 Subject: [PATCH] multimedia/ffmpeg: disable sndio
 
 ---
@@ -8,10 +8,10 @@ Subject: [PATCH] multimedia/ffmpeg: disable sndio
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/multimedia/ffmpeg/Makefile b/multimedia/ffmpeg/Makefile
-index 633673852..2ef109842 100644
+index 37cba727b..6560d7376 100644
 --- a/multimedia/ffmpeg/Makefile
 +++ b/multimedia/ffmpeg/Makefile
-@@ -403,7 +403,8 @@ FFMPEG_CONFIGURE:= \
+@@ -405,7 +405,8 @@ FFMPEG_CONFIGURE:= \
  	--disable-lzma \
  	--disable-vaapi \
  	--disable-vdpau \

@@ -1,6 +1,6 @@
-From 6b4e12edb33f75a136c4103f9912af6d57cebfdd Mon Sep 17 00:00:00 2001
+From f44ec7291744d6aa365a458e6e1716eea93a5cbc Mon Sep 17 00:00:00 2001
 From: The-BB <tun.chen.bo@gmail.com>
-Date: Sat, 10 Dec 2022 18:51:01 +0300
+Date: Fri, 9 Feb 2024 23:48:52 +0300
 Subject: [PATCH] libs/libvpx: add as dependency
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH] libs/libvpx: add as dependency
  1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/libs/libvpx/Makefile b/libs/libvpx/Makefile
-index 743ccadc4..8d8f1b075 100644
+index b5eba52ef..531532890 100644
 --- a/libs/libvpx/Makefile
 +++ b/libs/libvpx/Makefile
 @@ -45,7 +45,7 @@ endef

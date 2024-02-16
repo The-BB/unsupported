@@ -1,6 +1,6 @@
-From 92f1e54f8f92965f33694d97105667e40b14cc36 Mon Sep 17 00:00:00 2001
+From 2cd3ff50640291be428b5cda3dbeec3ab031bebb Mon Sep 17 00:00:00 2001
 From: The-BB <tun.chen.bo@gmail.com>
-Date: Mon, 12 Dec 2022 20:27:11 +0300
+Date: Fri, 9 Feb 2024 23:40:24 +0300
 Subject: [PATCH] livemedia: add shared libs
 
 ---
@@ -14,7 +14,7 @@ Subject: [PATCH] livemedia: add shared libs
  create mode 100644 livemedia/patches/130-expose_server_string.patch
 
 diff --git a/livemedia/Makefile b/livemedia/Makefile
-index cfac8b1..2f4123f 100644
+index b0255ee..7921f84 100644
 --- a/livemedia/Makefile
 +++ b/livemedia/Makefile
 @@ -32,43 +32,66 @@ define Package/livemedia/Default
@@ -108,7 +108,7 @@ index cfac8b1..2f4123f 100644
  $(eval $(call BuildPackage,openrtsp))
 diff --git a/livemedia/patches/110-entware.patch b/livemedia/patches/110-entware.patch
 new file mode 100644
-index 0000000..63db2d6
+index 0000000..3775f44
 --- /dev/null
 +++ b/livemedia/patches/110-entware.patch
 @@ -0,0 +1,51 @@
@@ -120,13 +120,13 @@ index 0000000..63db2d6
 ++# At least one interface changes, or is removed => CURRENT += 1; REVISION = 0; AGE = 0
 ++# One or more interfaces were added, but no existing interfaces were changed or removed => CURRENT += 1; REVISION = 0; AGE += 1
 ++
-++libliveMedia_VERSION_CURRENT=109
-++libliveMedia_VERSION_REVISION=3
-++libliveMedia_VERSION_AGE=2
+++libliveMedia_VERSION_CURRENT=112
+++libliveMedia_VERSION_REVISION=0
+++libliveMedia_VERSION_AGE=0
 ++libliveMedia_LIB_SUFFIX=so.$(shell expr $(libliveMedia_VERSION_CURRENT) - $(libliveMedia_VERSION_AGE)).$(libliveMedia_VERSION_AGE).$(libliveMedia_VERSION_REVISION)
 ++
-++libBasicUsageEnvironment_VERSION_CURRENT=1
-++libBasicUsageEnvironment_VERSION_REVISION=1
+++libBasicUsageEnvironment_VERSION_CURRENT=2
+++libBasicUsageEnvironment_VERSION_REVISION=4
 ++libBasicUsageEnvironment_VERSION_AGE=0
 ++libBasicUsageEnvironment_LIB_SUFFIX=so.$(shell expr $(libBasicUsageEnvironment_VERSION_CURRENT) - $(libBasicUsageEnvironment_VERSION_AGE)).$(libBasicUsageEnvironment_VERSION_AGE).$(libBasicUsageEnvironment_VERSION_REVISION)
 ++
@@ -136,7 +136,7 @@ index 0000000..63db2d6
 ++libUsageEnvironment_LIB_SUFFIX=so.$(shell expr $(libUsageEnvironment_VERSION_CURRENT) - $(libUsageEnvironment_VERSION_AGE)).$(libUsageEnvironment_VERSION_AGE).$(libUsageEnvironment_VERSION_REVISION)
 ++
 ++libgroupsock_VERSION_CURRENT=31
-++libgroupsock_VERSION_REVISION=10
+++libgroupsock_VERSION_REVISION=13
 ++libgroupsock_VERSION_AGE=1
 ++libgroupsock_LIB_SUFFIX=so.$(shell expr $(libgroupsock_VERSION_CURRENT) - $(libgroupsock_VERSION_AGE)).$(libgroupsock_VERSION_AGE).$(libgroupsock_VERSION_REVISION)
 ++#####
