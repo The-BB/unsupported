@@ -2,16 +2,18 @@
 
 # XXX remove feeds/packages/net/trojan-go
 
+# (fork)
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=trojan-go
-PKG_VERSION:=0.10.6
+PKG_VERSION:=0.10.7.1
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=2dc60f52e79ff8b910e78e444f1e80678e936450
-PKG_SOURCE_URL:=https://github.com/p4gefau1t/trojan-go
-PKG_MIRROR_HASH:=60d63a5235c087faae30827aa607e0b1d2b6cab58237ecb936a7d7392b059a1a
+PKG_SOURCE_VERSION:=4ae4bb6c9f4e072dfe1057333db78a6b4e7d3976
+PKG_SOURCE_URL:=https://github.com/omengye/trojan-go
+PKG_MIRROR_HASH:=d718a0d0a1e1440930368904bb1ee85e46fdb81924aca6413434bec34513f714
 
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE
@@ -55,8 +57,8 @@ endef
 Package/trojan-go_nohf/conffiles=$(Package/trojan-go/conffiles)
 
 GO_LDFLAGS += \
-	-X '$(XIMPORTPATH)/constant.Version=v$(PKG_VERSION)' \
-	-X '$(XIMPORTPATH)/constant.Commit=$(COMMIT_SHORT)'
+	-X 'github.com/p4gefau1t/trojan-go/constant.Version=v$(PKG_VERSION)' \
+	-X 'github.com/p4gefau1t/trojan-go/constant.Commit=$(COMMIT_SHORT)'
 
 GO_TAGS:= -tags=full
 
