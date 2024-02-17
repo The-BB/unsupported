@@ -11,7 +11,7 @@
  #ifndef SBINDIR
 --- a/src/core/fb.cc
 +++ b/src/core/fb.cc
-@@ -194,7 +194,7 @@ static int open_dev(dev_t dev)
+@@ -195,7 +195,7 @@ static int open_dev(dev_t dev)
  {
    static const char *paths[] =
    {
@@ -22,7 +22,7 @@
    char fn[64];
 --- a/src/core/osutils.cc
 +++ b/src/core/osutils.cc
-@@ -612,7 +612,7 @@ int open_dev(dev_t dev, int dev_type, co
+@@ -623,7 +623,7 @@ int open_dev(dev_t dev, int dev_type, co
  {
    static const char *paths[] =
    {
@@ -31,7 +31,7 @@
    };
    char const **p;
    char fn[64];
-@@ -802,7 +802,9 @@ string operating_system()
+@@ -813,7 +813,9 @@ string operating_system()
    struct utsname u;
    string os = "";
  
@@ -44,7 +44,7 @@
      os = osinfo[0];
 --- a/src/core/pcmcia-legacy.cc
 +++ b/src/core/pcmcia-legacy.cc
-@@ -16,7 +16,7 @@ __ID("@(#) $Id$");
+@@ -17,7 +17,7 @@ __ID("@(#) $Id$");
   * David A. Hinds <dahinds@users.sourceforge.net>.
   */
  
