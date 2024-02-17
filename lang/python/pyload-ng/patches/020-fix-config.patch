@@ -34,7 +34,7 @@
      int port : "Port" = 8000
      Default;modern;pyplex theme : "Theme" = modern
      bool autologin : "Skip login if single user" = False
-@@ -57,11 +57,11 @@ log - "Log":
+@@ -58,11 +58,11 @@ log - "Log":
      bool console_color : "Colorize console" = False
      bool syslog : "Sent log to syslog" = False
      local;remote syslog_location : "Syslog location" = local

@@ -3,12 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pyload-ng
-PKG_VERSION:=0.5.0b3.dev74
+PKG_PYLOAD_BUILD:=80
+PKG_VERSION:=0.5.0b3.dev$(PKG_PYLOAD_BUILD)
 PKG_RELEASE:=1
 
 PYPI_NAME:=pyload_ng
 PYPI_SOURCE_NAME:=pyload-ng
-PKG_HASH:=55904c9e4a4932f3f923ce336f31a223c3014224db9e923a69c8327a1e099115
+PKG_HASH:=d6f22411cb688fab9da30631170638d9fff32fd125c36365e9968bdb1df493f3
 
 PKG_LICENSE:=AGPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE.md
@@ -42,6 +43,7 @@ define Package/pyload-ng
 	+python3-bitmath \
 	+python3-certifi \
 	+python3-cheroot \
+	+python3-cryptography \
 	+python3-curl \
 	+python3-filetype \
 	+python3-flask \
@@ -63,26 +65,21 @@ define Package/pyload-ng
 	+python3-pyopenssl \
 	+python3-send2trash \
 	+python3-slixmpp
-  EXTRA_DEPENDS:=coreutils-nohup,
-# rust-lang pkg
-  EXTRA_DEPENDS+=python3-cryptography
+  EXTRA_DEPENDS:=coreutils-nohup
 endef
 
 define Package/pyload-ng/description
   The free and open-source Download Manager written in pure Python.
 endef
 
-# XXX dev74
-PYTHON3_PKG_SETUP_VARS += PYLOAD_BUILD=74
+PYTHON3_PKG_SETUP_VARS += PYLOAD_BUILD=$(PKG_PYLOAD_BUILD)
 
 # FIXME plugins don`t work if they compiled into bytecode
 define Package/pyload-ng/install
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/opt/bin/pyload $(1)/opt/bin
-
 	$(INSTALL_DIR) $(1)/opt/etc/init.d
 	$(INSTALL_BIN) ./files/S51pyload $(1)/opt/etc/init.d
-
 	$(INSTALL_DIR) $(1)$(PYTHON3_PKG_DIR)
 	$(CP) \
 	    $(PKG_INSTALL_DIR)$(PYTHON3_PKG_DIR)/* $(1)$(PYTHON3_PKG_DIR)/
