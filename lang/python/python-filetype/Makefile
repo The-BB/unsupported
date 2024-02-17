@@ -4,7 +4,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=filetype
 PKG_VERSION:=1.2.0
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PYPI_NAME:=filetype
 PKG_HASH:=66b56cd6474bf41d8c54660347d37afcc3f7d1970648de365c102ef77548aadb
@@ -28,11 +28,6 @@ endef
 define Package/python3-filetype/description
   Small and dependency free Python package to infer file type and MIME type 
 checking the magic numbers signature of a file or buffer.
-endef
-
-define Py3Package/python3-filetype/filespec
-+|$(PYTHON3_PKG_DIR)
--|$(PYTHON3_PKG_DIR)/examples
 endef
 
 $(eval $(call Py3Package,python3-filetype))
