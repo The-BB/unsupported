@@ -4,13 +4,16 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=glances
 PKG_VERSION:=3.4.0.3
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PYPI_NAME:=Glances
 PKG_HASH:=e7b1d54180db9961613f5485bf8e2a9fe93d0e58c1bcec0a451b4efe5687c85d
 
 PKG_LICENSE:=LGPL-3.0-only
 PKG_LICENSE_FILES:=COPYING
+
+PKG_CONFIG_DEPENDS:= \
+	CONFIG_GLANCES_WEB_MODE
 
 include $(TOPDIR)/feeds/packages/lang/python/pypi.mk
 include $(INCLUDE_DIR)/package.mk
@@ -24,17 +27,20 @@ define Package/glances
   DEPENDS:= \
 	+python3-codecs \
 	+python3-ctypes \
+	+python3-decimal \
 	+python3-logging \
 	+python3-multiprocessing \
 	+python3-ncurses \
 	+python3-openssl \
+	+python3-pydoc \
 	+python3-urllib \
 	+python3-uuid \
 	+python3-xml \
 	+python3-defusedxml \
 	+python3-psutil \
 	+python3-packaging \
-	+python3-ujson
+	+python3-ujson \
+	+GLANCES_WEB_MODE:python3-bottle
 endef
 
 define Package/glances/description
@@ -43,6 +49,13 @@ endef
 
 define Package/glances/conffiles
 /opt/etc/glances/glances.conf
+endef
+
+define Package/glances/config
+config GLANCES_WEB_MODE
+	depends on PACKAGE_glances
+	bool "Web server mode"
+	default y
 endef
 
 define Py3Package/glances/install
