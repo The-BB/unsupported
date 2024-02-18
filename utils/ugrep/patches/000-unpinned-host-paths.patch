@@ -1,0 +1,88 @@
+--- a/m4/ax_check_brotlilib.m4
++++ b/m4/ax_check_brotlilib.m4
+@@ -67,7 +67,7 @@ AC_DEFUN([AX_CHECK_BROTLILIB],
+ # Handle user hints
+ #
+ [AC_MSG_CHECKING(if brotli is wanted)
+-brotli_places="/usr/local /usr /opt/homebrew /opt/local /sw"
++brotli_places="=${STAGING_DIR}/opt"
+ AC_ARG_WITH([brotli],
+ [  --with-brotli=DIR       root directory path of brotli library installation
+                           @<:@defaults to /usr/local or /usr if not found in
+--- a/m4/ax_check_bz2lib.m4
++++ b/m4/ax_check_bz2lib.m4
+@@ -64,7 +64,7 @@ AC_DEFUN([AX_CHECK_BZ2LIB],
+ # Handle user hints
+ #
+ [AC_MSG_CHECKING(if bzlib is wanted)
+-bzlib_places="/usr/local /usr /opt/homebrew /opt/local /sw"
++bzlib_places="${STAGING_DIR}/opt"
+ AC_ARG_WITH([bzlib],
+ [  --with-bzlib=DIR        root directory path of bzlib installation @<:@defaults to
+                           /usr/local or /usr if not found in /usr/local@:>@
+--- a/m4/ax_check_bzip3lib.m4
++++ b/m4/ax_check_bzip3lib.m4
+@@ -64,7 +64,7 @@ AC_DEFUN([AX_CHECK_BZIP3LIB],
+ # Handle user hints
+ #
+ [AC_MSG_CHECKING(if bzip3 is wanted)
+-bzip3_places="/usr/local /usr /opt/homebrew /opt/local /sw"
++bzip3_places="${STAGING_DIR}/opt"
+ AC_ARG_WITH([bzip3],
+ [  --with-bzip3=DIR        root directory path of bzip3 library installation
+                           @<:@defaults to /usr/local or /usr if not found in
+--- a/m4/ax_check_lz4lib.m4
++++ b/m4/ax_check_lz4lib.m4
+@@ -64,7 +64,7 @@ AC_DEFUN([AX_CHECK_LZ4LIB],
+ # Handle user hints
+ #
+ [AC_MSG_CHECKING(if lz4 is wanted)
+-lz4_places="/usr/local /usr /opt/homebrew /opt/local /sw"
++lz4_places="${STAGING_DIR}/opt"
+ AC_ARG_WITH([lz4],
+ [  --with-lz4=DIR          root directory path of lz4 installation @<:@defaults to
+                           /usr/local or /usr if not found in /usr/local@:>@
+--- a/m4/ax_check_lzmalib.m4
++++ b/m4/ax_check_lzmalib.m4
+@@ -64,7 +64,7 @@ AC_DEFUN([AX_CHECK_LZMALIB],
+ # Handle user hints
+ #
+ [AC_MSG_CHECKING(if lzma is wanted)
+-lzma_places="/usr/local /usr /opt/homebrew /opt/local /sw"
++lzma_places="${STAGING_DIR}/opt"
+ AC_ARG_WITH([lzma],
+ [  --with-lzma=DIR         root directory path of lzma installation @<:@defaults to
+                           /usr/local or /usr if not found in /usr/local@:>@
+--- a/m4/ax_check_pcre2.m4
++++ b/m4/ax_check_pcre2.m4
+@@ -72,7 +72,7 @@ AC_DEFUN([AX_CHECK_PCRE2],
+ # Handle user hints
+ #
+ [AC_MSG_CHECKING(if PCRE2 is wanted)
+-pcre2_places="/usr/local /usr /opt/homebrew /opt/local /sw"
++pcre2_places="${STAGING_DIR}/opt"
+ AC_ARG_WITH([pcre2],
+ [  --with-pcre2=DIR        root directory path of PCRE2 installation @<:@defaults to
+                           /usr/local or /usr if not found in /usr/local@:>@
+--- a/m4/ax_check_zlib.m4
++++ b/m4/ax_check_zlib.m4
+@@ -70,7 +70,7 @@ AC_DEFUN([AX_CHECK_ZLIB],
+ # Handle user hints
+ #
+ [AC_MSG_CHECKING(if zlib is wanted)
+-zlib_places="/usr/local /usr /opt/homebrew /opt/local /sw"
++zlib_places="${STAGING_DIR}/opt"
+ AC_ARG_WITH([zlib],
+ [  --with-zlib=DIR         root directory path of zlib installation @<:@defaults to
+                           /usr/local or /usr if not found in /usr/local@:>@
+--- a/m4/ax_check_zstdlib.m4
++++ b/m4/ax_check_zstdlib.m4
+@@ -64,7 +64,7 @@ AC_DEFUN([AX_CHECK_ZSTDLIB],
+ # Handle user hints
+ #
+ [AC_MSG_CHECKING(if zstd is wanted)
+-zstd_places="/usr/local /usr /opt/homebrew /opt/local /sw"
++zstd_places="${STAGING_DIR}/opt"
+ AC_ARG_WITH([zstd],
+ [  --with-zstd=DIR         root directory path of zstd installation @<:@defaults to
+                           /usr/local or /usr if not found in /usr/local@:>@
