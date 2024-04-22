@@ -3,16 +3,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=perl-image-magick
-PKG_VERSION:=7.0.11
+PKG_VERSION:=7.1.1
 PKG_RELEASE:=1
 
-PKG_SOURCE:=Image-Magick-$(PKG_VERSION)-3.tar.gz
+PKG_SRC_NAME:=Image-Magick
+PKG_SOURCE:=$(PKG_SRC_NAME)-$(PKG_VERSION)-28.tar.gz
 PKG_SOURCE_URL:=https://cpan.metacpan.org/authors/id/J/JC/JCRISTY
-PKG_HASH:=232f2312c09a9d9ebc9de6c9c6380b893511ef7c6fc358d457a4afcec26916aa
+PKG_HASH:=bc54137346c1d45626e7075015f7d1dae813394af885457499f54878cfc19e0b
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/perl/Image-Magick-$(PKG_VERSION)
-
-PKG_BUILD_DEPENDS:=imagemagick
+PKG_BUILD_DIR:=$(BUILD_DIR)/perl/$(PKG_SRC_NAME)-$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/perl/perlmod.mk
@@ -27,7 +26,10 @@ define Package/perl-image-magick
 endef
 
 define Build/Configure
-	$(SED) 's,@STAGING_DIR@,$(STAGING_DIR),g' $(PKG_BUILD_DIR)/Makefile.PL
+	$(SED) 's,@STAGING_DIR@,$(STAGING_DIR),g; \
+		s,@TARGET_CFLAGS@,$(TARGET_CFLAGS),g; \
+		s|@TARGET_LDFLAGS@|$(TARGET_LDFLAGS)|g; \
+		s,@TARGET_CC@,$(TARGET_CC),g' $(PKG_BUILD_DIR)/Makefile.PL
 	$(call perlmod/Configure,,)
 endef
 

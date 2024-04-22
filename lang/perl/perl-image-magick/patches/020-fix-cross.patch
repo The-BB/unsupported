@@ -9,14 +9,34 @@
 -my $CCFLAGS_magick = "$Config{'ccflags'} -I/usr/include/freetype2 -g -O2 -Wall -pthread -DMAGICKCORE_HDRI_ENABLE=1 -DMAGICKCORE_QUANTUM_DEPTH=16";
 -my $LDFLAGS_magick   = "-L/usr/local/lib -lMagickCore-7.Q16HDRI $Config{'ldflags'} ";
 -my $LDDLFLAGS_magick = "-L/usr/local/lib -lMagickCore-7.Q16HDRI $Config{'lddlflags'} ";
-+my $INC_magick = '-I@STAGING_DIR@/opt/include/ImageMagick-7 -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=8 -I@STAGING_DIR@/opt/include/libxml2';
++my $INC_magick = '-I@STAGING_DIR@/opt/include/ImageMagick-7 -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=8 -DMAGICKCORE_CHANNEL_MASK_DEPTH=32';
 +my $LIBS_magick = '-L@STAGING_DIR@/opt/lib -lMagickCore-7.Q8 -lm -L' . $Config{'archlib'} . '/CORE';
-+my $CCFLAGS_magick = "$Config{'ccflags'} -I@STAGING_DIR@/opt/include/freetype2 -g -O2 -Wall -pthread -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=8";
-+my $LDFLAGS_magick   = "-L@STAGING_DIR@/opt/lib -lMagickCore-7.Q8 $Config{'ldflags'} ";
-+my $LDDLFLAGS_magick = "-L@STAGING_DIR@/opt/lib -lMagickCore-7.Q8 $Config{'lddlflags'} ";
++my $CCFLAGS_magick = "$Config{'ccflags'} -I@STAGING_DIR@/opt/include -I@STAGING_DIR@/opt/include/libxml2 -I@STAGING_DIR@/opt/include/libpng16 -I@STAGING_DIR@/opt/include/freetype2 @TARGET_CFLAGS@ -Wall -flto=auto -fno-fat-lto-objects -fexceptions -pthread -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=8 -DMAGICKCORE_CHANNEL_MASK_DEPTH=32";
++my $LDFLAGS_magick   = "-L@STAGING_DIR@/opt/lib -lMagickCore-7.Q8 $Config{'ldflags'} @TARGET_LDFLAGS@ -flto=auto -fuse-linker-plugin";
++my $LDDLFLAGS_magick = "-L@STAGING_DIR@/opt/lib -lMagickCore-7.Q8 $Config{'lddlflags'} @TARGET_LDFLAGS@ -flto=auto -fuse-linker-plugin";
  
  if (($^O eq 'MSWin32') && ($Config{cc} =~ /gcc/)) {
    my($Ipaths, $Lpaths) = AutodetectWin32gcc();
+@@ -173,8 +173,8 @@ if (($^O eq 'MSWin32') && ($Config{cc} =
+   #
+   # Setup for strawberry perl.
+   #
+-  $INC_magick       = "$Ipaths";
+-  $LIBS_magick      = "-lMagickCore"; # use here just plain 'MagickCore' no version info
++  $INC_magick       = "$Ipaths -I@STAGING_DIR@/opt/include -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=8 -DMAGICKCORE_CHANNEL_MASK_DEPTH=32";
++  $LIBS_magick      = "-lMagickCore-7.Q8"; # use here just plain 'MagickCore' no version info
+   $CCFLAGS_magick   = "$Config{'ccflags'}";
+   $LDFLAGS_magick   = "$Config{'ldflags'} $Lpaths ";
+   $LDDLFLAGS_magick = "$Config{'lddlflags'} $Lpaths ";
+@@ -200,7 +200,7 @@ WriteMakefile
+    'PREREQ_PM' => {'parent' => '0'},
+ 
+    # Preprocessor defines
+-   'DEFINE'	=> ' -D_LARGE_FILES=1 -DHAVE_CONFIG_H',     # e.g., '-DHAVE_SOMETHING'
++   'DEFINE'	=> ' -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES=1 -DHAVE_CONFIG_H',     # e.g., '-DHAVE_SOMETHING'
+ 
+    # Header search specification and preprocessor flags
+    'INC'	=> $INC_magick,
 @@ -224,7 +224,7 @@ WriteMakefile
     'LDDLFLAGS' => $LDDLFLAGS_magick,
  
@@ -26,6 +46,19 @@
  
     # Library specification
     'LIBS' => [ $LIBS_magick ],
+@@ -236,9 +236,9 @@ WriteMakefile
+    # 'OPTIMIZE'	=> '',
+ 
+    # Use same compiler as ImageMagick
+-   'PERLMAINCC'	=> ' ',
+-   'AR' => 'ar',
+-   'LD' => '',
++   'PERLMAINCC'	=> '@TARGET_CC@ ',
++   'AR' => '@TARGET_CC@-ar',
++   'LD' => '@TARGET_CC@',
+ 
+    # Set Perl installation prefix to ImageMagick installation prefix
+    # 'PREFIX'	=> '/usr/local',
 @@ -266,6 +266,6 @@ sub MY::makeaperl {
       # tries to insert our library path first. Also, use the same compiler used
       # to build perlmain.c to link so that a C++ compiler may be used if
