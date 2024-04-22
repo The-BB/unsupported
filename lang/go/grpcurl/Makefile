@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=grpcurl
-PKG_VERSION:=1.8.9
+PKG_VERSION:=1.9.1
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=28c0ee28f02a3db8affaf8fcc0c786312167e0f6
+PKG_SOURCE_VERSION:=400fa5f2d354f662c2e39c8b1f8ef71f50498075
 PKG_SOURCE_URL:=https://github.com/fullstorydev/grpcurl
-PKG_MIRROR_HASH:=af846138efbb87e64ed4c6b00bc7bd78a14c5a9c4bf0d5771a1ab18d0d91a498
+PKG_MIRROR_HASH:=c6b21c6e9f5d6ebd5c58ae4cac5428999e316104293858002abe32862eca9b0b
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -33,7 +33,7 @@ endef
 define Package/grpcurl_nohf
   $(call Package/grpcurl/Default)
   VARIANT:=nohf
-  DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS:=@arm
 endef
 
 define Package/grpcurl/description
@@ -44,8 +44,6 @@ endef
 Package/grpcurl_nohf/description=$(Package/grpcurl/description)
 
 GO_LDFLAGS += -X 'main.version=$(PKG_VERSION)'
-
-GO_TARGET:=./...
 
 define Package/grpcurl/install
 	$(INSTALL_DIR) $(1)/opt/sbin
