@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=filebrowser
-PKG_VERSION:=2.27.0
+PKG_VERSION:=2.28.0
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=04e03a83b4db4a9e8bda5ae47b203bd785f93ca4
+PKG_SOURCE_VERSION:=0e3b35b30e0dff257a9fc70308c7d81d8a53e16c
 PKG_SOURCE_URL:=https://github.com/filebrowser/filebrowser
-PKG_MIRROR_HASH:=5acd280ce57beddb111792eea9ea6187c4280c0f3db58895e0fbed6a8a121159
+PKG_MIRROR_HASH:=84b8c6c809ff6a2d029d79367aef8089934fdb601eb7b1f8f94d286286dfe169
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -36,7 +36,7 @@ endef
 define Package/filebrowser_nohf
   $(call Package/filebrowser/Default)
   VARIANT:=nohf
-  DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS:=@arm
 endef
 
 define Package/filebrowser/description
