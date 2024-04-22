@@ -3,14 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=nginx-ui
-PKG_VERSION:=2.0.0-beta.16
+PKG_VERSION:=2.0.0-beta.18
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2024-02-14
-PKG_SOURCE_VERSION:=371adde8b6b2db472e8d4069af9ad59c4600a146
+PKG_SOURCE_DATE:=2024-03-14
+PKG_SOURCE_VERSION:=979a1d5326b27924c3e6c5c5fae808394057c368
 PKG_SOURCE_URL:=https://github.com/0xJacky/nginx-ui
-PKG_MIRROR_HASH:=f8149592066e7bf5398ebbce2711492080538e5c86c974620473977045075bea
+PKG_MIRROR_HASH:=1438e775c8a6b1fbb0e2111add910697653ae4e922eb88329c5ab2e9c7247339
 
 PKG_LICENSE:=AGPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE
@@ -39,7 +39,7 @@ endef
 define Package/nginx-ui_nohf
   $(call Package/nginx-ui/Default)
   VARIANT:=nohf
-  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS+=@arm
 endef
 
 define Package/nginx-ui/description
