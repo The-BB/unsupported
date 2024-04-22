@@ -1,0 +1,13 @@
+usr/klibc/arch/mips/crt0.S:20: Error: opcode not supported on this processor: mips1 (mips1) `teq $0,$0'
+---
+
+--- a/usr/klibc/arch/mips/crt0.S
++++ b/usr/klibc/arch/mips/crt0.S
+@@ -17,6 +17,6 @@ NESTED(__start, 0, ra)
+ 	subu	sp, 16			# Allocate 16 bytes for function call
+ 
+ 	jal	__libc_init
+-	teq	zero, zero		# Crash if we return
++#	teq	zero, zero		# Crash if we return
+ 
+ 	END(__start)

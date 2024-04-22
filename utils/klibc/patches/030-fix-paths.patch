@@ -1,0 +1,187 @@
+--- a/Makefile
++++ b/Makefile
+@@ -42,12 +42,12 @@ export HOSTCFLAGS := -Wall -Wstrict-prot
+ export PERL       := perl
+ 
+ # Location for installation
+-export prefix      = /usr
+-export bindir      = $(prefix)/bin
++export prefix      = /opt/usr
++export bindir      = $(prefix)/sbin
+ export libdir      = $(prefix)/lib
+ export mandir      = $(prefix)/man
+-export INSTALLDIR  = $(prefix)/lib/klibc
+-export INSTALLROOT =
++export INSTALLDIR  = $(prefix)
++export INSTALLROOT = $(DESTDIR)
+ 
+ # Create a fake .config as present in the kernel tree
+ # But if it exists leave it alone
+--- a/scripts/Kbuild.install
++++ b/scripts/Kbuild.install
+@@ -11,7 +11,7 @@
+ # THIS MUST BE AN ABSOLUTE PATH WITH NO FINAL SLASH.
+ # Leave this empty to make it the root.
+ #
+-SHLIBDIR = /lib
++SHLIBDIR = /opt/usr/lib
+ 
+ # First rule
+ PHONY := __install install-rule
+--- a/scripts/Kbuild.klibc
++++ b/scripts/Kbuild.klibc
+@@ -154,7 +154,7 @@ endif
+ # THIS MUST BE AN ABSOLUTE PATH WITH NO FINAL SLASH.
+ # Leave this empty to make it the root.
+ #
+-SHLIBDIR = /lib
++SHLIBDIR = /opt/usr/lib
+ 
+ export KLIBCLD KLIBCCC KLIBCAR KLIBCSTRIP KLIBCNM
+ export KLIBCCFLAGS KLIBCAFLAGS KLIBCLIBGCC KLIBCSHAREDFLAGS KLIBCSTRIPFLAGS
+--- a/usr/dash/main.c
++++ b/usr/dash/main.c
+@@ -150,7 +150,7 @@ main(int argc, char **argv)
+ 	login = procargs(argc, argv);
+ 	if (login) {
+ 		state = 1;
+-		read_profile("/etc/profile");
++		read_profile("/opt/etc/profile");
+ state1:
+ 		state = 2;
+ 		read_profile("$HOME/.profile");
+--- a/usr/dash/show.c
++++ b/usr/dash/show.c
+@@ -367,9 +367,9 @@ opentrace(void)
+ 		char *p;
+ 		if ((p = getenv(homestr)) == NULL) {
+ 			if (geteuid() == 0)
+-				p = "/";
++				p = "/opt";
+ 			else
+-				p = "/tmp";
++				p = "/opt/tmp";
+ 		}
+ 		scopy(p, s);
+ 		strcat(s, "/trace");
+--- a/usr/dash/var.c
++++ b/usr/dash/var.c
+@@ -74,7 +74,7 @@ struct localvar_list {
+ MKINIT struct localvar_list *localvar_stack;
+ 
+ const char defpathvar[] =
+-	"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin";
++	"PATH=/opt/usr/sbin:/opt/usr/bin:/opt/sbin:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin";
+ #ifdef IFS_BROKEN
+ const char defifsvar[] = "IFS= \t\n";
+ #else
+--- a/usr/include/paths.h
++++ b/usr/include/paths.h
+@@ -33,42 +33,42 @@
+ #define	_PATHS_H_
+ 
+ /* Default search path. */
+-#define	_PATH_DEFPATH	"/usr/bin:/bin"
++#define	_PATH_DEFPATH	"/opt/usr/bin:/opt/bin:/usr/bin:/bin"
+ /* All standard utilities path. */
+ #define	_PATH_STDPATH \
+-	"/usr/bin:/bin:/usr/sbin:/sbin"
++	"/opt/usr/bin:/opt/bin:/opt/usr/sbin:/opt/sbin:/usr/bin:/bin:/usr/sbin:/sbin"
+ 
+-#define	_PATH_BSHELL	"/bin/sh"
++#define	_PATH_BSHELL	"/opt/bin/sh"
+ #define	_PATH_CONSOLE	"/dev/console"
+-#define	_PATH_CSHELL	"/bin/csh"
+-#define	_PATH_DEVDB	"/var/run/dev.db"
++#define	_PATH_CSHELL	"/opt/bin/csh"
++#define	_PATH_DEVDB	"/opt/var/run/dev.db"
+ #define	_PATH_DEVNULL	"/dev/null"
+ #define	_PATH_DRUM	"/dev/drum"
+ #define	_PATH_KLOG	"/proc/kmsg"
+ #define	_PATH_KMEM	"/dev/kmem"
+-#define	_PATH_LASTLOG	"/var/log/lastlog"
+-#define	_PATH_MAILDIR	"/var/mail"
+-#define	_PATH_MAN	"/usr/share/man"
++#define	_PATH_LASTLOG	"/opt/var/log/lastlog"
++#define	_PATH_MAILDIR	"/opt/var/mail"
++#define	_PATH_MAN	"/opt/share/man"
+ #define	_PATH_MEM	"/dev/mem"
+ #define	_PATH_MNTTAB	"/etc/fstab"
+ #define	_PATH_MOUNTED	"/etc/mtab"
+-#define	_PATH_NOLOGIN	"/etc/nologin"
+-#define	_PATH_PRESERVE	"/var/lib"
+-#define	_PATH_RWHODIR	"/var/spool/rwho"
+-#define	_PATH_SENDMAIL	"/usr/sbin/sendmail"
+-#define	_PATH_SHADOW	"/etc/shadow"
+-#define	_PATH_SHELLS	"/etc/shells"
++#define	_PATH_NOLOGIN	"/opt/etc/nologin"
++#define	_PATH_PRESERVE	"/opt/var/lib"
++#define	_PATH_RWHODIR	"/opt/var/spool/rwho"
++#define	_PATH_SENDMAIL	"/opt/sbin/sendmail"
++#define	_PATH_SHADOW	"/opt/etc/shadow"
++#define	_PATH_SHELLS	"/opt/etc/shells"
+ #define	_PATH_TTY	"/dev/tty"
+ #define	_PATH_UNIX	"/boot/vmlinux"
+-#define _PATH_UTMP	"/var/run/utmp"
+-#define	_PATH_VI	"/bin/vi"
+-#define _PATH_WTMP	"/var/log/wtmp"
++#define _PATH_UTMP	"/opt/var/run/utmp"
++#define	_PATH_VI	"/opt/bin/vi"
++#define _PATH_WTMP	"/opt/var/log/wtmp"
+ 
+ /* Provide trailing slash, since mostly used for building pathnames. */
+ #define	_PATH_DEV	"/dev/"
+-#define	_PATH_TMP	"/tmp/"
+-#define	_PATH_VARDB	"/var/db/"
+-#define	_PATH_VARRUN	"/var/run/"
+-#define	_PATH_VARTMP	"/var/tmp/"
++#define	_PATH_TMP	"/opt/tmp/"
++#define	_PATH_VARDB	"/opt/var/db/"
++#define	_PATH_VARRUN	"/opt/var/run/"
++#define	_PATH_VARTMP	"/opt/var/tmp/"
+ 
+ #endif				/* !_PATHS_H_ */
+--- a/usr/kinit/ipconfig/main.c
++++ b/usr/kinit/ipconfig/main.c
+@@ -168,7 +168,7 @@ static void dump_device_config(struct ne
+ 	 * sizeof(UINT64_MAX)==21
+ 	 */
+ 	char buf21[21];
+-	const char path[] = "/run/";
++	const char path[] = "/opt/var/run/";
+ 
+ 	snprintf(fn, sizeof(fn), "%snet-%s.conf", path, dev->name);
+ 	f = fopen(fn, "w");
+--- a/usr/klibc/execvpe.c
++++ b/usr/klibc/execvpe.c
+@@ -20,7 +20,7 @@
+ #include <string.h>
+ #include <limits.h>
+ 
+-#define DEFAULT_PATH 	"/bin:/usr/bin:."
++#define DEFAULT_PATH 	"/opt/bin:/opt/usr/bin:/bin:/usr/bin:."
+ 
+ int execvpe(const char *file, char *const *argv, char *const *envp)
+ {
+--- a/usr/klibc/tests/mmaptest.c
++++ b/usr/klibc/tests/mmaptest.c
+@@ -23,7 +23,7 @@ static void make_test_file(int fd)
+ int main(int argc, char *argv[])
+ {
+ 	void *foo;
+-	char *test_file = (argc > 1) ? argv[1] : "/tmp/mmaptest.tmp";
++	char *test_file = (argc > 1) ? argv[1] : "/opt/tmp/mmaptest.tmp";
+ 	int rv, fd;
+ 
+ 	/* Important case, this is how we get memory for malloc() */
+--- a/usr/klibc/tests/opentest.c
++++ b/usr/klibc/tests/opentest.c
+@@ -5,7 +5,7 @@ int main(void)
+ 	char buffer[1024];
+ 	FILE *f;
+ 
+-	f = fopen("/etc/passwd", "r");
++	f = fopen("/opt/etc/passwd", "r");
+ 	fgets(buffer, 1024, f);
+ 	fclose(f);
+ 

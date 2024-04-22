@@ -1,0 +1,86 @@
+--- a/usr/include/stdlib.h
++++ b/usr/include/stdlib.h
+@@ -12,6 +12,11 @@
+ #include <malloc.h>
+ #include <fcntl.h>
+ 
++/* O_TMPFILE since Linux 3.11 */
++#ifndef LINUX_VERSION_CODE
++#include <linux/version.h>
++#endif
++
+ #define EXIT_FAILURE 1
+ #define EXIT_SUCCESS 0
+ 
+@@ -85,6 +90,15 @@ static __inline__ void srandom(unsigned
+ __extern int unlockpt(int);
+ __extern char *ptsname(int);
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,11,0)
++#ifndef __O_TMPFILE
++#define __O_TMPFILE	020000000
++#endif
++#ifndef O_TMPFILE
++#define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
++#endif /* O_TMPFILE since Linux 3.11 */
++#endif
++
+ static __inline__ int posix_openpt(int __mode)
+ {
+ 	__extern int open(const char *, int, ...);
+--- a/usr/klibc/rename.c
++++ b/usr/klibc/rename.c
+@@ -3,9 +3,18 @@
+ 
+ #ifndef __NR_rename
+ 
++/* renameat2 since Linux 3.15 */
++#ifndef LINUX_VERSION_CODE
++#include <linux/version.h>
++#endif
++
+ int rename(const char *oldpath, const char *newpath)
+ {
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,15,0)
+ 	return renameat2(AT_FDCWD, oldpath, AT_FDCWD, newpath, 0);
++#else
++	return renameat(AT_FDCWD, oldpath, AT_FDCWD, newpath);
++#endif /* renameat2 since Linux 3.15 */
+ }
+ 
+ #endif /* __NR_rename */
+--- a/usr/klibc/SYSCALLS.def
++++ b/usr/klibc/SYSCALLS.def
+@@ -14,6 +14,12 @@
+ #include <klibc/sysconfig.h>
+ #include <bitsize.h>
+ 
++/* finit_module since Linux 3.8 */
++/* renameat2 since Linux 3.15 */
++#ifndef LINUX_VERSION_CODE
++#include <linux/version.h>
++#endif
++
+ /*
+  * Process-related syscalls
+  */
+@@ -116,7 +122,9 @@ int chdir(const char *);
+ int fchdir(int);
+ <?> int rename(const char *, const char *);
+ <?> int renameat(int, const char *, int, const char *);
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,15,0)
+ <?> int renameat2(int, const char *, int, const char *, unsigned int);
++#endif /* renameat2 since Linux 3.15 */
+ <?> int mknod(const char *, mode_t, dev_t);
+ <?> int mknodat(int, const char *, mode_t, dev_t);
+ <?> int chmod(const char *, mode_t);
+@@ -270,7 +278,9 @@ int uname(struct utsname *);
+ int setdomainname(const char *, size_t);
+ int sethostname(const char *, size_t);
+ long init_module(void *, unsigned long, const char *);
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,8,0)
+ long finit_module(int, const char *, int);
++#endif /* finit_module since Linux 3.8 */
+ long delete_module(const char *, unsigned int);
+ int reboot::__reboot(int, int, int, void *);
+ int syslog::klogctl(int, char *, int);
