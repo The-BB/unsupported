@@ -35,7 +35,7 @@ endef
 define Package/meshname_nohf
   $(call Package/meshname/Default)
   VARIANT:=nohf
-  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS+=@arm
 endef
 
 define Package/meshname/description
