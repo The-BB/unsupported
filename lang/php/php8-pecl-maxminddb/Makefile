@@ -5,13 +5,13 @@ include $(TOPDIR)/rules.mk
 PECL_NAME:=maxminddb
 PECL_LONGNAME:=Reader for the MaxMind DB file format
 
-PKG_VERSION:=1.11.0
+PKG_VERSION:=1.11.1
 PKG_RELEASE:=1
 
 PKG_NAME:=php8-pecl-$(PECL_NAME)
 PKG_SOURCE:=$(PECL_NAME)-$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=https://pecl.php.net/get
-PKG_HASH:=a57927e47341ee1d981ce11c09cd2d581366a18971e7c8b6b4aba86db6cf1c74
+PKG_HASH:=22d7ad7709b7ed7ce1b0e68b8c87e6ea67bcb0aa1924d221dbb79538560174b4
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/pecl-php8/$(PECL_NAME)-$(PKG_VERSION)
 
