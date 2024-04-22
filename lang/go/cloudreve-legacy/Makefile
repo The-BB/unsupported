@@ -43,7 +43,7 @@ endef
 define Package/cloudreve-legacy_nohf
   $(call Package/cloudreve-legacy/Default)
   VARIANT:=nohf
-  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS+=@arm
 endef
 
 define Package/cloudreve-legacy/description
