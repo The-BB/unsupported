@@ -3,16 +3,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=glances
-PKG_VERSION:=3.4.0.3
-PKG_RELEASE:=2
+PKG_VERSION:=3.4.0.5
+PKG_RELEASE:=1
 
 PYPI_NAME:=Glances
-PKG_HASH:=e7b1d54180db9961613f5485bf8e2a9fe93d0e58c1bcec0a451b4efe5687c85d
+PKG_HASH:=2aaae0222744837e1223f63bd2efffbc6a3fdae42c95b2ebd1925cf94ae2a85b
 
 PKG_LICENSE:=LGPL-3.0-only
 PKG_LICENSE_FILES:=COPYING
 
 PKG_CONFIG_DEPENDS:= \
+	CONFIG_GLANCES_BROWSER_MODE \
+	CONFIG_GLANCES_IP \
 	CONFIG_GLANCES_WEB_MODE
 
 include $(TOPDIR)/feeds/packages/lang/python/pypi.mk
@@ -40,7 +42,10 @@ define Package/glances
 	+python3-psutil \
 	+python3-packaging \
 	+python3-ujson \
-	+GLANCES_WEB_MODE:python3-bottle
+	+GLANCES_BROWSER_MODE:python3-zeroconf \
+	+GLANCES_IP:python3-netifaces \
+	+GLANCES_WEB_MODE:python3-bottle \
+	+GLANCES_WEB_MODE:python3-requests
 endef
 
 define Package/glances/description
@@ -52,9 +57,19 @@ define Package/glances/conffiles
 endef
 
 define Package/glances/config
-config GLANCES_WEB_MODE
+config GLANCES_BROWSER_MODE
+	bool "Autodiscover (browser) mode"
 	depends on PACKAGE_glances
+	default y
+
+config GLANCES_IP
+	bool "IP plugin"
+	depends on PACKAGE_glances
+	default y
+
+config GLANCES_WEB_MODE
 	bool "Web server mode"
+	depends on PACKAGE_glances
 	default y
 endef
 
