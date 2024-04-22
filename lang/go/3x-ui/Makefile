@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=3x-ui
-PKG_VERSION:=2.1.3
+PKG_VERSION:=2.3.0
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=c9ba393ce7bd7050b4d2dc8d4e3c019641a5f087
+PKG_SOURCE_VERSION:=2cf2c451c24a98d699d234ca073e1af9a0339833
 PKG_SOURCE_URL:=https://github.com/MHSanaei/3x-ui
-PKG_MIRROR_HASH:=f60c9be966c0e9b1351cd071d6c0a023aa762cbd66040eb26d5b623200bc1781
+PKG_MIRROR_HASH:=6455934c206565e700ab0605f5383878da5791b8b3318c7e80f3b9fa66d775cc
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -37,7 +37,7 @@ endef
 define Package/3x-ui_nohf
   $(call Package/3x-ui/Default)
   VARIANT:=nohf
-  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS+=@arm
 endef
 
 define Package/3x-ui/description

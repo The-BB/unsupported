@@ -47,8 +47,8 @@
 -    "access": "none",
 +    "access": "/opt/var/log/xui/access.log",
      "dnsLog": false,
+     "error": "./error.log",
      "loglevel": "warning"
-   },
 --- a/web/service/server.go
 +++ b/web/service/server.go
 @@ -164,7 +164,7 @@ func (s *ServerService) GetStatus(lastSt
