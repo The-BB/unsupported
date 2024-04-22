@@ -1,6 +1,6 @@
 --- a/setup.cfg
 +++ b/setup.cfg
-@@ -52,20 +52,20 @@ include_package_data = True
+@@ -53,21 +53,21 @@ include_package_data = True
  package_dir = 
  	= src
  install_requires = 
@@ -23,7 +23,8 @@
 -	filetype~=1.0
 +	cryptography>=35.0.0,<43.0.0;platform_python_implementation=='PyPy'
 +	filetype>=1.0
- 	Js2Py~=0.7
+ 	Js2Py~=0.7;python_version<"3.12"
+ 	dukPy>=0.3.1;python_version>="3.12"
 -	pycurl~=7.43
 +	pycurl>=7.43
  	certifi

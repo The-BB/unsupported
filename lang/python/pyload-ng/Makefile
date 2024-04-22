@@ -3,18 +3,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pyload-ng
-PKG_PYLOAD_BUILD:=80
+PKG_PYLOAD_BUILD:=82
 PKG_VERSION:=0.5.0b3.dev$(PKG_PYLOAD_BUILD)
 PKG_RELEASE:=1
 
 PYPI_NAME:=pyload_ng
-PYPI_SOURCE_NAME:=pyload-ng
-PKG_HASH:=d6f22411cb688fab9da30631170638d9fff32fd125c36365e9968bdb1df493f3
+PKG_HASH:=839a2a5d5f009f3c015e20b10316e85ec48fbe305324f543dc4d26c1d1062c70
 
 PKG_LICENSE:=AGPL-3.0-or-later
 PKG_LICENSE_FILES:=LICENSE.md
 
 PKG_BUILD_DEPENDS:=python-wheel/host
+PKG_BUILD_DEPENDS += python-dukpy python-js2py
 
 include $(TOPDIR)/feeds/packages/lang/python/pypi.mk
 include $(INCLUDE_DIR)/package.mk
@@ -52,7 +52,6 @@ define Package/pyload-ng
 	+python3-flask-compress \
 	+python3-flask-session2 \
 	+python3-flask-themes2 \
-	+python3-js2py \
 	+python3-semver \
 	+python3-setuptools
 ## all,build,plugin
@@ -65,7 +64,9 @@ define Package/pyload-ng
 	+python3-pyopenssl \
 	+python3-send2trash \
 	+python3-slixmpp
-  EXTRA_DEPENDS:=coreutils-nohup
+  EXTRA_DEPENDS:=coreutils-nohup, \
+	python3-dukpy (>=python3-3.12.2-1), \
+	python3-js2py (<python3-3.12.2-1)
 endef
 
 define Package/pyload-ng/description
