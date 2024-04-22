@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rizin
-PKG_VERSION:=0.6.3
+PKG_VERSION:=0.7.3
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/rizinorg/rizin/tar.gz/refs/tags/v$(PKG_VERSION)?
-PKG_HASH:=5f78a5ca71d3029664447f341d48b2ec7767929aa2dc51ac2d3597ab7f3f2a32
+PKG_HASH:=df369c2646cee3cfde0cccf64d1f914f01127a14dffe8d638a6fe031a96e6116
 
 PKG_LICENSE:=GPL-3.0-or-later LGPL-3.0-or-later
 PKG_LICENSE_FILES:=COPYING COPYING.LESSER
@@ -25,8 +25,8 @@ define Package/rizin
 endef
 
 define Package/rizin/description
-  Rizin is a fork of the radare2 reverse engineering framework with a focus
-  on usability, working features and code cleanliness.
+  Rizin is a fork of the radare2 reverse engineering framework with
+  a focus on usability, working features and code cleanliness.
 endef
 
 MESON_ARGS += \
