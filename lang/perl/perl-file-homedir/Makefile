@@ -4,7 +4,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=perl-file-homedir
 PKG_VERSION:=1.006
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SRC_NAME:=File-HomeDir
 PKG_SOURCE:=$(PKG_SRC_NAME)-$(PKG_VERSION).tar.gz
@@ -23,8 +23,8 @@ define Package/perl-file-homedir
   CATEGORY:=Languages
   SUBMENU:=Perl
   TITLE:=Find your home and other directories
-  URL:=https://metacpan.org/release/File-HomeDir
-  DEPENDS:=+perl +perlbase-file
+  URL:=https://metacpan.org/dist/File-HomeDir
+  DEPENDS:=+perl +perlbase-file +perl-file-which
 endef
 
 define Build/Configure
