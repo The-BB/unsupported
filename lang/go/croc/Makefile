@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=croc
-PKG_VERSION:=9.6.6
+PKG_VERSION:=9.6.15
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=c1367671b6532e04e05206f355915ec7678c9422
+PKG_SOURCE_VERSION:=d81116382fcb9dddb79b02ed4b0da99e7aecb2ab
 PKG_SOURCE_URL:=https://github.com/schollz/croc
-PKG_MIRROR_HASH:=68d719a166adc58b4110e6c1185e37b980fdecd612337df6ce5bd6a2af487723
+PKG_MIRROR_HASH:=6b4d23c4097fb52f58caea971f20f38fa7d2f3315c3733a1e73eceaa5ad73768
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE
@@ -34,7 +34,7 @@ endef
 define Package/croc_nohf
   $(call Package/croc/Default)
   VARIANT:=nohf
-  DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS:=@arm
 endef
 
 define Package/croc/description
