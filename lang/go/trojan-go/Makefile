@@ -39,7 +39,7 @@ endef
 define Package/trojan-go_nohf
   $(call Package/trojan-go/Default)
   VARIANT:=nohf
-  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS+=@arm
 endef
 
 define Package/trojan-go/description
