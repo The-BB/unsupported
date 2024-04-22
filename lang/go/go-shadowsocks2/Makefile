@@ -34,7 +34,7 @@ endef
 define Package/go-shadowsocks2_nohf
   $(call Package/go-shadowsocks2/Default)
   VARIANT:=nohf
-  DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS:=@arm
 endef
 
 define Package/go-shadowsocks2/description
