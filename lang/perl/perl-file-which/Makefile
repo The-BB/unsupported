@@ -4,7 +4,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=perl-file-which
 PKG_VERSION:=1.27
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SRC_NAME:=File-Which
 PKG_SOURCE:=$(PKG_SRC_NAME)-$(PKG_VERSION).tar.gz
@@ -23,7 +23,7 @@ define Package/perl-file-which
   CATEGORY:=Languages
   SUBMENU:=Perl
   TITLE:=Perl implementation of the which utility as an API
-  URL:=https://metacpan.org/pod/File::Which
+  URL:=https://metacpan.org/dist/File-Which
   DEPENDS:=+perl +perlbase-file
 endef
 
