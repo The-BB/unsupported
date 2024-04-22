@@ -3,11 +3,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=slixmpp
-PKG_VERSION:=1.8.4
+PKG_VERSION:=1.8.5
 PKG_RELEASE:=1
 
 PYPI_NAME:=slixmpp
-PKG_HASH:=406f1f4bab7e7573dd559a441027d3de33d17bba354bcf20ddc6aafba272286b
+PKG_HASH:=75e3f0ad48555f7f5c9228e7066c1d4358b33d640b4fbe773ec34b03b7fae9a3
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE.txt
@@ -38,12 +38,11 @@ define Package/python3-slixmpp
   DEPENDS+= \
 	+python3-aiodns \
 	+python3-aiohttp \
+	+python3-cryptography \
 	+python3-defusedxml \
 	+python3-emoji \
 	+python3-pyasn1 \
 	+python3-pyasn1-modules
-# rust-lang pkg
-  EXTRA_DEPENDS:=python3-cryptography
 endef
 
 define Package/python3-slixmpp/description
