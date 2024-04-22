@@ -5,14 +5,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dnsproxy
-PKG_VERSION:=0.65.0
+PKG_VERSION:=0.70.0
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2024-02-08
-PKG_SOURCE_VERSION:=ffdd3a3a658538fe47a822d81da320a0b71820e7
+PKG_SOURCE_DATE:=2024-04-18
+PKG_SOURCE_VERSION:=7d832999a812b3f237e1b0abd35c87ef559d35a4
 PKG_SOURCE_URL:=https://github.com/AdguardTeam/dnsproxy
-PKG_MIRROR_HASH:=6dcf5dc187562c6a669e95783b3a0e9fdddbd3867392443632e86bda15dc24b3
+PKG_MIRROR_HASH:=08a9ec73f8b829d32eab82fa12a7159fc292e2d658b9642832a647ecbe0a1148
 
 PKG_LICENSE:=GPL-3.0-only
 PKG_LICENSE_FILES:=LICENSE
@@ -38,7 +38,7 @@ endef
 define Package/dnsproxy_nohf
   $(call Package/dnsproxy/Default)
   VARIANT:=nohf
-  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS+=@arm
 endef
 
 define Package/dnsproxy/description
