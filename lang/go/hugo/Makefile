@@ -3,13 +3,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hugo
-PKG_VERSION:=0.122.0
+PKG_VERSION:=0.125.2
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=b9a03bd59d5f71a529acb3e33f995e0ef332b3aa
+PKG_SOURCE_VERSION:=4e483f5d4abae136c4312d397a55e9e1d39148df
 PKG_SOURCE_URL:=https://github.com/gohugoio/hugo
-PKG_MIRROR_HASH:=d53855f25f9cb97870a7cbdf9b4cc7d024cb35a20d40ea97b9883f59073cfd94
+PKG_MIRROR_HASH:=152f6d7712391ec09f5a23e6cd9a0b48f3e0608dfca173ffc565e418e08c075f
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -36,7 +36,7 @@ endef
 define Package/hugo_nohf
   $(call Package/hugo/Default)
   VARIANT:=nohf
-  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS+=@arm
 endef
 
 define Package/hugo/description
