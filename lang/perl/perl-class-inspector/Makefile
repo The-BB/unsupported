@@ -4,13 +4,14 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=perl-class-inspector
 PKG_VERSION:=1.36
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
-PKG_SOURCE:=Class-Inspector-$(PKG_VERSION).tar.gz
+PKG_SRC_NAME:=Class-Inspector
+PKG_SOURCE:=$(PKG_SRC_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://cpan.metacpan.org/authors/id/P/PL/PLICEASE
 PKG_HASH:=cc295d23a472687c24489d58226ead23b9fdc2588e522f0b5f0747741700694e
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/perl/Class-Inspector-$(PKG_VERSION)
+PKG_BUILD_DIR:=$(BUILD_DIR)/perl/$(PKG_SRC_NAME)-$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/perl/perlmod.mk
@@ -21,7 +22,7 @@ define Package/perl-class-inspector
   CATEGORY:=Languages
   TITLE:=Get information about a class and its structure
   URL:=https://metacpan.org/dist/Class-Inspector
-  DEPENDS:=+perl 
+  DEPENDS:=+perlbase-base +perlbase-file
 endef
 
 define Build/Configure
