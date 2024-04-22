@@ -3,14 +3,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=perl-net-ssleay
-PKG_VERSION:=1.92
+PKG_VERSION:=1.94
 PKG_RELEASE:=1
 
-PKG_SOURCE:=Net-SSLeay-$(PKG_VERSION).tar.gz
+PKG_SRC_NAME:=Net-SSLeay
+PKG_SOURCE:=$(PKG_SRC_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://cpan.metacpan.org/authors/id/C/CH/CHRISN
-PKG_HASH:=47c2f2b300f2e7162d71d699f633dd6a35b0625a00cbda8c50ac01144a9396a9
+PKG_HASH:=9d7be8a56d1bedda05c425306cc504ba134307e0c09bda4a788c98744ebcd95d
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/perl/Net-SSLeay-$(PKG_VERSION)
+PKG_BUILD_DIR:=$(BUILD_DIR)/perl/$(PKG_SRC_NAME)-$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/perl/perlmod.mk
@@ -21,7 +22,7 @@ define Package/perl-net-ssleay
   CATEGORY:=Languages
   TITLE:=Perl extension for using OpenSSL
   URL:=https://metacpan.org/dist/Net-SSLeay
-  DEPENDS:=+perl +libopenssl
+  DEPENDS:=+libopenssl +perlbase-mime
 endef
 
 define Build/Configure
