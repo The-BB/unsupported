@@ -35,7 +35,7 @@ endef
 define Package/coredns_nohf
   $(call Package/coredns/Default)
   VARIANT:=nohf
-  DEPENDS+=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+  DEPENDS+=@arm
 endef
 
 define Package/coredns/description
