@@ -3,14 +3,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=perl-stow
-PKG_VERSION:=2.3.1
+PKG_VERSION:=2.4.0
 PKG_RELEASE:=1
 
-PKG_SOURCE:=Stow-v$(PKG_VERSION).tar.gz
+PKG_SRC_NAME:=Stow
+PKG_SOURCE:=$(PKG_SRC_NAME)-v$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://cpan.metacpan.org/authors/id/A/AS/ASPIERS
-PKG_HASH:=5062a1f8d0c03e38aca5cf46b72de0cba03f901279729338b7b2f93e518182d8
+PKG_HASH:=a777927b076b08ac96d8aa3e1b68573064b9a87eb4cdb7831e86915d4598af45
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/perl/Stow-v$(PKG_VERSION)
+PKG_BUILD_DIR:=$(BUILD_DIR)/perl/$(PKG_SRC_NAME)-v$(PKG_VERSION)
 
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=COPYING
@@ -24,7 +25,7 @@ define Package/perl-stow
   CATEGORY:=Languages
   TITLE:=manage farms of symbolic links
   URL:=https://metacpan.org/dist/Stow
-  DEPENDS:=+perl 
+  DEPENDS:=+perl +perlbase-io
 endef
 
 Build/Configure:=:
@@ -33,7 +34,6 @@ Build/Compile:=:
 define Package/perl-stow/install
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/{,chk}stow $(1)/opt/bin
-
 	$(INSTALL_DIR) $(1)/opt/lib/perl5/$(PERL_VERSION2)/Stow
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/lib/Stow.pm \
 		$(1)/opt/lib/perl5/$(PERL_VERSION2)
