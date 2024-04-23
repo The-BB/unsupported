@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=highlight
-PKG_VERSION:=4.10
+PKG_VERSION:=4.11
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-PKG_SOURCE_URL:=http://www.andre-simon.de/zip
-PKG_HASH:=4389a022367ceafb55a6cf7774c5d82d320ec2df4339bae4aab058c511338ad0
+PKG_SOURCE_URL:=http://andre-simon.de/zip
+PKG_HASH:=080bdbc26342f11aaf78747e4a4db86ffedbaf2f053d4aad2d84d271f6647dcf
 
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=COPYING
@@ -23,7 +23,7 @@ define Package/highlight
   SECTION:=utils
   CATEGORY:=Utilities
   TITLE:=an universal sourcecode to formatted text converter
-  URL:=http://www.andre-simon.de/
+  URL:=http://andre-simon.de/
   DEPENDS:=+libstdcpp +lua
 endef
 
