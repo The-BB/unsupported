@@ -1,0 +1,10 @@
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -1,6 +1,6 @@
+ AUTOMAKE_OPTIONS = foreign
+ 
+-SUBDIRS = po4a
++#SUBDIRS = po4a
+ 
+ EXTRA_DIST = CONTRIBUTING
+ 
