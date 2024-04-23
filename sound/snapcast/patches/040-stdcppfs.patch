@@ -1,0 +1,15 @@
+undefined reference to `std::filesystem::path::_M_split_cmpts()'
+
+---
+
+--- a/server/CMakeLists.txt
++++ b/server/CMakeLists.txt
+@@ -105,7 +105,7 @@ if(ANDROID)
+   target_link_libraries(libsnapserver.so ${SERVER_LIBRARIES} log)
+ else()
+   add_executable(snapserver ${SERVER_SOURCES})
+-  target_link_libraries(snapserver ${SERVER_LIBRARIES})
++  target_link_libraries(snapserver ${SERVER_LIBRARIES} stdc++fs)
+ 
+   install(
+     TARGETS snapserver

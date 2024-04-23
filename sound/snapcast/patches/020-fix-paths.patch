@@ -24,3 +24,34 @@
  
  #
  ################################################</pre>
+--- a/server/etc/snapweb/index.html
++++ b/server/etc/snapweb/index.html
+@@ -40,16 +40,16 @@
+       either download
+       <ul>
+         <li><b>snapweb.zip</b> and extract it on your Snapcast server machine, e.g. into
+-          <tt>/usr/share/snapserver/snapweb</tt> or
++          <tt>/opt/share/snapserver/snapweb</tt> or
+         </li>
+         <li><b>snapweb_x.y.z-1_all.deb</b> and install it with <tt>sudo apt install ./snapweb_x.y.z-1_all.deb</tt> to
+-          <tt>/usr/share/snapweb</tt>
++          <tt>/opt/share/snapweb</tt>
+         </li>
+       </ul>
+     </li>
+     <li>Configure the document root (<tt>doc_root</tt>, see below) in the snapserver configuration file
+       <tt>snapserver.conf</tt> &mdash; usually
+-      located in <tt>/etc/snapserver.conf</tt> &mdash; to the location where snapweb is extracted or installed.
++      located in <tt>/opt/etc/snapserver.conf</tt> &mdash; to the location where snapweb is extracted or installed.
+     </li>
+     <li>Restart Snapserver to activate the changes: <tt>sudo service snapserver restart</tt></li>
+   </ol>
+@@ -62,7 +62,7 @@
+ ...
+ 
+ # serve a website from the doc_root location
+-doc_root = /usr/share/snapserver/snapweb/
++doc_root = /opt/share/snapserver/snapweb/
+ 
+ #
+ ################################################</pre>

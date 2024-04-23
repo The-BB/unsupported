@@ -11,7 +11,7 @@
  		</array>
 --- a/client/snapclient.cpp
 +++ b/client/snapclient.cpp
-@@ -312,7 +312,7 @@ int main(int argc, char** argv)
+@@ -314,7 +314,7 @@ int main(int argc, char** argv)
          std::unique_ptr<Daemon> daemon;
          if (daemonOption->is_set())
          {
@@ -22,7 +22,7 @@
              string user;
 --- a/common/utils.hpp
 +++ b/common/utils.hpp
-@@ -149,7 +149,7 @@ static std::string getOS()
+@@ -143,7 +143,7 @@ static std::string getOS()
  #ifndef WINDOWS
      if (os.empty())
      {
@@ -60,16 +60,16 @@
  
  # Hostname or IP under which clients can reach this host
  # used to serve cached cover art
-@@ -133,7 +133,7 @@ doc_root = /usr/share/snapserver/snapweb
+@@ -132,7 +132,7 @@ doc_root = /usr/share/snapserver/snapweb
  # tcp client: tcp://<server IP, e.g. 127.0.0.1>:<port>?name=<name>&mode=client
  # alsa: alsa:///?name=<name>&device=<alsa device>[&send_silence=false][&idle_threshold=100][&silence_threshold_percent=0.0]
  # meta: meta:///<name of source#1>/<name of source#2>/.../<name of source#N>?name=<name>
 -source = pipe:///tmp/snapfifo?name=default
 +source = pipe:///opt/tmp/snapfifo?name=default
- #source = tcp://127.0.0.1?name=mopidy_tcp
  
  # Default sample format: <sample rate>:<bits per sample>:<channels>
-@@ -175,7 +175,7 @@ source = pipe:///tmp/snapfifo?name=defau
+ #sampleformat = 48000:16:2
+@@ -173,7 +173,7 @@ source = pipe:///tmp/snapfifo?name=defau
  
  # log sink [null,system,stdout,stderr,file:<filename>]
  # when left empty: if running as daemon "system" else "stdout"
@@ -91,7 +91,7 @@
  		</array>
 --- a/server/streamreader/stream_control.cpp
 +++ b/server/streamreader/stream_control.cpp
-@@ -139,7 +139,7 @@ ScriptStreamControl::ScriptStreamControl
+@@ -136,7 +136,7 @@ ScriptStreamControl::ScriptStreamControl
      namespace fs = utils::file;
      if (!fs::exists(script_))
      {
@@ -102,7 +102,7 @@
          else
 --- a/server/config.cpp
 +++ b/server/config.cpp
-@@ -43,7 +43,7 @@ void Config::init(const std::string& roo
+@@ -48,7 +48,7 @@ void Config::init(const std::string& roo
      if (!root_directory.empty())
          dir = root_directory;
      else if (getenv("HOME") == nullptr)
@@ -113,7 +113,7 @@
  
 --- a/server/control_session_http.cpp
 +++ b/server/control_session_http.cpp
-@@ -50,11 +50,11 @@ static constexpr const char* UNCONFIGURE
+@@ -51,11 +51,11 @@ static constexpr const char* UNCONFIGURE
      "    This webserver is a websocket endpoint for control clients (ws://<i>host</i>:1780/jsonrpc) and streaming clients"
      "    (ws://<i>host</i>:1780/stream), but it can also host simple web pages. To serve a web page, you must configure the"
      "    document root in the snapserver configuration file <b>snapserver.conf</b>, usually located in"
@@ -127,7 +127,7 @@
      "    To activate it, please configure the <b>doc_root</b> as follows, and restart Snapserver to activate the changes:"
      "  </p>"
      "  <pre>"
-@@ -65,7 +65,7 @@ static constexpr const char* UNCONFIGURE
+@@ -66,7 +66,7 @@ static constexpr const char* UNCONFIGURE
      "...\n"
      "\n"
      "# serve a website from the doc_root location\n"
@@ -136,18 +136,18 @@
      "\n"
      "#\n"
      "################################################</pre>"
-@@ -281,7 +281,7 @@ void ControlSessionHttp::handle_request(
+@@ -282,7 +282,7 @@ void ControlSessionHttp::handle_request(
  
      if (settings_.doc_root.empty())
      {
--        std::string default_page = "/usr/share/snapserver/index.html";
-+        std::string default_page = "/opt/share/snapserver/index.html";
-         struct stat buffer;
-         if (stat(default_page.c_str(), &buffer) == 0)
+-        static constexpr auto default_page = "/usr/share/snapserver/index.html";
++        static constexpr auto default_page = "/opt/share/snapserver/index.html";
+         if (utils::file::exists(default_page))
              path = default_page;
+         else
 --- a/server/server_settings.hpp
 +++ b/server/server_settings.hpp
-@@ -30,8 +30,8 @@ struct ServerSettings
+@@ -32,8 +32,8 @@ struct ServerSettings
      struct Server
      {
          int threads{-1};
@@ -160,7 +160,7 @@
      };
 --- a/server/snapserver.cpp
 +++ b/server/snapserver.cpp
-@@ -61,8 +61,8 @@ int main(int argc, char* argv[])
+@@ -58,8 +58,8 @@ int main(int argc, char* argv[])
      try
      {
          ServerSettings settings;
@@ -171,7 +171,7 @@
  
          OptionParser op("Allowed options");
          auto helpSwitch = op.add<Switch>("h", "help", "Produce help message, use -hh to show options from config file");
-@@ -260,7 +260,7 @@ int main(int argc, char* argv[])
+@@ -257,7 +257,7 @@ int main(int argc, char* argv[])
                  throw std::invalid_argument("user must not be empty");
  
              if (settings.server.data_dir.empty())
