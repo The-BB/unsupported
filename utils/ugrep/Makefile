@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ugrep
-PKG_VERSION:=5.0.0
+PKG_VERSION:=5.1.4
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/Genivia/ugrep/tar.gz/refs/tags/v$(PKG_VERSION)?
-PKG_HASH:=4c1dbf338bfed337fe53df0f685894c2a27d4a4fed236ebb3491441c2ccbec65
+PKG_HASH:=5b80b527c3c5b4cd8f0ec300d816ac0c1dea11c6de7774d69e9becebf492274d
 
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE.txt

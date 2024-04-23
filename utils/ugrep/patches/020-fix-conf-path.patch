@@ -1,6 +1,6 @@
 --- a/src/ugrep.cpp
 +++ b/src/ugrep.cpp
-@@ -4705,7 +4705,7 @@ static void load_config(std::list<std::p
+@@ -4765,7 +4765,7 @@ static void load_config(std::list<std::p
  {
    // the default config file is .ugrep when FILE is not specified
    if (flag_config == NULL || *flag_config == '\0')
@@ -9,7 +9,7 @@
  
    // if config file was parsed before, then only try parsing the home dir config file
    bool home = flag_config_files.find(flag_config) != flag_config_files.end();
-@@ -4813,7 +4813,7 @@ static void load_config(std::list<std::p
+@@ -4873,7 +4873,7 @@ static void load_config(std::list<std::p
      if (errors)
        exit(EXIT_ERROR);
    }
@@ -18,7 +18,7 @@
    {
      error("option --config: cannot read", flag_config);
    }
-@@ -4859,7 +4859,7 @@ static void save_config()
+@@ -4919,7 +4919,7 @@ static void save_config()
      return;
    }
  
@@ -27,7 +27,7 @@
      fprintf(file, "# ugrep configuration used by ug and ugrep --config.\n");
    else if (strcmp(flag_save_config, "-") == 0)
      fprintf(file, "# ugrep configuration\n");
-@@ -5629,7 +5629,7 @@ void options(std::list<std::pair<CNF::PA
+@@ -5689,7 +5689,7 @@ void options(std::list<std::pair<CNF::PA
  
                case 's':
                  if (strcmp(arg, "save-config") == 0)
