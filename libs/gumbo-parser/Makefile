@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: WTFPL
 
+# repository has been archived by the owner on Feb 16, 2023.
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gumbo-parser
