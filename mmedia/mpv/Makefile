@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: WTFPL
 
+# 0.37.0+ ERROR: Dependency "libplacebo" not found, tried pkgconfig and cmake
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mpv
