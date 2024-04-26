@@ -3,12 +3,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=sdl2
-PKG_VERSION:=2.28.5
+PKG_VERSION:=2.30.2
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(shell echo $(PKG_NAME) | tr '[:lower:]' '[:upper:]')-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://www.libsdl.org/release
-PKG_HASH:=332cb37d0be20cb9541739c61f79bae5a477427d79ae85e352089afdaf6666e4
+PKG_HASH:=891d66ac8cae51361d3229e3336ebec1c407a8a2a063b61df14f5fdf3ab5ac31
 
 PKG_LICENSE:=Zlib
 PKG_LICENSE_FILES:=LICENSE.txt
@@ -37,7 +37,7 @@ define Package/libsdl2
   MENU:=1
 endef
 
- define Package/libsdl2/description
+define Package/libsdl2/description
   Simple DirectMedia Layer 2 - SDL2 is a library that allows programs
   portable low level access to a video framebuffer, audio output,
   mouse, and keyboard. It is not compatible with SDL1.
