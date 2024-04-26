@@ -3,14 +3,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=pango
-PKG_VERSION:=1.51.0
+PKG_VERSION:=1.52.2
 PKG_RELEASE:=1
 
 PANGO_MAJOR_VER:=$(word 1,$(subst ., ,$(PKG_VERSION))).$(word 2,$(subst ., ,$(PKG_VERSION)))
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://download.gnome.org/sources/pango/$(PANGO_MAJOR_VER)/
-PKG_HASH:=74efc109ae6f903bbe6af77eaa2ac6094b8ee245a2e23f132a7a8f0862d1a9f5
+PKG_HASH:=d0076afe01082814b853deec99f9349ece5f2ce83908b8e58ff736b41f78a96b
 
 PKG_LICENSE:=LGPL-2.0-or-later
 PKG_LICENSE_FILES:=COPYING
